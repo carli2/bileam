@@ -41,6 +41,7 @@ const sceneState = {
   phase: null,
   ambience: null,
   location: 'outside',
+  skipCurrentLevel: null,
 };
 
 const ambienceState = {
@@ -106,7 +107,9 @@ export function startScene(mainCallback) {
 }
 
 export function say(x, y, text) {
+  if (sceneState.skipRequested) return Promise.resolve('skip');
   speechQueue = speechQueue.then(() => {
+    if (sceneState.skipRequested) return 'skip';
     const wasEnabled = gameplayInputEnabled;
     gameplayInputEnabled = false;
     const promise = beginSpeech(
@@ -126,7 +129,7 @@ export function say(x, y, text) {
       gameplayInputEnabled = wasEnabled;
     });
   });
-  return speechQueue;
+  return speechQueue.then(value => (sceneState.skipRequested ? 'skip' : value));
 }
 
 export function promptBubble(x1, y1, text, x2, y2) {
@@ -162,11 +165,66 @@ export function getCurrentAmbienceKey() {
 }
 
 export function fadeToBase(duration) {
-  return paletteFader.fadeToBase(duration);
+  if (sceneState.skipRequested) return paletteFader.fadeToBase(0);
+  return paletteFader.fadeToBase(duration).then(() => {
+    if (sceneState.skipRequested) return;
+  });
 }
 
 export function fadeToBlack(duration) {
-  return paletteFader.fadeToBlack(duration);
+  if (sceneState.skipRequested) return paletteFader.fadeToBlack(0);
+  return paletteFader.fadeToBlack(duration).then(() => {
+    if (sceneState.skipRequested) return;
+  });
+}
+
+export function setSkipHandler(handler) {
+  sceneState.skipRequested = false;
+  sceneState.skipCurrentLevel = typeof handler === 'function' ? handler : null;
+}
+
+export function clearSkipHandler() {
+  sceneState.skipCurrentLevel = null;
+  sceneState.cancelPrompt = null;
+  sceneState.skipRequested = false;
+}
+
+export function isSkipRequested() {
+  return sceneState.skipRequested;
+}
+
+function requestSkip() {
+  if (sceneState.skipRequested) return;
+  sceneState.skipRequested = true;
+  if (pendingSpeechAck) {
+    acknowledgeSpeech(pendingSpeechAck, performance.now());
+    pendingSpeechAck = null;
+  }
+  if (sceneState.cancelPrompt) {
+    const cancel = sceneState.cancelPrompt;
+    sceneState.cancelPrompt = null;
+    cancel('skip');
+  }
+  if (narrationSpeech.active) {
+    narrationSpeech.active = false;
+    narrationSpeech.sequence = [];
+    narrationSpeech.lines = [];
+    const resolve = narrationSpeech.resolve;
+    narrationSpeech.resolve = null;
+    if (typeof resolve === 'function') resolve('skip');
+  }
+  overlaySpeechStates.forEach(state => {
+    state.active = false;
+    state.sequence = [];
+    state.lines = [];
+    if (typeof state.resolve === 'function') {
+      const resolver = state.resolve;
+      state.resolve = null;
+      resolver('skip');
+    }
+  });
+  overlaySpeechStates.clear();
+  speechQueue = Promise.resolve();
 }
 
 function setupEventListeners() {
@@ -194,6 +252,14 @@ function initSprites() {
   clouds = createClouds(cloudSprites);
 }
 function handleKeyDown(event) {
+  if (event.key === 'Tab') {
+    event.preventDefault();
+    requestSkip();
+    if (typeof sceneState.skipCurrentLevel === 'function') {
+      sceneState.skipCurrentLevel();
+    }
+    return;
+  }
   if (!gameplayInputEnabled) {
     return;
   }
@@ -533,16 +599,24 @@ async function performAmbienceTransition(key, options = {}) {
   if (!key || ambienceState.key === key) {
     return;
   }
+  if (sceneState.skipRequested) {
+    setAmbience(key, { immediate: true });
+    return;
+  }
   const fade = options.fade ?? null;
   if (fade) {
     const toBlack = Math.max(0, fade.toBlack | 0);
     const toBase = Math.max(0, fade.toBase | 0);
     if (toBlack > 0) {
-      await paletteFader.fadeToBlack(toBlack);
+      await fadeToBlack(toBlack);
+      if (sceneState.skipRequested) {
+        setAmbience(key, { immediate: true });
+        return;
+      }
     }
     setAmbience(key);
     if (toBase > 0) {
-      await paletteFader.fadeToBase(toBase);
+      await fadeToBase(toBase);
     }
     return;
   }
@@ -552,9 +626,13 @@ async function performAmbienceTransition(key, options = {}) {
     return;
   }
 
-  await paletteFader.fadeToBlack(180);
+  await fadeToBlack(180);
+  if (sceneState.skipRequested) {
+    setAmbience(key, { immediate: true });
+    return;
+  }
   setAmbience(key);
-  await paletteFader.fadeToBase(420);
+  await fadeToBase(420);
 }
 
 function createAmbiencePresets(c) {
@@ -798,6 +876,9 @@ function updateCamera() {
   }
 }
 function createPromptBubble(x1, y1, text, x2, y2) {
+  if (sceneState.skipRequested) {
+    return Promise.resolve('skip');
+  }
   if (activePrompt) {
     throw new Error('promptBubble already active');
   }
@@ -839,6 +920,7 @@ function createPromptBubble(x1, y1, text, x2, y2) {
   pressedKeys.clear();
   gameplayInputEnabled = false;
   activePrompt = state;
+  sceneState.cancelPrompt = result => detach(result ?? 'skip', false);
 
   const promise = new Promise((resolve, reject) => {
     state.resolve = resolve;
@@ -887,6 +969,7 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     window.removeEventListener('keydown', onKeyDown, true);
     gameplayInputEnabled = true;
     activePrompt = null;
+    sceneState.cancelPrompt = null;
     if (isReject) {
       state.reject(result);
     } else {
