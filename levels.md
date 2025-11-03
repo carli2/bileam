@@ -47,8 +47,6 @@ Vowels (`a`, `o`, `u`, `i`, `j`) act as phonetic modifiers and Alef-carriers whe
 - **Final forms** applied automatically:
   - כ→ך, מ→ם, נ→ן, פ→ף, צ→ץ
 
----
-
 ## 🧠 Notes for Engine Implementation
 
 - Maintain **final-form substitution** on last character.  
@@ -73,9 +71,6 @@ Vowels (`a`, `o`, `u`, `i`, `j`) act as phonetic modifiers and Alef-carriers whe
 | malak | מַלְאַךְ | Angel |
 | arur | אָרוּר | Curse |
 | beraka | בְּרָכָה | Blessing |
-
----
-
 
 # 🧙‍♂️ BILEAM – DER LEHRLING DES WORTES
 ## LEVELS.MD – DIDACTIC & STORY STRUCTURE
@@ -134,230 +129,127 @@ Fallback system:
 # LEVEL 2 – מַיִם (*mayim* – Water)
 
 ### Phase 1 – Review
-- Scene: Small stream outside.  
-- Bridge collapsed; wooden planks float nearby.  
-- *Prompt:* “Erhelle das Wasser, um den Weg zu sehen.”  
-  - *Type:* `aor` → **אוֹר**  
-  - ✅ The stream glows, revealing stepping stones.  
-  - ❌ Hint: “Erinner dich an das erste Wort…”
+- Player restores hut light using `aor` to exit.
 
 ### Phase 2 – Learn
-- *Esel:* “Du brauchst einen Weg über das Wasser.”  
-- *Bileam:* “Das Wort lautet *mayim* – Wasser.”  
-- *Prompt:* `mayim` → **מַיִם**  
-  - ✅ Water rises, forming platforms.  
-  - ❌ Esel: “Majim? Nein – mit *m* beginnen!”
+- River scene: Bileam must shape a water bridge using **מַיִם**.
 
 ### Phase 3 – Apply
-- Player must type `mayim` repeatedly to keep platforms afloat.  
-- Three crossings required.  
-- Misspelling → platform sinks → checkpoint reload.
-
-Fallback: After two failed crossings, Esel appears:  
-> “Vielleicht musst du das Wort fühlen – m… a… yim…”
+- Puzzle: Sequence of platforms that raise when `mayim` is typed correctly.
+- Fallback hints describe sound “ma-yim”.
 
 ---
 
 # LEVEL 3 – קוֹל (*qol* – Voice)
 
-### Phase 1 – Review
-- Scene: Cave mouth with echoing halls.  
-- *Prompt 1:* “Rufe das Wasser herbei.”  
-  - *Type:* `mayim` → **מַיִם** → flow clears path.  
-- *Prompt 2:* “Erhelle die Wandinschrift.”  
-  - *Type:* `aor` → **אוֹר** → reveals runes.
+### Review
+- Reuse `aor`, `mayim` to traverse echo chamber.
 
-### Phase 2 – Learn
-- *Bileam:* “Die Wände sprechen zurück… das ist *qol* – Stimme.”  
-- *Prompt:* `qol` → **קוֹל**  
-  - ✅ Echo answers with same sound.  
-  - ❌ Hint: “Ein kurzes Wort, das klingt wie dein Ruf.”
+### Learn
+- Whisper to stone doors: `qol` activates sonic resonance.
 
-### Phase 3 – Apply
-- Player faces an echo gate that only opens by typing `qol` in rhythm (3×).  
-- Missed beat → gate resets, echo taunts.  
-- After two fails → Esel: “Sprich, nicht dröhne – flüstere das Wort!”
+### Apply
+- Boss: Stone guardian requiring alternating `mayim` and `qol`.
+- Mistakes trigger Esel hint (“Sprich klar: KOL!”).
 
 ---
 
 # LEVEL 4 – חַיִּים (*xayim* – Life)
 
-### Phase 1 – Review
-- Scene: Overgrown garden gate.  
-- *Prompt 1:* “Bring Licht.” → `aor`  
-- *Prompt 2:* “Lass Wasser fließen.” → `mayim`  
-- ✅ Plants respond, but path still blocked by wilted vine.
+### Review
+- Combine `aor`, `mayim`, `qol` to reawaken garden.
 
-### Phase 2 – Learn
-- *Bileam:* “Dies ist der Garten des Lebens – das Wort: *xayim*.”  
-- *Prompt:* `xayim` → **חַיִּים**  
-  - ✅ Vines bloom; birds sing.  
-  - ❌ Esel: “Vielleicht beginnt es mit einem rauen Atemlaut?”
+### Learn
+- Teach Bileam to revive plants with `xayim`.
 
-### Phase 3 – Apply
-- Puzzle: Player must grow three plants using `xayim` in sequence.  
-- Misspell one → plant withers → restart.  
-- After two fails → Esel: “Das Leben kommt in Wellen – sprich sanft.”
+### Apply
+- Heal bridge vines using `xayim` while dodging obstacles.
 
 ---
 
 # LEVEL 5 – אֵשׁ (*aw* – Fire)
 
-### Phase 1 – Review
-- Scene: Dark cavern with dripping water and strange runes.  
-- *Prompt 1:* “Lass das Wasser fließen.” → `mayim`  
-- *Prompt 2:* “Gib Licht.” → `aor`  
-- Hidden spark appears in rune circle.
+### Review
+- Player uses `aor`, `mayim`, `xayim` to balance elements.
 
-### Phase 2 – Learn
-- *Bileam:* “Feuer ist reinigend. Das Wort ist *aw* – Flamme.”  
-- *Prompt:* `aw` → **אֵשׁ**  
-  - ✅ Flame ignites.  
-  - ❌ Hint: “Kurz wie ein Atemstoß – *a…w*.”
+### Learn
+- Volcano trial introduces `aw` for controlled flame.
 
-### Phase 3 – Apply
-- Lava barrier ahead.  
-- Sequence challenge: extinguish with water (`mayim`), then reignite forge with `aw`.  
-- Failing order = explosion, reload checkpoint.
-
-Fallback: After 2 fails, cinematic memory replay shows Bileam repeating `aw` at the forge.
+### Apply
+- Feuergolem battle requiring combos of `mayim` and `aw`.
 
 ---
 
 # LEVEL 6 – דָּבָר (*dabar* – Word)
 
-### Phase 1 – Review
-- Scene: Marketplace.  
-- *Prompt 1:* “Bring Licht zum Stand.” → `aor`  
-- *Prompt 2:* “Lass die Pflanzen wachsen.” → `xayim`  
-- Market awakens.
+### Review
+- Market scene: recall earlier spells to solve riddles.
 
-### Phase 2 – Learn
-- *Bileam:* “Ein Wort kann handeln wie Gold. *dabar* bedeutet ‘Wort’.”  
-- *Prompt:* `dabar` → **דָּבָר**  
-  - ✅ Händler applaudieren.  
-  - ❌ Esel: “Nicht ‘daWar’, denk an das sanfte b in der Mitte.”
+### Learn
+- Esel explains power of “דָּבָר”.
 
-### Phase 3 – Apply
-- Dialogue choice: Convince a guard to open gate.  
-- Player types `dabar` during conversation for persuasion.  
-- Misspelling → guard confused → Esel hints:  
-  > “Vielleicht sprichst du zu laut – versuch das Wort für Sprache selbst.”
+### Apply
+- Player persuades guard via correct typing of `dabar`.
 
 ---
 
 # LEVEL 7 – אֱמֶת (*emet* – Truth)
 
-### Phase 1 – Review
-- Scene: Mirror tower, illusions distort.  
-- *Prompt 1:* “Erhelle den Pfad.” → `aor`  
-- *Prompt 2:* “Sprich das Wort, das Türen öffnet.” → `dabar`  
-- Path partially clears.
+### Review
+- Mirror tower uses `aor`, `dabar` for entry.
 
-### Phase 2 – Learn
-- *Bileam:* “Nur Wahrheit kann Spiegel durchdringen – *emet*.”  
-- *Prompt:* `emet` → **אֱמֶת**  
-  - ✅ Mirrors align.  
-  - ❌ Hint: “Es beginnt sanft wie dein erstes Wort mit *e*.”
+### Learn
+- Angelic voice demands `emet`.
 
-### Phase 3 – Apply
-- Boss: Shadow Bileam mirrors actions.  
-- Only correct `emet` at right moment dispels him.  
-- 3 failed attempts → mirror shatters → reset to learning phase (reflection replay).
+### Apply
+- Shadow self battle where `emet` dispels illusions.
 
 ---
 
 # LEVEL 8 – מַלְאַךְ (*malak* – Angel)
 
-### Phase 1 – Review
-- Scene: Desert path; the Esel halts.  
-- *Prompt:* “Sprich die Worte des Lebens.”  
-  - Player types sequence: `aor → mayim → qol → xayim → aw → dabar → emet`  
-  - ✅ An ethereal shimmer appears.
+### Review
+- Desert travel recites entire set up to now.
 
-### Phase 2 – Learn
-- *Bileam:* “Ich sehe – ein *malak*, ein Bote.”  
-- *Prompt:* `malak` → **מַלְאַךְ**  
-  - ✅ Angel manifests.  
-  - ❌ Esel: “Das letzte Zeichen ist ein Laut des Endes – weich, nicht hart.”
+### Learn
+- Encounter angel; learn `malak`.
 
-### Phase 3 – Apply
-- Angel tests memory: repeats 4 random previous words, player must type correctly.  
-- 3 wrong answers → angel fades, restart phase.
+### Apply
+- Memory test: sequential prompts of previous words.
 
 ---
 
 # LEVEL 9 – אָרוּר / בְּרָכָה (*arur* / *beraka*)
 
-### Phase 1 – Review
-- Scene: King Balak’s throne room.  
-- *Prompt:* “Schenke dem König ein Zeichen.”  
-  - `aor` or `dabar` both acceptable → audience calms.
+### Review
+- Balak’s court: demonstrate earlier words for favor.
 
-### Phase 2 – Learn
-- *Balak:* “Verfluche Israel!”  
-- *Esel (flüsternd):* “Aber du kennst auch das Wort für Segen.”  
-- *Prompt A:* `arur` → **אָרוּר** – Fluch  
-- *Prompt B:* `beraka` → **בְּרָכָה** – Segen  
-  - ✅ Either word accepted, but moral choice affects ending.
+### Learn
+- Introduce duality of curse (`arur`) vs blessing (`beraka`).
 
-### Phase 3 – Apply
-- During ritual, player must type either `arur` or `beraka`.  
-- Choosing `beraka` triggers divine light; `arur` darkens hall.  
-- Player can retry once after seeing consequence; Esel asks:  
-  > “Willst du’s diesmal anders sprechen?”
+### Apply
+- Player chooses during ritual; moral outcome stored.
 
 ---
 
-# LEVEL 10 – FINAL: Transformation
+# LEVEL 10 – FINAL – Transformation
 
-### Phase 1 – Review
-- Scene: Valley overlooking Israel’s camp.  
-- *Prompt:* “Erinnere dich an alle Worte.”  
-  - Player recites full sequence:  
-    `aor mayim qol xayim aw dabar emet malak beraka`  
-  - ✅ Energy builds.
+### Review
+- Recite entire lexicon to summon power.
 
-### Phase 2 – Learning Through Revelation
-- *Bileam:* “Ich öffne meinen Mund – doch ein anderes Wort spricht.”  
-- Player begins typing `arur`.  
-- Letters morph automatically into **בְּרָכָה (beraka)**.
+### Learn
+- Attempt to type `arur`; text morphs into `beraka` automatically.
 
-### Phase 3 – Apply (Resolution)
-- Scripting triggers cinematic transformation:
-  - The curse becomes a blessing.
-  - The Esel: “Wer das Wort bewahrt, wird selbst bewahrt.”
-- Player control fades; all learned words scroll by.
-
-Fallbacks:
-- If player forgets order in Phase 1, glowing glyphs cycle hints in correct sequence.
-- Option “Meditate” restarts review phase.
+### Apply
+- Automatic blessing cutscene; words scroll as epilogue.
 
 ---
 
-# 🧩 DIDACTIC SUMMARY
+# ⚙️ MEMORY LOOP SYSTEM
 
-| Phase | Cognitive Focus | Teaching Method | Feedback Type |
-|--------|------------------|------------------|----------------|
-| 1 – Review | Recall | Contextual repetition | Visual success cues |
-| 2 – Learn | Comprehension | Dialog & demonstration | Esel hints |
-| 3 – Apply | Transfer | Problem-solving & sequence recall | Success animation / Retry loop |
+Every prompt keeps failure count:
+1. Hint bubble.
+2. Flashback (replay Learn phase).
+3. Choice (Retry vs Meditate).
 
-Progression:
-- **L1–L3:** Immediate feedback, guided learning.  
-- **L4–L7:** Increasing memory recall, multi-step tasks.  
-- **L8–L10:** Full word sequence mastery, moral reasoning, symbolic transformation.
-
----
-
-# ⚙️ MEMORY LOOP SYSTEM (Fallback Logic)
-
-**Each spell prompt has:**
-- First fail → *Hint line* (contextual).  
-- Second fail → *Memory flashback scene* (replay of learning phase).  
-- Third fail → *Choice menu*:  
-  - “Retry here” (loop)  
-  - “Meditate” (relearn word in safe space)
-
-**Example logic pseudocode:**
-
+Pseudo-code provided earlier for state machine.
