@@ -13,11 +13,32 @@ import {
   donkey,
 } from './scene.js';
 
+function actorCenterX(actor) {
+  const sprite = actor.sprites?.right ?? actor.sprites?.left;
+  const width = sprite?.width ?? 32;
+  return actor.x + width / 2;
+}
+
+function actorTopY(actor) {
+  return actor.y ?? 0;
+}
+
+function actorBubbleY(actor, offset = -20) {
+  return actorTopY(actor) + offset;
+}
+
+function actorAnchorX(actor, offset = 0) {
+  return () => actorCenterX(actor) + offset;
+}
+
+function actorAnchorY(actor, offset = -32) {
+  return () => actorBubbleY(actor, offset);
+}
+
 startScene(async () => {
   ensureAmbience('hutInteriorDark');
   setSceneContext({ level: 'level1', phase: 'introduction' });
   await fadeToBase(1500);
-  await say(() => wizard.x - 16, () => wizard.y - 34, 'Es ist finster in dieser Huette');
   await runLevelOne();
 });
 
@@ -33,18 +54,26 @@ async function runLevelOne() {
 
 function narratorSay(text) {
   return say(
-    () => (wizard.x + donkey.x) / 2,
-    () => Math.min(wizard.y, donkey.y) - 72,
+    () => (actorCenterX(wizard) + actorCenterX(donkey)) / 2,
+    () => Math.min(actorTopY(wizard), actorTopY(donkey)) - 70,
     text,
   );
 }
 
 function wizardSay(text) {
-  return say(() => wizard.x - 16, () => wizard.y - 48, text);
+  return say(
+    () => actorCenterX(wizard),
+    () => actorBubbleY(wizard, -46),
+    text,
+  );
 }
 
 function donkeySay(text) {
-  return say(() => donkey.x - 20, () => donkey.y - 40, text);
+  return say(
+    () => actorCenterX(donkey),
+    () => actorBubbleY(donkey, -40),
+    text,
+  );
 }
 
 async function levelOneIntroduction() {
@@ -52,7 +81,7 @@ async function levelOneIntroduction() {
   await wizardSay('Wo bin ich? ... Ich sehe nichts.');
   await donkeySay('Ich auch nicht, Meister. Vielleicht fehlt uns das richtige Wort.');
   await wizardSay('Ein Wort?');
-  await donkeySay('Ja. Worte sind wie Schluessel. Versuch es mit dem Wort AO R. Es bedeutet Licht.');
+  await donkeySay('Ja. Worte sind wie Schluessel. Versuch es mit dem Wort אור (AOR). Es bedeutet Licht.');
   await narratorSay('Tipp: Sprich das Wort nach.');
 }
 
@@ -64,11 +93,11 @@ async function levelOneLearning(plan) {
 
   while (true) {
     const input = await promptBubble(
-      () => wizard.x - 30,
-      () => wizard.y - 55,
+      actorAnchorX(wizard, -18),
+      actorAnchorY(wizard, -56),
       'Sprich das Wort אור (aor)',
-      () => wizard.x - 20,
-      () => wizard.y - 20
+      actorAnchorX(wizard, -12),
+      actorAnchorY(wizard, -28)
     );
 
     const trimmed = input.trim().toLowerCase();
@@ -92,7 +121,7 @@ async function levelOneLearning(plan) {
     if (attemptsSinceRecap === 1) {
       await donkeySay('Fast! Versuch, es laenger zu ziehen: A... O... R.');
     } else if (attemptsSinceRecap === 2) {
-      await narratorSay('Das Wort verhallt, aber kein Licht kommt. Erinner dich an die Reihenfolge.');
+      await narratorSay('Das Wort verhallt, aber kein Licht kommt. Versuche, dich zu erinnern.');
       await narratorSay('A  O  R');
     } else {
       attemptsSinceRecap = 0;
@@ -117,11 +146,11 @@ async function levelOneRemediationChoice() {
       await narratorSay('Noch einmal ueben oder zurueck zur Erklaerung?');
   while (true) {
     const choice = (await promptBubble(
-      () => wizard.x - 26,
-      () => wizard.y - 55,
+      actorAnchorX(wizard, -16),
+      actorAnchorY(wizard, -56),
       'Tippe ueben oder erklaerung',
-      () => wizard.x - 18,
-      () => wizard.y - 18,
+      actorAnchorX(wizard, -10),
+      actorAnchorY(wizard, -30),
     )).trim().toLowerCase();
     if (choice === 'ueben' || choice === 'uebung' || choice === 'nochmal') {
       return 'practice';
@@ -136,27 +165,12 @@ async function levelOneRemediationChoice() {
 async function levelOneDoorSequence(plan) {
   setSceneContext({ phase: 'apply' });
   await narratorSay('Vor der Tuer erscheint eine leuchtende Rune. Sie wartet auf das Wort.');
-  await narratorSay('Beruehre die Tuer und sprich noch einmal das Wort, um hinauszugehen.');
-
-  let doorOpened = false;
-  while (!doorOpened) {
-    const answer = (await promptBubble(
-      () => wizard.x + 42,
-      () => wizard.y - 52,
-      'Sprich erneut אור (aor), um die Tuer zu oeffnen',
-      () => wizard.x + 22,
-      () => wizard.y - 18,
-    )).trim().toLowerCase();
-
-    if (answer === 'aor') {
-      doorOpened = true;
-      await narratorSay('Die Rune glueht auf, die Huette fuellt sich mit Morgenlicht.');
-      await donkeySay('Da draussen wartet der Tag.');
-      await transitionAmbience(plan?.door ?? 'exteriorDay', { fade: { toBlack: 160, toBase: 420 } });
-      setSceneContext({ phase: 'exit' });
-      await fadeToBlack(800);
-    } else {
-      await narratorSay('Die Tuer bleibt verschlossen. Sprich das Wort klar und vollstaendig.');
-    }
-  }
+  await narratorSay('Das Licht bleibt als Spur in der Luft – die Huette erinnert sich an אור.');
+  await narratorSay('Die Rune oeffnet sich, ohne dass du das Wort wiederholen musst.');
+  await narratorSay('Du spuerst, wie der Morgen hereinsickert.');
+  await donkeySay('Da draussen wartet der Tag.');
+  await transitionAmbience(plan?.door ?? 'exteriorDay', { fade: { toBlack: 160, toBase: 420 } });
+  await narratorSay('Ein warmer Morgen wartet vor der Tuer.');
+  setSceneContext({ phase: 'exit' });
+  await fadeToBlack(800);
 }
