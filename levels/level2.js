@@ -67,7 +67,7 @@ async function phaseOneRecall(plan) {
     const answerInput = await promptBubble(
       anchorX(wizard, -12),
       anchorY(wizard, -58),
-      'Sprich אור (aor), um den Nebel zu teilen',
+      'Sprich אור (OR), um den Nebel zu teilen',
       anchorX(wizard, -8),
       anchorY(wizard, -32)
     );

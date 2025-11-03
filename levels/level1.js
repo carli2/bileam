@@ -63,7 +63,7 @@ async function levelOneIntroduction() {
   if (isSkipRequested()) return 'skip';
   await narratorSay('Es ist dunkel in dieser Huette.');
   if (isSkipRequested()) return 'skip';
-  await donkeySay('Sprich אור (aor). Das Alef schweigt, das O ziehst du lang – so ruft man das Licht.');
+  await donkeySay('Sprich אור – OR. Das Alef schweigt, das O ziehst du lang – so ruft man das Licht.');
   if (isSkipRequested()) return 'skip';
   await wizardSay('Gut, ich probiere es.');
   if (isSkipRequested()) return 'skip';
@@ -80,7 +80,7 @@ async function levelOneLearning(plan) {
     const input = await promptBubble(
       anchorX(wizard, -18),
       anchorY(wizard, -56),
-      'Sprich das Wort אור (aor)',
+      'Sprich das Wort אור (OR)',
       anchorX(wizard, -12),
       anchorY(wizard, -28)
     );
@@ -143,11 +143,10 @@ async function levelOneDoorSequence(plan) {
   setSceneContext({ phase: 'exit' });
   await fadeToBase(600);
   if (isSkipRequested()) return 'skip';
-  const [titleResult, narrationResult] = await Promise.all([
-    showLevelTitle('אור', 2600),
-    narratorSay('Das Wort אור flammt ueber dem Eingang auf – ohne dass du es noch einmal sprichst.'),
-  ]);
-  if (titleResult === 'skip' || narrationResult === 'skip' || isSkipRequested()) return 'skip';
+  const titleResult = await showLevelTitle('אור', 2600);
+  if (titleResult === 'skip' || isSkipRequested()) return 'skip';
+  await narratorSay('Das Wort אור steht wie ein Feuer ueber dem Eingang, ohne dass du es noch einmal sprichst.');
+  if (isSkipRequested()) return 'skip';
   await narratorSay('Du spuerst, wie der Morgen hereinsickert.');
   await donkeySay('Da draussen wartet der Tag.');
   await narratorSay('Ein warmer Morgen wartet vor der Tuer.');

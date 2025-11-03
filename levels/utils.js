@@ -90,6 +90,22 @@ export const CANYON_SCENE = {
   ],
 };
 
+export const GARDEN_SCENE = {
+  ambience: 'gardenBloom',
+  wizardStartX: 72,
+  donkeyOffset: -38,
+  props: [
+    { id: 'gardenBackgroundTrees', type: 'gardenBackdropTrees', x: -12, align: 'ground', parallax: 0.25 },
+    { id: 'gardenBalakStatue', type: 'balakStatue', x: 312, align: 'ground', parallax: 0.55 },
+    { id: 'gardenIrrigation', type: 'irrigationChannels', x: -28, align: 'ground', parallax: 0.9 },
+    { id: 'gardenDryBasin', type: 'fountainDry', x: 248, align: 'ground' },
+    { id: 'gardenSunStone', type: 'sunStoneDormant', x: 410, align: 'ground' },
+    { id: 'gardenEchoRock', type: 'resonanceRockDormant', x: 552, align: 'ground' },
+    { id: 'gardenAltar', type: 'gardenAltar', x: 612, align: 'ground' },
+    { id: 'gardenForegroundStem', type: 'gardenForegroundPlant', x: 120, align: 'ground', parallax: 1.05 },
+  ],
+};
+
 export function applySceneConfig(config, options = {}) {
   if (!config) return;
   const {

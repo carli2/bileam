@@ -90,7 +90,7 @@ async function phaseStoneArch(canyonProps, plan) {
     const answerInput = await promptBubble(
       anchorX(wizard, -8),
       anchorY(wizard, -60),
-      '',
+      'Sprich אור (OR)',
       anchorX(wizard, -2),
       anchorY(wizard, -34),
     );

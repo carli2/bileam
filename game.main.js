@@ -15,6 +15,7 @@ import {
 import { runLevelOne } from './levels/level1.js';
 import { runLevelTwo } from './levels/level2.js';
 import { runLevelThree } from './levels/level3.js';
+import { runLevelFour } from './levels/level4.js';
 
 startScene(mainFlow);
 
@@ -22,15 +23,44 @@ const LEVELS = [
   { id: 'level1', run: runLevelOne },
   { id: 'level2', run: runLevelTwo },
   { id: 'level3', run: runLevelThree },
+  { id: 'level4', run: runLevelFour },
 ];
+
+const STORAGE_KEY = 'bileamProgress';
+
+function loadProgress() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return { known: false, highestLevel: -1 };
+    }
+    const parsed = JSON.parse(raw);
+    return {
+      known: Boolean(parsed?.known),
+      highestLevel: Number.isInteger(parsed?.highestLevel) ? parsed.highestLevel : -1,
+    };
+  } catch (error) {
+    console.warn('Failed to load progress', error);
+    return { known: false, highestLevel: -1 };
+  }
+}
+
+function saveProgress(progress) {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+  } catch (error) {
+    console.warn('Failed to save progress', error);
+  }
+}
 
 async function mainFlow() {
   await fadeToBase(1500);
+  const progress = loadProgress();
   let endingState = 'completed';
 
   for (let index = 0; index < LEVELS.length; index++) {
-    const { run } = LEVELS[index];
-    const result = await runLevel(run);
+    const entry = LEVELS[index];
+    const result = await runLevel(entry, index, progress);
     if (result === 'skip') {
       if (index === LEVELS.length - 1) {
         endingState = 'skip';
@@ -39,21 +69,33 @@ async function mainFlow() {
       continue;
     }
     endingState = result;
+    if (endingState === 'completed' && progress.highestLevel < index) {
+      progress.highestLevel = index;
+      progress.known = true;
+      saveProgress(progress);
+    }
   }
 
   await showEndingScreen(endingState);
 }
 
-async function runLevel(fn) {
+async function runLevel(entry, index, progress) {
   let resolveSkip;
   const skipPromise = new Promise(resolve => {
     resolveSkip = resolve;
   });
 
-  setSkipHandler(() => resolveSkip('skip'));
+  const canSkip = (progress.highestLevel ?? -1) >= index;
+  setSkipHandler(() => {
+    if (canSkip) {
+      resolveSkip('skip');
+    } else {
+      showLevelTitle('Noch nicht freigeschaltet', 1800);
+    }
+  });
 
   try {
-    const result = await Promise.race([fn(), skipPromise]);
+    const result = await Promise.race([entry.run(), skipPromise]);
     if (result === 'skip') {
       ensureAmbience('exteriorDay');
       await fadeToBase(0);

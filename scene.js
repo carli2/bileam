@@ -387,6 +387,19 @@ function initSprites() {
   propSprites.basaltSpireShort = createBasaltSpireSprite(colors, 'short');
   propSprites.stalactite = createStalactiteSprite(colors);
   propSprites.canyonMist = createCanyonMistSprite(colors);
+  propSprites.gardenBackdropTrees = createGardenBackdropSprite(colors);
+  propSprites.balakStatue = createBalakStatueSprite(colors, false);
+  propSprites.balakStatueOvergrown = createBalakStatueSprite(colors, true);
+  propSprites.irrigationChannels = createIrrigationSprite(colors);
+  propSprites.sunStoneDormant = createSunStoneSprite(colors, false);
+  propSprites.sunStoneAwakened = createSunStoneSprite(colors, true);
+  propSprites.resonanceRockDormant = createResonanceRockSprite(colors, false);
+  propSprites.resonanceRockAwakened = createResonanceRockSprite(colors, true);
+  propSprites.gardenForegroundPlant = createGardenForegroundSprite(colors);
+  propSprites.gardenWheatBundle = createGardenWheatSprite(colors, false);
+  propSprites.gardenWheatHarvested = createGardenWheatSprite(colors, true);
+  propSprites.gardenAltar = createGardenAltarSprite(colors);
+  propSprites.gardenBreadLight = createGardenBreadLightSprite(colors);
   sceneProps = [];
 
   wizard.sprites = wizardSprites;
@@ -1710,6 +1723,258 @@ function createCanyonMistSprite(c) {
       const idx = y * width + x;
       const noise = Math.sin((x + y * 3) * 0.08) * 0.5 + Math.sin((x - y * 2) * 0.04) * 0.3;
       pixels[idx] = noise * alpha > 0.2 ? base : shadow;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createGardenBackdropSprite(c) {
+  const width = 220;
+  const height = 80;
+  const pixels = new Uint8Array(width * height);
+  const sky = c.gardenLeaf ?? c.grassBright;
+  const shadow = c.grassShadow ?? c.hillShadow;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      const noise = Math.sin((x + y * 2) * 0.05) * 0.4 + Math.cos((x - y) * 0.08) * 0.2;
+      pixels[idx] = noise > 0 ? sky : shadow;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createBalakStatueSprite(c, overgrown = false) {
+  const width = 48;
+  const height = 90;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const stone = c.courtMarble ?? c.hillLight;
+  const moss = c.gardenLeaf ?? c.grassBright;
+  const crack = c.hillShadow ?? c.caveStone;
+
+  for (let y = 0; y < height; y++) {
+    const left = 10;
+    const right = width - 10;
+    for (let x = left; x < right; x++) {
+      const idx = y * width + x;
+      const edge = x === left || x === right - 1 || y === 0;
+      pixels[idx] = edge ? crack : stone;
+    }
+  }
+
+  for (let y = Math.floor(height * 0.55); y < height - 10; y += 4) {
+    for (let x = 12; x < width - 12; x += 6) {
+      const idx = y * width + x;
+      pixels[idx] = crack;
+    }
+  }
+
+  if (overgrown) {
+    for (let y = 8; y < height; y += 2) {
+      for (let x = 6; x < width - 6; x++) {
+        if ((x + y * 2) % 5 === 0) {
+          const idx = y * width + x;
+          pixels[idx] = moss;
+        }
+      }
+    }
+  } else {
+    for (let y = 12; y < height; y += 3) {
+      for (let x = 8; x < width - 8; x++) {
+        if ((x + y) % 7 === 0) {
+          const idx = y * width + x;
+          pixels[idx] = moss;
+        }
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createIrrigationSprite(c) {
+  const width = 220;
+  const height = 26;
+  const pixels = new Uint8Array(width * height);
+  const soil = c.dirt ?? c.hutFloor;
+  const channel = c.riverWater ?? c.dawnSkyMid;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      if (y % 8 === 0 || y % 8 === 1) {
+        pixels[idx] = channel;
+      } else {
+        pixels[idx] = soil;
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createSunStoneSprite(c, awakened) {
+  const width = 58;
+  const height = 54;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const base = c.courtMarble ?? c.hillLight;
+  const petals = c.wizardHatHighlight ?? c.hutGlow;
+  const glow = awakened ? (c.gardenLeaf ?? c.grassBright) : petals;
+
+  for (let y = 10; y < height; y++) {
+    for (let x = 8; x < width - 8; x++) {
+      const idx = y * width + x;
+      const radial = Math.sin((x + y) * 0.12);
+      pixels[idx] = radial > 0 ? base : petals;
+    }
+  }
+
+  if (awakened) {
+    for (let y = 14; y < height - 6; y += 4) {
+      for (let x = 10; x < width - 10; x++) {
+        if ((x + y) % 5 === 0) {
+          pixels[y * width + x] = glow;
+        }
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createResonanceRockSprite(c, awakened) {
+  const width = 62;
+  const height = 50;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const stone = c.caveStone ?? c.hillShadow;
+  const highlight = c.hillLight ?? c.wizardHatHighlight;
+  const resonance = awakened ? (c.marketFabric ?? c.wizardRobeHighlight) : highlight;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      const ellipse = ((x - width / 2) ** 2) / (width * 6) + ((y - height + 8) ** 2) / (height * 4);
+      if (ellipse < 1) {
+        pixels[idx] = stone;
+      }
+    }
+  }
+
+  if (awakened) {
+    for (let y = 8; y < height - 4; y += 3) {
+      const ring = Math.sin((y / height) * Math.PI * 2);
+      for (let x = 12; x < width - 12; x++) {
+        if (Math.abs(Math.sin((x + y) * 0.18)) > 0.6) {
+          pixels[y * width + x] = ring > 0 ? resonance : highlight;
+        }
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createGardenForegroundSprite(c) {
+  const width = 44;
+  const height = 46;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const stem = c.grassDark ?? c.gardenLeaf;
+  const bloom = c.hutGlow ?? c.wizardBelt;
+
+  for (let y = 0; y < height; y++) {
+    const span = Math.max(1, Math.floor((width * 0.35) - y * 0.2));
+    const center = Math.floor(width / 2 + Math.sin(y * 0.25) * 2);
+    for (let x = center - span; x <= center + span; x++) {
+      if (x < 0 || x >= width) continue;
+      const idx = y * width + x;
+      pixels[idx] = stem;
+    }
+  }
+
+  for (let y = 4; y < 16; y++) {
+    for (let x = 12; x < width - 12; x++) {
+      if ((x + y) % 3 === 0) {
+        pixels[y * width + x] = bloom;
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createGardenWheatSprite(c, harvested) {
+  const width = 38;
+  const height = 34;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const stem = c.grassDark ?? c.gardenLeaf;
+  const grain = c.hutGlow ?? c.wizardBelt;
+  const soil = c.dirt ?? c.hutFloor;
+
+  for (let y = height - 6; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      pixels[y * width + x] = soil;
+    }
+  }
+
+  if (!harvested) {
+    for (let stalk = 4; stalk < width; stalk += 6) {
+      for (let y = 6; y < height - 6; y++) {
+        pixels[y * width + stalk] = stem;
+        if (y < 12 && (y + stalk) % 2 === 0) {
+          pixels[y * width + stalk] = grain;
+        }
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createGardenAltarSprite(c) {
+  const width = 46;
+  const height = 32;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const stone = c.courtMarble ?? c.hillLight;
+  const shadow = c.hillShadow ?? c.caveStone;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      const isTop = y < 8;
+      pixels[idx] = isTop ? stone : shadow;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createGardenBreadLightSprite(c) {
+  const width = 28;
+  const height = 32;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const aura = c.hutGlow ?? c.wizardBelt;
+  const bread = c.grassBright ?? c.gardenLeaf;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      const ry = y - height + 10;
+      const distance = Math.sqrt((x - width / 2) ** 2 + ry * ry);
+      if (distance < 6) {
+        pixels[idx] = bread;
+      } else if (distance < 12 && Math.sin(distance * 0.6) > 0) {
+        pixels[idx] = aura;
+      }
     }
   }
 
