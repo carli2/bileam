@@ -9,6 +9,7 @@ import {
   beginSpeech,
   updateSpeechState,
   renderSpeechBubble,
+  acknowledgeSpeech,
   wrapText,
   mapGlyphChar,
   clamp,
@@ -63,6 +64,7 @@ let clouds = [];
 const controls = new Set(['w', 'a', 's', 'd']);
 const heldKeys = new Set();
 const pressedKeys = new Set();
+const SPEECH_ACK_KEYS = new Set(['Enter', ' ', 'Space', 'Spacebar']);
 
 let gameplayInputEnabled = true;
 let activePrompt = null;
@@ -71,6 +73,7 @@ let cameraDelta = 0;
 let grassPhase = 0;
 let lastTime = performance.now();
 let hutLightOn = false;
+let pendingSpeechAck = null;
 
 initSprites();
 window.addEventListener('keydown', handleKeyDown, { passive: false });
@@ -79,13 +82,15 @@ window.addEventListener('blur', () => {
   heldKeys.clear();
   pressedKeys.clear();
 });
+window.addEventListener('keydown', handleSpeechAdvance, true);
+window.addEventListener('pointerdown', handleSpeechAdvance, true);
 
 requestAnimationFrame(loop);
 main();
 
 async function main() {
   await paletteFader.fadeToBase(1500);
-  await say(() => wizard.x - 16, () => wizard.y - 34, 'Es ist finster in dieser Hütte...');
+  await say(() => wizard.x - 16, () => wizard.y - 34, 'Es ist finster in dieser Huette');
   await runLevelOne();
 }
 
@@ -127,6 +132,26 @@ function handleKeyUp(event) {
   event.preventDefault();
 }
 
+function handleSpeechAdvance(event) {
+  if (!pendingSpeechAck || activePrompt) return;
+  const state = pendingSpeechAck;
+  if (state.visible < state.totalChars) return;
+
+  if (event.type === 'keydown') {
+    if (event.repeat) return;
+    if (!SPEECH_ACK_KEYS.has(event.key)) return;
+  } else if (event.type === 'pointerdown') {
+    if (event.button !== 0) return;
+  } else {
+    return;
+  }
+
+  acknowledgeSpeech(state, performance.now());
+  pendingSpeechAck = null;
+  event.preventDefault();
+  event.stopPropagation();
+}
+
 function loop(time) {
   const delta = Math.min(0.05, (time - lastTime) / 1000);
   lastTime = time;
@@ -148,6 +173,9 @@ function loop(time) {
       updateSpeechState(state, time);
     }
   });
+  if (activePrompt && typeof activePrompt.update === 'function') {
+    activePrompt.update(delta);
+  }
 
   drawScene();
 
@@ -347,7 +375,26 @@ function updateCamera() {
 }
 
 async function say(x, y, text) {
-  speechQueue = speechQueue.then(() => beginSpeech(narrationSpeech, textRenderer, TEXT_WRAP, x, y, text));
+  speechQueue = speechQueue.then(() => {
+    const wasEnabled = gameplayInputEnabled;
+    gameplayInputEnabled = false;
+    const promise = beginSpeech(
+      narrationSpeech,
+      textRenderer,
+      TEXT_WRAP,
+      x,
+      y,
+      text,
+      { awaitAck: true }
+    );
+    pendingSpeechAck = narrationSpeech;
+    return promise.finally(() => {
+      if (pendingSpeechAck === narrationSpeech) {
+        pendingSpeechAck = null;
+      }
+      gameplayInputEnabled = wasEnabled;
+    });
+  });
   return speechQueue;
 }
 
@@ -383,6 +430,9 @@ function promptBubble(x1, y1, text, x2, y2) {
     bufferChars,
     resolve: null,
     reject: null,
+    cursorVisible: true,
+    blinkTimer: 0,
+    update: null,
   };
 
   heldKeys.clear();
@@ -413,7 +463,14 @@ function promptBubble(x1, y1, text, x2, y2) {
   function refreshInputState() {
     const ascii = bufferChars.join('');
     const hebrew = transliterateToHebrew(ascii);
-    const display = hebrew.length > 0 ? hebrew : ' ';
+    state.transliterated = hebrew;
+    const cursorChar = state.cursorVisible ? '|' : ' ';
+    let display;
+    if (hebrew.length > 0) {
+      display = hebrew + cursorChar;
+    } else {
+      display = cursorChar;
+    }
     const lines = wrapText(display, TEXT_WRAP);
     const sequence = [];
     let maxLineLength = 0;
@@ -483,6 +540,15 @@ function promptBubble(x1, y1, text, x2, y2) {
   refreshInputState();
   window.addEventListener('keydown', onKeyDown, true);
 
+  state.update = delta => {
+    state.blinkTimer += delta;
+    if (state.blinkTimer >= 0.5) {
+      state.blinkTimer = 0;
+      state.cursorVisible = !state.cursorVisible;
+      refreshInputState();
+    }
+  };
+
   return promise.finally(() => {
     questState.active = false;
     inputState.active = false;
@@ -490,7 +556,7 @@ function promptBubble(x1, y1, text, x2, y2) {
 }
 
 async function runLevelOne() {
-  await say(() => donkey.x - 20, () => donkey.y - 40, 'Esel: Ich sehe nix!');
+  await say(() => donkey.x - 20, () => donkey.y - 40, 'Esel sagt ich sehe nix');
   let attempts = 0;
   let solved = false;
 
@@ -498,22 +564,22 @@ async function runLevelOne() {
     const input = await promptBubble(
       () => wizard.x - 30,
       () => wizard.y - 55,
-      'Sprich das Wort für Licht (aor)',
+      'Sprich das Wort אור (aor)',
       () => wizard.x - 20,
       () => wizard.y - 20
-  );
+    );
 
     const trimmed = input.trim().toLowerCase();
     if (trimmed === 'aor') {
       solved = true;
       hutLightOn = true;
-      await say(() => wizard.x - 18, () => wizard.y - 42, 'אוֹר!');
+      await say(() => wizard.x - 18, () => wizard.y - 42, 'אור (aor)');
     } else {
       attempts++;
       if (attempts === 1) {
-        await say(() => donkey.x - 18, () => donkey.y - 38, 'Esel: Vielleicht fängt es mit Alef an.');
+        await say(() => donkey.x - 18, () => donkey.y - 38, 'Esel sagt vielleicht faengt es mit Alef an');
       } else {
-        await say(() => wizard.x - 22, () => wizard.y - 42, 'Bileam: a-o-r, kurz und hell.');
+        await say(() => wizard.x - 22, () => wizard.y - 42, 'Bileam sagt אור (aor) ist kurz und hell');
       }
     }
   }

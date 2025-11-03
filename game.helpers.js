@@ -60,17 +60,23 @@ export function transliterateToHebrew(input) {
 
     switch (ch) {
       case 'a':
-        // Already handled via Alef; nothing else to append
+        // Already handled via Alef carrier; internal "a" adds no letter.
+        prevWasSpace = false;
         break;
       case 'o':
         result.push('ו');
+        prevWasSpace = false;
         break;
       case 'u':
         result.push('ו');
+        prevWasSpace = false;
         break;
       case 'i':
       case 'j':
-        result.push('י');
+        if (result[result.length - 1] !== 'י') {
+          result.push('י');
+        }
+        prevWasSpace = false;
         break;
       case 'e':
         result.push('ע');

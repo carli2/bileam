@@ -128,21 +128,27 @@ export function createPaletteFader(retroPalette, transparentIndex) {
   };
 }
 
-export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text) {
+export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text, options = {}) {
   return new Promise(resolve => {
     const now = performance.now();
     const lines = wrapText(String(text ?? ''), wrapLimit);
     const sequence = [];
+    const lineLengths = [];
     let maxLineLength = 0;
 
     for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
       const line = lines[lineIndex];
-      maxLineLength = Math.max(maxLineLength, line.length);
-      for (let column = 0; column < line.length; column++) {
-        const rawChar = line[column];
-        const glyphChar = mapGlyphChar(rawChar, textRenderer.glyphs);
-        sequence.push({ line: lineIndex, column, char: glyphChar });
+      let column = 0;
+      for (const { chars, hebrew } of segmentLine(line)) {
+        const drawChars = hebrew ? [...chars].reverse() : chars;
+        for (const rawChar of drawChars) {
+          const glyphChar = mapGlyphChar(rawChar, textRenderer.glyphs);
+          sequence.push({ line: lineIndex, column, char: glyphChar });
+          column++;
+        }
       }
+      maxLineLength = Math.max(maxLineLength, column);
+      lineLengths[lineIndex] = column;
     }
 
     const charWidth = textRenderer.width;
@@ -154,6 +160,11 @@ export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text) {
     const textWidth = maxLineLength > 0 ? maxLineLength * charAdvance - charSpacing : 0;
     const textHeight = lines.length > 0 ? lines.length * lineAdvance - lineSpacing : 0;
 
+    const awaitAck = Boolean(options.awaitAck);
+    const holdDuration = options.holdDuration != null
+      ? options.holdDuration
+      : (speechState.holdDuration ?? speechState.defaultHoldDuration);
+
     speechState.active = true;
     speechState.anchor = {
       x: typeof x === 'function' ? x : () => x,
@@ -162,11 +173,18 @@ export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text) {
     speechState.width = Math.max(12, textWidth + speechState.paddingX * 2);
     speechState.height = Math.max(10, textHeight + speechState.paddingY * 2);
     speechState.lines = lines;
+    speechState.lineLengths = lineLengths;
     speechState.sequence = sequence;
     speechState.totalChars = sequence.length;
     speechState.visible = 0;
     speechState.nextCharTime = now;
-    speechState.holdUntil = sequence.length === 0 ? now + speechState.holdDuration : Infinity;
+    speechState.holdDuration = holdDuration;
+    speechState.holdUntil = sequence.length === 0 && !awaitAck
+      ? now + speechState.holdDuration
+      : Infinity;
+    speechState.awaitAck = awaitAck;
+    speechState.acknowledged = false;
+    speechState.awaitingAck = false;
     speechState.resolve = resolve;
   });
 }
@@ -179,18 +197,50 @@ export function updateSpeechState(speechState, time) {
       speechState.visible++;
       speechState.nextCharTime += speechState.charDelay;
     }
-    if (speechState.visible >= speechState.totalChars && speechState.holdUntil === Infinity) {
-      speechState.holdUntil = time + speechState.holdDuration;
+
+    if (speechState.visible >= speechState.totalChars) {
+      if (speechState.awaitAck && !speechState.acknowledged) {
+        speechState.awaitingAck = true;
+      } else if (speechState.holdUntil === Infinity) {
+        speechState.holdUntil = time + speechState.holdDuration;
+      }
     }
-  } else if (time >= speechState.holdUntil) {
-    speechState.active = false;
-    speechState.sequence = [];
-    speechState.lines = [];
-    speechState.anchor = null;
-    const resolve = speechState.resolve;
-    speechState.resolve = null;
-    if (resolve) resolve();
+    return;
   }
+
+  if (speechState.awaitAck && !speechState.acknowledged) {
+    speechState.awaitingAck = true;
+    return;
+  }
+
+  if (speechState.holdUntil === Infinity) {
+    speechState.holdUntil = time + speechState.holdDuration;
+  }
+
+  if (time < speechState.holdUntil) {
+    return;
+  }
+
+  speechState.active = false;
+  speechState.sequence = [];
+  speechState.lines = [];
+  speechState.lineLengths = [];
+  speechState.anchor = null;
+  speechState.awaitAck = false;
+  speechState.acknowledged = false;
+  speechState.awaitingAck = false;
+  speechState.holdDuration = speechState.defaultHoldDuration;
+  const resolve = speechState.resolve;
+  speechState.resolve = null;
+  if (resolve) resolve();
+}
+
+export function acknowledgeSpeech(speechState, time = performance.now()) {
+  if (!speechState || !speechState.active) return;
+  speechState.awaitAck = false;
+  speechState.acknowledged = true;
+  speechState.awaitingAck = false;
+  speechState.holdUntil = Math.min(speechState.holdUntil, time);
 }
 
 export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textRenderer }) {
@@ -244,10 +294,32 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
     if (!node) continue;
     const glyph = textRenderer.glyphs[node.char];
     if (!glyph) continue;
-    const gx = textStartX + node.column * charAdvance;
+
+    const gx = Math.round(textStartX + node.column * charAdvance);
     const gy = textStartY + node.line * lineAdvance;
     blitSprite(buffer, glyph, gx, gy, { transparent: colors.transparent });
   }
+}
+
+function segmentLine(line) {
+  const segments = [];
+  if (!line) return segments;
+  let current = null;
+  for (const char of line) {
+    const hebrew = isHebrewChar(char);
+    if (!current || current.hebrew !== hebrew) {
+      current = { hebrew, chars: [] };
+      segments.push(current);
+    }
+    current.chars.push(char);
+  }
+  return segments;
+}
+
+function isHebrewChar(char) {
+  if (!char) return false;
+  const code = char.charCodeAt(0);
+  return code >= 0x0590 && code <= 0x05FF;
 }
 
 export function createTextRenderer(c) {
@@ -340,12 +412,17 @@ export function createSpeechState() {
     tipBaseHalf: 5,
     charDelay: 60,
     holdDuration: 1400,
+    defaultHoldDuration: 1400,
     lines: [],
+    lineLengths: [],
     sequence: [],
     totalChars: 0,
     visible: 0,
     nextCharTime: 0,
     holdUntil: Infinity,
+    awaitAck: false,
+    acknowledged: false,
+    awaitingAck: false,
     resolve: null,
   };
 }
@@ -523,8 +600,35 @@ function getGlyphPatterns() {
     Y: ['#...#', '#...#', '.#.#.', '..#..', '..#..', '..#..', '..#..'],
     Z: ['#####', '....#', '...#.', '..#..', '.#...', '#....', '#####'],
     Ö: ['.#.#.', '.###.', '#...#', '#...#', '#...#', '#...#', '.###.'],
-    א: ['.#.#.', '#.#.#', '#.#.#', '#####', '#...#', '#...#', '#...#'],
-    ו: ['#....', '#....', '#....', '#....', '#....', '#....', '.###.'],
-    ר: ['####.', '#...#', '#...#', '####.', '#....', '#....', '#....'],
+    '(': ['.##..', '..#..', '..#..', '..#..', '..#..', '..#..', '.##..'],
+    ')': ['..##.', '..#..', '..#..', '..#..', '..#..', '..#..', '..##.'],
+    א: ['#...#', '##.##', '.###.', '..#..', '.#.#.', '.#.#.', '#...#'],
+    ב: ['####.', '#...#', '#...#', '####.', '#....', '#....', '####.'],
+    ג: ['####.', '....#', '....#', '...##', '...#.', '..#..', '.##..'],
+    ד: ['####.', '#...#', '#...#', '#...#', '#...#', '#...#', '###..'],
+    ה: ['#####', '#....', '#....', '#####', '#...#', '#...#', '#...#'],
+    ו: ['..##.', '...#.', '...#.', '...#.', '...#.', '...#.', '..##.'],
+    ז: ['#####', '....#', '...#.', '..#..', '.#...', '#....', '#####'],
+    ח: ['#...#', '#...#', '#...#', '#####', '#...#', '#...#', '#...#'],
+    ט: ['.###.', '#...#', '#.#.#', '#.#.#', '#.#.#', '#...#', '.###.'],
+    י: ['..###', '...#.', '...#.', '...#.', '...#.', '...#.', '..##.'],
+    כ: ['###..', '#....', '#....', '#....', '#....', '#...#', '.###.'],
+    ך: ['###..', '..#..', '..#..', '..#..', '..#..', '..#..', '.##..'],
+    ל: ['...#.', '...#.', '...#.', '...#.', '#..#.', '#..#.', '.###.'],
+    מ: ['#...#', '##..#', '#.#.#', '#.#.#', '#.#.#', '#.#.#', '#...#'],
+    ם: ['#####', '#...#', '#...#', '#...#', '#...#', '#...#', '#####'],
+    נ: ['#....', '#....', '#....', '#....', '#....', '#...#', '.###.'],
+    ן: ['##...', '.#...', '.#...', '.#...', '.#...', '.#...', '.##..'],
+    ס: ['.###.', '#...#', '#.#.#', '#.#.#', '#.#.#', '#...#', '.###.'],
+    ע: ['#...#', '#...#', '#....', '#....', '#...#', '##..#', '#.##.'],
+    פ: ['.###.', '#...#', '#...#', '####.', '#...#', '#....', '.###.'],
+    ף: ['.###.', '#...#', '#...#', '####.', '...#.', '...#.', '..##.'],
+    צ: ['#...#', '.#.#.', '.#.#.', '..#..', '..#..', '..#..', '..#..'],
+    ץ: ['#...#', '.#.#.', '..#..', '..#..', '..#..', '..#..', '.##..'],
+    ק: ['.###.', '#...#', '#...#', '.##.#', '...##', '...#.', '.###.'],
+    ר: ['####.', '#...#', '#...#', '#...#', '#....', '#....', '#....'],
+    ש: ['#.#.#', '#.#.#', '#.#.#', '#####', '#.#.#', '#.#.#', '#.#.#'],
+    ת: ['#####', '#...#', '#...#', '#...#', '#.#.#', '#.#.#', '#.#.#'],
+    '|': ['..#..', '..#..', '..#..', '..#..', '..#..', '..#..', '..#..'],
   };
 }
