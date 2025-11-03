@@ -80,9 +80,9 @@ export function blitSprite(destBuffer, sprite, x, y, options = {}) {
 }
 
 function normalizeColor(color) {
-  if (Array.isArray(color)) {
+  if (Array.isArray(color) || ArrayBuffer.isView(color)) {
     const [r, g, b, a = 255] = color;
-    return [clamp(r), clamp(g), clamp(b), clamp(a)];
+    return new Uint8Array([clamp(r), clamp(g), clamp(b), clamp(a)]);
   }
 
   if (typeof color === 'string') {

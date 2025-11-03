@@ -1,4 +1,4 @@
-import { Sprite } from './retroBlitter.js';
+import { Sprite, blitSprite } from './retroBlitter.js';
 import { VGA_PALETTE } from './vgaPalette.js';
 
 export function createPalette() {
@@ -126,6 +126,128 @@ export function createPaletteFader(retroPalette, transparentIndex) {
     basePalette,
     blackPalette,
   };
+}
+
+export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text) {
+  return new Promise(resolve => {
+    const now = performance.now();
+    const lines = wrapText(String(text ?? ''), wrapLimit);
+    const sequence = [];
+    let maxLineLength = 0;
+
+    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+      const line = lines[lineIndex];
+      maxLineLength = Math.max(maxLineLength, line.length);
+      for (let column = 0; column < line.length; column++) {
+        const rawChar = line[column];
+        const glyphChar = mapGlyphChar(rawChar, textRenderer.glyphs);
+        sequence.push({ line: lineIndex, column, char: glyphChar });
+      }
+    }
+
+    const charWidth = textRenderer.width;
+    const charSpacing = textRenderer.spacing;
+    const lineSpacing = textRenderer.lineSpacing;
+    const charAdvance = charWidth + charSpacing;
+    const lineAdvance = textRenderer.height + lineSpacing;
+
+    const textWidth = maxLineLength > 0 ? maxLineLength * charAdvance - charSpacing : 0;
+    const textHeight = lines.length > 0 ? lines.length * lineAdvance - lineSpacing : 0;
+
+    speechState.active = true;
+    speechState.anchor = {
+      x: typeof x === 'function' ? x : () => x,
+      y: typeof y === 'function' ? y : () => y,
+    };
+    speechState.width = Math.max(12, textWidth + speechState.paddingX * 2);
+    speechState.height = Math.max(10, textHeight + speechState.paddingY * 2);
+    speechState.lines = lines;
+    speechState.sequence = sequence;
+    speechState.totalChars = sequence.length;
+    speechState.visible = 0;
+    speechState.nextCharTime = now;
+    speechState.holdUntil = sequence.length === 0 ? now + speechState.holdDuration : Infinity;
+    speechState.resolve = resolve;
+  });
+}
+
+export function updateSpeechState(speechState, time) {
+  if (!speechState.active) return;
+
+  if (speechState.visible < speechState.totalChars) {
+    while (time >= speechState.nextCharTime && speechState.visible < speechState.totalChars) {
+      speechState.visible++;
+      speechState.nextCharTime += speechState.charDelay;
+    }
+    if (speechState.visible >= speechState.totalChars && speechState.holdUntil === Infinity) {
+      speechState.holdUntil = time + speechState.holdDuration;
+    }
+  } else if (time >= speechState.holdUntil) {
+    speechState.active = false;
+    speechState.sequence = [];
+    speechState.lines = [];
+    speechState.anchor = null;
+    const resolve = speechState.resolve;
+    speechState.resolve = null;
+    if (resolve) resolve();
+  }
+}
+
+export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textRenderer }) {
+  if (!speechState.active || (
+    speechState.totalChars === 0 &&
+    speechState.visible === 0 &&
+    speechState.holdUntil === Infinity
+  )) {
+    return;
+  }
+
+  const anchorXWorld = speechState.anchor?.x?.();
+  const anchorYWorld = speechState.anchor?.y?.();
+  if (anchorXWorld == null || anchorYWorld == null) return;
+
+  const anchorX = Math.round(anchorXWorld - cameraX);
+  const anchorY = Math.round(anchorYWorld);
+
+  const width = speechState.width;
+  const height = speechState.height;
+  const bubbleLeftLimit = 2;
+  const bubbleRightLimit = buffer.width - width - 2;
+  let bubbleX = clamp(anchorX - Math.floor(width / 2), bubbleLeftLimit, bubbleRightLimit);
+  const bubbleBottom = anchorY - speechState.tipHeight;
+  const bubbleY = bubbleBottom - height;
+  const bubbleRight = bubbleX + width;
+
+  fillRect(buffer.pixels, buffer.width, buffer.height, bubbleX, bubbleY, width, height, colors.bubbleFill);
+  drawBubbleTip(
+    bubbleX,
+    bubbleBottom,
+    bubbleRight,
+    anchorX,
+    anchorY,
+    speechState.tipBaseHalf,
+    colors.bubbleFill,
+    colors.bubbleBorder,
+    buffer.pixels,
+    buffer.width,
+    buffer.height,
+  );
+  strokeRect(buffer.pixels, buffer.width, buffer.height, bubbleX, bubbleY, width, height, colors.bubbleBorder);
+
+  const textStartX = bubbleX + speechState.paddingX;
+  const textStartY = bubbleY + speechState.paddingY;
+  const charAdvance = textRenderer.width + textRenderer.spacing;
+  const lineAdvance = textRenderer.height + textRenderer.lineSpacing;
+
+  for (let i = 0; i < speechState.visible && i < speechState.sequence.length; i++) {
+    const node = speechState.sequence[i];
+    if (!node) continue;
+    const glyph = textRenderer.glyphs[node.char];
+    if (!glyph) continue;
+    const gx = textStartX + node.column * charAdvance;
+    const gy = textStartY + node.line * lineAdvance;
+    blitSprite(buffer, glyph, gx, gy, { transparent: colors.transparent });
+  }
 }
 
 export function createTextRenderer(c) {

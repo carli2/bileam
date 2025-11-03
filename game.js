@@ -6,11 +6,9 @@ import {
   spriteFromStrings,
   mirrorSprite,
   createSpeechState,
-  wrapText,
-  mapGlyphChar,
-  drawBubbleTip,
-  fillRect,
-  strokeRect,
+  beginSpeech,
+  updateSpeechState,
+  renderSpeechBubble,
   clamp,
 } from './graphics.js';
 
@@ -31,14 +29,6 @@ const { palette, colors } = createPalette();
 const retroPalette = new RetroPalette(palette);
 const buffer = new RetroBuffer(WIDTH, HEIGHT, retroPalette);
 const paletteFader = createPaletteFader(retroPalette, colors.transparent);
-
-async function fadeIn(duration) {
-  await paletteFader.fadeToBase(duration);
-}
-
-async function fadeOut(duration) {
-  await paletteFader.fadeToBlack(duration);
-}
 
 const wizardSprites = createWizardSprites(colors);
 const donkeySprites = createDonkeySprites(colors);
@@ -88,11 +78,11 @@ requestAnimationFrame(loop);
 main();
 
 async function main() {
-  await fadeIn(1500);
+  await paletteFader.fadeToBase(1500);
   await say(
     () => wizard.x + wizard.sprites.right.width / 2,
     () => wizard.y + 6,
-    'Hallo, ich bin Harald Töpfer, der Zauberlehrling'
+    'Schalom, ich bin Bileam, der Zauberlehrling'
   );
 }
 
@@ -129,7 +119,7 @@ function loop(time) {
   }
 
   updateClouds(delta, time);
-  updateSpeech(time);
+  updateSpeechState(speechState, time);
   drawScene();
 
   const frame = buffer.toImageData(ctx);
@@ -221,35 +211,13 @@ function updateClouds(delta, time) {
   }
 }
 
-function updateSpeech(time) {
-  if (!speechState.active) return;
-
-  if (speechState.visible < speechState.totalChars) {
-    while (time >= speechState.nextCharTime && speechState.visible < speechState.totalChars) {
-      speechState.visible++;
-      speechState.nextCharTime += speechState.charDelay;
-    }
-    if (speechState.visible >= speechState.totalChars && speechState.holdUntil === Infinity) {
-      speechState.holdUntil = time + speechState.holdDuration;
-    }
-  } else if (time >= speechState.holdUntil) {
-    speechState.active = false;
-    speechState.sequence = [];
-    speechState.lines = [];
-    speechState.anchor = null;
-    const resolve = speechState.resolve;
-    speechState.resolve = null;
-    if (resolve) resolve();
-  }
-}
-
 function drawScene() {
   drawSky();
   drawCloudLayer();
   drawHills();
   drawTerrain();
   drawCharacters();
-  drawSpeechBubble();
+  renderSpeechBubble(speechState, { buffer, colors, cameraX, textRenderer });
 }
 
 function drawSky() {
@@ -315,7 +283,7 @@ function drawTerrain() {
 }
 
 function drawCharacters() {
-  const wizardSprite = wizard.facing >= 0 ? wizard.sprites.right : wizard.sprites.left;
+  const wizardSprite = wizard.facing >= 0 ? wizard.sprites.left : wizard.sprites.right;
   const wizardX = Math.round(wizard.x - cameraX);
   const wizardY = Math.round(wizard.y);
   blitSprite(buffer, wizardSprite, wizardX, wizardY, { transparent: colors.transparent });
@@ -337,98 +305,9 @@ function updateCamera() {
   }
 }
 
-function drawSpeechBubble() {
-  if (!speechState.active || (speechState.totalChars === 0 && speechState.visible === 0 && speechState.holdUntil === Infinity)) {
-    return;
-  }
-
-  const anchorXWorld = resolveAnchor(speechState.anchor?.x, wizard.x + wizard.sprites.right.width / 2);
-  const anchorYWorld = resolveAnchor(speechState.anchor?.y, wizard.y);
-
-  const anchorX = Math.round(anchorXWorld - cameraX);
-  const anchorY = Math.round(anchorYWorld);
-
-  const width = speechState.width;
-  const height = speechState.height;
-  const bubbleLeftLimit = 2;
-  const bubbleRightLimit = WIDTH - width - 2;
-  let bubbleX = clamp(anchorX - Math.floor(width / 2), bubbleLeftLimit, bubbleRightLimit);
-  const bubbleBottom = anchorY - speechState.tipHeight;
-  const bubbleY = bubbleBottom - height;
-  const bubbleRight = bubbleX + width;
-
-  fillRect(buffer.pixels, WIDTH, HEIGHT, bubbleX, bubbleY, width, height, colors.bubbleFill);
-  drawBubbleTip(bubbleX, bubbleBottom, bubbleRight, anchorX, anchorY, speechState.tipBaseHalf, colors.bubbleFill, colors.bubbleBorder, buffer.pixels, WIDTH, HEIGHT);
-  strokeRect(buffer.pixels, WIDTH, HEIGHT, bubbleX, bubbleY, width, height, colors.bubbleBorder);
-
-  const textStartX = bubbleX + speechState.paddingX;
-  const textStartY = bubbleY + speechState.paddingY;
-  const charAdvance = textRenderer.width + textRenderer.spacing;
-  const lineAdvance = textRenderer.height + textRenderer.lineSpacing;
-
-  for (let i = 0; i < speechState.visible && i < speechState.sequence.length; i++) {
-    const node = speechState.sequence[i];
-    if (!node) continue;
-    const glyph = textRenderer.glyphs[node.char];
-    if (!glyph) continue;
-    const gx = textStartX + node.column * charAdvance;
-    const gy = textStartY + node.line * lineAdvance;
-    blitSprite(buffer, glyph, gx, gy, { transparent: colors.transparent });
-  }
-}
-
-function resolveAnchor(source, fallback) {
-  if (typeof source === 'function') return source();
-  if (typeof source === 'number') return source;
-  return fallback;
-}
-
 async function say(x, y, text) {
-  speechQueue = speechQueue.then(() => startSpeech(x, y, String(text ?? '')));
+  speechQueue = speechQueue.then(() => beginSpeech(speechState, textRenderer, TEXT_WRAP, x, y, text));
   return speechQueue;
-}
-
-function startSpeech(x, y, text) {
-  return new Promise(resolve => {
-    const now = performance.now();
-    const lines = wrapText(text, TEXT_WRAP);
-    const sequence = [];
-    let maxLineLength = 0;
-
-    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-      const line = lines[lineIndex];
-      maxLineLength = Math.max(maxLineLength, line.length);
-      for (let column = 0; column < line.length; column++) {
-        const rawChar = line[column];
-        const glyphChar = mapGlyphChar(rawChar, textRenderer.glyphs);
-        sequence.push({ line: lineIndex, column, char: glyphChar });
-      }
-    }
-
-    const charWidth = textRenderer.width;
-    const charSpacing = textRenderer.spacing;
-    const lineSpacing = textRenderer.lineSpacing;
-    const charAdvance = charWidth + charSpacing;
-    const lineAdvance = textRenderer.height + lineSpacing;
-
-    const textWidth = maxLineLength > 0 ? maxLineLength * charAdvance - charSpacing : 0;
-    const textHeight = lines.length > 0 ? lines.length * lineAdvance - lineSpacing : 0;
-
-    speechState.active = true;
-    speechState.anchor = {
-      x: typeof x === 'function' ? x : () => x,
-      y: typeof y === 'function' ? y : () => y,
-    };
-    speechState.width = Math.max(12, textWidth + speechState.paddingX * 2);
-    speechState.height = Math.max(10, textHeight + speechState.paddingY * 2);
-    speechState.lines = lines;
-    speechState.sequence = sequence;
-    speechState.totalChars = sequence.length;
-    speechState.visible = 0;
-    speechState.nextCharTime = now;
-    speechState.holdUntil = sequence.length === 0 ? now + speechState.holdDuration : Infinity;
-    speechState.resolve = resolve;
-  });
 }
 
 function createWizardSprites(c) {
@@ -495,29 +374,41 @@ function createWizardSprites(c) {
 
 function createDonkeySprites(c) {
   const art = [
-    '...........2...............................',
-    '...........114.............................',
-    '...........1722............................',
-    '.............22.22.........................',
-    '.................222.......................',
-    '...........21...7..222.....................',
-    '...........21...77...2.1...................',
-    '...........1...217.....7................2..',
-    '..........41...217.......................4.',
-    '..........34...2.........................2.',
-    '..........2342.........22...............224',
-    '..........123......2...22...............224',
-    '..................22...22...........22..222',
-    '...................22..22...........22..22.',
-    '...................22..222.......222242242.',
-    '....................2244422444444442724442.',
-    '......................434.224444444.172442.',
-    '......................434...22222...271441.',
-    '......................2334............1222.',
-    '2..2...................433............42.4.',
-    '.......................444............24.42',
-    '...................77712444...........24.44',
-    '777777771777777777777772424...........22.24',
+    '............112222112221551.....',
+    '..........11222222221115551.....',
+    '.........112222332222111221.....',
+    '........11222233333222211.......',
+    '.......1122223333333222211......',
+    '......112222333333333222211.....',
+    '.....11212233333333333222211....',
+    '....112122233333333333222211....',
+    '...11221223333333333332222211...',
+    '...12221223333333333333222211...',
+    '..1222122333333333333332222211..',
+    '..1222122333333333333332222211..',
+    '.12222223333333333333332222221..',
+    '.12222223333333333333332222221..',
+    '.12222223333333333333332222221..',
+    '..1222222333333333333332222221..',
+    '...11222222333333333332222211...',
+    '....1112222233333333322222144...',
+    '......11111223333333222111144...',
+    '.........11112233332221122764...',
+    '..122222222111122222111222264...',
+    '.1222222222221112211122222244...',
+    '.12222222222221111112222222461..',
+    '.1222222222222166661222222246...',
+    '.............16777671...........',
+    '............167.....761.........',
+    '...........167.......761........',
+    '..........167.........761.......',
+    '.........167..........761.......',
+    '........167............761......',
+    '.......167..............761.....',
+    '......167................761....',
+    '......16.................761....',
+    '......16..................61....',
+    '......16..................61....',
   ];
   const legend = {
     '.': c.transparent,
