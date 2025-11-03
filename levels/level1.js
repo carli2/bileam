@@ -6,8 +6,13 @@ import {
   levelAmbiencePlan,
   getCurrentAmbienceKey,
   fadeToBlack,
+  fadeToBase,
+  showLevelTitle,
 } from '../scene.js';
+import { transliterateToHebrew } from '../game.helpers.js';
 import { narratorSay, wizardSay, donkeySay, anchorX, anchorY, wizard, donkey, isSkipRequested } from './utils.js';
+
+const WORD_AOR = transliterateToHebrew('aor');
 
 export async function runLevelOne() {
   const plan = levelAmbiencePlan.level1;
@@ -15,6 +20,7 @@ export async function runLevelOne() {
   while (true) {
     ensureAmbience(plan?.introduction ?? 'hutInteriorDark');
     setSceneContext({ level: 'level1', phase: 'introduction' });
+    showLevelTitle('Level 1 - Das Licht');
 
     if (isSkipRequested()) return 'skip';
     const intro = await levelOneIntroduction();
@@ -66,8 +72,8 @@ async function levelOneLearning(plan) {
 
     if (input === 'skip') return 'skip';
 
-    const trimmed = input.trim().toLowerCase();
-    if (trimmed === 'aor') {
+    const answer = normalizeHebrewInput(input);
+    if (answer === WORD_AOR) {
       if (!illuminated) {
         setSceneContext({ phase: 'illumination' });
         await transitionAmbience(plan?.illumination ?? 'hutInteriorLit', {
@@ -111,13 +117,21 @@ async function levelOneDoorSequence(plan) {
   setSceneContext({ phase: 'apply' });
   await narratorSay('Vor der Tuer erscheint eine leuchtende Rune. Sie wartet auf das Wort.');
   await narratorSay('Das Licht bleibt als Spur in der Luft – die Huette erinnert sich an אור.');
+  await fadeToBlack(320);
+  if (isSkipRequested()) return 'skip';
+  ensureAmbience(plan?.door ?? 'exteriorDay');
+  setSceneContext({ phase: 'exit' });
+  await fadeToBase(600);
+  if (isSkipRequested()) return 'skip';
   await narratorSay('Die Rune oeffnet sich, ohne dass du das Wort wiederholen musst.');
   await narratorSay('Du spuerst, wie der Morgen hereinsickert.');
   await donkeySay('Da draussen wartet der Tag.');
-  await transitionAmbience(plan?.door ?? 'exteriorDay', { fade: { toBlack: 160, toBase: 420 } });
-  if (isSkipRequested()) return 'skip';
   await narratorSay('Ein warmer Morgen wartet vor der Tuer.');
-  setSceneContext({ phase: 'exit' });
-  await fadeToBlack(800);
+  await fadeToBlack(600);
   if (isSkipRequested()) return 'skip';
+}
+
+function normalizeHebrewInput(value) {
+  if (!value) return '';
+  return value.replace(/\s+/g, '');
 }

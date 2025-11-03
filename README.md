@@ -49,7 +49,8 @@ async function runLevelOne() {
       () => wizard.x - 20,
       () => wizard.y - 20
     );
-    if (input.trim().toLowerCase() === 'aor') {
+    const answer = input.replace(/\s+/g, '');
+    if (answer === 'אור') {
       solved = true;
       await say(() => wizard.x - 18, () => wizard.y - 42, 'אור (aor)!');
     } else {

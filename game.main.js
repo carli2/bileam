@@ -1,4 +1,4 @@
-import { startScene, fadeToBase, setSkipHandler, clearSkipHandler } from './scene.js';
+import { startScene, fadeToBase, setSkipHandler, clearSkipHandler, ensureAmbience } from './scene.js';
 import { runLevelOne } from './levels/level1.js';
 import { runLevelTwo } from './levels/level2.js';
 
@@ -21,6 +21,8 @@ async function runLevel(fn) {
   try {
     const result = await Promise.race([fn(), skipPromise]);
     if (result === 'skip') {
+      ensureAmbience('exteriorDay');
+      await fadeToBase(0);
       return;
     }
   } finally {

@@ -89,6 +89,11 @@ let sceneStarted = false;
 
 let ambiencePresets;
 export const levelAmbiencePlan = createLevelSceneMap();
+const titleOverlay = {
+  active: false,
+  text: '',
+  until: 0,
+};
 
 export function startScene(mainCallback) {
   if (sceneStarted) {
@@ -164,6 +169,16 @@ export function getCurrentAmbienceKey() {
   return ambienceState.key;
 }
 
+export function showLevelTitle(text, duration = 2600) {
+  if (!text || sceneState.skipRequested) {
+    titleOverlay.active = false;
+    return;
+  }
+  titleOverlay.active = true;
+  titleOverlay.text = String(text);
+  titleOverlay.until = performance.now() + Math.max(0, duration);
+}
+
 export function fadeToBase(duration) {
   if (sceneState.skipRequested) return paletteFader.fadeToBase(0);
   return paletteFader.fadeToBase(duration).then(() => {
@@ -180,7 +195,10 @@ export function fadeToBlack(duration) {
 
 export function setSkipHandler(handler) {
   sceneState.skipRequested = false;
-  sceneState.skipCurrentLevel = typeof handler === 'function' ? handler : null;
+  sceneState.skipCurrentLevel = () => {
+    requestSkip();
+    if (typeof handler === 'function') handler();
+  };
 }
 
 export function clearSkipHandler() {
@@ -196,6 +214,7 @@ export function isSkipRequested() {
 function requestSkip() {
   if (sceneState.skipRequested) return;
   sceneState.skipRequested = true;
+  titleOverlay.active = false;
   if (pendingSpeechAck) {
     acknowledgeSpeech(pendingSpeechAck, performance.now());
     pendingSpeechAck = null;
@@ -254,9 +273,10 @@ function initSprites() {
 function handleKeyDown(event) {
   if (event.key === 'Tab') {
     event.preventDefault();
-    requestSkip();
     if (typeof sceneState.skipCurrentLevel === 'function') {
       sceneState.skipCurrentLevel();
+    } else {
+      requestSkip();
     }
     return;
   }
@@ -304,6 +324,10 @@ function handleSpeechAdvance(event) {
 }
 
 function loop(time) {
+  if (titleOverlay.active && time >= titleOverlay.until) {
+    titleOverlay.active = false;
+  }
+
   const delta = Math.min(0.05, (time - lastTime) / 1000);
   lastTime = time;
 
@@ -332,6 +356,23 @@ function loop(time) {
 
   const frame = buffer.toImageData(ctx);
   ctx.putImageData(frame, 0, 0);
+
+  if (titleOverlay.active) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#ffe8a8';
+    ctx.font = '24px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const lines = String(titleOverlay.text).split('\n');
+    const lineHeight = 28;
+    const startY = canvas.height / 2 - ((lines.length - 1) * lineHeight) / 2;
+    lines.forEach((line, index) => {
+      ctx.fillText(line, canvas.width / 2, startY + index * lineHeight);
+    });
+    ctx.restore();
+  }
 
   pressedKeys.clear();
   requestAnimationFrame(loop);
@@ -931,7 +972,8 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     const key = event.key;
     if (key === 'Enter') {
       event.preventDefault();
-      const result = bufferChars.join('').trim();
+      const ascii = bufferChars.join('');
+      const result = (state.transliterated ?? transliterateToHebrew(ascii)).trim();
       detach(result, false);
       return;
     }
