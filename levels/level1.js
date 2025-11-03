@@ -130,7 +130,7 @@ async function levelOneRecap() {
 async function levelOneDoorSequence(plan) {
   if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'apply' });
-  await narratorSay('Die Tuer rechts glimmt im Licht. Lauf hinueber.');
+  await donkeySay('Siehst du die Tuer? Sie leuchtet fuer dich – geh hin, Meister.');
   if (isSkipRequested()) return 'skip';
   const target = doorTargetX();
   const arrival = await waitForWizardToReach(target, { tolerance: 10 });

@@ -30,7 +30,7 @@ const FINAL_FORMS = {
   'צ': 'ץ',
 };
 
-const START_VOWELS = new Set(['o', 'u', 'i', 'j']);
+const START_VOWELS = new Set(['o', 'u', 'i']);
 
 function isLetter(char) {
   return /^[a-z]$/i.test(char);
@@ -72,6 +72,10 @@ export function transliterateToHebrew(input) {
         prevWasSpace = false;
         break;
       case 'i':
+        result.push('א');
+        result.push('י');
+        prevWasSpace = false;
+        break;
       case 'j':
         result.push('י');
         prevWasSpace = false;

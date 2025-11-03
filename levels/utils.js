@@ -79,8 +79,14 @@ export const CANYON_SCENE = {
   wizardStartX: 64,
   donkeyOffset: -40,
   props: [
+    { id: 'canyonBackSpireLeft', type: 'basaltSpireTall', x: 140, offsetY: -6, parallax: 0.35 },
+    { id: 'canyonBackSpireRight', type: 'basaltSpireMid', x: 360, offsetY: -4, parallax: 0.42 },
+    { id: 'canyonMist', type: 'canyonMist', x: 0, align: 'ground', offsetY: -54, parallax: 0.55 },
+    { id: 'canyonStalactiteLeft', type: 'stalactite', x: 90, align: 'top', offsetY: 8, parallax: 0.3 },
+    { id: 'canyonStalactiteRight', type: 'stalactite', x: 308, align: 'top', offsetY: 10, parallax: 0.38 },
     { id: 'canyonArch', type: 'stoneArch', x: 268 },
     { id: 'canyonFountain', type: 'fountainDry', x: 452 },
+    { id: 'canyonForegroundSpire', type: 'basaltSpireShort', x: 512, offsetY: -2, parallax: 0.85 },
   ],
 };
 

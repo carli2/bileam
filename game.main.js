@@ -84,7 +84,7 @@ async function showEndingScreen(state) {
   const title = state === 'skip' ? 'Reise unterbrochen' : 'Reise gemeistert';
   const message = state === 'skip'
     ? 'Du legst den Stab fuer heute beiseite. Danke, dass du mit Bileam gereist bist.'
-    : 'Alle Missionen gemeistert – Worte leuchten weiter. Danke fuers Spielen!';
+    : 'Alle Missionen gemeistert. Danke fuers Spielen!';
 
   const [titleResult, speechResult] = await Promise.all([
     showLevelTitle(title, 5000),

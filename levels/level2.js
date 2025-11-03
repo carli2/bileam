@@ -95,7 +95,7 @@ async function phaseTravelToWater(plan, riverProps) {
   await transitionAmbience(plan?.learn ?? 'riverDawn', { fade: { toBlack: 120, toBase: 420 } });
   if (isSkipRequested()) return 'skip';
   applySceneConfig({ ...RIVER_SCENE, props: riverProps }, { setAmbience: false, position: false });
-  await narratorSay('Folge dem Pfad, bis das Wasser direkt vor dir liegt.');
+  await donkeySay('Komm, Meister – geh weiter bis das Wasser direkt vor dir liegt.');
   if (isSkipRequested()) return 'skip';
   const bounds = getScenePropBounds(RIVER_PROP_ID);
   const target = bounds ? bounds.left + bounds.width * 0.3 : RIVER_X;

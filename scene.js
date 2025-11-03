@@ -1646,6 +1646,76 @@ function createWaterGlyphSprite(c) {
   return new Sprite(width, height, pixels);
 }
 
+function createBasaltSpireSprite(c, variant = 'mid') {
+  const heightMap = {
+    tall: 110,
+    mid: 90,
+    short: 70,
+  };
+  const width = 26;
+  const height = heightMap[variant] ?? heightMap.mid;
+  const pixels = new Uint8Array(width * height);
+  const stone = c.caveStone ?? c.hillShadow;
+  const highlight = c.hillLight ?? c.wizardHatHighlight;
+  const shadow = c.nightSkyMid ?? stone;
+
+  for (let y = 0; y < height; y++) {
+    const taper = 1 + Math.cos((y / height) * Math.PI) * 6;
+    const left = Math.max(0, Math.floor((width - taper) / 2));
+    const right = Math.min(width, Math.ceil(width - left));
+    for (let x = left; x < right; x++) {
+      const idx = y * width + x;
+      const edge = x === left || x === right - 1;
+      const vein = ((x + y) % 6 === 0);
+      pixels[idx] = edge ? highlight : vein ? shadow : stone;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createStalactiteSprite(c) {
+  const width = 36;
+  const height = 48;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const stone = c.hillShadow ?? c.caveStone;
+  const highlight = c.hillLight ?? c.wizardHatHighlight;
+
+  for (let y = 0; y < height; y++) {
+    const span = Math.max(2, Math.floor((width / 2) - (y * 0.55)));
+    const left = Math.floor(width / 2) - span;
+    const right = Math.floor(width / 2) + span;
+    for (let x = left; x <= right; x++) {
+      if (x < 0 || x >= width) continue;
+      const idx = y * width + x;
+      const edge = x === left || x === right || y === 0;
+      pixels[idx] = edge ? highlight : stone;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createCanyonMistSprite(c) {
+  const width = 200;
+  const height = 48;
+  const pixels = new Uint8Array(width * height);
+  const base = c.dawnSkyMid ?? c.hillLight;
+  const shadow = c.caveStone ?? c.hillShadow;
+
+  for (let y = 0; y < height; y++) {
+    const alpha = 1 - y / height;
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      const noise = Math.sin((x + y * 3) * 0.08) * 0.5 + Math.sin((x - y * 2) * 0.04) * 0.3;
+      pixels[idx] = noise * alpha > 0.2 ? base : shadow;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
 function createCloudSprites(c) {
   const sizes = [
     { width: 46, height: 16 },
