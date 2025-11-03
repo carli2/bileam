@@ -52,6 +52,9 @@ const ambienceState = {
 const narrationSpeech = createSpeechState();
 const overlaySpeechStates = new Set();
 let speechQueue = Promise.resolve();
+const propSprites = {};
+let sceneProps = [];
+const activeWaiters = new Set();
 
 export const wizard = {
   sprites: null,
@@ -93,6 +96,7 @@ const titleOverlay = {
   active: false,
   text: '',
   until: 0,
+  resolve: null,
 };
 
 export function startScene(mainCallback) {
@@ -169,14 +173,121 @@ export function getCurrentAmbienceKey() {
   return ambienceState.key;
 }
 
-export function showLevelTitle(text, duration = 2600) {
-  if (!text || sceneState.skipRequested) {
-    titleOverlay.active = false;
-    return;
+export function setSceneProps(definitions = []) {
+  const list = Array.isArray(definitions) ? definitions : [definitions];
+  sceneProps = list.map(instantiatePropDefinition).filter(Boolean);
+}
+
+export function getScenePropBounds(key) {
+  if (!key) return null;
+  const prop = sceneProps.find(entry => entry.id === key || entry.type === key);
+  if (!prop) return null;
+  return {
+    id: prop.id,
+    type: prop.type,
+    left: prop.x,
+    right: prop.x + prop.sprite.width,
+    top: prop.y,
+    bottom: prop.y + prop.sprite.height,
+    width: prop.sprite.width,
+    height: prop.sprite.height,
+  };
+}
+
+export function waitForWizardToReach(targetX, options = {}) {
+  if (sceneState.skipRequested) return Promise.resolve('skip');
+  const tolerance = Math.max(0, options.tolerance ?? 6);
+  const direction = options.direction ?? (targetX >= getWizardCenterX() ? 1 : -1);
+  const resultValue = options.value ?? 'reached';
+  const abortOnSkip = options.abortOnSkip !== false;
+
+  return new Promise(resolve => {
+    const condition = () => {
+      const center = getWizardCenterX();
+      return direction >= 0
+        ? center >= targetX - tolerance
+        : center <= targetX + tolerance;
+    };
+
+    if (condition()) {
+      resolve(resultValue);
+      return;
+    }
+
+    const waiter = {
+      type: 'wizard-position',
+      condition,
+      resolve,
+      resultValue,
+      abortOnSkip,
+    };
+    activeWaiters.add(waiter);
+  });
+}
+
+function requestSpeechFastForward() {
+  accelerateSpeechState(narrationSpeech);
+  overlaySpeechStates.forEach(state => accelerateSpeechState(state));
+}
+
+function accelerateSpeechState(state) {
+  if (!state || !state.active) return;
+  if (state.fastForward) return;
+  const slow = state.charDelaySlow ?? state.charDelay;
+  if (!(slow > 0)) return;
+  let fast = state.charDelayFast ?? 0;
+  if (!(fast > 0 && fast < slow)) {
+    fast = Math.max(1, Math.floor(slow / 5));
+    if (fast >= slow) {
+      fast = Math.max(1, Math.round(slow / 5));
+    }
+    if (fast >= slow) {
+      fast = Math.max(1, slow - 1);
+    }
   }
+  if (!(fast > 0)) return;
+  if (fast >= slow) fast = Math.max(1, slow - 1);
+  state.charDelayFast = fast;
+  state.charDelay = fast;
+  state.fastForward = true;
+  const now = performance.now();
+  if (state.nextCharTime - now > state.charDelay) {
+    state.nextCharTime = now + state.charDelay;
+  }
+}
+
+export function showLevelTitle(text, duration = 2600) {
+  if (!text) {
+    deactivateTitleOverlay(sceneState.skipRequested ? 'skip' : 'cancel');
+    return Promise.resolve(sceneState.skipRequested ? 'skip' : 'cancel');
+  }
+
+  if (sceneState.skipRequested) {
+    deactivateTitleOverlay('skip');
+    return Promise.resolve('skip');
+  }
+
+  deactivateTitleOverlay('cancel');
+
   titleOverlay.active = true;
   titleOverlay.text = String(text);
   titleOverlay.until = performance.now() + Math.max(0, duration);
+
+  return new Promise(resolve => {
+    titleOverlay.resolve = resolve;
+  });
+}
+
+function deactivateTitleOverlay(reason = 'cancel') {
+  const resolver = titleOverlay.resolve;
+  titleOverlay.resolve = null;
+  const wasActive = titleOverlay.active;
+  titleOverlay.active = false;
+  titleOverlay.until = 0;
+  titleOverlay.text = '';
+  if ((wasActive || resolver) && typeof resolver === 'function') {
+    resolver(reason);
+  }
 }
 
 export function fadeToBase(duration) {
@@ -214,7 +325,8 @@ export function isSkipRequested() {
 function requestSkip() {
   if (sceneState.skipRequested) return;
   sceneState.skipRequested = true;
-  titleOverlay.active = false;
+  deactivateTitleOverlay('skip');
+  resolveWaitersOnSkip();
   if (pendingSpeechAck) {
     acknowledgeSpeech(pendingSpeechAck, performance.now());
     pendingSpeechAck = null;
@@ -261,6 +373,9 @@ function initSprites() {
   const wizardSprites = createWizardSprites(colors);
   const donkeySprites = createDonkeySprites(colors);
   const cloudSprites = createCloudSprites(colors);
+  propSprites.door = createDoorSprite(colors);
+  propSprites.water = createWaterSprite(colors);
+  sceneProps = [];
 
   wizard.sprites = wizardSprites;
   wizard.y = groundLineFor(wizardSprites.right);
@@ -280,6 +395,7 @@ function handleKeyDown(event) {
     }
     return;
   }
+  requestSpeechFastForward();
   if (!gameplayInputEnabled) {
     return;
   }
@@ -304,6 +420,7 @@ function handleKeyUp(event) {
 }
 
 function handleSpeechAdvance(event) {
+  requestSpeechFastForward();
   if (!pendingSpeechAck || activePrompt) return;
   const state = pendingSpeechAck;
   if (state.visible < state.totalChars) return;
@@ -325,7 +442,7 @@ function handleSpeechAdvance(event) {
 
 function loop(time) {
   if (titleOverlay.active && time >= titleOverlay.until) {
-    titleOverlay.active = false;
+    deactivateTitleOverlay('done');
   }
 
   const delta = Math.min(0.05, (time - lastTime) / 1000);
@@ -341,6 +458,8 @@ function loop(time) {
   if (cameraDelta !== 0) {
     grassPhase = (grassPhase + delta * GRASS_SWAY_SPEED) % (Math.PI * 2);
   }
+
+  processWaiters();
 
   drawScene();
 
@@ -456,6 +575,7 @@ function drawScene() {
   drawCloudLayer();
   drawHills();
   drawTerrain();
+  drawProps();
   drawCharacters();
   renderSpeechLayers();
 }
@@ -599,6 +719,81 @@ function drawTerrain() {
         pixels.fill(base, rowStart, rowStart + WIDTH);
       }
     }
+  }
+}
+
+function drawProps() {
+  if (sceneProps.length === 0) return;
+  for (const prop of sceneProps) {
+    if (!prop || prop.visible === false || !prop.sprite) continue;
+    const parallax = prop.parallax ?? 1;
+    const screenX = Math.round(prop.x - cameraX * parallax);
+    const screenY = Math.round(prop.y);
+    blitSprite(buffer, prop.sprite, screenX, screenY, { transparent: colors.transparent });
+  }
+}
+
+function instantiatePropDefinition(definition) {
+  if (!definition) return null;
+  const type = definition.type ?? null;
+  const sprite = definition.sprite ?? (type ? propSprites[type] : null);
+  if (!sprite) return null;
+
+  const prop = {
+    id: definition.id ?? type ?? null,
+    type,
+    sprite,
+    x: definition.x ?? 0,
+    y: definition.y ?? computePropY(sprite, definition.align ?? 'ground', definition.offsetY ?? 0),
+    parallax: definition.parallax ?? 1,
+    visible: definition.visible !== false,
+    data: definition.data ?? null,
+  };
+
+  return prop;
+}
+
+function computePropY(sprite, align, offsetY) {
+  switch (align) {
+    case 'top':
+      return (offsetY ?? 0) | 0;
+    case 'bottom':
+      return HEIGHT - sprite.height + ((offsetY ?? 0) | 0);
+    case 'center':
+      return Math.round((HEIGHT - sprite.height) / 2 + (offsetY ?? 0));
+    case 'ground':
+    default:
+      return groundLineFor(sprite) + ((offsetY ?? 0) | 0);
+  }
+}
+
+function processWaiters() {
+  if (activeWaiters.size === 0) return;
+  for (const waiter of Array.from(activeWaiters)) {
+    if (sceneState.skipRequested && waiter.abortOnSkip !== false) {
+      activeWaiters.delete(waiter);
+      waiter.resolve('skip');
+      continue;
+    }
+    if (typeof waiter.condition === 'function' && waiter.condition()) {
+      activeWaiters.delete(waiter);
+      waiter.resolve(waiter.resultValue);
+    }
+  }
+}
+
+function getWizardCenterX() {
+  const sprite = wizard.sprites?.right ?? wizard.sprites?.left;
+  const width = sprite?.width ?? 32;
+  return wizard.x + width / 2;
+}
+
+function resolveWaitersOnSkip() {
+  if (activeWaiters.size === 0) return;
+  for (const waiter of Array.from(activeWaiters)) {
+    if (waiter.abortOnSkip === false) continue;
+    activeWaiters.delete(waiter);
+    waiter.resolve('skip');
   }
 }
 function pickSkyColor(stops, y) {
@@ -821,7 +1016,7 @@ function createLevelSceneMap() {
       door: 'exteriorDay',
     },
     level2: {
-      review: 'hutInteriorLit',
+      review: 'riverDawn',
       learn: 'riverDawn',
       apply: 'riverDawn',
     },
@@ -931,6 +1126,8 @@ function createPromptBubble(x1, y1, text, x2, y2) {
 
   const questState = createSpeechState();
   questState.charDelay = 0;
+  questState.charDelaySlow = 0;
+  questState.charDelayFast = 0;
   questState.holdDuration = Number.POSITIVE_INFINITY;
   beginSpeech(questState, textRenderer, TEXT_WRAP, anchorQuestX, anchorQuestY, text);
   questState.visible = questState.totalChars;
@@ -939,6 +1136,8 @@ function createPromptBubble(x1, y1, text, x2, y2) {
 
   const inputState = createSpeechState();
   inputState.charDelay = 0;
+  inputState.charDelaySlow = 0;
+  inputState.charDelayFast = 0;
   inputState.holdDuration = Number.POSITIVE_INFINITY;
   inputState.anchor = { x: anchorInputX, y: anchorInputY };
   inputState.locked = true;
@@ -988,6 +1187,15 @@ function createPromptBubble(x1, y1, text, x2, y2) {
       event.preventDefault();
       bufferChars.pop();
       refreshInputState();
+      return;
+    }
+
+    if (key === ' ' || key === 'Space' || key === 'Spacebar') {
+      event.preventDefault();
+      if (bufferChars.length < MAX_INPUT_LENGTH) {
+        bufferChars.push(' ');
+        refreshInputState();
+      }
       return;
     }
 
@@ -1133,6 +1341,54 @@ function createWizardSprites(c) {
   return { right, left: mirrorSprite(right) };
 }
 
+function createDoorSprite(c) {
+  const width = 24;
+  const height = 44;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const frame = c.hutShadow;
+  const panel = c.hutFloor;
+  const glow = c.hutGlow;
+  const metal = c.wizardBelt;
+
+  const frameThickness = 2;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      const onBorder =
+        y < frameThickness ||
+        y >= height - frameThickness ||
+        x < frameThickness ||
+        x >= width - frameThickness;
+
+      if (onBorder) {
+        pixels[idx] = frame;
+        continue;
+      }
+
+      let color = panel;
+      if (x === frameThickness || x === frameThickness + 1) {
+        color = glow;
+      } else if ((x - frameThickness) % 6 === 0) {
+        color = glow;
+      } else if (y % 8 === 0) {
+        color = c.dirt;
+      }
+
+      pixels[idx] = color;
+    }
+  }
+
+  const handleY = Math.floor(height * 0.52);
+  for (let y = handleY - 1; y <= handleY + 1; y++) {
+    const idx = y * width + (width - frameThickness - 3);
+    pixels[idx] = metal;
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
 function createDonkeySprites(c) {
   const art = [
     '..............................1111',
@@ -1174,6 +1430,50 @@ function createDonkeySprites(c) {
   };
   const right = spriteFromStrings(art, legend);
   return { right, left: mirrorSprite(right) };
+}
+
+function createWaterSprite(c) {
+  const width = 128;
+  const height = 28;
+  const pixels = new Uint8Array(width * height);
+  const highlight = c.dawnSkyMid;
+  const surface = c.riverWater;
+  const depth = c.nightSkyMid;
+
+  for (let y = 0; y < height; y++) {
+    const ratio = y / (height - 1);
+    let baseColor;
+    if (ratio < 0.25) {
+      baseColor = highlight;
+    } else if (ratio < 0.65) {
+      baseColor = surface;
+    } else {
+      baseColor = depth;
+    }
+
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      let color = baseColor;
+
+      if (y < 6) {
+        const wave = Math.sin((x / width) * Math.PI * 4 + y * 0.6);
+        if (wave > 0.3) {
+          color = highlight;
+        }
+      }
+
+      if (y > height - 6) {
+        const undertow = Math.sin((x / width) * Math.PI * 2 + y * 0.4);
+        if (undertow < -0.2) {
+          color = depth;
+        }
+      }
+
+      pixels[idx] = color;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
 }
 
 function createCloudSprites(c) {

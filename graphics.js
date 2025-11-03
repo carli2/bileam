@@ -203,7 +203,9 @@ export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text, op
     speechState.sequence = sequence;
     speechState.totalChars = sequence.length;
     speechState.visible = 0;
-    speechState.nextCharTime = now;
+    speechState.fastForward = false;
+    speechState.charDelay = speechState.charDelaySlow;
+    speechState.nextCharTime = speechState.charDelay > 0 ? now + speechState.charDelay : now;
     speechState.holdDuration = holdDuration;
     speechState.holdUntil = sequence.length === 0 && !awaitAck
       ? now + speechState.holdDuration
@@ -219,9 +221,17 @@ export function updateSpeechState(speechState, time) {
   if (!speechState.active) return;
 
   if (speechState.visible < speechState.totalChars) {
-    while (time >= speechState.nextCharTime && speechState.visible < speechState.totalChars) {
-      speechState.visible++;
-      speechState.nextCharTime += speechState.charDelay;
+    if (speechState.charDelay <= 0) {
+      speechState.visible = speechState.totalChars;
+      speechState.nextCharTime = time;
+    } else {
+      while (time >= speechState.nextCharTime && speechState.visible < speechState.totalChars) {
+        speechState.visible++;
+        speechState.nextCharTime += speechState.charDelay;
+      }
+      if (speechState.nextCharTime - time > speechState.charDelay) {
+        speechState.nextCharTime = time + speechState.charDelay;
+      }
     }
 
     if (speechState.visible >= speechState.totalChars) {
@@ -454,6 +464,9 @@ export function createSpeechState() {
     tipHeight: 10,
     tipBaseHalf: 5,
     charDelay: 60,
+    charDelaySlow: 60,
+    charDelayFast: 12,
+    fastForward: false,
     holdDuration: 1400,
     defaultHoldDuration: 1400,
     align: 'ltr',

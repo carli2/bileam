@@ -7,28 +7,40 @@ import {
   fadeToBlack,
   fadeToBase,
   showLevelTitle,
+  setSceneProps,
+  getScenePropBounds,
+  waitForWizardToReach,
 } from '../scene.js';
 import { transliterateToHebrew } from '../game.helpers.js';
 import { narratorSay, wizardSay, donkeySay, anchorX, anchorY, wizard, donkey, isSkipRequested } from './utils.js';
 
 const WORD_AOR = transliterateToHebrew('aor');
 const WORD_MIM = transliterateToHebrew('mim');
+const RIVER_PROP_ID = 'riverPool';
+const RIVER_X = 620;
+const LEVEL2_START_X = 96;
 
 export async function runLevelTwo() {
   const plan = levelAmbiencePlan.level2;
+  setSceneProps([]);
+  wizard.x = LEVEL2_START_X;
+  donkey.x = wizard.x - 36;
   ensureAmbience(plan?.review ?? 'riverDawn');
   setSceneContext({ level: 'level2', phase: 'review' });
-  showLevelTitle('Level 2 - Das Wasser\ndes Lebens');
-  if (isSkipRequested()) return 'skip';
+  const titleResult = await showLevelTitle('Level 2 - Das Wasser\ndes Lebens');
+  if (titleResult === 'skip' || isSkipRequested()) return 'skip';
   await fadeToBase(600);
 
   if (isSkipRequested()) return 'skip';
   const recall = await phaseOneRecall(plan);
   if (recall === 'skip' || isSkipRequested()) return 'skip';
+  const travel = await phaseTravelToWater(plan);
+  if (travel === 'skip' || isSkipRequested()) return 'skip';
   const learn = await phaseTwoLearning(plan);
   if (learn === 'skip' || isSkipRequested()) return 'skip';
   const apply = await phaseThreeApplication(plan);
   if (apply === 'skip' || isSkipRequested()) return 'skip';
+  setSceneProps([]);
 }
 
 
@@ -52,9 +64,7 @@ async function phaseOneRecall(plan) {
     const answer = normalizeHebrewInput(answerInput);
 
     if (answer === WORD_AOR) {
-      await narratorSay('Das Licht faechert sich ueber das Wasser. Eine erste Planke erscheint.');
-      await transitionAmbience(plan?.learn ?? 'riverDawn', { fade: { toBlack: 120, toBase: 420 } });
-      if (isSkipRequested()) return 'skip';
+      await narratorSay('Das Licht legt eine Spur nach draussen.');
       break;
     }
 
@@ -66,6 +76,23 @@ async function phaseOneRecall(plan) {
       await wizardSay('A... O... R.');
     }
   }
+}
+
+async function phaseTravelToWater(plan) {
+  if (isSkipRequested()) return 'skip';
+  setSceneContext({ phase: 'travel' });
+  await transitionAmbience(plan?.learn ?? 'riverDawn', { fade: { toBlack: 120, toBase: 420 } });
+  if (isSkipRequested()) return 'skip';
+  setSceneProps([
+    { id: RIVER_PROP_ID, type: 'water', x: RIVER_X },
+  ]);
+  await narratorSay('Folge dem Pfad, bis das Wasser direkt vor dir liegt.');
+  if (isSkipRequested()) return 'skip';
+  const bounds = getScenePropBounds(RIVER_PROP_ID);
+  const target = bounds ? bounds.left + bounds.width * 0.3 : RIVER_X;
+  const reached = await waitForWizardToReach(target, { tolerance: 14 });
+  if (reached === 'skip' || isSkipRequested()) return 'skip';
+  await narratorSay('Jetzt rauscht der Fluss zu deinen Fuessen.');
 }
 
 async function phaseTwoLearning(plan) {

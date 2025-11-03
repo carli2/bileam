@@ -8,19 +8,28 @@ import {
   fadeToBlack,
   fadeToBase,
   showLevelTitle,
+  setSceneProps,
+  getScenePropBounds,
+  waitForWizardToReach,
 } from '../scene.js';
 import { transliterateToHebrew } from '../game.helpers.js';
 import { narratorSay, wizardSay, donkeySay, anchorX, anchorY, wizard, donkey, isSkipRequested } from './utils.js';
 
 const WORD_AOR = transliterateToHebrew('aor');
+const HUT_DOOR_ID = 'hutDoor';
+const HUT_DOOR_X = 252;
 
 export async function runLevelOne() {
   const plan = levelAmbiencePlan.level1;
 
   while (true) {
+    setSceneProps([
+      { id: HUT_DOOR_ID, type: 'door', x: HUT_DOOR_X },
+    ]);
     ensureAmbience(plan?.introduction ?? 'hutInteriorDark');
     setSceneContext({ level: 'level1', phase: 'introduction' });
-    showLevelTitle('Level 1 - Das Licht');
+    const titleResult = await showLevelTitle('Level 1 - Das Licht');
+    if (titleResult === 'skip' || isSkipRequested()) return 'skip';
 
     if (isSkipRequested()) return 'skip';
     const intro = await levelOneIntroduction();
@@ -42,15 +51,9 @@ async function levelOneIntroduction() {
   if (isSkipRequested()) return 'skip';
   await narratorSay('Es ist dunkel in dieser Huette.');
   if (isSkipRequested()) return 'skip';
-  await wizardSay('Wo bin ich? ... Ich sehe nichts.');
+  await donkeySay('Sprich אור (aor). Das Alef schweigt, das O ziehst du lang – so ruft man das Licht.');
   if (isSkipRequested()) return 'skip';
-  await donkeySay('Ich auch nicht, Meister. Vielleicht fehlt uns das richtige Wort.');
-  if (isSkipRequested()) return 'skip';
-  await wizardSay('Ein Wort?');
-  if (isSkipRequested()) return 'skip';
-  await donkeySay('Ja. Worte sind wie Schluessel. Versuch es mit dem Wort אור (AOR). Das Alef am Anfang ist still, das O schwingst du lang. Es bedeutet Licht.');
-  if (isSkipRequested()) return 'skip';
-  await narratorSay('Tipp: Sprich das Wort nach.');
+  await wizardSay('Gut, ich probiere es.');
   if (isSkipRequested()) return 'skip';
 }
 
@@ -115,15 +118,24 @@ async function levelOneRecap() {
 async function levelOneDoorSequence(plan) {
   if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'apply' });
-  await narratorSay('Vor der Tuer erscheint eine leuchtende Rune. Sie wartet auf das Wort.');
-  await narratorSay('Das Licht bleibt als Spur in der Luft – die Huette erinnert sich an אור.');
+  await narratorSay('Die Tuer rechts glimmt im Licht. Lauf hinueber.');
+  if (isSkipRequested()) return 'skip';
+  const target = doorTargetX();
+  const arrival = await waitForWizardToReach(target, { tolerance: 10 });
+  if (arrival === 'skip' || isSkipRequested()) return 'skip';
+  await narratorSay('Die Rune erwacht, sobald du das Holz beruehrst.');
   await fadeToBlack(320);
   if (isSkipRequested()) return 'skip';
+  setSceneProps([]);
   ensureAmbience(plan?.door ?? 'exteriorDay');
   setSceneContext({ phase: 'exit' });
   await fadeToBase(600);
   if (isSkipRequested()) return 'skip';
-  await narratorSay('Die Rune oeffnet sich, ohne dass du das Wort wiederholen musst.');
+  const [titleResult, narrationResult] = await Promise.all([
+    showLevelTitle('אור', 2600),
+    narratorSay('Das Wort אור flammt ueber dem Eingang auf – ohne dass du es noch einmal sprichst.'),
+  ]);
+  if (titleResult === 'skip' || narrationResult === 'skip' || isSkipRequested()) return 'skip';
   await narratorSay('Du spuerst, wie der Morgen hereinsickert.');
   await donkeySay('Da draussen wartet der Tag.');
   await narratorSay('Ein warmer Morgen wartet vor der Tuer.');
@@ -134,4 +146,10 @@ async function levelOneDoorSequence(plan) {
 function normalizeHebrewInput(value) {
   if (!value) return '';
   return value.replace(/\s+/g, '');
+}
+
+function doorTargetX() {
+  const bounds = getScenePropBounds(HUT_DOOR_ID);
+  if (!bounds) return HUT_DOOR_X + 12;
+  return bounds.left + bounds.width * 0.65;
 }
