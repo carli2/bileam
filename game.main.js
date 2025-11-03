@@ -14,12 +14,14 @@ import {
 } from './scene.js';
 import { runLevelOne } from './levels/level1.js';
 import { runLevelTwo } from './levels/level2.js';
+import { runLevelThree } from './levels/level3.js';
 
 startScene(mainFlow);
 
 const LEVELS = [
   { id: 'level1', run: runLevelOne },
   { id: 'level2', run: runLevelTwo },
+  { id: 'level3', run: runLevelThree },
 ];
 
 async function mainFlow() {

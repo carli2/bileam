@@ -375,6 +375,18 @@ function initSprites() {
   const cloudSprites = createCloudSprites(colors);
   propSprites.door = createDoorSprite(colors);
   propSprites.water = createWaterSprite(colors);
+  propSprites.stoneArch = createStoneArchSprite(colors);
+  propSprites.fountainDry = createFountainSprite(colors, false);
+  propSprites.fountainFilled = createFountainSprite(colors, true);
+  propSprites.monolithDormant = createMonolithSprite(colors, false);
+  propSprites.monolithAwakened = createMonolithSprite(colors, true);
+  propSprites.soundGlyph = createSoundGlyphSprite(colors);
+  propSprites.waterGlyph = createWaterGlyphSprite(colors);
+  propSprites.basaltSpireTall = createBasaltSpireSprite(colors, 'tall');
+  propSprites.basaltSpireMid = createBasaltSpireSprite(colors, 'mid');
+  propSprites.basaltSpireShort = createBasaltSpireSprite(colors, 'short');
+  propSprites.stalactite = createStalactiteSprite(colors);
+  propSprites.canyonMist = createCanyonMistSprite(colors);
   sceneProps = [];
 
   wizard.sprites = wizardSprites;
@@ -1013,7 +1025,7 @@ function createLevelSceneMap() {
     level1: {
       introduction: 'hutInteriorDark',
       illumination: 'hutInteriorLit',
-      door: 'exteriorDay',
+      door: 'riverDawn',
     },
     level2: {
       review: 'riverDawn',
@@ -1021,7 +1033,7 @@ function createLevelSceneMap() {
       apply: 'riverDawn',
     },
     level3: {
-      review: 'riverDawn',
+      review: 'echoChamber',
       learn: 'echoChamber',
       apply: 'echoChamber',
     },
@@ -1470,6 +1482,164 @@ function createWaterSprite(c) {
       }
 
       pixels[idx] = color;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createStoneArchSprite(c) {
+  const width = 72;
+  const height = 48;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+
+  const archTop = 6;
+  const baseTop = height - 8;
+  const outerA = (width - 10) / 2;
+  const outerB = baseTop - archTop;
+  const innerA = outerA - 6;
+  const innerB = outerB - 4;
+  const centerX = (width - 1) / 2;
+  const stone = c.caveStone ?? c.hillShadow;
+  const highlight = c.hillLight ?? c.wizardHatHighlight;
+  const shade = c.hillShadow ?? stone;
+
+  for (let y = archTop; y < baseTop; y++) {
+    for (let x = 0; x < width; x++) {
+      const dx = x - centerX;
+      const outer = (dx * dx) / (outerA * outerA) + ((y - archTop) * (y - archTop)) / (outerB * outerB);
+      if (outer > 1) continue;
+      const inner = (dx * dx) / (innerA * innerA) + ((y - (archTop + 3)) * (y - (archTop + 3))) / (innerB * innerB);
+      if (inner < 1 && y < baseTop - 2) continue;
+      const idx = y * width + x;
+      const edge = Math.abs(dx) > outerA - 1 || y < archTop + 2;
+      pixels[idx] = edge ? highlight : stone;
+    }
+  }
+
+  for (let y = baseTop; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      const edge = x < 6 || x >= width - 6;
+      pixels[idx] = edge ? shade : stone;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createFountainSprite(c, filled) {
+  const width = 52;
+  const height = 30;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const stone = c.caveStone ?? c.hillShadow;
+  const highlight = c.hillLight ?? c.wizardHatHighlight;
+  const waterTop = Math.floor(height * 0.6);
+  const bowlTop = Math.floor(height * 0.35);
+
+  for (let y = bowlTop; y < height; y++) {
+    for (let x = 4; x < width - 4; x++) {
+      const idx = y * width + x;
+      const rim = y < bowlTop + 2 || y > height - 3 || x < 6 || x >= width - 6;
+      pixels[idx] = rim ? highlight : stone;
+    }
+  }
+
+  if (filled) {
+    for (let y = waterTop; y < height - 4; y++) {
+      for (let x = 8; x < width - 8; x++) {
+        const idx = y * width + x;
+        const wave = Math.sin((x - 8) * 0.4 + y * 0.3);
+        pixels[idx] = wave > 0 ? c.riverWater : c.dawnSkyMid;
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createMonolithSprite(c, awakened) {
+  const width = 26;
+  const height = 54;
+  const pixels = new Uint8Array(width * height);
+  const stone = c.caveStone ?? c.hillShadow;
+  const highlight = c.hillLight ?? c.wizardHatHighlight;
+  const glow = awakened ? (c.wizardBelt ?? c.hutGlow) : highlight;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      const edge = x <= 2 || x >= width - 3;
+      pixels[idx] = edge ? highlight : stone;
+    }
+  }
+
+  for (let y = 8; y < height - 6; y += 6) {
+    for (let x = Math.floor(width / 2) - 2; x <= Math.floor(width / 2) + 2; x++) {
+      const idx = y * width + x;
+      pixels[idx] = glow;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createSoundGlyphSprite(c) {
+  const width = 40;
+  const height = 32;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const primary = c.wizardHatHighlight ?? c.hutGlow;
+  const secondary = c.wizardRobeHighlight ?? c.marketFabric;
+  const centerX = (width - 1) / 2;
+  const centerY = (height - 1) / 2;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < 3) {
+        pixels[y * width + x] = primary;
+      } else if (distance < 7) {
+        if ((x + y) % 2 === 0) {
+          pixels[y * width + x] = secondary;
+        }
+      } else if (distance < 12 && Math.abs(Math.sin(distance * 0.6)) > 0.55) {
+        pixels[y * width + x] = primary;
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createWaterGlyphSprite(c) {
+  const width = 42;
+  const height = 24;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const surface = c.riverWater ?? c.dawnSkyMid;
+  const highlight = c.dawnSkyMid ?? c.cloudHighlight;
+  const shadow = c.nightSkyMid ?? c.hillShadow;
+  const centerY = height - 6;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      const wave = Math.sin((x / width) * Math.PI * 4 + y * 0.45);
+      const falloff = Math.exp(-Math.pow((y - centerY) / (height * 0.9), 2));
+      if (y >= centerY - 3 && y <= centerY + 3) {
+        pixels[idx] = wave > 0 ? highlight : surface;
+      } else if (y > centerY + 3) {
+        pixels[idx] = shadow;
+      } else if (Math.abs(wave) > 0.75 * falloff) {
+        pixels[idx] = highlight;
+      } else if (Math.abs(wave) > 0.45 * falloff) {
+        pixels[idx] = surface;
+      }
     }
   }
 

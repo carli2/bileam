@@ -13,7 +13,19 @@ import {
   waitForWizardToReach,
 } from '../scene.js';
 import { transliterateToHebrew } from '../game.helpers.js';
-import { narratorSay, wizardSay, donkeySay, anchorX, anchorY, wizard, donkey, isSkipRequested } from './utils.js';
+import {
+  narratorSay,
+  wizardSay,
+  donkeySay,
+  anchorX,
+  anchorY,
+  wizard,
+  donkey,
+  isSkipRequested,
+  normalizeHebrewInput,
+  applySceneConfig,
+  RIVER_SCENE,
+} from './utils.js';
 
 const WORD_AOR = transliterateToHebrew('aor');
 const HUT_DOOR_ID = 'hutDoor';
@@ -126,8 +138,8 @@ async function levelOneDoorSequence(plan) {
   await narratorSay('Die Rune erwacht, sobald du das Holz beruehrst.');
   await fadeToBlack(320);
   if (isSkipRequested()) return 'skip';
-  setSceneProps([]);
-  ensureAmbience(plan?.door ?? 'exteriorDay');
+  applySceneConfig(RIVER_SCENE, { setAmbience: false });
+  ensureAmbience(plan?.door ?? RIVER_SCENE.ambience ?? 'riverDawn');
   setSceneContext({ phase: 'exit' });
   await fadeToBase(600);
   if (isSkipRequested()) return 'skip';
@@ -141,11 +153,6 @@ async function levelOneDoorSequence(plan) {
   await narratorSay('Ein warmer Morgen wartet vor der Tuer.');
   await fadeToBlack(600);
   if (isSkipRequested()) return 'skip';
-}
-
-function normalizeHebrewInput(value) {
-  if (!value) return '';
-  return value.replace(/\s+/g, '');
 }
 
 function doorTargetX() {

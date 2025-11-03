@@ -12,20 +12,31 @@ import {
   waitForWizardToReach,
 } from '../scene.js';
 import { transliterateToHebrew } from '../game.helpers.js';
-import { narratorSay, wizardSay, donkeySay, anchorX, anchorY, wizard, donkey, isSkipRequested } from './utils.js';
+import {
+  narratorSay,
+  wizardSay,
+  donkeySay,
+  anchorX,
+  anchorY,
+  wizard,
+  donkey,
+  isSkipRequested,
+  normalizeHebrewInput,
+  applySceneConfig,
+  RIVER_SCENE,
+  cloneSceneProps,
+} from './utils.js';
 
 const WORD_AOR = transliterateToHebrew('aor');
 const WORD_MIM = transliterateToHebrew('mim');
-const RIVER_PROP_ID = 'riverPool';
-const RIVER_X = 620;
-const LEVEL2_START_X = 96;
+const RIVER_PROP_ID = RIVER_SCENE.props?.[0]?.id ?? 'riverPool';
+const RIVER_X = RIVER_SCENE.props?.[0]?.x ?? 620;
 
 export async function runLevelTwo() {
   const plan = levelAmbiencePlan.level2;
-  setSceneProps([]);
-  wizard.x = LEVEL2_START_X;
-  donkey.x = wizard.x - 36;
-  ensureAmbience(plan?.review ?? 'riverDawn');
+  const riverProps = cloneSceneProps(RIVER_SCENE.props);
+  applySceneConfig({ ...RIVER_SCENE, props: riverProps }, { setAmbience: false });
+  ensureAmbience(plan?.review ?? RIVER_SCENE.ambience ?? 'riverDawn');
   setSceneContext({ level: 'level2', phase: 'review' });
   const titleResult = await showLevelTitle('Level 2 - Das Wasser\ndes Lebens');
   if (titleResult === 'skip' || isSkipRequested()) return 'skip';
@@ -34,11 +45,11 @@ export async function runLevelTwo() {
   if (isSkipRequested()) return 'skip';
   const recall = await phaseOneRecall(plan);
   if (recall === 'skip' || isSkipRequested()) return 'skip';
-  const travel = await phaseTravelToWater(plan);
+  const travel = await phaseTravelToWater(plan, riverProps);
   if (travel === 'skip' || isSkipRequested()) return 'skip';
   const learn = await phaseTwoLearning(plan);
   if (learn === 'skip' || isSkipRequested()) return 'skip';
-  const apply = await phaseThreeApplication(plan);
+  const apply = await phaseThreeApplication(plan, riverProps);
   if (apply === 'skip' || isSkipRequested()) return 'skip';
   setSceneProps([]);
 }
@@ -78,14 +89,12 @@ async function phaseOneRecall(plan) {
   }
 }
 
-async function phaseTravelToWater(plan) {
+async function phaseTravelToWater(plan, riverProps) {
   if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'travel' });
   await transitionAmbience(plan?.learn ?? 'riverDawn', { fade: { toBlack: 120, toBase: 420 } });
   if (isSkipRequested()) return 'skip';
-  setSceneProps([
-    { id: RIVER_PROP_ID, type: 'water', x: RIVER_X },
-  ]);
+  applySceneConfig({ ...RIVER_SCENE, props: riverProps }, { setAmbience: false, position: false });
   await narratorSay('Folge dem Pfad, bis das Wasser direkt vor dir liegt.');
   if (isSkipRequested()) return 'skip';
   const bounds = getScenePropBounds(RIVER_PROP_ID);
@@ -134,7 +143,7 @@ async function phaseTwoLearning(plan) {
   }
 }
 
-async function phaseThreeApplication(plan) {
+async function phaseThreeApplication(plan, riverProps) {
   if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'apply' });
   await narratorSay('Die Bruecke traegt dich. Doch mitten auf dem Fluss klafft eine Luecke.');
@@ -159,17 +168,20 @@ async function phaseThreeApplication(plan) {
       await donkeySay('Gut gemacht, Meister. Worte fliessen – und wer sie kennt, kann Stroeme lenken.');
       await wizardSay('Dann ist Sprache wirklich Kraft?');
       await donkeySay('Vielleicht. Aber vergiss nicht: Zu viel Fluss – und du wirst davongetragen.');
+      const glyphId = 'riverGlyph';
+      const glyphExists = riverProps?.some(prop => prop.id === glyphId);
+      if (!glyphExists) {
+        const wizardSprite = wizard.sprites?.right ?? wizard.sprites?.left;
+        const glyphX = wizard.x + (wizardSprite?.width ?? 24) + 12;
+        const glyphY = wizardSprite ? wizard.y + wizardSprite.height - 18 : wizard.y + 44;
+        riverProps.push({ id: glyphId, type: 'waterGlyph', x: glyphX, y: glyphY, parallax: 1 });
+        setSceneProps(riverProps);
+      }
       await transitionAmbience(plan?.apply ?? plan?.learn ?? 'riverDawn', { fade: { toBlack: 140, toBase: 420 } });
-      await narratorSay('Ein leuchtendes Wellenzeichen glimmt im Boden und weist auf den naechsten Pfad.');
       await fadeToBlack(800);
       if (isSkipRequested()) return 'skip';
     } else {
       await narratorSay('Das Wasser wartet noch. Hoere in den Fluss hinein und sprich es klar aus.');
     }
   }
-}
-
-function normalizeHebrewInput(value) {
-  if (!value) return '';
-  return value.replace(/\s+/g, '');
 }
