@@ -18,7 +18,6 @@ import {
   anchorY,
   wizard,
   donkey,
-  isSkipRequested,
   normalizeHebrewInput,
   applySceneConfig,
   CANYON_SCENE,
@@ -32,54 +31,34 @@ export async function runLevelThree() {
   applySceneConfig({ ...CANYON_SCENE, props: canyonProps });
   ensureAmbience(plan?.review ?? CANYON_SCENE.ambience ?? 'echoChamber');
   setSceneContext({ level: 'level3', phase: 'review' });
-  const titleResult = await showLevelTitle('Level 3 -\nDie Stimme aus\ndem Stein');
-  if (titleResult === 'skip' || isSkipRequested()) return 'skip';
+  await showLevelTitle('Level 3 -\nDie Stimme aus\ndem Stein');
   await fadeToBase(600);
 
-  if (isSkipRequested()) return 'skip';
-  const prep = await phasePreparation();
-  if (prep === 'skip' || isSkipRequested()) return 'skip';
-
-  const arch = await phaseStoneArch(canyonProps, plan);
-  if (arch === 'skip' || isSkipRequested()) return 'skip';
-
-  const fountain = await phaseDryFountain(canyonProps, plan);
-  if (fountain === 'skip' || isSkipRequested()) return 'skip';
-
-  const revelation = await phaseRevelation(canyonProps);
-  if (revelation === 'skip' || isSkipRequested()) return 'skip';
-
-  const application = await phaseResonanceWalk(plan, canyonProps);
-  if (application === 'skip' || isSkipRequested()) return 'skip';
+  await phasePreparation();
+  await phaseStoneArch(canyonProps, plan);
+  await phaseDryFountain(canyonProps, plan);
+  await phaseRevelation(canyonProps);
+  await phaseResonanceWalk(plan, canyonProps);
 
   await fadeToBlack(720);
 }
 
 async function phasePreparation() {
-  if (isSkipRequested()) return 'skip';
   await narratorSay('Die Schlucht fluestert – doch kein Wort ist zu verstehen.');
-  if (isSkipRequested()) return 'skip';
   await wizardSay('Ich spuere, dass hier ein Zauber aus Stein ruht.');
-  if (isSkipRequested()) return 'skip';
   await donkeySay('Dann findest du ihn wohl nur, wenn du zuhoerst, was der Fels verlangt.');
-  if (isSkipRequested()) return 'skip';
   await wizardSay('Aber ich kenne das Wort noch nicht.');
-  if (isSkipRequested()) return 'skip';
   await donkeySay('Nutze, was du gelernt hast. Manchmal braucht der Stein Licht – manchmal Wasser.');
 }
 
 async function phaseStoneArch(canyonProps, plan) {
-  if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'puzzle-light' });
 
   const archProp = findProp(canyonProps, 'canyonArch');
   const archTarget = archProp ? archProp.x + 36 : wizard.x + 140;
   await donkeySay('Der Steinbogen dort vorne pulsiert. Geh hin und hoer hin.');
-  if (isSkipRequested()) return 'skip';
-  const reachArch = await waitForWizardToReach(archTarget, { tolerance: 16 });
-  if (reachArch === 'skip' || isSkipRequested()) return 'skip';
+  await waitForWizardToReach(archTarget, { tolerance: 16 });
   await narratorSay('Ein Onyxauge sitzt im Bogen – es atmet schwach und wartet auf Licht.');
-  if (isSkipRequested()) return 'skip';
 
   let attempts = 0;
   while (true) {
@@ -90,7 +69,6 @@ async function phaseStoneArch(canyonProps, plan) {
       anchorX(wizard, -2),
       anchorY(wizard, -34),
     );
-    if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
     if (spellEquals(answer, 'or', 'אור')) {
@@ -108,28 +86,22 @@ async function phaseStoneArch(canyonProps, plan) {
     } else {
       attempts = 0;
       await fadeToBlack(220);
-      if (isSkipRequested()) return 'skip';
       ensureAmbience(plan?.review ?? CANYON_SCENE.ambience ?? 'echoChamber');
       await fadeToBase(420);
-      if (isSkipRequested()) return 'skip';
       await narratorSay('Erinnerung: In der Huette entzundest du Licht mit אור.');
     }
   }
 }
 
 async function phaseDryFountain(canyonProps, plan) {
-  if (isSkipRequested()) return 'skip';
   const fountainProp = findProp(canyonProps, 'canyonFountain');
   const fountainTarget = fountainProp ? fountainProp.x + 24 : wizard.x + 160;
   await donkeySay('Weiter vorn ist ein trockenes Becken. Lass uns nachsehen.');
-  if (isSkipRequested()) return 'skip';
-  const reachFountain = await waitForWizardToReach(fountainTarget, { tolerance: 14 });
-  if (reachFountain === 'skip' || isSkipRequested()) return 'skip';
+  await waitForWizardToReach(fountainTarget, { tolerance: 14 });
   await narratorSay('Hinter dem Bogen wartet ein Brunnenbecken aus Stein – ausgetrocknet. In die Kante ist eingeritzt: "Durst löscht, wer das Fließen ruft."');
 
   let attempts = 0;
   while (true) {
-    if (isSkipRequested()) return 'skip';
     const answerInput = await promptBubble(
       anchorX(wizard, -4),
       anchorY(wizard, -62),
@@ -137,7 +109,6 @@ async function phaseDryFountain(canyonProps, plan) {
       anchorX(wizard, 2),
       anchorY(wizard, -36),
     );
-    if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
@@ -154,39 +125,30 @@ async function phaseDryFountain(canyonProps, plan) {
     } else {
       attempts = 0;
       await fadeToBlack(180);
-      if (isSkipRequested()) return 'skip';
       ensureAmbience(plan?.learn ?? 'echoChamber');
       await fadeToBase(320);
-      if (isSkipRequested()) return 'skip';
       await donkeySay('Erinnere dich an den Fluss: MAYIM – das Wasserwort.');
     }
   }
 }
 
 async function phaseRevelation(canyonProps) {
-  if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'revelation' });
   addProp(canyonProps, { id: 'canyonMonolith', type: 'monolithDormant', x: 548 });
 
   await donkeySay('Da ist er, Meister – der Stein, der spricht.');
-  if (isSkipRequested()) return 'skip';
   await wizardSay('Er... spricht wirklich?');
-  if (isSkipRequested()) return 'skip';
   await donkeySay('Nicht mit Worten wie wir. Er spricht mit Klang. Du wirst es hoeren, wenn du das neue Wort lernst.');
-  if (isSkipRequested()) return 'skip';
 
-  const [titleResult] = await Promise.all([
+  await Promise.all([
     showLevelTitle('קוֹל (qol)', 3200),
     narratorSay('Eine Schriftlinie erscheint auf dem Stein: קוֹל – Stimme.'),
   ]);
-  if (titleResult === 'skip' || isSkipRequested()) return 'skip';
 
   await donkeySay('ק – das tiefe Grollen in der Erde, וֹ – das Rollen des Atems, ל – das sanfte Nachklingen. Sprich es, und die Steine antworten.');
-  if (isSkipRequested()) return 'skip';
 
   let attempts = 0;
   while (true) {
-    if (isSkipRequested()) return 'skip';
     const answerInput = await promptBubble(
       anchorX(wizard, -10),
       anchorY(wizard, -64),
@@ -194,7 +156,6 @@ async function phaseRevelation(canyonProps) {
       anchorX(wizard, -4),
       anchorY(wizard, -38),
     );
-    if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
     if (spellEquals(answer, 'qol', 'קול')) {
@@ -217,17 +178,12 @@ async function phaseRevelation(canyonProps) {
 }
 
 async function phaseResonanceWalk(plan, canyonProps) {
-  if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'apply' });
   addProp(canyonProps, { id: 'canyonPathLight', type: 'soundGlyph', x: wizard.x + 90, y: wizard.y - 12, parallax: 0.7 });
-  if (isSkipRequested()) return 'skip';
   const echoMarker = wizard.x + 120;
-  const titleResult = await showLevelTitle('Folge dem Echo\nund sprich קול');
-  if (titleResult === 'skip' || isSkipRequested()) return 'skip';
+  await showLevelTitle('Folge dem Echo\nund sprich קול');
   await donkeySay('Hoer auf das Echo, Meister.');
-  if (isSkipRequested()) return 'skip';
-  const reachEcho = await waitForWizardToReach(echoMarker, { tolerance: 14 });
-  if (reachEcho === 'skip' || isSkipRequested()) return 'skip';
+  await waitForWizardToReach(echoMarker, { tolerance: 14 });
   const echoSequences = [
     {
       prompt: 'Ein Echo rollt von den Waenden. Sprich קול, um den Pfad zu staerken.',
@@ -241,7 +197,6 @@ async function phaseResonanceWalk(plan, canyonProps) {
 
   for (const sequence of echoSequences) {
     await narratorSay(sequence.prompt);
-    if (isSkipRequested()) return 'skip';
 
     let correct = false;
     let attempts = 0;
@@ -253,7 +208,6 @@ async function phaseResonanceWalk(plan, canyonProps) {
         anchorX(wizard, 6),
         anchorY(wizard, -32),
       );
-      if (answerInput === 'skip' || isSkipRequested()) return 'skip';
       const answer = normalizeHebrewInput(answerInput);
       if (spellEquals(answer, 'qol', 'קול')) {
         correct = true;
@@ -270,9 +224,7 @@ async function phaseResonanceWalk(plan, canyonProps) {
   }
 
   await donkeySay('Gut, Meister. Nun kannst du mit den Steinen sprechen.');
-  if (isSkipRequested()) return 'skip';
   await wizardSay('Oder sie mit mir.');
-  if (isSkipRequested()) return 'skip';
   await narratorSay('So verliess der Lehrling die Schlucht – mit einer Stimme, die Berge bewegen konnte.');
   await transitionAmbience(plan?.apply ?? plan?.learn ?? 'echoChamber', { fade: { toBlack: 180, toBase: 420 } });
 }

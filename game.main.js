@@ -11,6 +11,8 @@ import {
   wizard,
   donkey,
   say,
+  SkipSignal,
+  clearSkipState,
 } from './scene.js';
 import { runLevelOne } from './levels/level1.js';
 import { runLevelTwo } from './levels/level2.js';
@@ -93,39 +95,28 @@ async function mainFlow() {
 }
 
 async function runLevel(entry, index, progress) {
-  let resolveSkip;
-  let skipRequested = false;
-  const skipPromise = new Promise(resolve => {
-    resolveSkip = resolve;
-  });
-
   const canSkip = (progress.highestLevel ?? -1) >= index;
-  setSkipHandler(() => {
-    if (canSkip) {
-      skipRequested = true;
-      resolveSkip('skipNext');
-    } else {
-      skipRequested = true;
-      resolveSkip('restart');
-    }
+  let resolvedReason = null;
+
+  setSkipHandler(reason => {
+    const decision = reason ?? (canSkip ? 'skip' : 'restart');
+    resolvedReason = decision;
+    return decision;
   });
 
   try {
-    const result = await Promise.race([entry.run(), skipPromise]);
-    if (result === 'skipNext' || result === 'skip') {
-      setSceneProps([]);
-      ensureAmbience('exteriorDay');
-      if (!skipRequested) {
-        await fadeToBase(0);
-      }
-      return 'skipNext';
-    }
-    if (result === 'restart') {
-      setSceneProps([]);
-      ensureAmbience('exteriorDay');
-      return 'restart';
-    }
+    await entry.run();
+    clearSkipState();
     return 'completed';
+  } catch (error) {
+    if (error instanceof SkipSignal) {
+      const reason = error.reason ?? resolvedReason ?? (canSkip ? 'skip' : 'restart');
+      clearSkipState();
+      setSceneProps([]);
+      ensureAmbience('exteriorDay');
+      return reason === 'restart' ? 'restart' : 'skipNext';
+    }
+    throw error;
   } finally {
     clearSkipHandler();
   }
@@ -152,9 +143,15 @@ async function showEndingScreen(state) {
     ? 'Du legst den Stab fuer heute beiseite. Danke, dass du mit Bileam gereist bist.'
     : 'Alle Missionen gemeistert. Danke fuers Spielen!';
 
-  const [titleResult, speechResult] = await Promise.all([
-    showLevelTitle(title, 5000),
-    say(() => wizard.x, () => wizard.y - 52, message),
-  ]);
-  if (titleResult === 'skip' || speechResult === 'skip') return;
+  try {
+    await Promise.all([
+      showLevelTitle(title, 5000),
+      say(() => wizard.x, () => wizard.y - 52, message),
+    ]);
+  } catch (error) {
+    if (error instanceof SkipSignal) {
+      return;
+    }
+    throw error;
+  }
 }

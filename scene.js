@@ -15,6 +15,13 @@ import {
 } from './graphics.js';
 import { transliterateToHebrew } from './game.helpers.js';
 
+export class SkipSignal extends Error {
+  constructor(reason = 'skip') {
+    super(reason);
+    this.reason = reason;
+  }
+}
+
 const WIDTH = 320;
 const HEIGHT = 200;
 const GROUND_HEIGHT = 8;
@@ -42,7 +49,21 @@ const sceneState = {
   ambience: null,
   location: 'outside',
   skipCurrentLevel: null,
+  skipRequested: false,
+  skipReason: null,
 };
+
+function ensureSkipSignal(reason) {
+  if (reason instanceof SkipSignal) return reason;
+  const finalReason = reason ?? sceneState.skipReason ?? 'skip';
+  return new SkipSignal(finalReason);
+}
+
+function throwIfSkipRequested() {
+  if (sceneState.skipRequested) {
+    throw ensureSkipSignal();
+  }
+}
 
 const ambienceState = {
   key: null,
@@ -97,6 +118,7 @@ const titleOverlay = {
   text: '',
   until: 0,
   resolve: null,
+  reject: null,
 };
 
 export function startScene(mainCallback) {
@@ -116,29 +138,35 @@ export function startScene(mainCallback) {
 }
 
 export function say(x, y, text) {
-  if (sceneState.skipRequested) return Promise.resolve('skip');
-  speechQueue = speechQueue.then(() => {
-    if (sceneState.skipRequested) return 'skip';
+  const runSpeech = async () => {
+    throwIfSkipRequested();
     const wasEnabled = gameplayInputEnabled;
     gameplayInputEnabled = false;
-    const promise = beginSpeech(
-      narrationSpeech,
-      textRenderer,
-      TEXT_WRAP,
-      x,
-      y,
-      text,
-      { awaitAck: true }
-    );
-    pendingSpeechAck = narrationSpeech;
-    return promise.finally(() => {
+    try {
+      pendingSpeechAck = narrationSpeech;
+      await beginSpeech(
+        narrationSpeech,
+        textRenderer,
+        TEXT_WRAP,
+        x,
+        y,
+        text,
+        { awaitAck: true },
+      );
+    } finally {
       if (pendingSpeechAck === narrationSpeech) {
         pendingSpeechAck = null;
       }
       gameplayInputEnabled = wasEnabled;
-    });
-  });
-  return speechQueue.then(value => (sceneState.skipRequested ? 'skip' : value));
+    }
+  };
+
+  const result = speechQueue.then(runSpeech);
+  speechQueue = result.then(
+    () => undefined,
+    () => undefined,
+  );
+  return result;
 }
 
 export function promptBubble(x1, y1, text, x2, y2) {
@@ -195,13 +223,13 @@ export function getScenePropBounds(key) {
 }
 
 export function waitForWizardToReach(targetX, options = {}) {
-  if (sceneState.skipRequested) return Promise.resolve('skip');
+  if (sceneState.skipRequested) return Promise.reject(ensureSkipSignal());
   const tolerance = Math.max(0, options.tolerance ?? 6);
   const direction = options.direction ?? (targetX >= getWizardCenterX() ? 1 : -1);
   const resultValue = options.value ?? 'reached';
   const abortOnSkip = options.abortOnSkip !== false;
 
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const condition = () => {
       const center = getWizardCenterX();
       return direction >= 0
@@ -218,6 +246,7 @@ export function waitForWizardToReach(targetX, options = {}) {
       type: 'wizard-position',
       condition,
       resolve,
+      reject,
       resultValue,
       abortOnSkip,
     };
@@ -258,57 +287,69 @@ function accelerateSpeechState(state) {
 
 export function showLevelTitle(text, duration = 2600) {
   if (!text) {
-    deactivateTitleOverlay(sceneState.skipRequested ? 'skip' : 'cancel');
-    return Promise.resolve(sceneState.skipRequested ? 'skip' : 'cancel');
+    deactivateTitleOverlay();
+    return Promise.resolve();
   }
 
   if (sceneState.skipRequested) {
-    deactivateTitleOverlay('skip');
-    return Promise.resolve('skip');
+    return Promise.reject(ensureSkipSignal());
   }
 
-  deactivateTitleOverlay('cancel');
+  deactivateTitleOverlay();
 
   titleOverlay.active = true;
   titleOverlay.text = String(text);
   titleOverlay.until = performance.now() + Math.max(0, duration);
 
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     titleOverlay.resolve = resolve;
+    titleOverlay.reject = reject;
   });
 }
 
-function deactivateTitleOverlay(reason = 'cancel') {
+function deactivateTitleOverlay(reason = null) {
   const resolver = titleOverlay.resolve;
+  const rejecter = titleOverlay.reject;
   titleOverlay.resolve = null;
+  titleOverlay.reject = null;
   const wasActive = titleOverlay.active;
   titleOverlay.active = false;
   titleOverlay.until = 0;
   titleOverlay.text = '';
-  if ((wasActive || resolver) && typeof resolver === 'function') {
-    resolver(reason);
+  if (!wasActive && !resolver && !rejecter) return;
+
+  if (reason instanceof SkipSignal) {
+    rejecter?.(reason);
+    return;
   }
+  if (reason === 'skip') {
+    rejecter?.(ensureSkipSignal('skip'));
+    return;
+  }
+
+  resolver?.();
 }
 
-export function fadeToBase(duration) {
-  if (sceneState.skipRequested) return paletteFader.fadeToBase(0);
-  return paletteFader.fadeToBase(duration).then(() => {
-    if (sceneState.skipRequested) return;
-  });
+export async function fadeToBase(duration) {
+  throwIfSkipRequested();
+  await paletteFader.fadeToBase(duration);
+  throwIfSkipRequested();
 }
 
-export function fadeToBlack(duration) {
-  if (sceneState.skipRequested) return paletteFader.fadeToBlack(0);
-  return paletteFader.fadeToBlack(duration).then(() => {
-    if (sceneState.skipRequested) return;
-  });
+export async function fadeToBlack(duration) {
+  throwIfSkipRequested();
+  await paletteFader.fadeToBlack(duration);
+  throwIfSkipRequested();
 }
 
 export function setSkipHandler(handler) {
   sceneState.skipRequested = false;
-  sceneState.skipCurrentLevel = () => {
-    requestSkip();
-    if (typeof handler === 'function') handler();
+  sceneState.skipReason = null;
+  sceneState.skipCurrentLevel = reason => {
+    const finalReason = typeof handler === 'function'
+      ? handler(reason)
+      : reason;
+    requestSkip(finalReason ?? 'skip');
   };
 }
 
@@ -316,17 +357,21 @@ export function clearSkipHandler() {
   sceneState.skipCurrentLevel = null;
   sceneState.cancelPrompt = null;
   sceneState.skipRequested = false;
+  sceneState.skipReason = null;
 }
 
-export function isSkipRequested() {
-  return sceneState.skipRequested;
+export function clearSkipState() {
+  sceneState.skipRequested = false;
+  sceneState.skipReason = null;
 }
 
-function requestSkip() {
+function requestSkip(reason = 'skip') {
   if (sceneState.skipRequested) return;
   sceneState.skipRequested = true;
-  deactivateTitleOverlay('skip');
-  resolveWaitersOnSkip();
+  sceneState.skipReason = reason;
+  const skipError = ensureSkipSignal(reason);
+  deactivateTitleOverlay(skipError);
+  resolveWaitersOnSkip(skipError);
   if (pendingSpeechAck) {
     acknowledgeSpeech(pendingSpeechAck, performance.now());
     pendingSpeechAck = null;
@@ -334,24 +379,26 @@ function requestSkip() {
   if (sceneState.cancelPrompt) {
     const cancel = sceneState.cancelPrompt;
     sceneState.cancelPrompt = null;
-    cancel('skip');
+    cancel(skipError);
   }
   if (narrationSpeech.active) {
     narrationSpeech.active = false;
     narrationSpeech.sequence = [];
     narrationSpeech.lines = [];
-    const resolve = narrationSpeech.resolve;
+    const reject = narrationSpeech.reject;
     narrationSpeech.resolve = null;
-    if (typeof resolve === 'function') resolve('skip');
+    narrationSpeech.reject = null;
+    reject?.(skipError);
   }
   overlaySpeechStates.forEach(state => {
     state.active = false;
     state.sequence = [];
     state.lines = [];
-    if (typeof state.resolve === 'function') {
-      const resolver = state.resolve;
+    if (typeof state.reject === 'function') {
+      const rejecter = state.reject;
       state.resolve = null;
-      resolver('skip');
+      state.reject = null;
+      rejecter(skipError);
     }
   });
   overlaySpeechStates.clear();
@@ -417,6 +464,15 @@ function handleKeyDown(event) {
       sceneState.skipCurrentLevel();
     } else {
       requestSkip();
+    }
+    return;
+  }
+  if (event.key === 'Escape') {
+    event.preventDefault();
+    if (typeof sceneState.skipCurrentLevel === 'function') {
+      sceneState.skipCurrentLevel('skip');
+    } else {
+      requestSkip('skip');
     }
     return;
   }
@@ -797,7 +853,7 @@ function processWaiters() {
   for (const waiter of Array.from(activeWaiters)) {
     if (sceneState.skipRequested && waiter.abortOnSkip !== false) {
       activeWaiters.delete(waiter);
-      waiter.resolve('skip');
+      waiter.reject?.(ensureSkipSignal());
       continue;
     }
     if (typeof waiter.condition === 'function' && waiter.condition()) {
@@ -813,12 +869,12 @@ function getWizardCenterX() {
   return wizard.x + width / 2;
 }
 
-function resolveWaitersOnSkip() {
+function resolveWaitersOnSkip(skipError) {
   if (activeWaiters.size === 0) return;
   for (const waiter of Array.from(activeWaiters)) {
     if (waiter.abortOnSkip === false) continue;
     activeWaiters.delete(waiter);
-    waiter.resolve('skip');
+    waiter.reject?.(ensureSkipSignal(skipError));
   }
 }
 function pickSkyColor(stops, y) {
@@ -1143,7 +1199,7 @@ function updateCamera() {
 }
 function createPromptBubble(x1, y1, text, x2, y2) {
   if (sceneState.skipRequested) {
-    return Promise.resolve('skip');
+    return Promise.reject(ensureSkipSignal());
   }
   if (activePrompt) {
     throw new Error('promptBubble already active');
@@ -1159,7 +1215,7 @@ function createPromptBubble(x1, y1, text, x2, y2) {
   questState.charDelaySlow = 0;
   questState.charDelayFast = 0;
   questState.holdDuration = Number.POSITIVE_INFINITY;
-  beginSpeech(questState, textRenderer, TEXT_WRAP, anchorQuestX, anchorQuestY, text);
+  beginSpeech(questState, textRenderer, TEXT_WRAP, anchorQuestX, anchorQuestY, text).catch(() => {});
   questState.visible = questState.totalChars;
   questState.locked = true;
   overlaySpeechStates.add(questState);
@@ -1196,7 +1252,7 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     donkey.vx = 0;
   }
   activePrompt = state;
-  sceneState.cancelPrompt = result => detach(result ?? 'skip', false);
+  sceneState.cancelPrompt = reason => detach(reason ?? ensureSkipSignal(), true);
 
   const promise = new Promise((resolve, reject) => {
     state.resolve = resolve;
@@ -1215,7 +1271,11 @@ function createPromptBubble(x1, y1, text, x2, y2) {
 
     if (key === 'Escape') {
       event.preventDefault();
-      detach('', true);
+      if (typeof sceneState.skipCurrentLevel === 'function') {
+        sceneState.skipCurrentLevel('skip');
+      } else {
+        requestSkip('skip');
+      }
       return;
     }
 
@@ -1255,7 +1315,7 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     activePrompt = null;
     sceneState.cancelPrompt = null;
     if (isReject) {
-      state.reject(result);
+      state.reject(ensureSkipSignal(result));
     } else {
       state.resolve(result);
     }

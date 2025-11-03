@@ -19,7 +19,6 @@ import {
   anchorY,
   wizard,
   donkey,
-  isSkipRequested,
   normalizeHebrewInput,
   applySceneConfig,
   RIVER_SCENE,
@@ -35,32 +34,24 @@ export async function runLevelTwo() {
   applySceneConfig({ ...RIVER_SCENE, props: riverProps }, { setAmbience: false });
   ensureAmbience(plan?.review ?? RIVER_SCENE.ambience ?? 'riverDawn');
   setSceneContext({ level: 'level2', phase: 'review' });
-  const titleResult = await showLevelTitle('Level 2 - Das Wasser\ndes Lebens');
-  if (titleResult === 'skip' || isSkipRequested()) return 'skip';
+  await showLevelTitle('Level 2 - Das Wasser\ndes Lebens');
   await fadeToBase(600);
 
-  if (isSkipRequested()) return 'skip';
-  const recall = await phaseOneRecall(plan);
-  if (recall === 'skip' || isSkipRequested()) return 'skip';
-  const travel = await phaseTravelToWater(plan, riverProps);
-  if (travel === 'skip' || isSkipRequested()) return 'skip';
-  const learn = await phaseTwoLearning(plan);
-  if (learn === 'skip' || isSkipRequested()) return 'skip';
-  const apply = await phaseThreeApplication(plan, riverProps);
-  if (apply === 'skip' || isSkipRequested()) return 'skip';
+  await phaseOneRecall(plan);
+  await phaseTravelToWater(plan, riverProps);
+  await phaseTwoLearning(plan);
+  await phaseThreeApplication(plan, riverProps);
   setSceneProps([]);
 }
 
 
 async function phaseOneRecall(plan) {
-  if (isSkipRequested()) return 'skip';
   await narratorSay('Das Licht aus der Huette folgt dir – doch vor dir liegt Dunkel im Nebel.');
   await donkeySay('Der Nebel verschluckt das Licht. Ruf es noch einmal, so wie vorhin.');
   await wizardSay('Ich erinnere mich ... das Wort AO R.');
 
   let attempts = 0;
   while (true) {
-    if (isSkipRequested()) return 'skip';
     const answerInput = await promptBubble(
       anchorX(wizard, -12),
       anchorY(wizard, -58),
@@ -68,7 +59,6 @@ async function phaseOneRecall(plan) {
       anchorX(wizard, -8),
       anchorY(wizard, -32)
     );
-    if (answerInput === 'skip') return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
     if (spellEquals(answer, 'or', 'אור')) {
@@ -87,22 +77,17 @@ async function phaseOneRecall(plan) {
 }
 
 async function phaseTravelToWater(plan, riverProps) {
-  if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'travel' });
   await transitionAmbience(plan?.learn ?? 'riverDawn', { fade: { toBlack: 120, toBase: 420 } });
-  if (isSkipRequested()) return 'skip';
   applySceneConfig({ ...RIVER_SCENE, props: riverProps }, { setAmbience: false, position: false });
   await donkeySay('Komm, Meister – geh weiter bis das Wasser direkt vor dir liegt.');
-  if (isSkipRequested()) return 'skip';
   const bounds = getScenePropBounds(RIVER_PROP_ID);
   const target = bounds ? bounds.left + bounds.width * 0.3 : RIVER_X;
-  const reached = await waitForWizardToReach(target, { tolerance: 14 });
-  if (reached === 'skip' || isSkipRequested()) return 'skip';
+  await waitForWizardToReach(target, { tolerance: 14 });
   await narratorSay('Jetzt rauscht der Fluss zu deinen Fuessen.');
 }
 
 async function phaseTwoLearning(plan) {
-  if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'learning' });
   await wizardSay('Das Licht reicht nicht weit genug. Der Fluss bleibt wild.');
   await donkeySay('Dann brauchst du ein neues Wort, Meister. Geschrieben mim – gesprochen ma-im. Es bedeutet Wasser.');
@@ -111,7 +96,6 @@ async function phaseTwoLearning(plan) {
 
   let attempts = 0;
   while (true) {
-    if (isSkipRequested()) return 'skip';
     const answerInput = await promptBubble(
       anchorX(wizard, -10),
       anchorY(wizard, -58),
@@ -119,7 +103,6 @@ async function phaseTwoLearning(plan) {
       anchorX(wizard, -6),
       anchorY(wizard, -30),
     );
-    if (answerInput === 'skip') return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
@@ -141,14 +124,12 @@ async function phaseTwoLearning(plan) {
 }
 
 async function phaseThreeApplication(plan, riverProps) {
-  if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'apply' });
   await narratorSay('Die Bruecke traegt dich. Doch mitten auf dem Fluss klafft eine Luecke.');
   await narratorSay('Der Fluss wartet auf dein Wort, bevor er dich weiter traegt.');
 
   let filled = false;
   while (!filled) {
-    if (isSkipRequested()) return 'skip';
     const answerInput = await promptBubble(
       anchorX(wizard, 24),
       anchorY(wizard, -52),
@@ -156,7 +137,6 @@ async function phaseThreeApplication(plan, riverProps) {
       anchorX(wizard, 18),
       anchorY(wizard, -24),
     );
-    if (answerInput === 'skip') return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
@@ -176,7 +156,6 @@ async function phaseThreeApplication(plan, riverProps) {
       }
       await transitionAmbience(plan?.apply ?? plan?.learn ?? 'riverDawn', { fade: { toBlack: 140, toBase: 420 } });
       await fadeToBlack(800);
-      if (isSkipRequested()) return 'skip';
     } else {
       await narratorSay('Das Wasser wartet noch. Hoere in den Fluss hinein und sprich es klar aus.');
     }

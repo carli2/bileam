@@ -142,12 +142,12 @@ export async function runFightLoop({
   while (state.attackerHP.current > 0 && state.defenderHP.current > 0) {
     if (state.turn === 'player') {
       const spellInput = await promptPlayerSpell?.({ playerHP: state.attackerHP.current, enemyHP: state.defenderHP.current });
-      if (spellInput === 'skip') {
+      if (spellInput == null) {
         onEvent({ type: 'info', speaker: 'player', text: `${playerName} zaudert.` });
         state.turn = 'enemy';
         continue;
       }
-  const playerSpell = normalizeInput(spellInput);
+      const playerSpell = normalizeInput(spellInput);
       if (!playerSpell) {
         onEvent({ type: 'invalid', speaker: 'player', text: 'Der Zauber verfliegt wirkungslos.' });
         state.turn = 'enemy';

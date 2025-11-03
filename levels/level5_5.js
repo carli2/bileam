@@ -17,7 +17,6 @@ import {
   anchorY,
   wizard,
   donkey,
-  isSkipRequested,
   normalizeHebrewInput,
   applySceneConfig,
   cloneSceneProps,
@@ -148,39 +147,26 @@ export async function runLevelFiveFive() {
   ensureAmbience(plan?.review ?? 'echoChamber');
   setSceneContext({ level: 'level5_5', phase: 'arrival' });
   await fadeToBase(600);
-  if (isSkipRequested()) return 'skip';
 
   await narratorSay('Aus dem Staub der Schlucht formt sich ein Leib aus Stein – schwer, uralt, stumm.');
-  if (isSkipRequested()) return 'skip';
   await donkeySay('Ein Wächter. Er prüft, ob du verstanden hast, was Worte bewirken können.');
-  if (isSkipRequested()) return 'skip';
   await wizardSay('Wie besiegt man einen Stein?');
-  if (isSkipRequested()) return 'skip';
   await donkeySay('Mit Worten, nicht mit Fäusten. Aber merke: Worte kämpfen nicht – sie wirken.');
-  if (isSkipRequested()) return 'skip';
 
   let fightResult;
   do {
     fightResult = await executeFight();
-    if (fightResult === 'skip') return 'skip';
     if (fightResult === 'lose') {
-      if (isSkipRequested()) return 'skip';
       await narratorSay('Der Golem schüttelt das Licht ab. Du wirst zurück in die Schlucht gedrängt.');
-      if (isSkipRequested()) return 'skip';
       await fadeToBlack(420);
-      if (isSkipRequested()) return 'skip';
       ensureAmbience(plan?.review ?? 'echoChamber');
       await fadeToBase(420);
-      if (isSkipRequested()) return 'skip';
       await narratorSay('Staub formt den Wächter erneut. Versuche es noch einmal.');
-      if (isSkipRequested()) return 'skip';
     }
   } while (fightResult === 'lose');
 
   await narratorSay('Der Golem erstarrt. Moos wächst über seinen Leib, und die Schlucht wird still.');
-  if (isSkipRequested()) return 'skip';
   await donkeySay('Du hast nicht zerstört – du hast verstanden. Weiter nach Moab, Meister.');
-  if (isSkipRequested()) return 'skip';
   await fadeToBlack(480);
 }
 
@@ -189,7 +175,7 @@ async function executeFight() {
     if (!state) return;
     const barLines = buildLifeBarString(state.playerHP, state.playerMax, state.enemyHP, state.enemyMax).split('\n');
     const lifeText = `Bileam ${barLines[0] ?? ''}\nGolem ${barLines[1] ?? ''}`;
-    showLevelTitle(lifeText, 600);
+    showLevelTitle(lifeText, 600).catch(() => {});
   };
 
   const result = await runFightLoop({
@@ -225,8 +211,10 @@ async function promptSpellInput(promptText, allowSkip = false) {
     anchorX(wizard, 0),
     anchorY(wizard, -32),
   );
-  if (input === 'skip' || input === null) return allowSkip ? 'skip' : null;
   const normalized = normalizeHebrewInput(input);
+  if (!normalized && allowSkip) {
+    return null;
+  }
   return normalized || input;
 }
 

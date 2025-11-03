@@ -17,7 +17,6 @@ import {
   anchorY,
   wizard,
   donkey,
-  isSkipRequested,
   normalizeHebrewInput,
   applySceneConfig,
   cloneSceneProps,
@@ -32,11 +31,8 @@ export async function runLevelFour() {
   setSceneProps(cloneSceneProps(CANYON_SCENE.props));
   setSceneContext({ level: 'bridge', phase: 'between3and4' });
   await fadeToBase(800);
-  if (isSkipRequested()) return 'skip';
   await narratorSay('Der Klang der Schlucht hallt noch in dir nach, als der Pfad sich weitet.');
-  if (isSkipRequested()) return 'skip';
   await donkeySay('Hoer hin: Vor uns liegt Moab – Balaks Garten wartet.');
-  if (isSkipRequested()) return 'skip';
   await transitionAmbience(plan?.review ?? GARDEN_SCENE.ambience ?? 'gardenBloom', { fade: { toBlack: 220, toBase: 520 } });
 
   const gardenProps = cloneSceneProps(GARDEN_SCENE.props);
@@ -44,54 +40,38 @@ export async function runLevelFour() {
   applySceneConfig({ ...GARDEN_SCENE, props: gardenProps });
   setSceneContext({ level: 'level4', phase: 'review' });
 
-  const titleResult = await showLevelTitle('Level 4 -\nDer Garten der\nErneuerung');
-  if (titleResult === 'skip' || isSkipRequested()) return 'skip';
+  await showLevelTitle('Level 4 -\nDer Garten der\nErneuerung');
   await fadeToBase(600);
 
-  const intro = await phaseIntroduction();
-  if (intro === 'skip' || isSkipRequested()) return 'skip';
+  await phaseIntroduction();
 
-  const fountain = await phaseGardenFountain(plan, gardenProps);
-  if (fountain === 'skip' || isSkipRequested()) return 'skip';
+  await phaseGardenFountain(plan, gardenProps);
 
-  const sunStone = await phaseSunStone(plan, gardenProps);
-  if (sunStone === 'skip' || isSkipRequested()) return 'skip';
+  await phaseSunStone(plan, gardenProps);
 
-  const resonance = await phaseResonanceRock(plan, gardenProps);
-  if (resonance === 'skip' || isSkipRequested()) return 'skip';
+  await phaseResonanceRock(plan, gardenProps);
 
-  const revelation = await phaseXayimReveal(gardenProps);
-  if (revelation === 'skip' || isSkipRequested()) return 'skip';
+  await phaseXayimReveal(gardenProps);
 
-  const application = await phaseBreadOfLife(plan, gardenProps);
-  if (application === 'skip' || isSkipRequested()) return 'skip';
+  await phaseBreadOfLife(plan, gardenProps);
 
   await fadeToBlack(720);
 }
 
 async function phaseIntroduction() {
-  if (isSkipRequested()) return 'skip';
   await narratorSay('Am Tor von Moab ruht Balaks Garten – einst voller Leben, nun nur Staub.');
-  if (isSkipRequested()) return 'skip';
   await wizardSay('Was soll ich hier tun?');
-  if (isSkipRequested()) return 'skip';
   await donkeySay('Balak verlangt, dass du diesen Garten neu erblühen laesst.');
-  if (isSkipRequested()) return 'skip';
   await wizardSay('Mit Worten allein?');
-  if (isSkipRequested()) return 'skip';
   await donkeySay('Mit den richtigen Worten. Du kennst sie – findest du noch, wo sie hingehören?');
 }
 
 async function phaseGardenFountain(plan, props) {
-  if (isSkipRequested()) return 'skip';
   const fountainProp = findProp(props, 'gardenDryBasin');
   const target = fountainProp ? fountainProp.x + 26 : wizard.x + 120;
   await donkeySay('Sieh dir den Brunnen an, Meister – er ist nur noch Staub.');
-  if (isSkipRequested()) return 'skip';
-  const reach = await waitForWizardToReach(target, { tolerance: 40 });
-  if (reach === 'skip' || isSkipRequested()) return 'skip';
+  await waitForWizardToReach(target, { tolerance: 40 });
   await narratorSay('Der Brunnen ist ausgetrocknet. Auf dem Rand steht: "Durst löscht, wer das Fließen ruft."');
-  if (isSkipRequested()) return 'skip';
 
   let attempts = 0;
   while (true) {
@@ -102,7 +82,6 @@ async function phaseGardenFountain(plan, props) {
       anchorX(wizard, 0),
       anchorY(wizard, -36),
     );
-    if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       updateProp(props, 'gardenDryBasin', { type: 'fountainFilled' });
@@ -118,25 +97,19 @@ async function phaseGardenFountain(plan, props) {
     } else {
       attempts = 0;
       await fadeToBlack(160);
-      if (isSkipRequested()) return 'skip';
       ensureAmbience(plan?.review ?? GARDEN_SCENE.ambience ?? 'gardenBloom');
       await donkeySay('Erinner dich an den Fluss. Wie nanntest du das Wort, das ihn beruhigte?');
       await fadeToBase(320);
-      if (isSkipRequested()) return 'skip';
     }
   }
 }
 
 async function phaseSunStone(plan, props) {
-  if (isSkipRequested()) return 'skip';
   const sunProp = findProp(props, 'gardenSunStone');
   const target = sunProp ? sunProp.x + 30 : wizard.x + 160;
   await donkeySay('Dort steht der Sonnenstein. Ohne Morgenlicht bleibt er kalt.');
-  if (isSkipRequested()) return 'skip';
-  const reach = await waitForWizardToReach(target, { tolerance: 40 });
-  if (reach === 'skip' || isSkipRequested()) return 'skip';
+  await waitForWizardToReach(target, { tolerance: 40 });
   await narratorSay('Die Metallblüte ist geschlossen und kalt. Eine Inschrift flüstert: "Was kalt ist, wird warm durch den Hauch des Morgens."');
-  if (isSkipRequested()) return 'skip';
 
   let attempts = 0;
   while (true) {
@@ -147,7 +120,6 @@ async function phaseSunStone(plan, props) {
       anchorX(wizard, 2),
       anchorY(wizard, -34),
     );
-    if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
     if (spellEquals(answer, 'or', 'אור')) {
       updateProp(props, 'gardenSunStone', { type: 'sunStoneAwakened' });
@@ -161,25 +133,19 @@ async function phaseSunStone(plan, props) {
     } else {
       attempts = 0;
       await fadeToBlack(160);
-      if (isSkipRequested()) return 'skip';
       ensureAmbience(plan?.learn ?? GARDEN_SCENE.ambience ?? 'gardenBloom');
       await narratorSay('Rueckblende: Die Huette, in der du erstmals אור gesprochen hast.');
       await fadeToBase(320);
-      if (isSkipRequested()) return 'skip';
     }
   }
 }
 
 async function phaseResonanceRock(plan, props) {
-  if (isSkipRequested()) return 'skip';
   const rockProp = findProp(props, 'gardenEchoRock');
   const target = rockProp ? rockProp.x + 24 : wizard.x + 180;
   await donkeySay('Hoer auf den Felsen am Rand – er atmet.');
-  if (isSkipRequested()) return 'skip';
-  const reach = await waitForWizardToReach(target, { tolerance: 36 });
-  if (reach === 'skip' || isSkipRequested()) return 'skip';
+  await waitForWizardToReach(target, { tolerance: 36 });
   await narratorSay('Der Stein brummt tief, als hielte er die Luft an.');
-  if (isSkipRequested()) return 'skip';
   await narratorSay('In den Rissen glimmt ein Wort: "Ich öffne mich nur, wenn man mich hört."');
 
   let attempts = 0;
@@ -191,7 +157,6 @@ async function phaseResonanceRock(plan, props) {
       anchorX(wizard, 2),
       anchorY(wizard, -32),
     );
-    if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
     if (spellEquals(answer, 'qol', 'קול')) {
       updateProp(props, 'gardenEchoRock', { type: 'resonanceRockAwakened' });
@@ -205,23 +170,18 @@ async function phaseResonanceRock(plan, props) {
     } else {
       attempts = 0;
       await fadeToBlack(160);
-      if (isSkipRequested()) return 'skip';
       ensureAmbience(plan?.learn ?? GARDEN_SCENE.ambience ?? 'gardenBloom');
       await narratorSay('Rueckblende: Die Schlucht, in der du קול gelernt hast.');
       await fadeToBase(300);
-      if (isSkipRequested()) return 'skip';
     }
   }
 }
 
 async function phaseXayimReveal(props) {
-  if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'revelation' });
   addProp(props, { id: 'gardenGlyph', type: 'waterGlyph', x: wizard.x + 60, y: wizard.y - 10, parallax: 0.8 });
   await narratorSay('Licht, Wasser und Klang verweben sich. Eine neue Glyphe entsteht im Boden.');
-  if (isSkipRequested()) return 'skip';
   await donkeySay('Das ist חַיִּים – xayim. Es bedeutet Leben... und Brot.');
-  if (isSkipRequested()) return 'skip';
 
   let attempts = 0;
   while (true) {
@@ -232,7 +192,6 @@ async function phaseXayimReveal(props) {
       anchorX(wizard, 0),
       anchorY(wizard, -34),
     );
-    if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
     if (spellEquals(answer, 'xayim', 'חיים', 'חַיִּים')) {
       updateProp(props, 'gardenGlyph', { type: 'soundGlyph' });
@@ -256,33 +215,26 @@ async function phaseXayimReveal(props) {
 }
 
 async function phaseBreadOfLife(plan, props) {
-  if (isSkipRequested()) return 'skip';
   setSceneContext({ phase: 'apply' });
   const wheat = findProp(props, 'gardenWheatBundle');
   const altar = findProp(props, 'gardenAltar');
 
   if (wheat) {
     await donkeySay('Siehst du die goldenen Aehren dort? Sammle sie ein.');
-    if (isSkipRequested()) return 'skip';
-    const reachWheat = await waitForWizardToReach(wheat.x + 10, { tolerance: 12 });
-    if (reachWheat === 'skip' || isSkipRequested()) return 'skip';
+    await waitForWizardToReach(wheat.x + 10, { tolerance: 12 });
     await narratorSay('Du sammelst die Aehren behutsam ein; sie fuehlen sich warm an.');
     updateProp(props, 'gardenWheatBundle', { type: 'gardenWheatHarvested' });
   }
 
   if (altar) {
     await donkeySay('Bring die Aehren zum Altar und lege sie dort ab.');
-    if (isSkipRequested()) return 'skip';
-    const reachAltar = await waitForWizardToReach(altar.x + 16, { tolerance: 12 });
-    if (reachAltar === 'skip' || isSkipRequested()) return 'skip';
+    await waitForWizardToReach(altar.x + 16, { tolerance: 12 });
     addProp(props, { id: 'gardenBreadLight', type: 'gardenBreadLight', x: altar.x + 8, y: altar.y - 18, parallax: 0.95 });
     await narratorSay('Die Aehren legen sich zu einem einfachen Brot. Licht und Erde backen es zusammen.');
   }
 
   await donkeySay('Wer Leben spricht, saet Brot. Und wer Brot teilt, spricht Leben.');
-  if (isSkipRequested()) return 'skip';
   await wizardSay('Ich habe mit Worten Brot gemacht.');
-  if (isSkipRequested()) return 'skip';
   await donkeySay('Oder Brot hat dich gemacht. Wer weiss das schon?');
   await transitionAmbience(plan?.apply ?? plan?.learn ?? GARDEN_SCENE.ambience ?? 'gardenBloom', { fade: { toBlack: 180, toBase: 420 } });
 }

@@ -173,7 +173,7 @@ export function layoutText(text, textRenderer, wrapLimit) {
 }
 
 export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text, options = {}) {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     const now = performance.now();
     const { lines, sequence, lineLengths, maxLineLength } = layoutText(text, textRenderer, wrapLimit);
 
@@ -214,6 +214,7 @@ export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text, op
     speechState.acknowledged = false;
     speechState.awaitingAck = false;
     speechState.resolve = resolve;
+    speechState.reject = reject;
   });
 }
 
@@ -268,6 +269,8 @@ export function updateSpeechState(speechState, time) {
   speechState.holdDuration = speechState.defaultHoldDuration;
   const resolve = speechState.resolve;
   speechState.resolve = null;
+  const reject = speechState.reject;
+  speechState.reject = null;
   if (resolve) resolve();
 }
 
@@ -481,6 +484,7 @@ export function createSpeechState() {
     acknowledged: false,
     awaitingAck: false,
     resolve: null,
+    reject: null,
   };
 }
 

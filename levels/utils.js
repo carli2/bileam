@@ -1,11 +1,4 @@
-import {
-  say,
-  wizard,
-  donkey,
-  isSkipRequested,
-  setSceneProps,
-  ensureAmbience,
-} from '../scene.js';
+import { say, wizard, donkey, setSceneProps, ensureAmbience } from '../scene.js';
 
 function actorSprite(actor) {
   return actor.sprites?.right ?? actor.sprites?.left;
@@ -34,7 +27,6 @@ export function anchorY(actor, offset = -28) {
 }
 
 export function narratorSay(text) {
-  if (isSkipRequested()) return Promise.resolve();
   return say(
     () => (actorCenterX(wizard) + actorCenterX(donkey)) / 2,
     () => Math.min(actorTopY(wizard), actorTopY(donkey)) - 70,
@@ -43,7 +35,6 @@ export function narratorSay(text) {
 }
 
 export function wizardSay(text) {
-  if (isSkipRequested()) return Promise.resolve();
   return say(
     anchorX(wizard),
     () => actorBubbleY(wizard, -46),
@@ -52,7 +43,6 @@ export function wizardSay(text) {
 }
 
 export function donkeySay(text) {
-  if (isSkipRequested()) return Promise.resolve();
   return say(
     anchorX(donkey),
     () => actorBubbleY(donkey, -40),
@@ -153,4 +143,4 @@ export function cloneSceneProps(definitions = []) {
   return Array.isArray(definitions) ? definitions.map(def => ({ ...def })) : [];
 }
 
-export { wizard, donkey, isSkipRequested } from '../scene.js';
+export { wizard, donkey } from '../scene.js';
