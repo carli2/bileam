@@ -50,6 +50,25 @@ export function createPalette() {
     textPrimary: [245, 244, 254],
     bubbleFill: [22, 28, 52],
     bubbleBorder: [118, 200, 255],
+    hutShadow: [20, 18, 34],
+    hutWall: [116, 92, 68],
+    hutFloor: [82, 58, 40],
+    hutGlow: [210, 168, 112],
+    dawnSkyTop: [52, 72, 122],
+    dawnSkyMid: [104, 120, 168],
+    dawnSkyBottom: [176, 152, 122],
+    riverWater: [48, 92, 160],
+    caveStone: [54, 56, 76],
+    gardenLeaf: [72, 150, 92],
+    desertSand: [204, 178, 120],
+    lavaGlow: [220, 96, 52],
+    marketFabric: [186, 84, 128],
+    towerGlass: [132, 164, 206],
+    courtMarble: [208, 204, 198],
+    sanctumSky: [140, 122, 190],
+    nightSkyTop: [18, 26, 48],
+    nightSkyMid: [34, 44, 74],
+    nightSkyBottom: [58, 70, 104],
   };
 
   for (const [name, rgb] of Object.entries(targets)) {
@@ -595,4 +614,3 @@ function nearestColorIndex(target, palette) {
   }
   return bestIndex;
 }
-
