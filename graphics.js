@@ -128,28 +128,34 @@ export function createPaletteFader(retroPalette, transparentIndex) {
   };
 }
 
+export function layoutText(text, textRenderer, wrapLimit) {
+  const lines = wrapText(String(text ?? ''), wrapLimit);
+  const sequence = [];
+  const lineLengths = [];
+  let maxLineLength = 0;
+
+  for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+    const line = lines[lineIndex];
+    let column = 0;
+    for (const { chars, hebrew } of segmentLine(line)) {
+      const drawChars = hebrew ? [...chars].reverse() : chars;
+      for (const rawChar of drawChars) {
+        const glyphChar = mapGlyphChar(rawChar, textRenderer.glyphs);
+        sequence.push({ line: lineIndex, column, char: glyphChar });
+        column++;
+      }
+    }
+    maxLineLength = Math.max(maxLineLength, column);
+    lineLengths[lineIndex] = column;
+  }
+
+  return { lines, sequence, lineLengths, maxLineLength };
+}
+
 export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text, options = {}) {
   return new Promise(resolve => {
     const now = performance.now();
-    const lines = wrapText(String(text ?? ''), wrapLimit);
-    const sequence = [];
-    const lineLengths = [];
-    let maxLineLength = 0;
-
-    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-      const line = lines[lineIndex];
-      let column = 0;
-      for (const { chars, hebrew } of segmentLine(line)) {
-        const drawChars = hebrew ? [...chars].reverse() : chars;
-        for (const rawChar of drawChars) {
-          const glyphChar = mapGlyphChar(rawChar, textRenderer.glyphs);
-          sequence.push({ line: lineIndex, column, char: glyphChar });
-          column++;
-        }
-      }
-      maxLineLength = Math.max(maxLineLength, column);
-      lineLengths[lineIndex] = column;
-    }
+    const { lines, sequence, lineLengths, maxLineLength } = layoutText(text, textRenderer, wrapLimit);
 
     const charWidth = textRenderer.width;
     const charSpacing = textRenderer.spacing;
@@ -286,8 +292,24 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
 
   const textStartX = bubbleX + speechState.paddingX;
   const textStartY = bubbleY + speechState.paddingY;
-  const charAdvance = textRenderer.width + textRenderer.spacing;
+  const charSpacing = textRenderer.spacing;
+  const charAdvance = textRenderer.width + charSpacing;
   const lineAdvance = textRenderer.height + textRenderer.lineSpacing;
+  const lineLengths = speechState.lineLengths || [];
+  const align = speechState.align || 'ltr';
+
+  const lineOffsets = [];
+  const totalLines = speechState.lines ? speechState.lines.length : 0;
+  for (let lineIndex = 0; lineIndex < totalLines; lineIndex++) {
+    const length = lineLengths[lineIndex] ?? 0;
+    if (align === 'rtl') {
+      const lineWidth = length > 0 ? length * charAdvance - charSpacing : 0;
+      const base = bubbleX + speechState.width - speechState.paddingX - lineWidth;
+      lineOffsets[lineIndex] = Math.max(textStartX, base);
+    } else {
+      lineOffsets[lineIndex] = textStartX;
+    }
+  }
 
   for (let i = 0; i < speechState.visible && i < speechState.sequence.length; i++) {
     const node = speechState.sequence[i];
@@ -295,7 +317,8 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
     const glyph = textRenderer.glyphs[node.char];
     if (!glyph) continue;
 
-    const gx = Math.round(textStartX + node.column * charAdvance);
+    const baseX = lineOffsets[node.line] ?? textStartX;
+    const gx = Math.round(baseX + node.column * charAdvance);
     const gy = textStartY + node.line * lineAdvance;
     blitSprite(buffer, glyph, gx, gy, { transparent: colors.transparent });
   }
@@ -413,6 +436,7 @@ export function createSpeechState() {
     charDelay: 60,
     holdDuration: 1400,
     defaultHoldDuration: 1400,
+    align: 'ltr',
     lines: [],
     lineLengths: [],
     sequence: [],
@@ -600,35 +624,35 @@ function getGlyphPatterns() {
     Y: ['#...#', '#...#', '.#.#.', '..#..', '..#..', '..#..', '..#..'],
     Z: ['#####', '....#', '...#.', '..#..', '.#...', '#....', '#####'],
     Ö: ['.#.#.', '.###.', '#...#', '#...#', '#...#', '#...#', '.###.'],
-    '(': ['.##..', '..#..', '..#..', '..#..', '..#..', '..#..', '.##..'],
-    ')': ['..##.', '..#..', '..#..', '..#..', '..#..', '..#..', '..##.'],
-    א: ['#...#', '##.##', '.###.', '..#..', '.#.#.', '.#.#.', '#...#'],
-    ב: ['####.', '#...#', '#...#', '####.', '#....', '#....', '####.'],
-    ג: ['####.', '....#', '....#', '...##', '...#.', '..#..', '.##..'],
-    ד: ['####.', '#...#', '#...#', '#...#', '#...#', '#...#', '###..'],
-    ה: ['#####', '#....', '#....', '#####', '#...#', '#...#', '#...#'],
-    ו: ['..##.', '...#.', '...#.', '...#.', '...#.', '...#.', '..##.'],
-    ז: ['#####', '....#', '...#.', '..#..', '.#...', '#....', '#####'],
+    '(': ['.##..', '##...', '#....', '#....', '#....', '##...', '.##..'],
+    ')': ['..##.', '...##', '....#', '....#', '....#', '...##', '..##.'],
+    א: ['##..#', '.#..#', '.#.#.', '..##.', '.#.#.', '.#..#', '#...#'],
+    ב: ['#####', '....#', '....#', '#####', '#....', '#....', '#####'],
+    ג: ['.####', '....#', '....#', '....#', '....#', '..#..', '###..'],
+    ד: ['#####', '....#', '....#', '....#', '....#', '....#', '###.#'],
+    ה: ['#####', '....#', '....#', '#####', '....#', '....#', '#####'],
+    ו: ['..##.', '...#.', '...#.', '...#.', '...#.', '...#.', '...#.'],
+    ז: ['#####', '...#.', '..#..', '.#...', '.#...', '#....', '#####'],
     ח: ['#...#', '#...#', '#...#', '#####', '#...#', '#...#', '#...#'],
     ט: ['.###.', '#...#', '#.#.#', '#.#.#', '#.#.#', '#...#', '.###.'],
-    י: ['..###', '...#.', '...#.', '...#.', '...#.', '...#.', '..##.'],
-    כ: ['###..', '#....', '#....', '#....', '#....', '#...#', '.###.'],
-    ך: ['###..', '..#..', '..#..', '..#..', '..#..', '..#..', '.##..'],
-    ל: ['...#.', '...#.', '...#.', '...#.', '#..#.', '#..#.', '.###.'],
-    מ: ['#...#', '##..#', '#.#.#', '#.#.#', '#.#.#', '#.#.#', '#...#'],
+    י: ['....#', '....#', '....#', '....#', '....#', '....#', '....#'],
+    כ: ['.####', '....#', '....#', '....#', '....#', '....#', '###.#'],
+    ך: ['...##', '....#', '....#', '....#', '....#', '....#', '###.#'],
+    ל: ['...##', '....#', '....#', '....#', '....#', '###.#', '##..#'],
+    מ: ['#####', '#...#', '##..#', '#.#.#', '#.#.#', '#...#', '#####'],
     ם: ['#####', '#...#', '#...#', '#...#', '#...#', '#...#', '#####'],
-    נ: ['#....', '#....', '#....', '#....', '#....', '#...#', '.###.'],
-    ן: ['##...', '.#...', '.#...', '.#...', '.#...', '.#...', '.##..'],
-    ס: ['.###.', '#...#', '#.#.#', '#.#.#', '#.#.#', '#...#', '.###.'],
-    ע: ['#...#', '#...#', '#....', '#....', '#...#', '##..#', '#.##.'],
-    פ: ['.###.', '#...#', '#...#', '####.', '#...#', '#....', '.###.'],
-    ף: ['.###.', '#...#', '#...#', '####.', '...#.', '...#.', '..##.'],
-    צ: ['#...#', '.#.#.', '.#.#.', '..#..', '..#..', '..#..', '..#..'],
-    ץ: ['#...#', '.#.#.', '..#..', '..#..', '..#..', '..#..', '.##..'],
-    ק: ['.###.', '#...#', '#...#', '.##.#', '...##', '...#.', '.###.'],
-    ר: ['####.', '#...#', '#...#', '#...#', '#....', '#....', '#....'],
+    נ: ['....#', '....#', '....#', '....#', '....#', '###.#', '##..#'],
+    ן: ['....#', '....#', '....#', '....#', '....#', '....#', '....#'],
+    ס: ['.###.', '#...#', '#...#', '#...#', '#...#', '#...#', '.###.'],
+    ע: ['.###.', '#...#', '#...#', '##..#', '#.#.#', '#..#.', '#....'],
+    פ: ['.###.', '#...#', '#...#', '#####', '....#', '....#', '.###.'],
+    ף: ['.###.', '#...#', '#####', '....#', '....#', '....#', '....#'],
+    צ: ['#...#', '.#..#', '.#.#.', '..##.', '...#.', '...#.', '###..'],
+    ץ: ['#...#', '.#..#', '..##.', '...#.', '...#.', '...#.', '...#.'],
+    ק: ['.###.', '#...#', '#...#', '#...#', '.####', '...#.', '.###.'],
+    ר: ['.####', '....#', '....#', '....#', '....#', '....#', '....#'],
     ש: ['#.#.#', '#.#.#', '#.#.#', '#####', '#.#.#', '#.#.#', '#.#.#'],
-    ת: ['#####', '#...#', '#...#', '#...#', '#.#.#', '#.#.#', '#.#.#'],
+    ת: ['#####', '#...#', '#...#', '#...#', '#...#', '#...#', '#...#'],
     '|': ['..#..', '..#..', '..#..', '..#..', '..#..', '..#..', '..#..'],
   };
 }

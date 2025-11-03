@@ -9,9 +9,8 @@ import {
   beginSpeech,
   updateSpeechState,
   renderSpeechBubble,
+  layoutText,
   acknowledgeSpeech,
-  wrapText,
-  mapGlyphChar,
   clamp,
 } from './graphics.js';
 import { transliterateToHebrew } from './game.helpers.js';
@@ -421,6 +420,7 @@ function promptBubble(x1, y1, text, x2, y2) {
   inputState.holdDuration = Number.POSITIVE_INFINITY;
   inputState.anchor = { x: anchorInputX, y: anchorInputY };
   inputState.locked = true;
+  inputState.align = 'rtl';
   overlaySpeechStates.add(inputState);
 
   const bufferChars = [];
@@ -464,23 +464,13 @@ function promptBubble(x1, y1, text, x2, y2) {
     const ascii = bufferChars.join('');
     const hebrew = transliterateToHebrew(ascii);
     state.transliterated = hebrew;
-    const cursorChar = state.cursorVisible ? '|' : ' ';
-    let display;
-    if (hebrew.length > 0) {
-      display = hebrew + cursorChar;
-    } else {
-      display = cursorChar;
-    }
-    const lines = wrapText(display, TEXT_WRAP);
-    const sequence = [];
-    let maxLineLength = 0;
-    for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
-      const line = lines[lineIndex];
-      maxLineLength = Math.max(maxLineLength, line.length);
-      for (let column = 0; column < line.length; column++) {
-        const glyphChar = mapGlyphChar(line[column], textRenderer.glyphs) || ' ';
-        sequence.push({ line: lineIndex, column, char: glyphChar });
-      }
+    const display = '|' + hebrew;
+    const { lines, sequence, lineLengths, maxLineLength } = layoutText(display, textRenderer, TEXT_WRAP);
+
+    const cursorGlyph = state.cursorVisible ? '|' : ' ';
+    const cursorNode = sequence.find(node => node.line === 0 && node.column === 0);
+    if (cursorNode) {
+      cursorNode.char = cursorGlyph;
     }
 
     const charWidth = textRenderer.width;
@@ -493,6 +483,7 @@ function promptBubble(x1, y1, text, x2, y2) {
     const textHeight = lines.length > 0 ? lines.length * lineAdvance - lineSpacing : 0;
 
     inputState.lines = lines;
+    inputState.lineLengths = lineLengths;
     inputState.sequence = sequence;
     inputState.totalChars = sequence.length;
     inputState.visible = sequence.length;
