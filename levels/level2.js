@@ -11,7 +11,6 @@ import {
   getScenePropBounds,
   waitForWizardToReach,
 } from '../scene.js';
-import { transliterateToHebrew } from '../game.helpers.js';
 import {
   narratorSay,
   wizardSay,
@@ -25,10 +24,8 @@ import {
   applySceneConfig,
   RIVER_SCENE,
   cloneSceneProps,
+  spellEquals,
 } from './utils.js';
-
-const WORD_AOR = transliterateToHebrew('aor');
-const WORD_MIM = transliterateToHebrew('mim');
 const RIVER_PROP_ID = RIVER_SCENE.props?.[0]?.id ?? 'riverPool';
 const RIVER_X = RIVER_SCENE.props?.[0]?.x ?? 620;
 
@@ -74,7 +71,7 @@ async function phaseOneRecall(plan) {
     if (answerInput === 'skip') return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
-    if (answer === WORD_AOR) {
+    if (spellEquals(answer, 'or', 'אור')) {
       await narratorSay('Das Licht legt eine Spur nach draussen.');
       break;
     }
@@ -125,7 +122,7 @@ async function phaseTwoLearning(plan) {
     if (answerInput === 'skip') return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
-    if (answer === WORD_MIM) {
+    if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       await narratorSay('Das Wasser beruhigt sich, Nebel hebt sich. Planken steigen aus der Tiefe.');
       break;
     }
@@ -162,7 +159,7 @@ async function phaseThreeApplication(plan, riverProps) {
     if (answerInput === 'skip') return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
-    if (answer === WORD_MIM) {
+    if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       filled = true;
       await narratorSay('Eine transparente Welle hebt dich sanft an und traegt dich ans andere Ufer.');
       await donkeySay('Gut gemacht, Meister. Worte fliessen – und wer sie kennt, kann Stroeme lenken.');

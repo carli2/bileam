@@ -30,8 +30,6 @@ const FINAL_FORMS = {
   'צ': 'ץ',
 };
 
-const START_VOWELS = new Set(['o', 'u', 'i']);
-
 function isLetter(char) {
   return /^[a-z]$/i.test(char);
 }
@@ -40,12 +38,10 @@ export function transliterateToHebrew(input) {
   if (!input) return '';
   const ascii = input.toLowerCase();
   const result = [];
-  let prevWasSpace = true;
 
   for (const ch of ascii) {
     if (ch === ' ') {
       result.push(' ');
-      prevWasSpace = true;
       continue;
     }
 
@@ -53,45 +49,29 @@ export function transliterateToHebrew(input) {
       continue;
     }
 
-    if (prevWasSpace && START_VOWELS.has(ch)) {
-      result.push('א');
-      prevWasSpace = false;
-    }
-
     switch (ch) {
       case 'a':
         result.push('א');
-        prevWasSpace = false;
         break;
       case 'o':
         result.push('ו');
-        prevWasSpace = false;
         break;
       case 'u':
         result.push('ו');
-        prevWasSpace = false;
         break;
       case 'i':
-        result.push('א');
         result.push('י');
-        prevWasSpace = false;
         break;
       case 'j':
         result.push('י');
-        prevWasSpace = false;
         break;
       case 'e':
         result.push('ע');
-        prevWasSpace = false;
         break;
       default: {
         const letter = BASE_CONSONANTS[ch];
         if (letter) {
-          if (prevWasSpace && (letter === 'י' || letter === 'ו')) {
-            result.push('א');
-          }
           result.push(letter);
-          prevWasSpace = false;
         }
         break;
       }

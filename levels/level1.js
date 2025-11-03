@@ -12,7 +12,6 @@ import {
   getScenePropBounds,
   waitForWizardToReach,
 } from '../scene.js';
-import { transliterateToHebrew } from '../game.helpers.js';
 import {
   narratorSay,
   wizardSay,
@@ -25,9 +24,8 @@ import {
   normalizeHebrewInput,
   applySceneConfig,
   RIVER_SCENE,
+  spellEquals,
 } from './utils.js';
-
-const WORD_AOR = transliterateToHebrew('aor');
 const HUT_DOOR_ID = 'hutDoor';
 const HUT_DOOR_X = 252;
 
@@ -88,7 +86,7 @@ async function levelOneLearning(plan) {
     if (input === 'skip') return 'skip';
 
     const answer = normalizeHebrewInput(input);
-    if (answer === WORD_AOR) {
+    if (spellEquals(answer, 'or', 'אור')) {
       if (!illuminated) {
         setSceneContext({ phase: 'illumination' });
         await transitionAmbience(plan?.illumination ?? 'hutInteriorLit', {
@@ -122,7 +120,7 @@ async function levelOneLearning(plan) {
 async function levelOneRecap() {
   if (isSkipRequested()) return;
   setSceneContext({ phase: 'introduction' });
-  await donkeySay('AO R bedeutet Licht. Stell es dir wie eine kleine Sonne in der Hand vor.');
+  await donkeySay('OR bedeutet Licht. Stell es dir wie eine kleine Sonne in der Hand vor.');
   await wizardSay('Ich spreche es diesmal lauter.');
   setSceneContext({ phase: 'learning' });
 }

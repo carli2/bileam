@@ -61,8 +61,18 @@ export function donkeySay(text) {
 }
 
 export function normalizeHebrewInput(value) {
-  if (!value) return '';
-  return value.replace(/\s+/g, '');
+  if (value == null) return '';
+  return String(value)
+    .normalize('NFC')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '');
+}
+
+export function spellEquals(answer, ...variants) {
+  const normalized = normalizeHebrewInput(answer);
+  if (!variants || variants.length === 0) return false;
+  return variants.some(option => normalizeHebrewInput(option) === normalized);
 }
 
 export const RIVER_SCENE = {

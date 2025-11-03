@@ -16,6 +16,7 @@ import { runLevelOne } from './levels/level1.js';
 import { runLevelTwo } from './levels/level2.js';
 import { runLevelThree } from './levels/level3.js';
 import { runLevelFour } from './levels/level4.js';
+import { runLevelFiveFive } from './levels/level5_5.js';
 
 startScene(mainFlow);
 
@@ -24,6 +25,7 @@ const LEVELS = [
   { id: 'level2', run: runLevelTwo },
   { id: 'level3', run: runLevelThree },
   { id: 'level4', run: runLevelFour },
+  { id: 'level5_5', run: runLevelFiveFive },
 ];
 
 const STORAGE_KEY = 'bileamProgress';
@@ -60,19 +62,30 @@ async function mainFlow() {
 
   for (let index = 0; index < LEVELS.length; index++) {
     const entry = LEVELS[index];
-    const result = await runLevel(entry, index, progress);
-    if (result === 'skip') {
-      if (index === LEVELS.length - 1) {
-        endingState = 'skip';
+    let levelStatus;
+    do {
+      levelStatus = await runLevel(entry, index, progress);
+      if (levelStatus === 'restart') {
+        continue;
+      }
+      if (levelStatus === 'skipNext') {
+        if (index === LEVELS.length - 1) {
+          endingState = 'skip';
+        }
         break;
       }
-      continue;
-    }
-    endingState = result;
-    if (endingState === 'completed' && progress.highestLevel < index) {
-      progress.highestLevel = index;
-      progress.known = true;
-      saveProgress(progress);
+      if (levelStatus === 'completed') {
+        endingState = 'completed';
+        if (progress.highestLevel < index) {
+          progress.highestLevel = index;
+          progress.known = true;
+          saveProgress(progress);
+        }
+      }
+    } while (levelStatus === 'restart');
+
+    if (levelStatus === 'skipNext' && endingState === 'skip') {
+      break;
     }
   }
 
@@ -81,6 +94,7 @@ async function mainFlow() {
 
 async function runLevel(entry, index, progress) {
   let resolveSkip;
+  let skipRequested = false;
   const skipPromise = new Promise(resolve => {
     resolveSkip = resolve;
   });
@@ -88,18 +102,28 @@ async function runLevel(entry, index, progress) {
   const canSkip = (progress.highestLevel ?? -1) >= index;
   setSkipHandler(() => {
     if (canSkip) {
-      resolveSkip('skip');
+      skipRequested = true;
+      resolveSkip('skipNext');
     } else {
-      showLevelTitle('Noch nicht freigeschaltet', 1800);
+      skipRequested = true;
+      resolveSkip('restart');
     }
   });
 
   try {
     const result = await Promise.race([entry.run(), skipPromise]);
-    if (result === 'skip') {
+    if (result === 'skipNext' || result === 'skip') {
+      setSceneProps([]);
       ensureAmbience('exteriorDay');
-      await fadeToBase(0);
-      return 'skip';
+      if (!skipRequested) {
+        await fadeToBase(0);
+      }
+      return 'skipNext';
+    }
+    if (result === 'restart') {
+      setSceneProps([]);
+      ensureAmbience('exteriorDay');
+      return 'restart';
     }
     return 'completed';
   } finally {

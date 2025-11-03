@@ -9,7 +9,6 @@ import {
   setSceneProps,
   waitForWizardToReach,
 } from '../scene.js';
-import { transliterateToHebrew } from '../game.helpers.js';
 import {
   narratorSay,
   wizardSay,
@@ -24,12 +23,8 @@ import {
   cloneSceneProps,
   GARDEN_SCENE,
   CANYON_SCENE,
+  spellEquals,
 } from './utils.js';
-
-const WORD_AOR = transliterateToHebrew('aor');
-const WORD_MAYIM = transliterateToHebrew('mim');
-const WORD_QOL = transliterateToHebrew('qol');
-const WORD_XAYIM = transliterateToHebrew('xayim');
 
 export async function runLevelFour() {
   const plan = levelAmbiencePlan.level4;
@@ -49,7 +44,7 @@ export async function runLevelFour() {
   applySceneConfig({ ...GARDEN_SCENE, props: gardenProps });
   setSceneContext({ level: 'level4', phase: 'review' });
 
-  const titleResult = await showLevelTitle('Level 4 -\nDer Garten der Erneuerung');
+  const titleResult = await showLevelTitle('Level 4 -\nDer Garten der\nErneuerung');
   if (titleResult === 'skip' || isSkipRequested()) return 'skip';
   await fadeToBase(600);
 
@@ -90,24 +85,26 @@ async function phaseIntroduction() {
 async function phaseGardenFountain(plan, props) {
   if (isSkipRequested()) return 'skip';
   const fountainProp = findProp(props, 'gardenDryBasin');
-  const target = fountainProp ? fountainProp.x + 20 : wizard.x + 120;
+  const target = fountainProp ? fountainProp.x + 26 : wizard.x + 120;
   await donkeySay('Sieh dir den Brunnen an, Meister – er ist nur noch Staub.');
   if (isSkipRequested()) return 'skip';
-  const reach = await waitForWizardToReach(target, { tolerance: 14 });
+  const reach = await waitForWizardToReach(target, { tolerance: 40 });
   if (reach === 'skip' || isSkipRequested()) return 'skip';
+  await narratorSay('Der Brunnen ist ausgetrocknet. Auf dem Rand steht: "Durst löscht, wer das Fließen ruft."');
+  if (isSkipRequested()) return 'skip';
 
   let attempts = 0;
   while (true) {
     const answerInput = await promptBubble(
       anchorX(wizard, -6),
       anchorY(wizard, -62),
-      'Durst loescht, wer das Fliessen ruft.',
+      'Sprich מים (mayim)',
       anchorX(wizard, 0),
       anchorY(wizard, -36),
     );
     if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
-    if (answer === WORD_MAYIM) {
+    if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       updateProp(props, 'gardenDryBasin', { type: 'fountainFilled' });
       await narratorSay('Wasser steigt aus der Tiefe, fuellt den Brunnen und laesst ein zartes Gurgeln erklingen.');
       return;
@@ -133,11 +130,13 @@ async function phaseGardenFountain(plan, props) {
 async function phaseSunStone(plan, props) {
   if (isSkipRequested()) return 'skip';
   const sunProp = findProp(props, 'gardenSunStone');
-  const target = sunProp ? sunProp.x + 24 : wizard.x + 160;
+  const target = sunProp ? sunProp.x + 30 : wizard.x + 160;
   await donkeySay('Dort steht der Sonnenstein. Ohne Morgenlicht bleibt er kalt.');
   if (isSkipRequested()) return 'skip';
-  const reach = await waitForWizardToReach(target, { tolerance: 14 });
+  const reach = await waitForWizardToReach(target, { tolerance: 40 });
   if (reach === 'skip' || isSkipRequested()) return 'skip';
+  await narratorSay('Die Metallblüte ist geschlossen und kalt. Eine Inschrift flüstert: "Was kalt ist, wird warm durch den Hauch des Morgens."');
+  if (isSkipRequested()) return 'skip';
 
   let attempts = 0;
   while (true) {
@@ -150,7 +149,7 @@ async function phaseSunStone(plan, props) {
     );
     if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
-    if (answer === WORD_AOR) {
+    if (spellEquals(answer, 'or', 'אור')) {
       updateProp(props, 'gardenSunStone', { type: 'sunStoneAwakened' });
       await narratorSay('Die Metallblaetter oeffnen sich, Licht bricht aus der Steinbluete und tanzt auf dem Wasser.');
       return;
@@ -174,12 +173,14 @@ async function phaseSunStone(plan, props) {
 async function phaseResonanceRock(plan, props) {
   if (isSkipRequested()) return 'skip';
   const rockProp = findProp(props, 'gardenEchoRock');
-  const target = rockProp ? rockProp.x + 18 : wizard.x + 180;
+  const target = rockProp ? rockProp.x + 24 : wizard.x + 180;
   await donkeySay('Hoer auf den Felsen am Rand – er atmet.');
   if (isSkipRequested()) return 'skip';
-  const reach = await waitForWizardToReach(target, { tolerance: 14 });
+  const reach = await waitForWizardToReach(target, { tolerance: 36 });
   if (reach === 'skip' || isSkipRequested()) return 'skip';
   await narratorSay('Der Stein brummt tief, als hielte er die Luft an.');
+  if (isSkipRequested()) return 'skip';
+  await narratorSay('In den Rissen glimmt ein Wort: "Ich öffne mich nur, wenn man mich hört."');
 
   let attempts = 0;
   while (true) {
@@ -192,7 +193,7 @@ async function phaseResonanceRock(plan, props) {
     );
     if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
-    if (answer === WORD_QOL) {
+    if (spellEquals(answer, 'qol', 'קול')) {
       updateProp(props, 'gardenEchoRock', { type: 'resonanceRockAwakened' });
       await narratorSay('Der Fels bebt, Risse leuchten, ein klarer Ton mischt sich in das Wasser. Voegel regen sich in den Zweigen.');
       return;
@@ -233,7 +234,7 @@ async function phaseXayimReveal(props) {
     );
     if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
-    if (answer === WORD_XAYIM) {
+    if (spellEquals(answer, 'xayim', 'חיים', 'חַיִּים')) {
       updateProp(props, 'gardenGlyph', { type: 'soundGlyph' });
       updateProp(props, 'gardenBalakStatue', { type: 'balakStatueOvergrown' });
       updateProp(props, 'gardenSunStone', { type: 'sunStoneAwakened' });

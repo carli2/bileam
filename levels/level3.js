@@ -10,7 +10,6 @@ import {
   setSceneProps,
   waitForWizardToReach,
 } from '../scene.js';
-import { transliterateToHebrew } from '../game.helpers.js';
 import {
   narratorSay,
   wizardSay,
@@ -24,11 +23,8 @@ import {
   applySceneConfig,
   CANYON_SCENE,
   cloneSceneProps,
+  spellEquals,
 } from './utils.js';
-
-const WORD_AOR = transliterateToHebrew('aor');
-const WORD_MIM = transliterateToHebrew('mim');
-const WORD_QOL = transliterateToHebrew('qol');
 
 export async function runLevelThree() {
   const plan = levelAmbiencePlan.level3;
@@ -97,7 +93,7 @@ async function phaseStoneArch(canyonProps, plan) {
     if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
-    if (answer === WORD_AOR) {
+    if (spellEquals(answer, 'or', 'אור')) {
       updateProp(canyonProps, 'canyonArch', null);
       await narratorSay('Der Onyx beginnt zu gluehen. Der Bogen spaltet sich lautlos, Lichtadern ziehen durch den Stein.');
       setSceneContext({ phase: 'puzzle-water' });
@@ -129,7 +125,7 @@ async function phaseDryFountain(canyonProps, plan) {
   if (isSkipRequested()) return 'skip';
   const reachFountain = await waitForWizardToReach(fountainTarget, { tolerance: 14 });
   if (reachFountain === 'skip' || isSkipRequested()) return 'skip';
-  await narratorSay('Hinter dem Bogen wartet ein Brunnenbecken aus Stein – ausgetrocknet.');
+  await narratorSay('Hinter dem Bogen wartet ein Brunnenbecken aus Stein – ausgetrocknet. In die Kante ist eingeritzt: "Durst löscht, wer das Fließen ruft."');
 
   let attempts = 0;
   while (true) {
@@ -137,14 +133,14 @@ async function phaseDryFountain(canyonProps, plan) {
     const answerInput = await promptBubble(
       anchorX(wizard, -4),
       anchorY(wizard, -62),
-      '',
+      'Sprich מים (mayim)',
       anchorX(wizard, 2),
       anchorY(wizard, -36),
     );
     if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
-    if (answer === WORD_MIM) {
+    if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       updateProp(canyonProps, 'canyonFountain', { type: 'fountainFilled' });
       await narratorSay('Ein Rauschen beginnt, das Becken fuellt sich. Das Wasser spiegelt kurz ein Ohr aus Licht.');
       return;
@@ -201,7 +197,7 @@ async function phaseRevelation(canyonProps) {
     if (answerInput === 'skip' || isSkipRequested()) return 'skip';
     const answer = normalizeHebrewInput(answerInput);
 
-    if (answer === WORD_QOL) {
+    if (spellEquals(answer, 'qol', 'קול')) {
       updateProp(canyonProps, 'canyonMonolith', { type: 'monolithAwakened' });
       addProp(canyonProps, { id: 'canyonGlyph', type: 'soundGlyph', x: 596, y: 38, parallax: 0.8 });
       await narratorSay('Der Stein singt zurueck – ein klarer Ton rollt durch die Schlucht, Staub und Licht steigen auf.');
@@ -259,7 +255,7 @@ async function phaseResonanceWalk(plan, canyonProps) {
       );
       if (answerInput === 'skip' || isSkipRequested()) return 'skip';
       const answer = normalizeHebrewInput(answerInput);
-      if (answer === WORD_QOL) {
+      if (spellEquals(answer, 'qol', 'קול')) {
         correct = true;
         await narratorSay(sequence.success);
       } else {

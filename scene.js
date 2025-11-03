@@ -1055,6 +1055,11 @@ function createLevelSceneMap() {
       learn: 'gardenBloom',
       apply: 'gardenBloom',
     },
+    level5_5: {
+      review: 'echoChamber',
+      learn: 'echoChamber',
+      apply: 'echoChamber',
+    },
     level5: {
       review: 'gardenBloom',
       learn: 'volcanoTrial',
@@ -1184,6 +1189,12 @@ function createPromptBubble(x1, y1, text, x2, y2) {
   heldKeys.clear();
   pressedKeys.clear();
   gameplayInputEnabled = false;
+  if (wizard) {
+    wizard.vx = 0;
+  }
+  if (donkey) {
+    donkey.vx = 0;
+  }
   activePrompt = state;
   sceneState.cancelPrompt = result => detach(result ?? 'skip', false);
 
@@ -1225,14 +1236,12 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     }
 
     if (key.length === 1) {
-      const lower = key.toLowerCase();
-      if (/^[a-z ]$/.test(lower)) {
-        if (bufferChars.length < MAX_INPUT_LENGTH) {
-          bufferChars.push(lower);
-          refreshInputState();
-        }
-        event.preventDefault();
+      const char = key.length === 1 ? key.toLowerCase() : key;
+      if (bufferChars.length < MAX_INPUT_LENGTH) {
+        bufferChars.push(char);
+        refreshInputState();
       }
+      event.preventDefault();
     }
   };
 
