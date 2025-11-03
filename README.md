@@ -1,80 +1,39 @@
-# Bileam – Lehrling des Wortes
+# Bileam - Lehrling des Wortes
 
-Bileam ist ein 320×200-Pixel-Browserspiel, das sich wie ein alter Mode-13h-DOS-Titel anfühlt. Jeder Frame entsteht in einem `Uint8Array`-Framebuffer, jeder Farbwert ist ein Palettenindex der originalen VGA-256-Farben. Die Szene wird per nearest-neighbour auf den Bildschirm skaliert – keine DOM-Widgets, keine Shader, nur harte Pixel.
+![Titelgrafik: Bileam und die Macht der Worte](assets/title.png)
 
-## Idee und Stimmung
+Willkommen in einer Welt, in der gesprochene Worte Licht, Wasser und Stein bewegen. *Bileam - Lehrling des Wortes* ist ein seitwaerts scrollendes Lernabenteuer, in dem du hebraeische Begriffe entdeckst und mit ihnen die Umgebung formst. Die Reise fuehrt dich durch Landschaften aus Lehm und Licht, begleitet von einer Eselin, die jeden Schritt mit didaktischen Hinweisen unterlegt.
 
-- **Minimalismus:** Canvas als einziger Ausgabekanal, Sprite-Daten aus ASCII-Kunst, Musiklosigkeit wird durch Text und Farben ersetzt.
-- **Story:** Der junge Bileam und sein Esel reisen durch eine veraltete Science-Fiction-Welt, lernen zehn hebräische Zauberworte (siehe `levels.md`) und kämpfen mit der Macht gesprochener Worte.
-- **Retro-Mechanik:** Spieler tippen Phonetik (z. B. `aor`) und sehen live die hebräische Umsetzung (`אור`). Fehler rufen Hinweise oder Flashbacks hervor.
+## Was dich erwartet
+- **Poetische Atmosphaere:** Archaische Dialoge, ruhige Musik und eine Welt zwischen Wuestensand und schimmernden Glyphen.
+- **Lernen durch Erleben:** Jedes Level stellt ein hebraeisches Wort in den Mittelpunkt. Wenn du es korrekt aussprichst oder eintippst, reagieren Licht, Wasser oder Pflanzen unmittelbar.
+- **Didaktischer Zyklus:** Erinnern, Begreifen, Anwenden - jeder Abschnitt baut logisch auf dem Vorherigen auf und belohnt aufmerksam Lernende.
+- **Dynamische Begleitung:** Die sprechende Eselin bleibt dein humorvoller Mentor, waehrend Koenig Balak immer staerker versucht, Sprache zur Manipulation einzusetzen.
 
-## Projektstruktur
+## Reise durch zehn Welten
+1. *aor* - Licht bricht die Finsternis in der Huette des Erwachens.
+2. *mayim* - Am Flussufer reinigt fliessendes Wasser alte Zweifel.
+3. *qol* - In der Felsenschlucht hallt jedes Wort als Resonanz wider.
+4. *xayim* - Ein Garten, in dem neue Lebenserkenntnis knospt.
+5. *aw* - Die Schmiede der Flammen prueft die Kraft deiner Zunge.
+6. *dabar* - Eine goldene Stadt, in der Sprache verlockt und taeuscht.
+7. *emet* - Spiegel enthuellen dein wahres Gesicht.
+8. *malak* - Engel aus gebuendeltem Licht bringen Warnungen.
+9. *arur / beraka* - Am Hof von Balak entscheidest du ueber Fluch oder Segen.
+10. *hamilchama* - Auf dem Hochplateau muessen Worte fuer Wahrheit kaempfen.
 
-```
-index.html        # Minimaler Host, lädt ES-Module
-retroBlitter.js   # Framebuffer, Palette, Sprite-Blitting
-vgaPalette.js     # 256er Palette (RGBA) aus VGA Mode 13h
-graphics.js       # Zeichenfunktionen, Speech-Bubbles, Text-Renderer
-game.helpers.js   # ASCII→Hebraeer-Transliteration
-game.main.js      # Spiel-Loop, Levelskripte, promptBubble
-levels.md         # Didaktische Struktur und Wortliste
-README.md         # Dieses Dokument
-```
+## Figuren, die dich praegen
+- **Bileam:** Ein neugieriger Lehrling, dessen Staunen jede neue Lektion traegt.
+- **Die Eselin:** Dein geduldiger Begleiter mit klaren, kurzen Hinweisen.
+- **Koenig Balak:** Machtbesessen, glaenzend und immer bereit, Sprache zu missbrauchen.
+- **Engel:** Wesen aus Licht, die spaetere Levels bewachen und lehren.
 
-### Framebuffer-Pipeline
+## So probierst du das Spiel aus
+- Lade dieses Projekt auf deinen Rechner.
+- Starte einen einfachen lokalen Webserver und oeffne `index.html` in deinem Browser.
+- Folge den Hinweisen der Eselin, sprich oder tippe die Woerter und beobachte, wie die Welt darauf reagiert.
 
-1. `RetroBuffer.pixels` ist ein `Uint8Array` (320×200). Jeder Wert ist ein Palettenindex.
-2. `RetroPalette.colors` hält 256 RGBA-Vierereintraege.
-3. `blitSprite` kopiert Sprite-Indices direkt in den Framebuffer.
-4. `buffer.toImageData(ctx)` baut ein `ImageData` und `ctx.putImageData` zeichnet es ohne zusätzliche Filter.
+## Mehr entdecken
+Die Datei `AGENTS.md` enthaelt weiterfuehrende Stil- und Designhinweise. Wenn du neue Levels planst, orientiere dich am Rhythmus Erinnerung -> Erkenntnis -> Anwendung, damit Lernende die Macht der Worte Schritt fuer Schritt meistern.
 
-## Eingabe und Sprechblasen
-
-- `promptBubble(xQuest, yQuest, questText, xInput, yInput)` öffnet zwei Bubbles: eine mit Questtext (links nach rechts), eine live mit hebräischer Vorschau deiner Eingabe (rechts nach links). Die Funktion wartet auf RETURN und liefert den eingegebenen ASCII-String zurück.
-- Der Cursor blinkt als `|`, auch wenn noch kein Zeichen getippt wurde.
-- Die Hebraeer-Transliteration folgt den Regeln in `levels.md` (Alef-Carrier, Endformen). Beispiel: `aor` → `אור`, `mayim` → `מים`.
-- Levelskripte prüfen selbst, ob ein Wort korrekt war, und rufen bei Bedarf `await say(...)` für Hinweise.
-
-## Levelskripting
-
-```js
-async function runLevelOne() {
-  await say(() => wizard.x - 16, () => wizard.y - 34, 'Es ist finster in dieser Huette...');
-  let solved = false;
-  while (!solved) {
-    const input = await promptBubble(
-      () => wizard.x - 30,
-      () => wizard.y - 55,
-      'Sprich das Wort אור (aor)',
-      () => wizard.x - 20,
-      () => wizard.y - 20
-    );
-    const answer = input.replace(/\s+/g, '');
-    if (answer === 'אור') {
-      solved = true;
-      await say(() => wizard.x - 18, () => wizard.y - 42, 'אור (aor)!');
-    } else {
-      await say(() => donkey.x - 18, () => donkey.y - 38, 'Esel: Vielleicht faengt es mit Alef an.');
-    }
-  }
-}
-```
-
-- Jeder Level ist eine async Funktion (`runLevelX`) und ruft `promptBubble` / `say` / `paletteFader` nach Bedarf.
-- Typischer Aufbau: `Review → Learn → Apply`, wie in `levels.md` beschrieben.
-- Fehlerlogik (Hinweise, Flashbacks, Meditation) wird im Levelskript abgebildet (z. B. `let attempts = 0;` und unterschiedliche `say`-Zeilen).
-
-## Ausprobieren
-
-1. Repository klonen.
-2. Einen lokalen Webserver starten (`npx http-server` oder `python -m http.server`).
-3. `http://localhost:8080/index.html` öffnen.
-4. Level 1 testen: Questtext untersuchen, `aor` eingeben, Hinweisstrom ausprobieren.
-
-## Ausblick
-
-- Weitere Worte (`mayim`, `qol`, `xayim`, `aw`, `dabar`, `emet`, `malak`, `arur`, `beraka`) wie in `levels.md` skripten.
-- Hebraeer Glyphentruppe erweitern (`levels.md` listet alle Zielwoerter).
-- Speicherstand (z. B. `localStorage`) und Optionsmenue fuer erneute Uebungen.
-
-Viel Spass beim Tuefteln - und vergiss nicht: אור (aor) ist erst der Anfang.
+Geniesse die Reise - Worte sind die Schluessel im Bauplan der Schoepfung.
