@@ -20,122 +20,80 @@ import {
   applySceneConfig,
   cloneSceneProps,
   CANYON_SCENE,
+  propSay,
   addProp,
 } from './utils.js';
 import { runFightLoop } from '../fight.js';
 
-const SPELL_TREE = {
-  'אור': {
-    hebrew: 'אור',
-    text: 'אור – das Licht blendet deinen Gegner!',
-    text2: 'Der Golem blinzelt, doch er stemmt sich gegen das Strahlen.',
-    success: 'Der Golem ist geblendet und taumelt zurück.',
-    damage: 10,
-    counters: {
-      'מים': {
-        text: 'מים – Wasser löscht das Licht!',
-        text2: 'Der Nebel verschlingt dein Strahlen.',
-        success: 'Das Licht erlischt – du verlierst an Kraft.',
-        damage: 6,
-        counters: {
-          'אש': {
-            text: 'אש – Feuer verdampft das Wasser!',
-            text2: 'Zischend hebt sich der Dampf – der Golem schreit!',
-            success: 'Das Wasser löst sich in Rauch auf, der Gegner nimmt Schaden.',
-            damage: 8,
-          },
-        },
-      },
-      'אש': {
-        text: 'אש – das Licht entfacht die Flamme!',
-        text2: 'Hitze breitet sich aus, der Golem schützt sein Gesicht.',
-        success: 'Eine Explosion trifft beide Seiten.',
-        damage: 12,
-        counters: {
-          'מים': {
-            text: 'מים – ein Strom löscht das Feuer!',
-            text2: 'Zischend weichen die Flammen.',
-            success: 'Das Feuer erlischt; du erleidest nur geringen Schaden.',
-            damage: 4,
-          },
-        },
-      },
+const RESPONSE_ALIASES = {
+  ash: 'אש',
+  אש: 'אש',
+  or: 'אור',
+  אור: 'אור',
+  mayim: 'מים',
+  majim: 'מים',
+  mjm: 'מים',
+  מים: 'מים',
+  qol: 'קול',
+  kol: 'קול',
+  קול: 'קול',
+};
+
+const GOLEM_MACHINE = {
+  start: {
+    speaker: 'narrator',
+    text: 'Der Steinwächter stampft auf und sammelt Staub zu einer Faust.',
+    text2: 'Spürst du es? Er wählt dein nächstes Prüfwort.',
+    speaker2: 'ally',
+    options: ['attack_fire', 'attack_echo', 'attack_stone'],
+  },
+  attack_fire: {
+    speaker: 'enemy',
+    text: 'Glühende Risse öffnen sich in der Brust des Wächters. Hitze peitscht dir entgegen.',
+    text2: 'Nur Wasser zähmt Glut.',
+    speaker2: 'ally',
+    prompt: 'Mit welchem Wort besänftigst du die Flammen?',
+    target: 'player',
+    damage: 24,
+    failText: 'Die Glut frisst sich in deine Haut!',
+    failDamageText: 'Bileam verliert 24 Lebenspunkte.',
+    failSpeaker: 'narrator',
+    failNext: 'start',
+    counterspells: {
+      'מים': { speaker: 'player', text: 'Du sprichst מים. Wasser hüllt dich ein und erstickt das Feuer.', damage: 26, damageText: 'Der Wächter dampft und Steine platzen von seinem Körper.', target: 'enemy', next: 'start' },
     },
   },
-  'מים': {
-    text: 'מים – Wogen umfließen den Gegner.',
-    text2: 'Der Golem wird schwer und versucht standzuhalten.',
-    success: 'Die Fluten drücken auf den Stein.',
-    damage: 9,
-    counters: {
-      'אש': {
-        text: 'אש – Feuer verdampft das Wasser!',
-        text2: 'Dampf erfüllt die Luft.',
-        success: 'Das Wasser verliert Kraft – du nimmst Schaden.',
-        damage: 6,
-        counters: {
-          'קול': {
-            text: 'קול – deine Stimme durchbricht den Dampf!',
-            text2: 'Das Echo reißt die Nebel auseinander.',
-            success: 'Der Golem ist benommen.',
-            damage: 7,
-          },
-        },
-      },
-      'חיים': {
-        text: 'חיים – Leben erwächst aus dem Wasser!',
-        text2: 'Wurzeln und Blätter umringen den Golem.',
-        success: 'Der Garten erstarkt, der Golem wird langsamer.',
-        damage: -8,
-      },
+  attack_echo: {
+    speaker: 'enemy',
+    text: 'Der Wächter stößt einen kehlig vibrierenden Ton aus. Der Fels unter dir beginnt zu schwingen.',
+    text2: 'Antworte laut und klar mit Stimme.',
+    speaker2: 'ally',
+    prompt: 'Welches Wort lenkt das Echo?',
+    target: 'player',
+    damage: 18,
+    failText: 'Der Klang schneidet durch deine Knochen.',
+    failDamageText: 'Bileam verliert 18 Lebenspunkte.',
+    failSpeaker: 'narrator',
+    failNext: 'start',
+    counterspells: {
+      'קול': { speaker: 'player', text: 'Du antwortest mit קול. Deine Stimme fängt das Echo ein und wirft es zurück.', damage: 22, damageText: 'Der Wächter taumelt, Risse ziehen sich durch seine Brust.', target: 'enemy', next: 'start' },
     },
   },
-  'אש': {
-    text: 'אש – Hitze flammt auf!',
-    text2: 'Die Luft flimmert, der Stein brennt.',
-    success: 'Der Gegner brennt und verliert Kraft.',
-    damage: 14,
-    counters: {
-      'מים': {
-        text: 'מים – Wasser löscht das Feuer!',
-        text2: 'Ein Strom ergießt sich, Dampf steigt auf.',
-        success: 'Das Feuer wird gezähmt, der Schaden bleibt gering.',
-        damage: 5,
-      },
-      'אור': {
-        text: 'אור – Licht spaltet den Rauch!',
-        text2: 'Der Nebel zerreißt, Funken tanzen.',
-        success: 'Der Golem wird geblendet.',
-        damage: 4,
-      },
-    },
-  },
-  'קול': {
-    text: 'קול – deine Stimme hallt durch den Stein!',
-    text2: 'Der Golem hält sich die Ohren zu.',
-    success: 'Das Echo erschüttert die Felsen.',
-    damage: 7,
-    counters: {
-      'אור': {
-        text: 'אור – das Licht übertönt die Stimme!',
-        text2: 'Ein Strahl durchschneidet den Klang.',
-        success: 'Der Ton zerfällt, nur Licht bleibt.',
-        damage: 5,
-      },
-    },
-  },
-  'חיים': {
-    text: 'חיים – Leben erneuert dich!',
-    text2: 'Wurzeln wachsen um deine Füße.',
-    success: 'Du heilst dich um 12 Punkte.',
-    damage: -12,
-    counters: {
-      'אש': {
-        text: 'אש – Feuer verbrennt das Leben!',
-        text2: 'Der Rauch riecht nach Asche.',
-        success: 'Leben wird zu Staub; du verlierst Energie.',
-        damage: 10,
-      },
+  attack_stone: {
+    speaker: 'enemy',
+    text: 'Der Golem reißt einen Basaltbrocken aus dem Boden und schleudert ihn auf dich.',
+    text2: 'Feuer bricht Stein – oder Blendlicht.',
+    speaker2: 'ally',
+    prompt: 'Wie brichst du den Ansturm?',
+    target: 'player',
+    damage: 20,
+    failText: 'Der Brocken trifft dich und presst die Luft aus deiner Brust.',
+    failDamageText: 'Bileam verliert 20 Lebenspunkte.',
+    failSpeaker: 'narrator',
+    failNext: 'start',
+    counterspells: {
+      'אש': { speaker: 'player', text: 'Du rufst אש. Glut zeichnet Linien in den Stein, der Brocken zerbirst.', damage: 24, damageText: 'Splitter reißen Stücke aus dem Wächter.', target: 'enemy', next: 'start' },
+      'אור': { speaker: 'player', text: 'Du sprichst אור. Licht blendet den Wächter, der Fels zerfällt zu Staub.', damage: 18, damageText: 'Der Wächter schwankt und verliert Stücke aus seinem Torso.', target: 'enemy', next: 'start' },
     },
   },
 };
@@ -146,6 +104,7 @@ export async function runLevelFiveFive() {
   applySceneConfig({ ...CANYON_SCENE, props: canyonProps });
   ensureAmbience(plan?.review ?? 'echoChamber');
   setSceneContext({ level: 'level5_5', phase: 'arrival' });
+  setLifeBars(null);
   await showLevelTitle('Zwischenboss -\nDer Steinwächter');
   await fadeToBase(600);
 
@@ -165,6 +124,7 @@ export async function runLevelFiveFive() {
       ensureAmbience(plan?.review ?? 'echoChamber');
       await fadeToBase(420);
       await narratorSay('Staub formt den Wächter erneut. Versuche es noch einmal.');
+      setLifeBars(null);
     }
   } while (fightResult === 'lose');
 
@@ -192,21 +152,32 @@ async function executeFight() {
     });
   };
 
+const relayFightEvent = async (event, props) => {
+  if (!event || !event.text) return;
+  switch (event.speaker) {
+    case 'player':
+      await wizardSay(event.text);
+      break;
+    case 'enemy':
+      await propSay(props, 'golemGuardian', event.text);
+      break;
+    case 'ally':
+      await donkeySay(event.text);
+      break;
+    default:
+        await narratorSay(event.text);
+        break;
+    }
+  };
+
   const result = await runFightLoop({
-    spellTree: SPELL_TREE,
+    machine: GOLEM_MACHINE,
+    initialState: 'start',
     playerName: 'Bileam',
     enemyName: 'Golem',
-    promptPlayerSpell: () => promptSpellInput('Sprich dein Wort'),
-    promptPlayerCounter: ({ enemySpell }) => promptSpellInput(`Golem spricht ${renderSpellName(enemySpell)} – womit antwortest du? (Enter für kein Gegenwort)`, true),
-    enemyAttackStrategy: () => pickEnemySpell(),
-    enemyCounterStrategy: (playerSpell) => pickEnemyCounter(playerSpell),
-    onEvent: event => relayFightEvent(event),
-    onUpdate: hudState => hudUpdate({
-      playerHP: hudState.playerHP,
-      playerMax: hudState.playerMax,
-      enemyHP: hudState.enemyHP,
-      enemyMax: hudState.enemyMax,
-    }),
+    promptPlayerSpell: options => promptSpellInput(options),
+    onEvent: evt => relayFightEvent(evt, canyonProps),
+    onUpdate: hudUpdate,
   });
 
   if (result.winner === 'player') {
@@ -217,54 +188,18 @@ async function executeFight() {
   return 'lose';
 }
 
-async function promptSpellInput(promptText, allowSkip = false) {
+async function promptSpellInput({ prompt, allowSkip = false } = {}) {
   const input = await promptBubble(
     anchorX(wizard, -6),
     anchorY(wizard, -60),
-    promptText,
+    prompt ?? 'Sprich dein Wort',
     anchorX(wizard, 0),
     anchorY(wizard, -32),
   );
   const normalized = normalizeHebrewInput(input);
+  const canonical = RESPONSE_ALIASES[normalized] ?? normalized;
   if (!normalized && allowSkip) {
     return null;
   }
-  return normalized || input;
-}
-
-function renderSpellName(key) {
-  return key ?? '?';
-}
-
-function pickEnemySpell() {
-  const keys = Object.keys(SPELL_TREE);
-  if (keys.length === 0) return null;
-  return keys[Math.floor(Math.random() * keys.length)];
-}
-
-function pickEnemyCounter(playerSpell) {
-  const node = SPELL_TREE[playerSpell];
-  if (!node?.counters) return null;
-  const keys = Object.keys(node.counters);
-  if (keys.length === 0) return null;
-  return keys[Math.floor(Math.random() * keys.length)];
-}
-
-async function relayFightEvent(event) {
-  if (!event) return;
-  const speaker = event.speaker;
-  switch (speaker) {
-    case 'player':
-      await wizardSay(event.text);
-      break;
-    case 'enemy':
-      await narratorSay(`Golem: ${event.text}`);
-      break;
-    case 'narrator':
-      await narratorSay(event.text);
-      break;
-    default:
-      await narratorSay(event.text ?? '');
-      break;
-  }
+  return canonical || input;
 }

@@ -1541,12 +1541,12 @@ function createGolemGuardianSprite(c) {
     '...hGGGGGGGGGGGGGGGGGh........',
     '...hGGGGGGGGGGGGGGGGGh........',
     '...hGGGGhHHHHHHHHhGGGh........',
-    '....hGGg........gGGh.........',
-    '....hGGg........gGGh.........',
-    '....hGGh........hGGh.........',
-    '....hGGh........hGGh.........',
-    '.....hh..........hh........',
-    '.....hh..........hh........',
+    '....hGGg........gGGh..........',
+    '....hGGg........gGGh..........',
+    '....hGGh........hGGh..........',
+    '....hGGh........hGGh..........',
+    '.....hh..........hh...........',
+    '.....hh..........hh...........',
   ];
   const legend = {
     '.': c.transparent,

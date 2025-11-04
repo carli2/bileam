@@ -1,4 +1,5 @@
 const DEFAULT_MAX_HP = 100;
+
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
@@ -7,7 +8,7 @@ function normalizeInput(input) {
   if (!input) return null;
   const cleaned = String(input).trim();
   if (!cleaned) return null;
-  return cleaned;
+  return cleaned.toLowerCase();
 }
 
 function createLifeState(max = DEFAULT_MAX_HP) {
@@ -15,87 +16,6 @@ function createLifeState(max = DEFAULT_MAX_HP) {
     max,
     current: max,
   };
-}
-
-function isNumber(value) {
-  return typeof value === 'number' && !Number.isNaN(value);
-}
-
-function resolveNode(node, actorRole, effects) {
-  if (!node) return;
-  const targetKey = actorRole === 'attacker' ? 'defender' : 'attacker';
-  if (isNumber(node.damage)) {
-    if (node.damage > 0) {
-      effects[targetKey] -= node.damage;
-    } else if (node.damage < 0) {
-      effects[actorRole] -= node.damage; // negative damage heals actor
-    }
-  }
-}
-
-function appendTexts(events, speaker, node) {
-  if (!node) return;
-  if (node.text) {
-    events.push({ speaker, text: node.text });
-  }
-  if (node.text2) {
-    const responder = speaker === 'player' ? 'enemy' : 'player';
-    events.push({ speaker: responder, text: node.text2 });
-  }
-  if (node.success) {
-    events.push({ speaker: 'narrator', text: node.success });
-  }
-}
-
-function resolveInteraction(spellTree, attackerSpell, defenderSpell) {
-  const canonicalAttack = normalizeInput(attackerSpell);
-  const canonicalDefend = normalizeInput(defenderSpell);
-  const events = [];
-  const deltas = { attacker: 0, defender: 0 };
-  let counterNode;
-
-  const attackNode = canonicalAttack ? spellTree[canonicalAttack] : null;
-  if (!attackNode) {
-    events.push({ type: 'invalid', speaker: 'player', text: `Unbekannter Zauber: ${attackerSpell}` });
-    deltas.attacker -= 5;
-    return { events, deltas, attackSpell: canonicalAttack, counterSpell: canonicalDefend };
-  }
-
-  appendTexts(events, 'attacker', attackNode);
-  resolveNode(attackNode, 'attacker', deltas);
-
-  if (canonicalDefend && attackNode.counters && attackNode.counters[canonicalDefend]) {
-    counterNode = attackNode.counters[canonicalDefend];
-    appendTexts(events, 'defender', counterNode);
-    resolveNode(counterNode, 'defender', deltas);
-  }
-
-  return { events, deltas, attackSpell: canonicalAttack, counterSpell: canonicalDefend };
-}
-
-function applyDeltas(state, deltas) {
-  if (deltas.attacker !== 0) {
-    state.attackerHP.current = clamp(state.attackerHP.current + deltas.attacker, 0, state.attackerHP.max);
-  }
-  if (deltas.defender !== 0) {
-    state.defenderHP.current = clamp(state.defenderHP.current + deltas.defender, 0, state.defenderHP.max);
-  }
-}
-
-function selectEnemyCounter(spellTree, attackKey, randomFn = Math.random) {
-  const node = spellTree[normalizeInput(attackKey)];
-  if (!node || !node.counters) return null;
-  const keys = Object.keys(node.counters);
-  if (keys.length === 0) return null;
-  const index = Math.floor(randomFn() * keys.length);
-  return keys[index];
-}
-
-function selectEnemyAttack(spellTree, randomFn = Math.random) {
-  const keys = Object.keys(spellTree);
-  if (keys.length === 0) return null;
-  const index = Math.floor(randomFn() * keys.length);
-  return keys[index];
 }
 
 function formatLifeBar(current, max, width = 8) {
@@ -107,114 +27,159 @@ function formatLifeBar(current, max, width = 8) {
   return filledChar.repeat(filled) + emptyChar.repeat(empty);
 }
 
+function pickOption(options, randomFn) {
+  if (!options) return null;
+  if (Array.isArray(options)) {
+    if (options.length === 0) return null;
+    const index = Math.floor(randomFn() * options.length);
+    return options[index];
+  }
+  const keys = Object.keys(options);
+  if (keys.length === 0) return null;
+  const index = Math.floor(randomFn() * keys.length);
+  return options[keys[index]] ?? keys[index];
+}
+
 export async function runFightLoop({
-  spellTree,
+  machine,
+  initialState = 'start',
   playerName = 'Bileam',
   enemyName = 'Golem',
   playerHP = DEFAULT_MAX_HP,
   enemyHP = DEFAULT_MAX_HP,
   promptPlayerSpell,
-  promptPlayerCounter,
-  enemyAttackStrategy,
-  enemyCounterStrategy,
   onEvent = () => {},
   onUpdate = () => {},
   randomFn = Math.random,
 }) {
-  const normalizedTree = spellTree ?? {};
-  const state = {
-    turn: 'player',
-    attackerHP: createLifeState(playerHP),
-    defenderHP: createLifeState(enemyHP),
+  if (!machine) {
+    throw new Error('Fight state machine not provided');
+  }
+
+  const states = machine;
+  if (!states[initialState]) {
+    throw new Error(`Unknown fight state: ${initialState}`);
+  }
+
+  const life = {
+    player: createLifeState(playerHP),
+    enemy: createLifeState(enemyHP),
   };
 
   const renderStatus = () => {
     onUpdate({
-      playerHP: state.attackerHP.current,
-      playerMax: state.attackerHP.max,
-      enemyHP: state.defenderHP.current,
-      enemyMax: state.defenderHP.max,
-      barPlayer: formatLifeBar(state.attackerHP.current, state.attackerHP.max),
-      barEnemy: formatLifeBar(state.defenderHP.current, state.defenderHP.max),
+      playerHP: life.player.current,
+      playerMax: life.player.max,
+      enemyHP: life.enemy.current,
+      enemyMax: life.enemy.max,
+      barPlayer: formatLifeBar(life.player.current, life.player.max),
+      barEnemy: formatLifeBar(life.enemy.current, life.enemy.max),
     });
   };
 
+  const applyDamage = async (target, amount, message) => {
+    if (!(amount > 0)) return;
+    if (target === 'enemy') {
+      life.enemy.current = clamp(life.enemy.current - amount, 0, life.enemy.max);
+    } else {
+      life.player.current = clamp(life.player.current - amount, 0, life.player.max);
+    }
+    if (message) {
+      await onEvent({ speaker: 'narrator', text: message });
+    }
+    renderStatus();
+  };
+
+  const emitLine = async (speaker, text) => {
+    if (!text) return;
+    await onEvent({ speaker, text });
+  };
+
+  let stateKey = initialState;
   renderStatus();
 
-  while (state.attackerHP.current > 0 && state.defenderHP.current > 0) {
-    if (state.turn === 'player') {
-      const spellInput = await promptPlayerSpell?.({ playerHP: state.attackerHP.current, enemyHP: state.defenderHP.current });
-      if (spellInput == null) {
-        onEvent({ type: 'info', speaker: 'player', text: `${playerName} zaudert.` });
-        state.turn = 'enemy';
-        continue;
-      }
-      const playerSpell = normalizeInput(spellInput);
-      if (!playerSpell) {
-        onEvent({ type: 'invalid', speaker: 'player', text: 'Der Zauber verfliegt wirkungslos.' });
-        state.turn = 'enemy';
-        continue;
-      }
-      const enemyCounter = enemyCounterStrategy?.(playerSpell, { playerHP: state.attackerHP.current, enemyHP: state.defenderHP.current })
-        ?? selectEnemyCounter(normalizedTree, playerSpell, randomFn);
-
-      const interaction = resolveInteraction(normalizedTree, playerSpell, enemyCounter);
-      for (const evt of interaction.events) {
-        const role = evt.speaker === 'attacker' ? 'player' : evt.speaker === 'defender' ? 'enemy' : evt.speaker;
-        await onEvent({ ...evt, speaker: role });
-      }
-      applyDeltas({
-        attackerHP: state.attackerHP,
-        defenderHP: state.defenderHP,
-        turn: state.turn,
-      }, interaction.deltas);
-      renderStatus();
-
-      if (state.defenderHP.current <= 0) {
-        return {
-          winner: 'player',
-          playerHP: state.attackerHP.current,
-          enemyHP: 0,
-        };
-      }
-      state.turn = 'enemy';
-    } else {
-      const enemySpell = enemyAttackStrategy?.({ playerHP: state.attackerHP.current, enemyHP: state.defenderHP.current })
-        ?? selectEnemyAttack(normalizedTree, randomFn);
-      if (!enemySpell) {
-        onEvent({ type: 'info', speaker: 'enemy', text: `${enemyName} verharrt schweigend.` });
-        state.turn = 'player';
-        continue;
-      }
-      const playerCounterInput = await promptPlayerCounter?.({ enemySpell });
-      const playerCounter = normalizeInput(playerCounterInput);
-      const interaction = resolveInteraction(normalizedTree, enemySpell, playerCounter);
-      for (const evt of interaction.events) {
-        const role = evt.speaker === 'attacker' ? 'enemy' : evt.speaker === 'defender' ? 'player' : evt.speaker;
-        await onEvent({ ...evt, speaker: role });
-      }
-      applyDeltas({
-        attackerHP: state.defenderHP,
-        defenderHP: state.attackerHP,
-        turn: state.turn,
-      }, interaction.deltas);
-      renderStatus();
-
-      if (state.attackerHP.current <= 0) {
-        return {
-          winner: 'enemy',
-          playerHP: 0,
-          enemyHP: state.defenderHP.current,
-        };
-      }
-      state.turn = 'player';
+  while (life.player.current > 0 && life.enemy.current > 0) {
+    const state = states[stateKey];
+    if (!state) {
+      throw new Error(`Missing fight state definition for "${stateKey}"`);
     }
+
+    await emitLine(state.speaker ?? 'narrator', state.text);
+    if (state.text2) {
+      await emitLine(state.speaker2 ?? 'narrator', state.text2);
+    }
+
+    if (state.damageOnEnter && state.targetOnEnter) {
+      const targetName = state.targetOnEnter === 'enemy' ? enemyName : playerName;
+      const dmgText = state.enterDamageText ?? `${targetName} erleidet ${state.damageOnEnter} Schaden.`;
+      await applyDamage(state.targetOnEnter, state.damageOnEnter, dmgText);
+      if (life.player.current <= 0 || life.enemy.current <= 0) break;
+    }
+
+    if (state.options) {
+      stateKey = pickOption(state.options, randomFn) ?? state.next ?? 'start';
+      continue;
+    }
+
+    const responses = state.counterspells || {};
+    const hasResponses = Object.keys(responses).length > 0;
+
+    if (!hasResponses) {
+      stateKey = state.next ?? 'start';
+      continue;
+    }
+
+    const promptText = state.prompt ?? 'Welches Wort sprichst du?';
+    const allowSkip = state.allowSkip ?? false;
+    const input = await promptPlayerSpell?.({
+      prompt: promptText,
+      allowSkip,
+      state: stateKey,
+      playerHP: life.player.current,
+      enemyHP: life.enemy.current,
+    });
+    const normalized = normalizeInput(input);
+
+    const responseKey = normalized ?? '';
+    const response = responses[responseKey];
+
+    if (response) {
+      const next = typeof response === 'string' ? { next: response } : { ...response };
+      await emitLine(next.speaker ?? 'player', next.text);
+      if (next.text2) {
+        await emitLine(next.speaker2 ?? 'narrator', next.text2);
+      }
+      if (next.damage && next.target) {
+        const targetName = next.target === 'enemy' ? enemyName : playerName;
+        const dmgText = next.damageText ?? `${targetName} erleidet ${next.damage} Schaden.`;
+        await applyDamage(next.target, next.damage, dmgText);
+        if (life.player.current <= 0 || life.enemy.current <= 0) break;
+      }
+      stateKey = next.next ?? 'start';
+      continue;
+    }
+
+    const target = state.target ?? 'player';
+    const targetName = target === 'enemy' ? enemyName : playerName;
+    const failSpeaker = state.failSpeaker ?? (target === 'player' ? 'enemy' : 'player');
+    const failText = state.failText ?? `${targetName} findet keinen passenden Zauber.`;
+    await emitLine(failSpeaker, failText);
+    if (state.failText2) {
+      await emitLine(state.failSpeaker2 ?? 'narrator', state.failText2);
+    }
+    if (state.damage) {
+      const dmgText = state.failDamageText ?? `${targetName} erleidet ${state.damage} Schaden.`;
+      await applyDamage(target, state.damage, dmgText);
+    }
+    if (life.player.current <= 0 || life.enemy.current <= 0) break;
+
+    stateKey = state.failNext ?? 'start';
   }
 
   return {
-    winner: state.attackerHP.current > state.defenderHP.current ? 'player' : 'enemy',
-    playerHP: state.attackerHP.current,
-    enemyHP: state.defenderHP.current,
+    winner: life.player.current > 0 ? 'player' : 'enemy',
+    playerHP: life.player.current,
+    enemyHP: life.enemy.current,
   };
 }
 
