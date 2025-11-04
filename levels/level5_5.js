@@ -1,13 +1,12 @@
 import {
   ensureAmbience,
-  transitionAmbience,
   setSceneContext,
   levelAmbiencePlan,
   fadeToBlack,
   fadeToBase,
   showLevelTitle,
-  setSceneProps,
   promptBubble,
+  setLifeBars,
 } from '../scene.js';
 import {
   narratorSay,
@@ -21,25 +20,26 @@ import {
   applySceneConfig,
   cloneSceneProps,
   CANYON_SCENE,
+  addProp,
 } from './utils.js';
-import { runFightLoop, buildLifeBarString } from '../fight.js';
+import { runFightLoop } from '../fight.js';
 
 const SPELL_TREE = {
   'אור': {
-    hebrew: 'אוֹר',
-    text: 'אוֹר – das Licht blendet deinen Gegner!',
+    hebrew: 'אור',
+    text: 'אור – das Licht blendet deinen Gegner!',
     text2: 'Der Golem blinzelt, doch er stemmt sich gegen das Strahlen.',
     success: 'Der Golem ist geblendet und taumelt zurück.',
     damage: 10,
     counters: {
       'מים': {
-        text: 'מַיִם – Wasser löscht das Licht!',
+        text: 'מים – Wasser löscht das Licht!',
         text2: 'Der Nebel verschlingt dein Strahlen.',
         success: 'Das Licht erlischt – du verlierst an Kraft.',
         damage: 6,
         counters: {
           'אש': {
-            text: 'אֵשׁ – Feuer verdampft das Wasser!',
+            text: 'אש – Feuer verdampft das Wasser!',
             text2: 'Zischend hebt sich der Dampf – der Golem schreit!',
             success: 'Das Wasser löst sich in Rauch auf, der Gegner nimmt Schaden.',
             damage: 8,
@@ -47,13 +47,13 @@ const SPELL_TREE = {
         },
       },
       'אש': {
-        text: 'אֵשׁ – das Licht entfacht die Flamme!',
+        text: 'אש – das Licht entfacht die Flamme!',
         text2: 'Hitze breitet sich aus, der Golem schützt sein Gesicht.',
         success: 'Eine Explosion trifft beide Seiten.',
         damage: 12,
         counters: {
           'מים': {
-            text: 'מַיִם – ein Strom löscht das Feuer!',
+            text: 'מים – ein Strom löscht das Feuer!',
             text2: 'Zischend weichen die Flammen.',
             success: 'Das Feuer erlischt; du erleidest nur geringen Schaden.',
             damage: 4,
@@ -63,19 +63,19 @@ const SPELL_TREE = {
     },
   },
   'מים': {
-    text: 'מַיִם – Wogen umfließen den Gegner.',
+    text: 'מים – Wogen umfließen den Gegner.',
     text2: 'Der Golem wird schwer und versucht standzuhalten.',
     success: 'Die Fluten drücken auf den Stein.',
     damage: 9,
     counters: {
       'אש': {
-        text: 'אֵשׁ – Feuer verdampft das Wasser!',
+        text: 'אש – Feuer verdampft das Wasser!',
         text2: 'Dampf erfüllt die Luft.',
         success: 'Das Wasser verliert Kraft – du nimmst Schaden.',
         damage: 6,
         counters: {
           'קול': {
-            text: 'קוֹל – deine Stimme durchbricht den Dampf!',
+            text: 'קול – deine Stimme durchbricht den Dampf!',
             text2: 'Das Echo reißt die Nebel auseinander.',
             success: 'Der Golem ist benommen.',
             damage: 7,
@@ -83,7 +83,7 @@ const SPELL_TREE = {
         },
       },
       'חיים': {
-        text: 'חַיִּים – Leben erwächst aus dem Wasser!',
+        text: 'חיים – Leben erwächst aus dem Wasser!',
         text2: 'Wurzeln und Blätter umringen den Golem.',
         success: 'Der Garten erstarkt, der Golem wird langsamer.',
         damage: -8,
@@ -91,19 +91,19 @@ const SPELL_TREE = {
     },
   },
   'אש': {
-    text: 'אֵשׁ – Hitze flammt auf!',
+    text: 'אש – Hitze flammt auf!',
     text2: 'Die Luft flimmert, der Stein brennt.',
     success: 'Der Gegner brennt und verliert Kraft.',
     damage: 14,
     counters: {
       'מים': {
-        text: 'מַיִם – Wasser löscht das Feuer!',
+        text: 'מים – Wasser löscht das Feuer!',
         text2: 'Ein Strom ergießt sich, Dampf steigt auf.',
         success: 'Das Feuer wird gezähmt, der Schaden bleibt gering.',
         damage: 5,
       },
       'אור': {
-        text: 'אוֹר – Licht spaltet den Rauch!',
+        text: 'אור – Licht spaltet den Rauch!',
         text2: 'Der Nebel zerreißt, Funken tanzen.',
         success: 'Der Golem wird geblendet.',
         damage: 4,
@@ -111,13 +111,13 @@ const SPELL_TREE = {
     },
   },
   'קול': {
-    text: 'קוֹל – deine Stimme hallt durch den Stein!',
+    text: 'קול – deine Stimme hallt durch den Stein!',
     text2: 'Der Golem hält sich die Ohren zu.',
     success: 'Das Echo erschüttert die Felsen.',
     damage: 7,
     counters: {
       'אור': {
-        text: 'אוֹר – das Licht übertönt die Stimme!',
+        text: 'אור – das Licht übertönt die Stimme!',
         text2: 'Ein Strahl durchschneidet den Klang.',
         success: 'Der Ton zerfällt, nur Licht bleibt.',
         damage: 5,
@@ -125,13 +125,13 @@ const SPELL_TREE = {
     },
   },
   'חיים': {
-    text: 'חַיִּים – Leben erneuert dich!',
+    text: 'חיים – Leben erneuert dich!',
     text2: 'Wurzeln wachsen um deine Füße.',
     success: 'Du heilst dich um 12 Punkte.',
     damage: -12,
     counters: {
       'אש': {
-        text: 'אֵשׁ – Feuer verbrennt das Leben!',
+        text: 'אש – Feuer verbrennt das Leben!',
         text2: 'Der Rauch riecht nach Asche.',
         success: 'Leben wird zu Staub; du verlierst Energie.',
         damage: 10,
@@ -146,7 +146,10 @@ export async function runLevelFiveFive() {
   applySceneConfig({ ...CANYON_SCENE, props: canyonProps });
   ensureAmbience(plan?.review ?? 'echoChamber');
   setSceneContext({ level: 'level5_5', phase: 'arrival' });
+  await showLevelTitle('Zwischenboss -\nDer Steinwächter');
   await fadeToBase(600);
+
+  addProp(canyonProps, { id: 'golemGuardian', type: 'golemGuardian', align: 'ground', x: wizard.x + 140 });
 
   await narratorSay('Aus dem Staub der Schlucht formt sich ein Leib aus Stein – schwer, uralt, stumm.');
   await donkeySay('Ein Wächter. Er prüft, ob du verstanden hast, was Worte bewirken können.');
@@ -168,14 +171,25 @@ export async function runLevelFiveFive() {
   await narratorSay('Der Golem erstarrt. Moos wächst über seinen Leib, und die Schlucht wird still.');
   await donkeySay('Du hast nicht zerstört – du hast verstanden. Weiter nach Moab, Meister.');
   await fadeToBlack(480);
+  setLifeBars(null);
 }
 
 async function executeFight() {
   const hudUpdate = state => {
-    if (!state) return;
-    const barLines = buildLifeBarString(state.playerHP, state.playerMax, state.enemyHP, state.enemyMax).split('\n');
-    const lifeText = `Bileam ${barLines[0] ?? ''}\nGolem ${barLines[1] ?? ''}`;
-    showLevelTitle(lifeText, 600).catch(() => {});
+    if (!state) {
+      setLifeBars(null);
+      return;
+    }
+    const playerHP = Math.max(0, Math.round(state.playerHP ?? 0));
+    const playerMax = Math.max(1, Math.round(state.playerMax ?? 100));
+    const enemyHP = Math.max(0, Math.round(state.enemyHP ?? 0));
+    const enemyMax = Math.max(1, Math.round(state.enemyMax ?? 100));
+    const playerText = `Bileam ${state.barPlayer ?? ''} ${playerHP}/${playerMax}`.trim();
+    const enemyText = `Golem ${state.barEnemy ?? ''} ${enemyHP}/${enemyMax}`.trim();
+    setLifeBars({
+      player: { text: playerText },
+      enemy: { text: enemyText },
+    });
   };
 
   const result = await runFightLoop({
@@ -253,8 +267,4 @@ async function relayFightEvent(event) {
       await narratorSay(event.text ?? '');
       break;
   }
-}
-
-function findProp(list, id) {
-  return Array.isArray(list) ? list.find(prop => prop.id === id) ?? null : null;
 }

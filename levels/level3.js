@@ -7,7 +7,6 @@ import {
   fadeToBlack,
   fadeToBase,
   showLevelTitle,
-  setSceneProps,
   waitForWizardToReach,
 } from '../scene.js';
 import {
@@ -23,6 +22,9 @@ import {
   CANYON_SCENE,
   cloneSceneProps,
   spellEquals,
+  findProp,
+  updateProp,
+  addProp,
 } from './utils.js';
 
 export async function runLevelThree() {
@@ -88,7 +90,7 @@ async function phaseStoneArch(canyonProps, plan) {
       await fadeToBlack(220);
       ensureAmbience(plan?.review ?? CANYON_SCENE.ambience ?? 'echoChamber');
       await fadeToBase(420);
-      await narratorSay('Erinnerung: In der Huette entzundest du Licht mit אור.');
+      await narratorSay('Erinnerung: In der Hütte entzündest du Licht mit אור.');
     }
   }
 }
@@ -113,7 +115,7 @@ async function phaseDryFountain(canyonProps, plan) {
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       updateProp(canyonProps, 'canyonFountain', { type: 'fountainFilled' });
-      await narratorSay('Ein Rauschen beginnt, das Becken fuellt sich. Das Wasser spiegelt kurz ein Ohr aus Licht.');
+      await narratorSay('Ein Rauschen beginnt, das Becken füllt sich. Das Wasser spiegelt kurz ein Ohr aus Licht.');
       return;
     }
 
@@ -121,7 +123,7 @@ async function phaseDryFountain(canyonProps, plan) {
     if (attempts === 1) {
       await donkeySay('Der Stein bleibt still. Vielleicht braucht er mehr Bewegung?');
     } else if (attempts === 2) {
-      await narratorSay('Ein Rinnsal laeuft kurz, versiegt wieder.');
+      await narratorSay('Ein Rinnsal läuft kurz, versiegt wieder.');
     } else {
       attempts = 0;
       await fadeToBlack(180);
@@ -138,14 +140,14 @@ async function phaseRevelation(canyonProps) {
 
   await donkeySay('Da ist er, Meister – der Stein, der spricht.');
   await wizardSay('Er... spricht wirklich?');
-  await donkeySay('Nicht mit Worten wie wir. Er spricht mit Klang. Du wirst es hoeren, wenn du das neue Wort lernst.');
+  await donkeySay('Nicht mit Worten wie wir. Er spricht mit Klang. Du wirst es hören, wenn du das neue Wort lernst.');
 
   await Promise.all([
-    showLevelTitle('קוֹל (qol)', 3200),
-    narratorSay('Eine Schriftlinie erscheint auf dem Stein: קוֹל – Stimme.'),
+    showLevelTitle('קול (qol)', 3200),
+    narratorSay('Eine Schriftlinie erscheint auf dem Stein: קול – Stimme.'),
   ]);
 
-  await donkeySay('ק – das tiefe Grollen in der Erde, וֹ – das Rollen des Atems, ל – das sanfte Nachklingen. Sprich es, und die Steine antworten.');
+  await donkeySay('ק – das tiefe Grollen in der Erde, ו – das Rollen des Atems, ל – das sanfte Nachklingen. Sprich es, und die Steine antworten.');
 
   let attempts = 0;
   while (true) {
@@ -172,7 +174,7 @@ async function phaseRevelation(canyonProps) {
       await narratorSay('Der Fels bleibt stumm. Die Schrift verblasst und wartet.');
     } else {
       attempts = 0;
-      await narratorSay('Meditation: Du siehst die Buchstaben, hoerst die Laute – קוֹל. Atme und versuche es erneut.');
+      await narratorSay('Meditation: Du siehst die Buchstaben, hoerst die Laute – קול. Atme und versuche es erneut.');
     }
   }
 }
@@ -182,7 +184,7 @@ async function phaseResonanceWalk(plan, canyonProps) {
   addProp(canyonProps, { id: 'canyonPathLight', type: 'soundGlyph', x: wizard.x + 90, y: wizard.y - 12, parallax: 0.7 });
   const echoMarker = wizard.x + 120;
   await showLevelTitle('Folge dem Echo\nund sprich קול');
-  await donkeySay('Hoer auf das Echo, Meister.');
+  await donkeySay('Hör auf das Echo, Meister.');
   await waitForWizardToReach(echoMarker, { tolerance: 14 });
   const echoSequences = [
     {
@@ -227,30 +229,4 @@ async function phaseResonanceWalk(plan, canyonProps) {
   await wizardSay('Oder sie mit mir.');
   await narratorSay('So verliess der Lehrling die Schlucht – mit einer Stimme, die Berge bewegen konnte.');
   await transitionAmbience(plan?.apply ?? plan?.learn ?? 'echoChamber', { fade: { toBlack: 180, toBase: 420 } });
-}
-
-function updateProp(list, id, changes) {
-  const index = list.findIndex(entry => entry.id === id);
-  if (index === -1) return;
-  if (changes == null) {
-    list.splice(index, 1);
-  } else {
-    list[index] = { ...list[index], ...changes };
-  }
-  setSceneProps(list);
-}
-
-function addProp(list, definition) {
-  const existingIndex = definition?.id ? list.findIndex(entry => entry.id === definition.id) : -1;
-  if (existingIndex >= 0) {
-    list[existingIndex] = { ...list[existingIndex], ...definition };
-  } else {
-    list.push({ ...definition });
-  }
-  setSceneProps(list);
-}
-
-function findProp(list, id) {
-  if (!Array.isArray(list)) return null;
-  return list.find(entry => entry.id === id) ?? null;
 }

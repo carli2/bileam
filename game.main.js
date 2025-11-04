@@ -13,11 +13,13 @@ import {
   say,
   SkipSignal,
   clearSkipState,
+  setLifeBars,
 } from './scene.js';
 import { runLevelOne } from './levels/level1.js';
 import { runLevelTwo } from './levels/level2.js';
 import { runLevelThree } from './levels/level3.js';
 import { runLevelFour } from './levels/level4.js';
+import { runLevelFive } from './levels/level5.js';
 import { runLevelFiveFive } from './levels/level5_5.js';
 
 startScene(mainFlow);
@@ -27,6 +29,7 @@ const LEVELS = [
   { id: 'level2', run: runLevelTwo },
   { id: 'level3', run: runLevelThree },
   { id: 'level4', run: runLevelFour },
+  { id: 'level5', run: runLevelFive },
   { id: 'level5_5', run: runLevelFiveFive },
 ];
 
@@ -58,6 +61,8 @@ function saveProgress(progress) {
 }
 
 async function mainFlow() {
+  clearSkipState();
+  setLifeBars(null);
   await fadeToBase(1500);
   const progress = loadProgress();
   let endingState = 'completed';

@@ -1,5 +1,15 @@
 import { say, wizard, donkey, setSceneProps, ensureAmbience } from '../scene.js';
 
+/*
+ * Level Coding Rules
+ * ------------------
+ * - Files under `levels/` export async story flows only. Shared logic,
+ *   branching helpers, or prop mutation utilities live here (or another helper
+ *   module), keeping level scripts focused on narrative sequencing.
+ * - Helper utilities must remain side-effect free except when they deliberately
+ *   call back into `scene.js` (e.g. `setSceneProps`).
+ */
+
 function actorSprite(actor) {
   return actor.sprites?.right ?? actor.sprites?.left;
 }
@@ -65,6 +75,56 @@ export function spellEquals(answer, ...variants) {
   return variants.some(option => normalizeHebrewInput(option) === normalized);
 }
 
+export function findProp(list, id) {
+  if (!Array.isArray(list)) return null;
+  return list.find(entry => entry.id === id) ?? null;
+}
+
+export function propSay(props, id, text, options = {}) {
+  const { offsetX = 0, offsetY = -24 } = options;
+  const anchorX = () => {
+    const prop = findProp(props, id);
+    if (prop?.sprite) {
+      const width = prop.sprite.width ?? 0;
+      return (prop.x ?? 0) + width / 2 + offsetX;
+    }
+    return actorCenterX(wizard) + offsetX;
+  };
+
+  const anchorY = () => {
+    const prop = findProp(props, id);
+    if (prop?.sprite) {
+      return (prop.y ?? 0) - 16 + offsetY;
+    }
+    return actorBubbleY(wizard, -46) + offsetY;
+  };
+
+  return say(anchorX, anchorY, text);
+}
+
+export function updateProp(list, id, changes) {
+  if (!Array.isArray(list)) return;
+  const index = list.findIndex(entry => entry.id === id);
+  if (index === -1) return;
+  if (changes == null) {
+    list.splice(index, 1);
+  } else {
+    list[index] = { ...list[index], ...changes };
+  }
+  setSceneProps(list);
+}
+
+export function addProp(list, definition) {
+  if (!Array.isArray(list) || !definition) return;
+  const existingIndex = definition?.id ? list.findIndex(entry => entry.id === definition.id) : -1;
+  if (existingIndex >= 0) {
+    list[existingIndex] = { ...list[existingIndex], ...definition };
+  } else {
+    list.push({ ...definition });
+  }
+  setSceneProps(list);
+}
+
 export const RIVER_SCENE = {
   ambience: 'riverDawn',
   wizardStartX: 96,
@@ -97,12 +157,28 @@ export const GARDEN_SCENE = {
   props: [
     { id: 'gardenBackgroundTrees', type: 'gardenBackdropTrees', x: -12, align: 'ground', parallax: 0.25 },
     { id: 'gardenBalakStatue', type: 'balakStatue', x: 312, align: 'ground', parallax: 0.55 },
+    { id: 'gardenBalakFigure', type: 'balakFigure', x: 352, align: 'ground', parallax: 0.95 },
     { id: 'gardenIrrigation', type: 'irrigationChannels', x: -28, align: 'ground', parallax: 0.9 },
     { id: 'gardenDryBasin', type: 'fountainDry', x: 248, align: 'ground' },
     { id: 'gardenSunStone', type: 'sunStoneDormant', x: 410, align: 'ground' },
     { id: 'gardenEchoRock', type: 'resonanceRockDormant', x: 552, align: 'ground' },
     { id: 'gardenAltar', type: 'gardenAltar', x: 612, align: 'ground' },
     { id: 'gardenForegroundStem', type: 'gardenForegroundPlant', x: 120, align: 'ground', parallax: 1.05 },
+  ],
+};
+
+export const FORGE_SCENE = {
+  ambience: 'volcanoTrial',
+  wizardStartX: 68,
+  donkeyOffset: -34,
+  props: [
+    { id: 'forgeBackSpireLeft', type: 'basaltSpireTall', x: 110, offsetY: -10, parallax: 0.3 },
+    { id: 'forgeBackSpireRight', type: 'basaltSpireMid', x: 360, offsetY: -8, parallax: 0.36 },
+    { id: 'forgeCinderMist', type: 'canyonMist', x: -24, align: 'ground', offsetY: -48, parallax: 0.62 },
+    { id: 'forgeWaterCistern', type: 'fountainDry', x: 220, align: 'ground' },
+    { id: 'forgeIgnitionRing', type: 'sunStoneDormant', x: 336, align: 'ground' },
+    { id: 'forgeAnvil', type: 'gardenAltar', x: 468, align: 'ground' },
+    { id: 'forgeBalakEcho', type: 'balakFigure', x: 548, align: 'ground', parallax: 0.92 },
   ],
 };
 

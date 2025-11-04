@@ -12,7 +12,20 @@ import {
   layoutText,
   acknowledgeSpeech,
   clamp,
+  mapGlyphChar,
 } from './graphics.js';
+
+/*
+ * Engine Contract Notes
+ * ---------------------
+ * - Dialogue helpers (`say`, `promptBubble`, `showLevelTitle`, waiters) must
+ *   abort immediately when a skip has been requested. This file owns the
+ *   central guards so level scripts can rely on consistent behaviour.
+ * - Skip handling always flows through `requestSkip` / `setSkipHandler`; do not
+ *   short-circuit those paths inside level scripts.
+ * - Level scripts must treat this module as the single source of gameplay
+ *   control flow – they provide narrative sequencing only.
+ */
 import { transliterateToHebrew } from './game.helpers.js';
 
 export class SkipSignal extends Error {
@@ -51,6 +64,11 @@ const sceneState = {
   skipCurrentLevel: null,
   skipRequested: false,
   skipReason: null,
+};
+
+const hudState = {
+  player: null,
+  enemy: null,
 };
 
 function ensureSkipSignal(reason) {
@@ -138,6 +156,10 @@ export function startScene(mainCallback) {
 }
 
 export function say(x, y, text) {
+  if (sceneState.skipRequested) {
+    return Promise.reject(ensureSkipSignal());
+  }
+
   const runSpeech = async () => {
     throwIfSkipRequested();
     const wasEnabled = gameplayInputEnabled;
@@ -153,6 +175,7 @@ export function say(x, y, text) {
         text,
         { awaitAck: true },
       );
+      throwIfSkipRequested();
     } finally {
       if (pendingSpeechAck === narrationSpeech) {
         pendingSpeechAck = null;
@@ -171,6 +194,16 @@ export function say(x, y, text) {
 
 export function promptBubble(x1, y1, text, x2, y2) {
   return createPromptBubble(x1, y1, text, x2, y2);
+}
+
+export function setLifeBars(bars) {
+  if (!bars) {
+    hudState.player = null;
+    hudState.enemy = null;
+    return;
+  }
+  hudState.player = bars.player ?? null;
+  hudState.enemy = bars.enemy ?? null;
 }
 
 export function ensureAmbience(key) {
@@ -369,6 +402,8 @@ function requestSkip(reason = 'skip') {
   if (sceneState.skipRequested) return;
   sceneState.skipRequested = true;
   sceneState.skipReason = reason;
+  hudState.player = null;
+  hudState.enemy = null;
   const skipError = ensureSkipSignal(reason);
   deactivateTitleOverlay(skipError);
   resolveWaitersOnSkip(skipError);
@@ -437,6 +472,7 @@ function initSprites() {
   propSprites.gardenBackdropTrees = createGardenBackdropSprite(colors);
   propSprites.balakStatue = createBalakStatueSprite(colors, false);
   propSprites.balakStatueOvergrown = createBalakStatueSprite(colors, true);
+  propSprites.balakFigure = createBalakFigureSprite(colors);
   propSprites.irrigationChannels = createIrrigationSprite(colors);
   propSprites.sunStoneDormant = createSunStoneSprite(colors, false);
   propSprites.sunStoneAwakened = createSunStoneSprite(colors, true);
@@ -447,6 +483,7 @@ function initSprites() {
   propSprites.gardenWheatHarvested = createGardenWheatSprite(colors, true);
   propSprites.gardenAltar = createGardenAltarSprite(colors);
   propSprites.gardenBreadLight = createGardenBreadLightSprite(colors);
+  propSprites.golemGuardian = createGolemGuardianSprite(colors);
   sceneProps = [];
 
   wizard.sprites = wizardSprites;
@@ -543,6 +580,7 @@ function loop(time) {
   processWaiters();
 
   drawScene();
+  renderHud();
 
   updateSpeechState(narrationSpeech, time);
   overlaySpeechStates.forEach(state => {
@@ -659,6 +697,53 @@ function drawScene() {
   drawProps();
   drawCharacters();
   renderSpeechLayers();
+}
+
+function renderHud() {
+  const lineAdvance = textRenderer.height + textRenderer.lineSpacing;
+  if (hudState.player?.text) {
+    const lines = String(hudState.player.text).split('\n');
+    const totalHeight = lines.length * lineAdvance - textRenderer.lineSpacing;
+    const baseY = buffer.height - totalHeight - 4;
+    drawHudBlock(lines, 4, baseY, 'left');
+  }
+  if (hudState.enemy?.text) {
+    const lines = String(hudState.enemy.text).split('\n');
+    const totalHeight = lines.length * lineAdvance - textRenderer.lineSpacing;
+    const baseY = 4;
+    drawHudBlock(lines, buffer.width - 4, baseY, 'right');
+  }
+}
+
+function drawHudBlock(lines, anchorX, startY, align) {
+  const lineAdvance = textRenderer.height + textRenderer.lineSpacing;
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index];
+    const y = Math.round(startY + index * lineAdvance);
+    drawHudLine(line, anchorX, y, align);
+  }
+}
+
+function drawHudLine(text, anchorX, y, align) {
+  if (!text) return;
+  const glyphs = textRenderer.glyphs;
+  const charWidth = textRenderer.width;
+  const charSpacing = textRenderer.spacing;
+  const length = text.length;
+  if (length === 0) return;
+  const totalWidth = length * (charWidth + charSpacing) - charSpacing;
+  let startX = anchorX;
+  if (align === 'right') {
+    startX = anchorX - totalWidth;
+  }
+  for (let i = 0; i < length; i++) {
+    const char = text[i];
+    const glyphKey = mapGlyphChar(char, glyphs);
+    const glyph = glyphs[glyphKey];
+    if (!glyph) continue;
+    const gx = Math.round(startX + i * (charWidth + charSpacing));
+    blitSprite(buffer, glyph, gx, y, { transparent: colors.transparent });
+  }
 }
 
 function drawSky() {
@@ -1435,6 +1520,44 @@ function createWizardSprites(c) {
   return { right, left: mirrorSprite(right) };
 }
 
+function createGolemGuardianSprite(c) {
+  const art = [
+    '............hhhhh.............',
+    '.........hhhGGGGGhhh..........',
+    '.......hhGGGGGGGGGhh..........',
+    '......hGGGGGGGGGGGGh..........',
+    '.....hGGGGGGGGGGGGGGh.........',
+    '.....hGGGGgGGGGgGGGGh.........',
+    '....hGGGGGGGGGGGGGGGGh........',
+    '....hGGGGGGGGGGGGGGGGh........',
+    '...hGGGGGGGGGGGGGGGGGh........',
+    '...hGGGGhhhGGGGGhhhGGh........',
+    '...hGGGGh..hGGGGh..GGh........',
+    '...hGGGGh..hGGGGh..GGh........',
+    '...hGGGGh..hGGGGh..GGh........',
+    '...hGGGGhhhGGGGGhhhGGh........',
+    '...hGGGGGGGGGGGGGGGGGh........',
+    '...hGGGGGGGGGGGGGGGGGh........',
+    '...hGGGGGGGGGGGGGGGGGh........',
+    '...hGGGGGGGGGGGGGGGGGh........',
+    '...hGGGGhHHHHHHHHhGGGh........',
+    '....hGGg........gGGh.........',
+    '....hGGg........gGGh.........',
+    '....hGGh........hGGh.........',
+    '....hGGh........hGGh.........',
+    '.....hh..........hh........',
+    '.....hh..........hh........',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'h': c.caveStone,
+    'G': c.hillShadow,
+    'g': c.gardenLeaf,
+    'H': c.courtMarble,
+  };
+  return spriteFromStrings(art, legend);
+}
+
 function createDoorSprite(c) {
   const width = 24;
   const height = 44;
@@ -1524,6 +1647,67 @@ function createDonkeySprites(c) {
   };
   const right = spriteFromStrings(art, legend);
   return { right, left: mirrorSprite(right) };
+}
+
+function createBalakFigureSprite(c) {
+  const art = [
+    '..........ccc............',
+    '.........ccCCc...........',
+    '........ccCCCCc..........',
+    '........ccCCCCc..........',
+    '.......ccCCCCCCc.........',
+    '......tccCCCCCCct........',
+    '......tcCCCCCCCCt........',
+    '.....tccCCCCCCCCct.......',
+    '.....tccCCCCCCCCct.......',
+    '....tcccCCCCCCCCcct......',
+    '....tcccccCCCCccccct.....',
+    '....tcccccCCCCccccct.....',
+    '....tcccccCCCCccccct.....',
+    '.....tccccCCCCccccct.....',
+    '......tccccCCccccct......',
+    '.......tccccccccct.......',
+    '........tcssssscct.......',
+    '.........tbbbbbbt........',
+    '.........tbbdbbbt........',
+    '........tsbbdbbbst.......',
+    '.......tspbbdbppst.......',
+    '......tsppbbdpppst.......',
+    '.....tspppbdppppst.......',
+    '....tsppPPPPPPPPst.......',
+    '...tspPPPPPPPPPPst.......',
+    '...tsPPPPPPPPPPPst.......',
+    '..tsPPPPPPPPPPPPst.......',
+    '..tsPPPPPPPPPPPPst.......',
+    '..tsPPPPPPPPPPPPst.......',
+    '..tsPPPPPPPPPPPPst.......',
+    '..tsPPPPPPPPPPPPst.......',
+    '..gsPPPPPPPPPPPPst.......',
+    '..gsPPPPPPPPPPPPst.......',
+    '..ggPPPPPPPPPPPPgt.......',
+    '..ggPPPPPPPPPPPPgt.......',
+    '..ggPPPPPPPPPPPPgt.......',
+    '..ggPPPPPPPPPPPPgt.......',
+    '..ggPPPPPPPPPPPPgt.......',
+    '..ggPPPPPPPPPPPPgt.......',
+    '..ggPPPPPPPPPPPPgt.......',
+    '..ggPPPPPPPPPPPPgt.......',
+    '..BBPPPPPPPPPPPPBB.......',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'c': c.hutGlow,
+    'C': c.wizardBelt,
+    't': c.staffWood,
+    's': c.wizardSkin,
+    'b': c.wizardBeard,
+    'd': c.wizardBeardShadow,
+    'p': c.marketFabric,
+    'P': c.wizardRobeHighlight,
+    'g': c.courtMarble,
+    'B': c.wizardBoot,
+  };
+  return spriteFromStrings(art, legend);
 }
 
 function createWaterSprite(c) {

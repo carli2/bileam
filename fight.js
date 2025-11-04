@@ -98,11 +98,13 @@ function selectEnemyAttack(spellTree, randomFn = Math.random) {
   return keys[index];
 }
 
-function formatLifeBar(current, max, width = 12) {
+function formatLifeBar(current, max, width = 8) {
   const ratio = max > 0 ? current / max : 0;
   const filled = clamp(Math.round(ratio * width), 0, width);
   const empty = width - filled;
-  return '█'.repeat(filled) + '░'.repeat(empty);
+  const filledChar = '|';
+  const emptyChar = '.';
+  return filledChar.repeat(filled) + emptyChar.repeat(empty);
 }
 
 export async function runFightLoop({

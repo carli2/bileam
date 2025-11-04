@@ -528,6 +528,7 @@ export function mapGlyphChar(char, glyphs) {
   if (char === ',') return ',';
   if (char === '.') return '.';
   if (char === '-') return '-';
+  if (char === 'ß') return 'ß';
   const upper = char.toUpperCase();
   return glyphs[upper] ? upper : ' ';
 }
