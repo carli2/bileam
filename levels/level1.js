@@ -116,7 +116,7 @@ async function levelOneDoorSequence(plan) {
   await donkeySay('Siehst du die Tuer? Sie leuchtet fuer dich – geh hin, Meister.');
   const target = doorTargetX();
   await waitForWizardToReach(target, { tolerance: 10 });
-  await narratorSay('Die Rune erwacht, sobald du das Holz beruehrst.');
+  await showLevelTitle('Die Rune erwacht, sobald du das Holz beruehrst.', 1800);
   await fadeToBlack(320);
   applySceneConfig(RIVER_SCENE, { setAmbience: false });
   ensureAmbience(plan?.door ?? RIVER_SCENE.ambience ?? 'riverDawn');

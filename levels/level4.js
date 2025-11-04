@@ -30,6 +30,14 @@ import {
   addProp,
 } from './utils.js';
 
+function balakSay(props, text, options = {}) {
+  return propSay(props, 'gardenBalakFigure', text, {
+    anchor: 'center',
+    offsetY: -36,
+    ...options,
+  });
+}
+
 export async function runLevelFour() {
   const plan = levelAmbiencePlan.level4;
   ensureAmbience(CANYON_SCENE.ambience ?? 'echoChamber');
@@ -64,9 +72,9 @@ export async function runLevelFour() {
 async function phaseIntroduction(props) {
   await narratorSay('Am Tor von Moab liegt Balaks Garten – einst voller Leben, nun nur Staub.');
   await moveBalak(props, wizard.x + 24);
-  await propSay(props, 'gardenBalakFigure', 'Lehrling, mein Garten verdorrt. Erwecke ihn – sonst ist unser Bund dahin.', { offsetY: -48 });
+  await balakSay(props, 'Lehrling, mein Garten verdorrt. Erwecke ihn – sonst ist unser Bund dahin.');
   await wizardSay('Majestät Balak – erwartet Ihr, dass Worte den Staub zu Blüte wandeln?');
-  await propSay(props, 'gardenBalakFigure', 'Man pries deine Zunge in meinem Hof. Zeige mir, dass sie Licht und Wasser gebietet.', { offsetY: -48 });
+  await balakSay(props, 'Man pries deine Zunge in meinem Hof. Zeige mir, dass sie Licht und Wasser gebietet.');
   await donkeySay('Du hast ihn gehört. Balak verlangt, dass du diesen Garten neu erblühen lässt.');
   await wizardSay('Mit Worten allein?');
   await donkeySay('Mit den richtigen Worten. Du kennst sie – findest du noch, wo sie hingehören?');
@@ -74,7 +82,7 @@ async function phaseIntroduction(props) {
 
 async function phaseGardenFountain(plan, props) {
   await moveBalak(props, wizard.x + 72);
-  await propSay(props, 'gardenBalakFigure', 'Sieh zuerst nach dem Brunnen, Lehrling. Wo kein Wasser ist, gibt es kein Leben.', { offsetY: -48 });
+  await balakSay(props, 'Sieh zuerst nach dem Brunnen, Lehrling. Wo kein Wasser ist, gibt es kein Leben.');
   const fountainProp = findProp(props, 'gardenDryBasin');
   const target = fountainProp ? fountainProp.x + 26 : wizard.x + 120;
   await donkeySay('Sieh dir den Brunnen an, Meister – er ist nur noch Staub.');
@@ -114,7 +122,7 @@ async function phaseGardenFountain(plan, props) {
 
 async function phaseSunStone(plan, props) {
   await moveBalak(props, wizard.x + 108);
-  await propSay(props, 'gardenBalakFigure', 'Die Blüte dort war einst mein Stolz. Vielleicht braucht sie mehr als nur Worte.', { offsetY: -48 });
+  await balakSay(props, 'Die Blüte dort war einst mein Stolz. Vielleicht braucht sie mehr als nur Worte.');
   const sunProp = findProp(props, 'gardenSunStone');
   const target = sunProp ? sunProp.x + 30 : wizard.x + 160;
   await donkeySay('Dort steht der Sonnenstein. Ohne Morgenlicht bleibt er kalt.');
@@ -152,7 +160,7 @@ async function phaseSunStone(plan, props) {
 
 async function phaseResonanceRock(plan, props) {
   await moveBalak(props, wizard.x + 146);
-  await propSay(props, 'gardenBalakFigure', 'Der Fels antwortete mir nie. Vielleicht hört er eher auf dich.', { offsetY: -48 });
+  await balakSay(props, 'Der Fels antwortete mir nie. Vielleicht hört er eher auf dich.');
   const rockProp = findProp(props, 'gardenEchoRock');
   const target = rockProp ? rockProp.x + 24 : wizard.x + 180;
   await donkeySay('Hör auf den Felsen am Rand – er atmet.');
@@ -194,7 +202,7 @@ async function phaseXayimReveal(props) {
   setSceneContext({ phase: 'revelation' });
   addProp(props, { id: 'gardenGlyph', type: 'waterGlyph', x: wizard.x + 60, y: wizard.y - 10, parallax: 0.8 });
   await narratorSay('Licht, Wasser und Klang verweben sich. Eine neue Glyphe entsteht im Boden.');
-  await propSay(props, 'gardenBalakFigure', 'Höre zu: Das ist חיים – Leben. Es ernährt mein Reich... oder lässt es verhungern.', { offsetY: -48 });
+  await balakSay(props, 'Höre zu: Das ist חיים – Leben. Es ernährt mein Reich... oder lässt es verhungern.');
   await donkeySay('Das ist חיים – xayim. Es bedeutet Leben... und Brot.');
 
   let attempts = 0;
@@ -215,7 +223,7 @@ async function phaseXayimReveal(props) {
       addProp(props, { id: 'gardenGrowth', type: 'gardenForegroundPlant', x: wizard.x + 70, y: wizard.y - 18, parallax: 1.02 });
       addProp(props, { id: 'gardenWheatBundle', type: 'gardenWheatBundle', x: wizard.x + 110, y: wizard.y - 12, parallax: 0.95 });
       await narratorSay('Pflanzen sprießen, Bäume treiben Blüten, Wasser rinnt durch die Kanäle. Über der Statue Balaks wächst Moos.');
-      await propSay(props, 'gardenBalakFigure', 'So sei es – dein Wort weckt den Staub. Vergiss nicht, wessen Auftrag du trägst.');
+      await balakSay(props, 'So sei es – dein Wort weckt den Staub. Vergiss nicht, wessen Auftrag du trägst.');
       return;
     }
 
@@ -231,7 +239,7 @@ async function phaseXayimReveal(props) {
 
 async function phaseBreadOfLife(plan, props) {
   await moveBalak(props, wizard.x + 128);
-  await propSay(props, 'gardenBalakFigure', 'Bring das Brot zum Altar. Zeig mir, dass Worte wirklich nähren.', { offsetY: -48 });
+  await balakSay(props, 'Bring das Brot zum Altar. Zeig mir, dass Worte wirklich nähren.');
   setSceneContext({ phase: 'apply' });
   const wheat = findProp(props, 'gardenWheatBundle');
   const altar = findProp(props, 'gardenAltar');

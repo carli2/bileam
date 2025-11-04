@@ -296,16 +296,35 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
   if (anchorXWorld == null || anchorYWorld == null) return;
 
   const anchorX = Math.round(anchorXWorld - cameraX);
-  const anchorY = Math.round(anchorYWorld);
+  let anchorY = Math.round(anchorYWorld);
 
   const width = speechState.width;
   const height = speechState.height;
   const bubbleLeftLimit = 2;
   const bubbleRightLimit = buffer.width - width - 2;
   let bubbleX = clamp(anchorX - Math.floor(width / 2), bubbleLeftLimit, bubbleRightLimit);
-  const bubbleBottom = anchorY - speechState.tipHeight;
-  const bubbleY = bubbleBottom - height;
+  let bubbleBottom = anchorY - speechState.tipHeight;
+  let bubbleY = bubbleBottom - height;
   const bubbleRight = bubbleX + width;
+
+  const topMargin = 2;
+  const bottomMargin = 2;
+
+  if (bubbleY < topMargin) {
+    const delta = topMargin - bubbleY;
+    bubbleY += delta;
+    bubbleBottom += delta;
+    anchorY += delta;
+  }
+
+  const projectedBottom = bubbleY + height;
+  const maxBottom = buffer.height - bottomMargin;
+  if (projectedBottom > maxBottom) {
+    const delta = projectedBottom - maxBottom;
+    bubbleY -= delta;
+    bubbleBottom -= delta;
+    anchorY -= delta;
+  }
 
   fillRect(buffer.pixels, buffer.width, buffer.height, bubbleX, bubbleY, width, height, colors.bubbleFill);
   drawBubbleTip(

@@ -69,7 +69,8 @@ function formatLifeBar(current, max, width = 8) {
   *
  * Additional params:
  * - enemyMistakeChance (0..1) controls how often the enemy deliberately
- *   chooses a non-transition word.
+ *   chooses a non-transition word. Overridden by `enemyAccuracy` (1 - mistake)
+ *   or machine meta (`meta.enemyMistakeChance` / `meta.enemyAccuracy`).
  * - enemyVocabulary allows overriding the word bank considered for random
  *   enemy mistakes; defaults to the union of machine transitions.
  *
@@ -87,7 +88,8 @@ export async function runFightLoop({
   onEvent = () => {},
   onUpdate = () => {},
   randomFn = Math.random,
-  enemyMistakeChance = 0.5,
+  enemyMistakeChance,
+  enemyAccuracy,
   enemyVocabulary,
 }) {
   if (!machine) {
@@ -95,6 +97,9 @@ export async function runFightLoop({
   }
 
   const states = machine;
+  const machineMeta = (machine && typeof machine === 'object' && machine.meta && typeof machine.meta === 'object')
+    ? machine.meta
+    : {};
   if (!states[initialState]) {
     throw new Error(`Unknown fight state: ${initialState}`);
   }
@@ -241,6 +246,18 @@ export async function runFightLoop({
 
   const transitionsFor = state => state?.transitions ?? {};
 
+  const clamp01 = value => clamp(value, 0, 1);
+
+  const resolvedMistakeChance = (() => {
+    const paramAccuracy = typeof enemyAccuracy === 'number' ? clamp01(enemyAccuracy) : null;
+    const paramMistake = typeof enemyMistakeChance === 'number' ? clamp01(enemyMistakeChance) : null;
+    const metaAccuracy = typeof machineMeta.enemyAccuracy === 'number' ? clamp01(machineMeta.enemyAccuracy) : null;
+    const metaMistake = typeof machineMeta.enemyMistakeChance === 'number' ? clamp01(machineMeta.enemyMistakeChance) : null;
+    const derivedParam = paramMistake ?? (paramAccuracy != null ? 1 - paramAccuracy : null);
+    const derivedMeta = metaMistake ?? (metaAccuracy != null ? 1 - metaAccuracy : null);
+    return derivedParam ?? derivedMeta ?? 0.5;
+  })();
+
   const collectedVocabulary = (() => {
     if (Array.isArray(enemyVocabulary) && enemyVocabulary.length > 0) {
       return [...new Set(enemyVocabulary.filter(Boolean))];
@@ -337,6 +354,15 @@ export async function runFightLoop({
         ? state.failure_player_next
         : state.failure_computer_next;
       stateKey = failureNextPreference ?? state.failure_next ?? 'start';
+      const keepFailureActor = actor === 'player'
+        ? state.failure_player_keepActor
+        : state.failure_computer_keepActor;
+      if (!keepFailureActor) {
+        actor = actor === 'player' ? 'enemy' : 'player';
+        if (actor === 'enemy') {
+          recentEnemyWord = null;
+        }
+      }
       const transitions = Object.keys(stateTransitions ?? {});
       lastFailure = {
         actor,
@@ -368,7 +394,7 @@ export async function runFightLoop({
       chosenWord = normalized ?? '';
     } else {
       const pickRandom = list => (list.length > 0 ? list[Math.floor(randomFn() * list.length)] : undefined);
-      const shouldFreestyle = enemyMistakeChance > 0 && randomFn() < enemyMistakeChance;
+      const shouldFreestyle = resolvedMistakeChance > 0 && randomFn() < resolvedMistakeChance;
       if (shouldFreestyle) {
         chosenWord = pickRandom(collectedVocabulary) ?? null;
       }
@@ -471,4 +497,93 @@ export function buildLifeBarString(playerHP, playerMax, enemyHP, enemyMax) {
   const playerBar = formatLifeBar(playerHP, playerMax);
   const enemyBar = formatLifeBar(enemyHP, enemyMax);
   return `${playerBar} ${Math.max(0, Math.round(playerHP))}/${playerMax}\n${enemyBar} ${Math.max(0, Math.round(enemyHP))}/${enemyMax}`;
+}
+
+export function cropStateMachine(machine, wordList = [], initialState = 'start') {
+  if (!machine || typeof machine !== 'object') {
+    return {};
+  }
+
+  const words = Array.isArray(wordList) ? wordList : [wordList];
+  const allowed = new Set(words.map(normalizeInput).filter(Boolean));
+  const shouldFilter = allowed.size > 0;
+
+  const filteredMachine = {};
+  Object.entries(machine).forEach(([stateKey, stateValue]) => {
+    if (stateKey === 'meta') {
+      return;
+    }
+    if (!stateValue || typeof stateValue !== 'object') return;
+    const copy = { ...stateValue };
+    const transitions = stateValue.transitions ?? {};
+    const filteredTransitions = {};
+    Object.entries(transitions).forEach(([word, transitionConfig]) => {
+      const normalizedWord = normalizeInput(word);
+      if (!shouldFilter || allowed.has(normalizedWord)) {
+        filteredTransitions[word] = typeof transitionConfig === 'string'
+          ? transitionConfig
+          : { ...transitionConfig };
+      }
+    });
+    copy.transitions = filteredTransitions;
+    filteredMachine[stateKey] = copy;
+  });
+
+  const resolveNextState = config => {
+    if (typeof config === 'string') {
+      return config;
+    }
+    if (config && typeof config === 'object' && typeof config.next === 'string') {
+      return config.next;
+    }
+    return 'start';
+  };
+
+  if (!filteredMachine[initialState]) {
+    throw new Error(`Initial state "${initialState}" missing after cropping.`);
+  }
+
+  const visited = new Set();
+  const queue = [initialState];
+  visited.add(initialState);
+
+  while (queue.length > 0) {
+    const stateKey = queue.shift();
+    const state = filteredMachine[stateKey];
+    if (!state) continue;
+    const transitions = state.transitions ?? {};
+    Object.values(transitions).forEach(config => {
+      const nextState = resolveNextState(config);
+      if (filteredMachine[nextState] && !visited.has(nextState)) {
+        visited.add(nextState);
+        queue.push(nextState);
+      }
+    });
+  }
+
+  const result = {};
+  visited.forEach(stateKey => {
+    const source = filteredMachine[stateKey];
+    if (!source) return;
+    const transitions = source.transitions ?? {};
+    const sanitizedTransitions = {};
+    Object.entries(transitions).forEach(([word, config]) => {
+      const nextState = resolveNextState(config);
+      if (visited.has(nextState)) {
+        sanitizedTransitions[word] = typeof config === 'string' ? config : { ...config };
+      }
+    });
+
+    if (Object.keys(sanitizedTransitions).length === 0) {
+      throw new Error(`State "${stateKey}" has no transitions after cropping.`);
+    }
+
+    result[stateKey] = { ...source, transitions: sanitizedTransitions };
+  });
+
+  if (machine.meta && typeof machine.meta === 'object') {
+    result.meta = { ...machine.meta };
+  }
+
+  return result;
 }

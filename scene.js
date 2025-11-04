@@ -44,6 +44,7 @@ const GRAVITY = 280;
 const JUMP_FORCE = 180;
 const TEXT_WRAP = 26;
 const CAMERA_MARGIN = 96;
+const CAMERA_EASE = 0.12;
 const GRASS_SWAY_SPEED = 4;
 const MAX_INPUT_LENGTH = 18;
 
@@ -65,6 +66,7 @@ const sceneState = {
   skipCurrentLevel: null,
   skipRequested: false,
   skipReason: null,
+  pendingSkipReason: null,
 };
 
 const hudState = {
@@ -424,6 +426,11 @@ export function setSkipHandler(handler) {
       : reason;
     requestSkip(finalReason ?? 'skip');
   };
+  if (sceneState.pendingSkipReason) {
+    const pending = sceneState.pendingSkipReason;
+    sceneState.pendingSkipReason = null;
+    sceneState.skipCurrentLevel(pending);
+  }
 }
 
 export function clearSkipHandler() {
@@ -431,6 +438,7 @@ export function clearSkipHandler() {
   sceneState.cancelPrompt = null;
   sceneState.skipRequested = false;
   sceneState.skipReason = null;
+  sceneState.pendingSkipReason = null;
 }
 
 export function clearSkipState() {
@@ -439,6 +447,10 @@ export function clearSkipState() {
 }
 
 function requestSkip(reason = 'skip') {
+  if (!sceneState.skipCurrentLevel) {
+    sceneState.pendingSkipReason = reason ?? 'skip';
+    return;
+  }
   if (sceneState.skipRequested) return;
   sceneState.skipRequested = true;
   sceneState.skipReason = reason;
@@ -659,10 +671,14 @@ function loop(time) {
 }
 
 function updateWizard(delta) {
-  const left = gameplayInputEnabled && heldKeys.has('a');
-  const right = gameplayInputEnabled && heldKeys.has('d');
-  const crouch = gameplayInputEnabled && heldKeys.has('s');
-  const jumpPressed = gameplayInputEnabled && pressedKeys.has('w');
+  const leftHeld = heldKeys.has('a') || heldKeys.has('arrowleft');
+  const rightHeld = heldKeys.has('d') || heldKeys.has('arrowright');
+  const downHeld = heldKeys.has('s') || heldKeys.has('arrowdown');
+  const upHeld = heldKeys.has('w') || heldKeys.has('arrowup');
+  const left = gameplayInputEnabled && leftHeld;
+  const right = gameplayInputEnabled && rightHeld;
+  const crouch = gameplayInputEnabled && downHeld;
+  const jumpPressed = gameplayInputEnabled && (pressedKeys.has('w') || pressedKeys.has('arrowup'));
 
   let desired = 0;
   if (left) desired -= MOVE_SPEED;
@@ -680,7 +696,7 @@ function updateWizard(delta) {
 
   const gravityForce = GRAVITY * delta;
   wizard.vy += gravityForce;
-  if (!heldKeys.has('w') && wizard.vy < 0) {
+  if (!upHeld && wizard.vy < 0) {
     wizard.vy += GRAVITY * 0.35 * delta;
   }
   if (crouch && wizard.vy > 0) {
@@ -1331,14 +1347,8 @@ function renderSpeechLayers() {
 }
 
 function updateCamera() {
-  const margin = CAMERA_MARGIN;
-  const leftEdge = cameraX + margin;
-  const rightEdge = cameraX + WIDTH - margin;
-  if (wizard.x < leftEdge) {
-    cameraX = Math.max(0, wizard.x - margin);
-  } else if (wizard.x > rightEdge) {
-    cameraX = Math.max(0, wizard.x - (WIDTH - margin));
-  }
+  const targetX = Math.max(0, wizard.x - CAMERA_MARGIN);
+  cameraX += (targetX - cameraX) * CAMERA_EASE;
 }
 function createPromptBubble(x1, y1, text, x2, y2) {
   if (sceneState.skipRequested) {
@@ -2530,8 +2540,8 @@ function handleVirtualKeyPress(key, displayLabel) {
     return;
   }
   if (activePrompt && typeof activePrompt.handleVirtualInput === 'function') {
-    const normalized = (displayLabel && displayLabel.length === 1)
-      ? displayLabel.toLowerCase()
+    const normalized = (typeof key === 'string' && key.length === 1)
+      ? key.toLowerCase()
       : key;
     activePrompt.handleVirtualInput(normalized);
     return;

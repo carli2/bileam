@@ -205,4 +205,5 @@ Er dient als Gegenpol zum Lernprozess: Manipulation vs. Erkenntnis.
 - **Esel-Dialoge:** bleiben das didaktische Herz des Spiels.  
   - Verwenden einfache Sprache.  
   - Struktur: *Problem – Wort – Erklärung – Anwendung – Moralischer Satz.*  
-
+- **Regie-Anweisungen:** niemals in wörtlicher Rede oder Sprechblasen unterbringen; nutze stattdessen großflächige Texte (z. B. Sequenzen, `showLevelTitle`) oder passende Effekte.  
+- **Tests:** Nach jeder Änderung `npm test` ausführen und nur mit grünem Ergebnis weiterarbeiten.  

@@ -1,4 +1,11 @@
-import { say, wizard, donkey, setSceneProps, ensureAmbience } from '../scene.js';
+import {
+  say,
+  wizard,
+  donkey,
+  setSceneProps,
+  ensureAmbience,
+  getScenePropBounds,
+} from '../scene.js';
 
 /*
  * Level Coding Rules
@@ -60,6 +67,63 @@ export function donkeySay(text) {
   );
 }
 
+const SPELL_ALIASES = {
+  // אור
+  aor: 'אור',
+  or: 'אור',
+  אור: 'אור',
+  // מים
+  mayim: 'מים',
+  majim: 'מים',
+  mjm: 'מים',
+  מים: 'מים',
+  // קול
+  qol: 'קול',
+  kol: 'קול',
+  קול: 'קול',
+  // חיים
+  chayim: 'חיים',
+  chaim: 'חיים',
+  xayim: 'חיים',
+  chajim: 'חיים',
+  חיים: 'חיים',
+  // אש
+  ash: 'אש',
+  esh: 'אש',
+  אש: 'אש',
+  // דבר
+  dabar: 'דבר',
+  davar: 'דבר',
+  dbr: 'דבר',
+  דבר: 'דבר',
+  // אמת
+  emet: 'אמת',
+  amet: 'אמת',
+  אמת: 'אמת',
+  // מלאך
+  malak: 'מלאך',
+  malach: 'מלאך',
+  mlak: 'מלאך',
+  מלאך: 'מלאך',
+  // ארור
+  arur: 'ארור',
+  aror: 'ארור',
+  ארור: 'ארור',
+  // ברכה
+  beraka: 'ברכה',
+  beracha: 'ברכה',
+  bracha: 'ברכה',
+  brcha: 'ברכה',
+  ברכה: 'ברכה',
+  // המלחמה
+  hamilchama: 'המלחמה',
+  milchama: 'המלחמה',
+  hmlchmh: 'המלחמה',
+  hamilchamah: 'המלחמה',
+  milchamah: 'המלחמה',
+  המלחמה: 'המלחמה',
+};
+
 export function normalizeHebrewInput(value) {
   if (value == null) return '';
   return String(value)
@@ -69,10 +133,16 @@ export function normalizeHebrewInput(value) {
     .replace(/\s+/g, '');
 }
 
+export function canonicalSpell(value) {
+  const normalized = normalizeHebrewInput(value);
+  if (!normalized) return '';
+  return SPELL_ALIASES[normalized] ?? normalized;
+}
+
 export function spellEquals(answer, ...variants) {
-  const normalized = normalizeHebrewInput(answer);
+  const canonical = canonicalSpell(answer);
   if (!variants || variants.length === 0) return false;
-  return variants.some(option => normalizeHebrewInput(option) === normalized);
+  return variants.some(option => canonicalSpell(option) === canonical);
 }
 
 export function findProp(list, id) {
@@ -81,23 +151,67 @@ export function findProp(list, id) {
 }
 
 export function propSay(props, id, text, options = {}) {
-  const { offsetX = 0, offsetY = -24 } = options;
-  const anchorX = () => {
-    const prop = findProp(props, id);
-    if (prop?.sprite) {
-      const width = prop.sprite.width ?? 0;
-      return (prop.x ?? 0) + width / 2 + offsetX;
+  const {
+    offsetX = 0,
+    offsetY = -24,
+    anchor = 'right',
+    anchorX: anchorXOverride = null,
+    anchorY: anchorYOverride = null,
+  } = options;
+
+  const resolveBaseX = () => {
+    if (typeof anchorXOverride === 'function') {
+      return anchorXOverride();
     }
-    return actorCenterX(wizard) + offsetX;
+
+    const runtime = getScenePropBounds(id);
+    if (runtime) {
+      const { left, right, width } = runtime;
+      switch (anchor) {
+        case 'left':
+          return left;
+        case 'center':
+          return left + width / 2;
+        default:
+          return right;
+      }
+    }
+
+    const prop = findProp(props, id);
+    if (prop) {
+      const width = prop.sprite?.width ?? prop.width ?? 0;
+      const left = prop.x ?? 0;
+      if (anchor === 'left') return left;
+      if (anchor === 'center') return left + width / 2;
+      return left + width;
+    }
+
+    const wizardBase = anchor === 'left'
+      ? wizard.x
+      : actorCenterX(wizard);
+    return wizardBase;
   };
 
-  const anchorY = () => {
-    const prop = findProp(props, id);
-    if (prop?.sprite) {
-      return (prop.y ?? 0) - 16 + offsetY;
+  const resolveBaseY = () => {
+    if (typeof anchorYOverride === 'function') {
+      return anchorYOverride();
     }
-    return actorBubbleY(wizard, -46) + offsetY;
+
+    const runtime = getScenePropBounds(id);
+    if (runtime) {
+      return runtime.top - 16;
+    }
+
+    const prop = findProp(props, id);
+    if (prop && typeof prop.y === 'number') {
+      return prop.y - 16;
+    }
+
+    return actorBubbleY(wizard, -46);
   };
+
+  const anchorX = () => Math.round(resolveBaseX() + offsetX);
+  const anchorY = () => Math.round(resolveBaseY() + offsetY);
 
   return say(anchorX, anchorY, text);
 }
