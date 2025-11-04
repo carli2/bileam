@@ -157,7 +157,7 @@ export const GARDEN_SCENE = {
   props: [
     { id: 'gardenBackgroundTrees', type: 'gardenBackdropTrees', x: -12, align: 'ground', parallax: 0.25 },
     { id: 'gardenBalakStatue', type: 'balakStatue', x: 312, align: 'ground', parallax: 0.55 },
-    { id: 'gardenBalakFigure', type: 'balakFigure', x: 352, align: 'ground', parallax: 0.95 },
+    { id: 'gardenBalakFigure', type: 'balakFigure', x: 232, align: 'ground', parallax: 0.95 },
     { id: 'gardenIrrigation', type: 'irrigationChannels', x: -28, align: 'ground', parallax: 0.9 },
     { id: 'gardenDryBasin', type: 'fountainDry', x: 248, align: 'ground' },
     { id: 'gardenSunStone', type: 'sunStoneDormant', x: 410, align: 'ground' },

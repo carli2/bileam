@@ -63,15 +63,18 @@ export async function runLevelFour() {
 
 async function phaseIntroduction(props) {
   await narratorSay('Am Tor von Moab liegt Balaks Garten – einst voller Leben, nun nur Staub.');
-  await propSay(props, 'gardenBalakFigure', 'Lehrling, mein Garten verdorrt. Erwecke ihn – sonst ist unser Bund dahin.');
+  await moveBalak(props, wizard.x + 24);
+  await propSay(props, 'gardenBalakFigure', 'Lehrling, mein Garten verdorrt. Erwecke ihn – sonst ist unser Bund dahin.', { offsetY: -48 });
   await wizardSay('Majestät Balak – erwartet Ihr, dass Worte den Staub zu Blüte wandeln?');
-  await propSay(props, 'gardenBalakFigure', 'Man pries deine Zunge in meinem Hof. Zeige mir, dass sie Licht und Wasser gebietet.');
+  await propSay(props, 'gardenBalakFigure', 'Man pries deine Zunge in meinem Hof. Zeige mir, dass sie Licht und Wasser gebietet.', { offsetY: -48 });
   await donkeySay('Du hast ihn gehört. Balak verlangt, dass du diesen Garten neu erblühen lässt.');
   await wizardSay('Mit Worten allein?');
   await donkeySay('Mit den richtigen Worten. Du kennst sie – findest du noch, wo sie hingehören?');
 }
 
 async function phaseGardenFountain(plan, props) {
+  await moveBalak(props, wizard.x + 72);
+  await propSay(props, 'gardenBalakFigure', 'Sieh zuerst nach dem Brunnen, Lehrling. Wo kein Wasser ist, gibt es kein Leben.', { offsetY: -48 });
   const fountainProp = findProp(props, 'gardenDryBasin');
   const target = fountainProp ? fountainProp.x + 26 : wizard.x + 120;
   await donkeySay('Sieh dir den Brunnen an, Meister – er ist nur noch Staub.');
@@ -110,6 +113,8 @@ async function phaseGardenFountain(plan, props) {
 }
 
 async function phaseSunStone(plan, props) {
+  await moveBalak(props, wizard.x + 108);
+  await propSay(props, 'gardenBalakFigure', 'Die Blüte dort war einst mein Stolz. Vielleicht braucht sie mehr als nur Worte.', { offsetY: -48 });
   const sunProp = findProp(props, 'gardenSunStone');
   const target = sunProp ? sunProp.x + 30 : wizard.x + 160;
   await donkeySay('Dort steht der Sonnenstein. Ohne Morgenlicht bleibt er kalt.');
@@ -146,6 +151,8 @@ async function phaseSunStone(plan, props) {
 }
 
 async function phaseResonanceRock(plan, props) {
+  await moveBalak(props, wizard.x + 146);
+  await propSay(props, 'gardenBalakFigure', 'Der Fels antwortete mir nie. Vielleicht hört er eher auf dich.', { offsetY: -48 });
   const rockProp = findProp(props, 'gardenEchoRock');
   const target = rockProp ? rockProp.x + 24 : wizard.x + 180;
   await donkeySay('Hör auf den Felsen am Rand – er atmet.');
@@ -183,9 +190,11 @@ async function phaseResonanceRock(plan, props) {
 }
 
 async function phaseXayimReveal(props) {
+  await moveBalak(props, wizard.x + 92);
   setSceneContext({ phase: 'revelation' });
   addProp(props, { id: 'gardenGlyph', type: 'waterGlyph', x: wizard.x + 60, y: wizard.y - 10, parallax: 0.8 });
   await narratorSay('Licht, Wasser und Klang verweben sich. Eine neue Glyphe entsteht im Boden.');
+  await propSay(props, 'gardenBalakFigure', 'Höre zu: Das ist חיים – Leben. Es ernährt mein Reich... oder lässt es verhungern.', { offsetY: -48 });
   await donkeySay('Das ist חיים – xayim. Es bedeutet Leben... und Brot.');
 
   let attempts = 0;
@@ -221,6 +230,8 @@ async function phaseXayimReveal(props) {
 }
 
 async function phaseBreadOfLife(plan, props) {
+  await moveBalak(props, wizard.x + 128);
+  await propSay(props, 'gardenBalakFigure', 'Bring das Brot zum Altar. Zeig mir, dass Worte wirklich nähren.', { offsetY: -48 });
   setSceneContext({ phase: 'apply' });
   const wheat = findProp(props, 'gardenWheatBundle');
   const altar = findProp(props, 'gardenAltar');
@@ -243,4 +254,9 @@ async function phaseBreadOfLife(plan, props) {
   await wizardSay('Ich habe mit Worten Brot gemacht.');
   await donkeySay('Oder Brot hat dich gemacht. Wer weiss das schon?');
   await transitionAmbience(plan?.apply ?? plan?.learn ?? GARDEN_SCENE.ambience ?? 'gardenBloom', { fade: { toBlack: 180, toBase: 420 } });
+}
+
+function moveBalak(props, x) {
+  updateProp(props, 'gardenBalakFigure', { x });
+  return Promise.resolve();
 }

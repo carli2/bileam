@@ -13,6 +13,7 @@ import {
   acknowledgeSpeech,
   clamp,
   mapGlyphChar,
+  wrapText,
 } from './graphics.js';
 
 /*
@@ -115,7 +116,15 @@ export const donkey = {
 let donkeyBaseY = 0;
 let clouds = [];
 
-const controls = new Set(['w', 'a', 's', 'd']);
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+let touchControlsAttached = false;
+const touchState = {
+  id: null,
+  startX: 0,
+  startY: 0,
+};
+
+const controls = new Set(['w', 'a', 's', 'd', 'arrowup', 'arrowleft', 'arrowdown', 'arrowright']);
 const heldKeys = new Set();
 const pressedKeys = new Set();
 const SPEECH_ACK_KEYS = new Set(['Enter', ' ', 'Space', 'Spacebar']);
@@ -137,7 +146,33 @@ const titleOverlay = {
   until: 0,
   resolve: null,
   reject: null,
+  lines: [],
 };
+
+const TITLE_WRAP_LIMIT = 22;
+
+function prepareTitleLines(text) {
+  if (text == null) return [''];
+  const segments = String(text)
+    .replace(/\r/g, '')
+    .split(/\n+/)
+    .map(chunk => chunk.trim())
+    .filter(Boolean);
+  if (segments.length === 0) {
+    return [''];
+  }
+  const lines = [];
+  segments.forEach(chunk => {
+    const wrapped = wrapText(chunk, TITLE_WRAP_LIMIT);
+    wrapped.forEach(line => {
+      const trimmed = line.trim();
+      if (trimmed) {
+        lines.push(trimmed);
+      }
+    });
+  });
+  return lines.length > 0 ? lines : [''];
+}
 
 export function startScene(mainCallback) {
   if (sceneStarted) {
@@ -146,6 +181,9 @@ export function startScene(mainCallback) {
   sceneStarted = true;
   initSprites();
   setupEventListeners();
+  if (isTouchDevice) {
+    setupTouchMode();
+  }
   lastTime = performance.now();
   requestAnimationFrame(loop);
   if (typeof mainCallback === 'function') {
@@ -332,6 +370,7 @@ export function showLevelTitle(text, duration = 2600) {
 
   titleOverlay.active = true;
   titleOverlay.text = String(text);
+  titleOverlay.lines = prepareTitleLines(text);
   titleOverlay.until = performance.now() + Math.max(0, duration);
 
   return new Promise((resolve, reject) => {
@@ -349,6 +388,7 @@ function deactivateTitleOverlay(reason = null) {
   titleOverlay.active = false;
   titleOverlay.until = 0;
   titleOverlay.text = '';
+  titleOverlay.lines = [];
   if (!wasActive && !resolver && !rejecter) return;
 
   if (reason instanceof SkipSignal) {
@@ -603,7 +643,9 @@ function loop(time) {
     ctx.font = '24px monospace';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    const lines = String(titleOverlay.text).split('\n');
+    const lines = (titleOverlay.lines && titleOverlay.lines.length > 0)
+      ? titleOverlay.lines
+      : [String(titleOverlay.text)];
     const lineHeight = 28;
     const startY = canvas.height / 2 - ((lines.length - 1) * lineHeight) / 2;
     lines.forEach((line, index) => {
@@ -744,6 +786,22 @@ function drawHudLine(text, anchorX, y, align) {
     const gx = Math.round(startX + i * (charWidth + charSpacing));
     blitSprite(buffer, glyph, gx, y, { transparent: colors.transparent });
   }
+}
+
+function setKeyState(key, pressed) {
+  const lower = key.toLowerCase();
+  if (pressed) {
+    if (!heldKeys.has(lower)) {
+      heldKeys.add(lower);
+      pressedKeys.add(lower);
+    }
+  } else {
+    heldKeys.delete(lower);
+  }
+}
+
+function triggerKeyPress(key) {
+  pressedKeys.add(key.toLowerCase());
 }
 
 function drawSky() {
@@ -1325,6 +1383,7 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     cursorVisible: true,
     blinkTimer: 0,
     update: null,
+    handleVirtualInput: null,
   };
 
   heldKeys.clear();
@@ -1344,10 +1403,15 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     state.reject = reject;
   });
 
-  const onKeyDown = event => {
-    const key = event.key;
+  const handleInput = (key, event = null) => {
+    const prevent = () => {
+      if (event && typeof event.preventDefault === 'function') {
+        event.preventDefault();
+      }
+    };
+
     if (key === 'Enter') {
-      event.preventDefault();
+      prevent();
       const ascii = bufferChars.join('');
       const result = (state.transliterated ?? transliterateToHebrew(ascii)).trim();
       detach(result, false);
@@ -1355,7 +1419,7 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     }
 
     if (key === 'Escape') {
-      event.preventDefault();
+      prevent();
       if (typeof sceneState.skipCurrentLevel === 'function') {
         sceneState.skipCurrentLevel('skip');
       } else {
@@ -1365,14 +1429,16 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     }
 
     if (key === 'Backspace') {
-      event.preventDefault();
-      bufferChars.pop();
+      prevent();
+      if (bufferChars.length > 0) {
+        bufferChars.pop();
+      }
       refreshInputState();
       return;
     }
 
     if (key === ' ' || key === 'Space' || key === 'Spacebar') {
-      event.preventDefault();
+      prevent();
       if (bufferChars.length < MAX_INPUT_LENGTH) {
         bufferChars.push(' ');
         refreshInputState();
@@ -1380,14 +1446,18 @@ function createPromptBubble(x1, y1, text, x2, y2) {
       return;
     }
 
-    if (key.length === 1) {
-      const char = key.length === 1 ? key.toLowerCase() : key;
+    if (typeof key === 'string' && key.length === 1) {
+      const char = key.toLowerCase ? key.toLowerCase() : key;
       if (bufferChars.length < MAX_INPUT_LENGTH) {
         bufferChars.push(char);
         refreshInputState();
       }
-      event.preventDefault();
+      prevent();
     }
+  };
+
+  const onKeyDown = event => {
+    handleInput(event.key, event);
   };
 
   function detach(result, isReject = false) {
@@ -1399,6 +1469,7 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     gameplayInputEnabled = true;
     activePrompt = null;
     sceneState.cancelPrompt = null;
+    state.handleVirtualInput = null;
     if (isReject) {
       state.reject(ensureSkipSignal(result));
     } else {
@@ -1442,6 +1513,10 @@ function createPromptBubble(x1, y1, text, x2, y2) {
 
   refreshInputState();
   window.addEventListener('keydown', onKeyDown, true);
+
+  state.handleVirtualInput = key => {
+    handleInput(key, null);
+  };
 
   state.update = delta => {
     state.blinkTimer += delta;
@@ -1521,7 +1596,7 @@ function createWizardSprites(c) {
 }
 
 function createGolemGuardianSprite(c) {
-  const art = [
+  const baseArt = [
     '............hhhhh.............',
     '.........hhhGGGGGhhh..........',
     '.......hhGGGGGGGGGhh..........',
@@ -1550,12 +1625,35 @@ function createGolemGuardianSprite(c) {
   ];
   const legend = {
     '.': c.transparent,
-    'h': c.caveStone,
-    'G': c.hillShadow,
-    'g': c.gardenLeaf,
+    'h': c.donkeyShadow,
+    'G': c.donkeyFur,
+    'g': c.donkeyHighlight,
     'H': c.courtMarble,
   };
-  return spriteFromStrings(art, legend);
+  const factor = 4;
+  const baseHeight = baseArt.length;
+  const baseWidth = baseArt[0].length;
+  const width = baseWidth * factor;
+  const height = baseHeight * factor;
+  const pixels = new Uint8Array(width * height);
+
+  for (let by = 0; by < baseHeight; by++) {
+    const row = baseArt[by];
+    for (let bx = 0; bx < baseWidth; bx++) {
+      const key = row[bx];
+      const color = legend[key];
+      if (color == null) continue;
+      for (let fy = 0; fy < factor; fy++) {
+        const y = by * factor + fy;
+        for (let fx = 0; fx < factor; fx++) {
+          const x = bx * factor + fx;
+          pixels[y * width + x] = color;
+        }
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
 }
 
 function createDoorSprite(c) {
@@ -1651,61 +1749,41 @@ function createDonkeySprites(c) {
 
 function createBalakFigureSprite(c) {
   const art = [
-    '..........ccc............',
-    '.........ccCCc...........',
-    '........ccCCCCc..........',
-    '........ccCCCCc..........',
-    '.......ccCCCCCCc.........',
-    '......tccCCCCCCct........',
-    '......tcCCCCCCCCt........',
-    '.....tccCCCCCCCCct.......',
-    '.....tccCCCCCCCCct.......',
-    '....tcccCCCCCCCCcct......',
-    '....tcccccCCCCccccct.....',
-    '....tcccccCCCCccccct.....',
-    '....tcccccCCCCccccct.....',
-    '.....tccccCCCCccccct.....',
-    '......tccccCCccccct......',
-    '.......tccccccccct.......',
-    '........tcssssscct.......',
-    '.........tbbbbbbt........',
-    '.........tbbdbbbt........',
-    '........tsbbdbbbst.......',
-    '.......tspbbdbppst.......',
-    '......tsppbbdpppst.......',
-    '.....tspppbdppppst.......',
-    '....tsppPPPPPPPPst.......',
-    '...tspPPPPPPPPPPst.......',
-    '...tsPPPPPPPPPPPst.......',
-    '..tsPPPPPPPPPPPPst.......',
-    '..tsPPPPPPPPPPPPst.......',
-    '..tsPPPPPPPPPPPPst.......',
-    '..tsPPPPPPPPPPPPst.......',
-    '..tsPPPPPPPPPPPPst.......',
-    '..gsPPPPPPPPPPPPst.......',
-    '..gsPPPPPPPPPPPPst.......',
-    '..ggPPPPPPPPPPPPgt.......',
-    '..ggPPPPPPPPPPPPgt.......',
-    '..ggPPPPPPPPPPPPgt.......',
-    '..ggPPPPPPPPPPPPgt.......',
-    '..ggPPPPPPPPPPPPgt.......',
-    '..ggPPPPPPPPPPPPgt.......',
-    '..ggPPPPPPPPPPPPgt.......',
-    '..ggPPPPPPPPPPPPgt.......',
-    '..BBPPPPPPPPPPPPBB.......',
+    '........ggggg.................',
+    '.......ggggggg................',
+    '......gggsssggg...............',
+    '.....ggsssssssgg..............',
+    '.....gssbsssbbsgg.............',
+    '....gssbbbbbbbssgg............',
+    '....gssbbbbbbbssgg............',
+    '....gsssssssssssgg............',
+    '....gssssddddsssgg............',
+    '....gssssbbbbsssgg............',
+    '....gsssppppppssgg............',
+    '...ggssppPPPPpssgg............',
+    '...ggsppPPPPPPpssgg...........',
+    '...gsppPPppPPPPpssgg..........',
+    '...gsppPPppPPPPpssgg..........',
+    '...gsppPPPPPPPPpssgg..........',
+    '...gsppPPPPPPPPpssgg..........',
+    '...gsppPPPPPPPPpssgg..........',
+    '...gsppPPPPPPPPpssgg..........',
+    '...gssppPPPPPPpssgg...........',
+    '...gsssppPPPPpsssg............',
+    '...gsssppppppsssgg............',
+    '...gsssssssssssggg............',
+    '...gsssssssssssggg............',
+    '...ggggggggggggggg............',
+    '...gg..............gg.........',
   ];
   const legend = {
     '.': c.transparent,
-    'c': c.hutGlow,
-    'C': c.wizardBelt,
-    't': c.staffWood,
+    'g': c.wizardBelt,
     's': c.wizardSkin,
     'b': c.wizardBeard,
     'd': c.wizardBeardShadow,
     'p': c.marketFabric,
     'P': c.wizardRobeHighlight,
-    'g': c.courtMarble,
-    'B': c.wizardBoot,
   };
   return spriteFromStrings(art, legend);
 }
@@ -2282,6 +2360,186 @@ function generateCloudSprite(width, height, c) {
     }
   }
   return new Sprite(width, height, pixels);
+}
+
+function setupTouchMode() {
+  if (touchControlsAttached) return;
+  touchControlsAttached = true;
+  document.body.classList.add('touch-mode');
+  createTouchKeyboard();
+  setupTouchMovement();
+}
+
+function setupTouchMovement() {
+  if (!canvas) return;
+  canvas.addEventListener('touchstart', handleTouchStart, { passive: false });
+  canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+  canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+  canvas.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+}
+
+function handleTouchStart(event) {
+  if (touchState.id != null) return;
+  const touch = event.changedTouches?.[0];
+  if (!touch) return;
+  touchState.id = touch.identifier;
+  touchState.startX = touch.clientX;
+  touchState.startY = touch.clientY;
+  updateTouchMovement(touch, true);
+  event.preventDefault();
+}
+
+function handleTouchMove(event) {
+  const touch = getTrackedTouch(event.changedTouches);
+  if (!touch) return;
+  updateTouchMovement(touch, false);
+  event.preventDefault();
+}
+
+function handleTouchEnd(event) {
+  const touch = getTrackedTouch(event.changedTouches);
+  if (touchState.id != null && (!touch || touch.identifier === touchState.id)) {
+    setKeyState('a', false);
+    setKeyState('d', false);
+    setKeyState('s', false);
+    touchState.id = null;
+  }
+  event.preventDefault();
+}
+
+function getTrackedTouch(list) {
+  if (!list) return null;
+  for (let i = 0; i < list.length; i++) {
+    if (list[i].identifier === touchState.id) {
+      return list[i];
+    }
+  }
+  return null;
+}
+
+function updateTouchMovement(touch, initial) {
+  const rect = canvas.getBoundingClientRect();
+  const dx = touch.clientX - touchState.startX;
+  const dy = touch.clientY - touchState.startY;
+  const threshold = Math.max(rect.width, rect.height) * 0.05;
+
+  let moveLeft = false;
+  let moveRight = false;
+  let moveDown = false;
+
+  if (!initial) {
+    if (Math.abs(dx) > Math.abs(dy)) {
+      if (dx < -threshold) moveLeft = true;
+      else if (dx > threshold) moveRight = true;
+    } else {
+      if (dy > threshold) moveDown = true;
+      else if (dy < -threshold) {
+        triggerKeyPress('w');
+      }
+    }
+  }
+
+  if (initial && !moveLeft && !moveRight) {
+    const relativeX = touch.clientX - rect.left;
+    if (relativeX < rect.width * 0.4) moveLeft = true;
+    else if (relativeX > rect.width * 0.6) moveRight = true;
+  }
+
+  setKeyState('a', moveLeft);
+  setKeyState('d', moveRight);
+  setKeyState('s', moveDown);
+}
+
+function createTouchKeyboard() {
+  const container = document.getElementById('touch-ui');
+  if (!container || container.dataset.ready === 'true') return;
+  container.innerHTML = '';
+  container.dataset.ready = 'true';
+
+  const keyboard = document.createElement('div');
+  keyboard.id = 'touch-keyboard';
+
+  const letters = [
+    { label: 'א', value: 'a' },
+    { label: 'ב', value: 'b' },
+    { label: 'ג', value: 'g' },
+    { label: 'ד', value: 'd' },
+    { label: 'ה', value: 'h' },
+    { label: 'ו', value: 'o' },
+    { label: 'ז', value: 'z' },
+    { label: 'ח', value: 'x' },
+    { label: 'ט', value: 'y' },
+    { label: 'י', value: 'i' },
+    { label: 'כ', value: 'k' },
+    { label: 'ל', value: 'l' },
+    { label: 'מ', value: 'm' },
+    { label: 'נ', value: 'n' },
+    { label: 'ס', value: 's' },
+    { label: 'ע', value: 'e' },
+    { label: 'פ', value: 'p' },
+    { label: 'צ', value: 'c' },
+    { label: 'ק', value: 'q' },
+    { label: 'ר', value: 'r' },
+    { label: 'ש', value: 'w' },
+    { label: 'ת', value: 't' },
+    { label: 'ך', value: 'k' },
+    { label: 'ם', value: 'm' },
+    { label: 'ן', value: 'n' },
+    { label: 'ף', value: 'p' },
+    { label: 'ץ', value: 'c' },
+  ];
+  const specials = [
+    { label: '␣', value: ' ', className: 'special' },
+    { label: '⌫', value: 'Backspace', className: 'special' },
+    { label: 'ENTER', value: 'Enter', className: 'special primary' },
+    { label: 'Skip', value: 'skip', className: 'special secondary' },
+  ];
+
+  const addButton = (label, key, className) => {
+    const button = document.createElement('button');
+    button.textContent = label;
+    if (className) {
+      className.split(/\s+/).forEach(name => button.classList.add(name));
+    }
+    const press = value => handleVirtualKeyPress(value, label);
+    button.addEventListener('touchstart', event => {
+      event.preventDefault();
+      press(key);
+    }, { passive: false });
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      press(key);
+    });
+    keyboard.appendChild(button);
+  };
+
+  letters.forEach(entry => addButton(entry.label, entry.value, entry.className));
+  specials.forEach(entry => addButton(entry.label, entry.value, entry.className));
+
+  container.appendChild(keyboard);
+}
+
+function handleVirtualKeyPress(key, displayLabel) {
+  if (!key) return;
+  if (key === 'skip') {
+    if (typeof sceneState.skipCurrentLevel === 'function') {
+      sceneState.skipCurrentLevel('skip');
+    } else {
+      requestSkip('skip');
+    }
+    return;
+  }
+  if (activePrompt && typeof activePrompt.handleVirtualInput === 'function') {
+    const normalized = (displayLabel && displayLabel.length === 1)
+      ? displayLabel.toLowerCase()
+      : key;
+    activePrompt.handleVirtualInput(normalized);
+    return;
+  }
+  const down = new KeyboardEvent('keydown', { key, bubbles: true });
+  window.dispatchEvent(down);
+  const up = new KeyboardEvent('keyup', { key, bubbles: true });
+  window.dispatchEvent(up);
 }
 
 function groundLineFor(sprite) {

@@ -13,6 +13,7 @@
       align-items: center;
       justify-content: center;
       background: #000;
+      position: relative;
     }
 
     main,
@@ -26,6 +27,76 @@
       image-rendering: pixelated;
       image-rendering: crisp-edges;
       background: #000;
+      touch-action: none;
+    }
+
+    body.touch-mode {
+      flex-direction: column;
+      justify-content: flex-start;
+      padding-top: 2vh;
+      gap: 2vh;
+    }
+
+    body.touch-mode main,
+    body.touch-mode canvas {
+      width: min(100vw, 60vh * (320 / 200));
+      height: min(60vh, 100vw / (320 / 200));
+    }
+
+    #touch-ui {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      display: none;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 3vh 4vw;
+      gap: 1.5vh;
+      box-sizing: border-box;
+    }
+
+    body.touch-mode #touch-ui {
+      display: flex;
+    }
+
+    #touch-keyboard {
+      pointer-events: auto;
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 0.5rem;
+      max-width: min(96vw, 540px);
+      width: 100%;
+    }
+
+    #touch-keyboard button {
+      font-size: clamp(16px, 2.6vh, 22px);
+      padding: 0.7rem 0.4rem;
+      border: none;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffe8a8;
+      text-transform: none;
+      touch-action: manipulation;
+    }
+
+    #touch-keyboard button.special {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    #touch-keyboard button.primary {
+      grid-column: span 2;
+      justify-self: end;
+      background: rgba(255, 232, 168, 0.25);
+    }
+
+    #touch-keyboard button.secondary {
+      justify-self: start;
+      background: rgba(255, 255, 255, 0.14);
+    }
+
+    #touch-keyboard button:active {
+      background: rgba(255, 255, 255, 0.3);
     }
   </style>
 </head>
@@ -33,6 +104,7 @@
   <main>
     <canvas id="screen" width="320" height="200" aria-label="Retro Schauplatz"></canvas>
   </main>
+  <div id="touch-ui"></div>
 
   <script type="module" src="./game.js"></script>
 </body>

@@ -7,6 +7,7 @@ import {
   showLevelTitle,
   promptBubble,
   setLifeBars,
+  SkipSignal,
 } from '../scene.js';
 import {
   narratorSay,
@@ -22,11 +23,13 @@ import {
   CANYON_SCENE,
   propSay,
   addProp,
+  findProp,
 } from './utils.js';
 import { runFightLoop } from '../fight.js';
 
 const RESPONSE_ALIASES = {
   ash: 'אש',
+  esh: 'אש',
   אש: 'אש',
   or: 'אור',
   אור: 'אור',
@@ -37,63 +40,226 @@ const RESPONSE_ALIASES = {
   qol: 'קול',
   kol: 'קול',
   קול: 'קול',
+  chayim: 'חיים',
+  chaim: 'חיים',
+  xayim: 'חיים',
+  chajim: 'חיים',
+  חיים: 'חיים',
 };
 
 const GOLEM_MACHINE = {
   start: {
-    speaker: 'narrator',
-    text: 'Der Steinwächter stampft auf und sammelt Staub zu einer Faust.',
-    text2: 'Spürst du es? Er wählt dein nächstes Prüfwort.',
-    speaker2: 'ally',
-    options: ['attack_fire', 'attack_echo', 'attack_stone'],
+    intro_player: {
+      speaker: 'narrator',
+      text: 'Staub pulst um dich. Worte hungern nach Form.',
+    },
+    intro_enemy: null,
+    sequence_enemy: {
+      text: 'Der Wächter ballt die Fäuste.\nStaub knotet sich, Glyphen glühen.',
+      duration: 1500,
+    },
+    prompt_player: 'Welches Wort entfesselst du?',
+    damage: 10,
+    failure_player: '%s - dein Atem verfliegt, der Wächter rührt sich nicht.',
+    failure_computer: '%s - der Wächter presst das Wort, doch nichts gehorcht ihm.',
+    failure_player_damageText: 'Bileam erhält 10 Schaden im Rückstoß.',
+    failure_computer_damageText: 'Der Wächter erhält 10 Schaden, Splitter seiner Kraft brechen.',
+    transitions: {
+      'אש': {
+        next: 'burning',
+        text_player: 'אש! Funken fräsen sich in deinen Stein.',
+        text_enemy: 'אש! Brenne, Lehrling.',
+      },
+      'מים': {
+        next: 'flooded',
+        text_player: 'מים! Ströme, haltet diesen Wächter.',
+        text_enemy: 'מים! Stürze ihn, Wortbändiger.',
+      },
+      'קול': {
+        next: 'echoing',
+        text_player: 'קול! Stimme, zerreiß den Canyon.',
+        text_enemy: 'קול! Lausche meinem Kern, Mensch.',
+      },
+      'אור': {
+        next: 'radiant',
+        text_player: 'אור! Licht, schneide durch Stein.',
+        text_enemy: 'אור! Strahlen, bindet ihn.',
+      },
+      'חיים': {
+        next: 'overgrown',
+        text_player: 'חיים! Wurzeln, umschlingt den Wächter.',
+        text_enemy: 'חיים! Wucher, halte den Lehrling fest.',
+      },
+    },
   },
-  attack_fire: {
-    speaker: 'enemy',
-    text: 'Glühende Risse öffnen sich in der Brust des Wächters. Hitze peitscht dir entgegen.',
-    text2: 'Nur Wasser zähmt Glut.',
-    speaker2: 'ally',
-    prompt: 'Mit welchem Wort besänftigst du die Flammen?',
-    target: 'player',
+  burning: {
+    intro_player: {
+      speaker: 'narrator',
+      text: 'אש kriecht über deine Ärmel. Hitze summt in der Luft.',
+    },
+    intro_enemy: {
+      speaker: 'narrator',
+      text: 'אש frisst durch den Wächter. Seine Runen flackern unruhig.',
+    },
+    prompt_player: 'Wie löschst du die Flammen?',
     damage: 24,
-    failText: 'Die Glut frisst sich in deine Haut!',
-    failDamageText: 'Bileam verliert 24 Lebenspunkte.',
-    failSpeaker: 'narrator',
-    failNext: 'start',
-    counterspells: {
-      'מים': { speaker: 'player', text: 'Du sprichst מים. Wasser hüllt dich ein und erstickt das Feuer.', damage: 26, damageText: 'Der Wächter dampft und Steine platzen von seinem Körper.', target: 'enemy', next: 'start' },
+    failure_player: '%s - die Glut frisst tiefer in dein Fleisch.',
+    failure_computer: '%s - der Wächter knirscht, sein Leib splittert in der Glut.',
+    failure_player_damageText: 'Bileam erhält 24 Schaden im Feuer.',
+    failure_computer_damageText: 'Der Wächter erhält 24 Schaden in der Glut.',
+    transitions: {
+      'מים': {
+        next: 'start',
+        text_player: 'מים! Nebel, nimm die Glut.',
+        text_enemy: 'מים! Ersticke die Flamme in mir.',
+      },
+      'קול': {
+        next: 'echoing',
+        text_player: 'קול! Donner, zerreiß die Flammen.',
+        text_enemy: 'קול! Klang, stoß ihn zurück.',
+        damage: 8,
+        damageText: '%opponent% erhält 8 Klangschläge Schaden.',
+      },
     },
   },
-  attack_echo: {
-    speaker: 'enemy',
-    text: 'Der Wächter stößt einen kehlig vibrierenden Ton aus. Der Fels unter dir beginnt zu schwingen.',
-    text2: 'Antworte laut und klar mit Stimme.',
-    speaker2: 'ally',
-    prompt: 'Welches Wort lenkt das Echo?',
-    target: 'player',
+  flooded: {
+    intro_player: {
+      speaker: 'narrator',
+      text: 'מים umspült deine Beine. Die Schlucht rauscht mit dir.',
+    },
+    intro_enemy: {
+      speaker: 'narrator',
+      text: 'מים presst den Wächter nieder. Er sucht Hitze oder Stimme.',
+    },
+    prompt_player: 'Wie formst du die Strömung?',
     damage: 18,
-    failText: 'Der Klang schneidet durch deine Knochen.',
-    failDamageText: 'Bileam verliert 18 Lebenspunkte.',
-    failSpeaker: 'narrator',
-    failNext: 'start',
-    counterspells: {
-      'קול': { speaker: 'player', text: 'Du antwortest mit קול. Deine Stimme fängt das Echo ein und wirft es zurück.', damage: 22, damageText: 'Der Wächter taumelt, Risse ziehen sich durch seine Brust.', target: 'enemy', next: 'start' },
+    failure_player: '%s - Dampf schlägt zurück, die Flut reißt dich zu Boden.',
+    failure_computer: '%s - das Wasser spült dem Wächter Runen aus dem Leib.',
+    failure_player_damageText: 'Bileam erhält 18 Schaden in der Strömung.',
+    failure_computer_damageText: 'Der Wächter erhält 18 Schaden, Runen werden ausgespült.',
+    transitions: {
+      'אש': {
+        only: 'enemy',
+        next: 'burning',
+        text_enemy: 'אש! Verdampfe seinen Schutz.',
+      },
+      'קול': {
+        next: 'echoing',
+        text_player: 'קול! Wasser, sing nach meinem Willen.',
+        text_enemy: 'קול! Strömung, schlag ihn mit deinem Echo.',
+      },
+      'חיים': {
+        next: 'overgrown',
+        text_player: 'חיים! Ranken, haltet ihn.',
+        text_enemy: 'חיים! Moos, kriecht an ihm hoch.',
+        damage: 6,
+        damageText: '%opponent% erhält 6 Schaden durch wuchernde Ranken.',
+      },
     },
   },
-  attack_stone: {
-    speaker: 'enemy',
-    text: 'Der Golem reißt einen Basaltbrocken aus dem Boden und schleudert ihn auf dich.',
-    text2: 'Feuer bricht Stein – oder Blendlicht.',
-    speaker2: 'ally',
-    prompt: 'Wie brichst du den Ansturm?',
-    target: 'player',
+  echoing: {
+    intro_player: {
+      speaker: 'narrator',
+      text: 'קול drückt in deine Schläfen. Fels vibriert im Takt.',
+    },
+    intro_enemy: {
+      speaker: 'narrator',
+      text: 'קול schwingt durch den Wächter. Er jagt dem hallenden Wort hinterher.',
+    },
+    prompt_player: 'Mit welchem Wort stellst du die Resonanz?',
+    damage: 18,
+    failure_player: '%s - dein Klang reißt zurück und zerschneidet dich.',
+    failure_computer: '%s - der Wächter verstummt, Risse laufen wie Notenlinien.',
+    failure_player_damageText: 'Bileam erhält 18 Schaden in der Resonanz.',
+    failure_computer_damageText: 'Der Wächter erhält 18 Schaden, Risse singen im Stein.',
+    transitions: {
+      'קול': {
+        next: 'start',
+        text_player: 'קול! Gehorche mir und werde still.',
+        text_enemy: 'קול! Schweig und gehorsam mir.',
+      },
+      'אור': {
+        next: 'radiant',
+        text_player: 'אור! Blitz, brich das Echo.',
+        text_enemy: 'אור! Licht, jag ihn mit Klang.',
+        damage: 10,
+        damageText: '%opponent% erhält 10 Schaden aus grellem Klang.',
+      },
+      'מים': {
+        next: 'flooded',
+        text_player: 'מים! Fließ mit dem Klang.',
+        text_enemy: 'מים! Echo, werde Strömung.',
+      },
+    },
+  },
+  radiant: {
+    intro_player: {
+      speaker: 'narrator',
+      text: 'אור blendet dich. Linien schneiden durch den Nebel.',
+    },
+    intro_enemy: {
+      speaker: 'narrator',
+      text: 'אור schneidet den Wächter. Er sucht Schatten im Klang.',
+    },
+    prompt_player: 'Wie formst du das Licht?',
     damage: 20,
-    failText: 'Der Brocken trifft dich und presst die Luft aus deiner Brust.',
-    failDamageText: 'Bileam verliert 20 Lebenspunkte.',
-    failSpeaker: 'narrator',
-    failNext: 'start',
-    counterspells: {
-      'אש': { speaker: 'player', text: 'Du rufst אש. Glut zeichnet Linien in den Stein, der Brocken zerbirst.', damage: 24, damageText: 'Splitter reißen Stücke aus dem Wächter.', target: 'enemy', next: 'start' },
-      'אור': { speaker: 'player', text: 'Du sprichst אור. Licht blendet den Wächter, der Fels zerfällt zu Staub.', damage: 18, damageText: 'Der Wächter schwankt und verliert Stücke aus seinem Torso.', target: 'enemy', next: 'start' },
+    failure_player: '%s - das Licht durchdringt dich, Metall liegt auf deiner Zunge.',
+    failure_computer: '%s - der Wächter zerfällt zu Glas, doch das Leuchten bleibt.',
+    failure_player_damageText: 'Bileam erhält 20 Schaden im Licht.',
+    failure_computer_damageText: 'Der Wächter erhält 20 Schaden, Licht zerfrisst den Stein.',
+    transitions: {
+      'קול': {
+        next: 'echoing',
+        text_player: 'קול! Sing das Licht in Schatten.',
+        text_enemy: 'קול! Licht, dröhn gegen ihn.',
+      },
+      'מים': {
+        next: 'flooded',
+        text_player: 'מים! Brech dieses Licht zu Regen.',
+        text_enemy: 'מים! Regen, zerstreu sein Licht.',
+      },
+      'אש': {
+        next: 'burning',
+        text_player: 'אש! Verbrenne das Licht zu Funken.',
+        text_enemy: 'אש! Licht, werde Glut gegen ihn.',
+        damage: 12,
+        damageText: '%opponent% erhält 12 Schaden aus blendender Glut.',
+      },
+    },
+  },
+  overgrown: {
+    intro_player: {
+      speaker: 'narrator',
+      text: 'חיים greifen nach dir. Sporen glimmen über dem Boden.',
+    },
+    intro_enemy: {
+      speaker: 'narrator',
+      text: 'חיים sprießen durch den Wächter. Er knirscht unter Ranken.',
+    },
+    prompt_player: 'Wie beantwortest du das Wachsen?',
+    damage: 16,
+    failure_player: '%s - die Ranken ziehen dich zu Boden.',
+    failure_computer: '%s - das Leben im Wächter wird wild, er zerreißt sich selbst.',
+    failure_player_damageText: 'Bileam erhält 16 Schaden zwischen Ranken.',
+    failure_computer_damageText: 'Der Wächter erhält 16 Schaden, Holzplatten splittern.',
+    transitions: {
+      'אש': {
+        next: 'burning',
+        text_player: 'אש! Brenne diese Ranken fort.',
+        text_enemy: 'אש! Wucher, werde Asche um ihn.',
+      },
+      'מים': {
+        next: 'flooded',
+        text_player: 'מים! Führ das Leben zum Fluss.',
+        text_enemy: 'מים! Leben, fließ auf ihn zu.',
+      },
+      'קול': {
+        next: 'echoing',
+        text_player: 'קול! Ruhe, Leben.',
+        text_enemy: 'קול! Wucher, hör mir zu und schlag zu.',
+        damage: 6,
+        damageText: '%opponent% erhält 6 Schaden durch peitschende Triebe.',
+      },
     },
   },
 };
@@ -115,26 +281,18 @@ export async function runLevelFiveFive() {
   await wizardSay('Wie besiegt man einen Stein?');
   await donkeySay('Mit Worten, nicht mit Fäusten. Aber merke: Worte kämpfen nicht – sie wirken.');
 
-  let fightResult;
-  do {
-    fightResult = await executeFight();
-    if (fightResult === 'lose') {
-      await narratorSay('Der Golem schüttelt das Licht ab. Du wirst zurück in die Schlucht gedrängt.');
-      await fadeToBlack(420);
-      ensureAmbience(plan?.review ?? 'echoChamber');
-      await fadeToBase(420);
-      await narratorSay('Staub formt den Wächter erneut. Versuche es noch einmal.');
-      setLifeBars(null);
-    }
-  } while (fightResult === 'lose');
+  const fightOutcome = await executeFight(canyonProps);
 
-  await narratorSay('Der Golem erstarrt. Moos wächst über seinen Leib, und die Schlucht wird still.');
-  await donkeySay('Du hast nicht zerstört – du hast verstanden. Weiter nach Moab, Meister.');
-  await fadeToBlack(480);
-  setLifeBars(null);
+  if (fightOutcome === 'win') {
+    await narratorSay('Der Golem erstarrt. Moos wächst über seinen Leib, und die Schlucht wird still.');
+    await donkeySay('Du hast nicht zerstört – du hast verstanden. Weiter nach Moab, Meister.');
+    await fadeToBlack(480);
+    setLifeBars(null);
+    return;
+  }
 }
 
-async function executeFight() {
+async function executeFight(canyonProps) {
   const hudUpdate = state => {
     if (!state) {
       setLifeBars(null);
@@ -152,40 +310,66 @@ async function executeFight() {
     });
   };
 
-const relayFightEvent = async (event, props) => {
-  if (!event || !event.text) return;
-  switch (event.speaker) {
-    case 'player':
-      await wizardSay(event.text);
-      break;
-    case 'enemy':
-      await propSay(props, 'golemGuardian', event.text);
-      break;
-    case 'ally':
-      await donkeySay(event.text);
-      break;
-    default:
+
+  const propsRef = { current: canyonProps };
+
+  const relayFightEvent = async event => {
+    if (!event) return;
+    if (event.speaker === 'sequence') {
+      await playCutsceneMoment(event);
+      return;
+    }
+    if (!event.text) return;
+    switch (event.speaker) {
+      case 'player':
+        await wizardSay(event.text);
+        break;
+      case 'enemy': {
+        const golem = findProp(propsRef.current, 'golemGuardian');
+        const spriteHeight = golem?.sprite?.height ?? 96;
+        const offsetY = -(spriteHeight + 24);
+        await propSay(propsRef.current, 'golemGuardian', event.text, { offsetY });
+        break;
+      }
+      case 'ally':
+        await donkeySay(event.text);
+        break;
+      default:
         await narratorSay(event.text);
         break;
     }
   };
 
-  const result = await runFightLoop({
-    machine: GOLEM_MACHINE,
-    initialState: 'start',
-    playerName: 'Bileam',
-    enemyName: 'Golem',
-    promptPlayerSpell: options => promptSpellInput(options),
-    onEvent: evt => relayFightEvent(evt, canyonProps),
-    onUpdate: hudUpdate,
-  });
+  let result;
+  try {
+    result = await runFightLoop({
+      machine: GOLEM_MACHINE,
+      initialState: 'start',
+      initialActor: 'enemy',
+      playerName: 'Bileam',
+      enemyName: 'Golem',
+      promptPlayerSpell: options => promptSpellInput(options),
+      onEvent: relayFightEvent,
+      onUpdate: hudUpdate,
+    });
+  } catch (err) {
+    if (err instanceof SkipSignal) {
+      setLifeBars(null);
+    }
+    throw err;
+  }
 
   if (result.winner === 'player') {
     await donkeySay('Gut gemacht. Der Golem verneigt sich – Worte beruhigen Stein.');
     return 'win';
   }
-  await donkeySay('Der Golem formt sich neu. Versuche es noch einmal!');
-  return 'lose';
+  const defeatAdvice = await handleFightDefeat(result.lastFailure);
+  const error = new Error('level5_5_guardian_defeat');
+  error.code = 'LEVEL_RETRY';
+  error.level = 'level5_5';
+  error.hint = defeatAdvice?.suggestion ?? null;
+  error.state = defeatAdvice?.stateKey ?? null;
+  throw error;
 }
 
 async function promptSpellInput({ prompt, allowSkip = false } = {}) {
@@ -202,4 +386,79 @@ async function promptSpellInput({ prompt, allowSkip = false } = {}) {
     return null;
   }
   return canonical || input;
+}
+
+async function playCutsceneMoment({ text, duration = 1400 } = {}) {
+  const caption = (text ?? '').trim();
+  if (!caption) return;
+  await showLevelTitle(caption, duration);
+}
+
+async function handleFightDefeat(lastFailure) {
+  setLifeBars(null);
+  const word = lastFailure?.attackerWord;
+  if (word) {
+    await narratorSay(`${word} zerreißt deine Verteidigung. Deine Knie geben nach.`);
+  } else {
+    await narratorSay('Der Wächter trifft dich. Deine Knie geben nach.');
+  }
+
+  const { stateKey, suggestion } = buildSuggestion(lastFailure);
+  const stateLabel = stateKey ? describeState(stateKey) : null;
+
+  if (stateLabel && suggestion) {
+    await donkeySay(`Mut, Meister. Wenn der Wächter dich im Zustand ${stateLabel} hält, antworte mit ${suggestion}.`);
+  } else if (suggestion) {
+    await donkeySay(`Mut, Meister. Versuch es beim nächsten Mal mit ${suggestion}.`);
+  } else {
+    await donkeySay('Mut, Meister. Beobachte seine Worte und antworte präzise.');
+  }
+
+  return {
+    suggestion: suggestion ?? null,
+    stateKey: stateKey ?? null,
+  };
+}
+
+function buildSuggestion(lastFailure) {
+  if (!lastFailure?.state) {
+    return { stateKey: null, suggestion: null };
+  }
+  const stateKey = lastFailure.state;
+  const machineState = GOLEM_MACHINE[stateKey];
+  if (!machineState) {
+    return { stateKey, suggestion: null };
+  }
+
+  const transitions = machineState.transitions ?? {};
+  const orderedKeys = (lastFailure.transitions && lastFailure.transitions.length > 0)
+    ? lastFailure.transitions
+    : Object.keys(transitions);
+
+  for (const key of orderedKeys) {
+    const entry = transitions[key];
+    if (!entry) continue;
+    if (typeof entry === 'object' && entry.only === 'enemy') continue;
+    return { stateKey, suggestion: key };
+  }
+
+  return { stateKey, suggestion: null };
+}
+
+function describeState(stateKey) {
+  switch (stateKey) {
+    case 'burning':
+      return 'אש';
+    case 'flooded':
+      return 'מים';
+    case 'echoing':
+      return 'קול';
+    case 'radiant':
+      return 'אור';
+    case 'overgrown':
+      return 'חיים';
+    case 'start':
+    default:
+      return null;
+  }
 }

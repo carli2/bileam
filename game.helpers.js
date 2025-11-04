@@ -34,6 +34,10 @@ function isLetter(char) {
   return /^[a-z]$/i.test(char);
 }
 
+function isHebrewChar(char) {
+  return /[\u0590-\u05FF]/.test(char);
+}
+
 export function transliterateToHebrew(input) {
   if (!input) return '';
   const ascii = input.toLowerCase();
@@ -42,6 +46,11 @@ export function transliterateToHebrew(input) {
   for (const ch of ascii) {
     if (ch === ' ') {
       result.push(' ');
+      continue;
+    }
+
+    if (isHebrewChar(ch)) {
+      result.push(ch);
       continue;
     }
 
