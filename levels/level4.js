@@ -31,6 +31,8 @@ import {
   addProp,
 } from './utils.js';
 
+const BALAK_WALK_SPEED = 26;
+
 function balakSay(props, text, options = {}) {
   return propSay(props, 'gardenBalakFigure', text, {
     anchor: 'center',
@@ -72,7 +74,7 @@ export async function runLevelFour() {
 
 async function phaseIntroduction(props) {
   await narratorSay('Am Tor von Moab liegt Balaks Garten – einst voller Leben, nun nur Staub.');
-  await walkBalak(props, wizard.x + 24, { duration: 600 });
+  await walkBalak(props, wizard.x + 24);
   await balakSay(props, 'Lehrling, mein Garten verdorrt. Erwecke ihn – sonst ist unser Bund dahin.');
   await wizardSay('Majestät Balak – erwartet Ihr, dass Worte den Staub zu Blüte wandeln?');
   await balakSay(props, 'Man pries deine Zunge in meinem Hof. Zeige mir, dass sie Licht und Wasser gebietet.');
@@ -201,7 +203,14 @@ async function phaseResonanceRock(plan, props) {
 async function phaseXayimReveal(props) {
   await walkBalak(props, wizard.x + 92);
   setSceneContext({ phase: 'revelation' });
-  addProp(props, { id: 'gardenGlyph', type: 'waterGlyph', x: wizard.x + 60, y: wizard.y - 10, parallax: 0.8 });
+  addProp(props, {
+    id: 'gardenGlyph',
+    type: 'waterGlyph',
+    x: wizard.x + 60,
+    y: wizard.y - 10,
+    parallax: 0.8,
+    layer: 3,
+  });
   await narratorSay('Licht, Wasser und Klang verweben sich. Eine neue Glyphe entsteht im Boden.');
   await balakSay(props, 'Höre zu: Das ist חיים – Leben. Es ernährt mein Reich... oder lässt es verhungern.');
   await donkeySay('Das ist חיים – xayim. Es bedeutet Leben... und Brot.');
@@ -221,8 +230,22 @@ async function phaseXayimReveal(props) {
       updateProp(props, 'gardenBalakStatue', { type: 'balakStatueOvergrown' });
       updateProp(props, 'gardenSunStone', { type: 'sunStoneAwakened' });
       updateProp(props, 'gardenEchoRock', { type: 'resonanceRockAwakened' });
-      addProp(props, { id: 'gardenGrowth', type: 'gardenForegroundPlant', x: wizard.x + 70, y: wizard.y - 18, parallax: 1.02 });
-      addProp(props, { id: 'gardenWheatBundle', type: 'gardenWheatBundle', x: wizard.x + 110, y: wizard.y - 12, parallax: 0.95 });
+      addProp(props, {
+        id: 'gardenGrowth',
+        type: 'gardenForegroundPlant',
+        x: wizard.x + 70,
+        y: wizard.y - 18,
+        parallax: 1.02,
+        layer: 2,
+      });
+      addProp(props, {
+        id: 'gardenWheatBundle',
+        type: 'gardenWheatBundle',
+        x: wizard.x + 110,
+        y: wizard.y - 12,
+        parallax: 0.95,
+        layer: 2,
+      });
       await narratorSay('Pflanzen sprießen, Bäume treiben Blüten, Wasser rinnt durch die Kanäle. Über der Statue Balaks wächst Moos.');
       await balakSay(props, 'So sei es – dein Wort weckt den Staub. Vergiss nicht, wessen Auftrag du trägst.');
       return;
@@ -255,7 +278,14 @@ async function phaseBreadOfLife(plan, props) {
   if (altar) {
     await donkeySay('Bring die Ähren zum Altar und lege sie dort ab.');
     await waitForWizardToReach(altar.x + 16, { tolerance: 12 });
-    addProp(props, { id: 'gardenBreadLight', type: 'gardenBreadLight', x: altar.x + 8, y: altar.y - 18, parallax: 0.95 });
+    addProp(props, {
+      id: 'gardenBreadLight',
+      type: 'gardenBreadLight',
+      x: altar.x + 8,
+      y: altar.y - 18,
+      parallax: 0.95,
+      layer: 3,
+    });
     await narratorSay('Die Ähren legen sich zu einem einfachen Brot. Licht und Erde backen es zusammen.');
   }
 
@@ -271,7 +301,7 @@ function walkBalak(props, targetX, options = {}) {
   const balak = findProp(props, 'gardenBalakFigure');
   if (!balak) return Promise.resolve();
 
-  const { duration = 900, minSpacing = 48 } = options;
+  const { duration, minSpacing = 48, speed } = options;
   const bounds = getScenePropBounds('gardenBalakFigure');
   const startX = bounds ? bounds.left : balak.x ?? 0;
   const rawTarget = typeof targetX === 'number' ? targetX : startX;
@@ -289,9 +319,15 @@ function walkBalak(props, targetX, options = {}) {
   return new Promise(resolve => {
     const startTime = performance.now();
     const distance = finalX - startX;
+    const baseSpeed = Math.max(6, speed ?? BALAK_WALK_SPEED);
+    let travelDuration = duration;
+    if (!Number.isFinite(travelDuration) || travelDuration <= 0) {
+      const computed = Math.abs(distance) / Math.max(1e-3, baseSpeed) * 1000;
+      travelDuration = Math.max(420, Math.round(computed));
+    }
 
     const step = now => {
-      const t = Math.min(1, (now - startTime) / Math.max(1, duration));
+      const t = Math.min(1, (now - startTime) / Math.max(1, travelDuration));
       const eased = t * t * (3 - 2 * t);
       const current = Math.round(startX + distance * eased);
       updateProp(props, 'gardenBalakFigure', { x: current, visible: true });

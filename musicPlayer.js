@@ -8,6 +8,20 @@ let startRequested = false;
 let playbackUnlocked = false;
 let startInProgress = false;
 
+const FADE_OUT_DURATION = 500;
+const FADE_IN_DURATION = 1400;
+let baseVolume = 1;
+let fadeLevel = 1;
+let fadeTarget = 1;
+let fadeStartLevel = 1;
+let fadeDuration = 0;
+let fadeStartTime = 0;
+let fadeFrame = null;
+let fadeToken = 0;
+let focusSuppressed = false;
+let focusPaused = false;
+let pendingFocusResume = false;
+
 const playlistPromise = fetchPlaylist();
 
 function fetchPlaylist() {
@@ -51,6 +65,7 @@ function ensureAudioElement() {
   audioElement = new Audio();
   audioElement.loop = false;
   audioElement.preload = 'auto';
+  applyVolume();
   audioElement.addEventListener('ended', () => {
     queueNextTrack();
   });
@@ -91,6 +106,7 @@ async function playTrack(trackName) {
   const url = new URL(`./music/${trackName}`, import.meta.url);
   audioElement.src = url.toString();
   audioElement.currentTime = 0;
+  applyVolume();
   await audioElement.play();
 }
 
@@ -111,6 +127,7 @@ async function beginPlayback() {
   if (playbackUnlocked || startInProgress) {
     if (audioElement && audioElement.paused && playbackUnlocked) {
       try {
+        applyVolume();
         await audioElement.play();
       } catch (error) {
         console.warn('Failed to resume music playback', error);
@@ -140,12 +157,16 @@ export function initMusicPlayer() {
   playlistPromise.then(list => {
     playlist = list;
     ensureAudioElement();
+    applyInitialFocusState();
     if (startRequested && playlist.length) {
       beginPlayback().catch(error => {
         console.warn('Music playback failed after playlist load', error);
       });
     }
   });
+  window.addEventListener('blur', handleWindowBlur, true);
+  window.addEventListener('focus', handleWindowFocus, true);
+  document.addEventListener('visibilitychange', handleVisibilityChange, true);
 }
 
 export function isMusicPlaying() {
@@ -158,8 +179,8 @@ export function stopMusic() {
 }
 
 export function setMusicVolume(volume) {
-  if (!audioElement) return;
-  audioElement.volume = Math.min(1, Math.max(0, volume));
+  baseVolume = Math.min(1, Math.max(0, volume));
+  applyVolume();
 }
 
 // initialise playlist fetch immediately but allow consumers to re-attempt start
@@ -174,3 +195,130 @@ playlistPromise.then(list => {
     });
   }
 });
+
+function applyVolume() {
+  if (!audioElement) return;
+  const level = Math.min(1, Math.max(0, baseVolume * fadeLevel));
+  audioElement.volume = level;
+}
+
+function fadeTo(level, duration) {
+  const clampedLevel = Math.min(1, Math.max(0, level));
+  if (duration <= 0) {
+    fadeLevel = clampedLevel;
+    fadeTarget = clampedLevel;
+    if (fadeFrame) {
+      cancelAnimationFrame(fadeFrame);
+      fadeFrame = null;
+    }
+    applyVolume();
+    return;
+  }
+  fadeTarget = clampedLevel;
+  fadeStartLevel = fadeLevel;
+  fadeDuration = duration;
+  fadeStartTime = performance.now();
+  const token = ++fadeToken;
+  const step = now => {
+    const elapsed = now - fadeStartTime;
+    const t = Math.min(1, elapsed / fadeDuration);
+    const eased = t * t * (3 - 2 * t);
+    fadeLevel = fadeStartLevel + (fadeTarget - fadeStartLevel) * eased;
+    applyVolume();
+    if (t < 1 && token === fadeToken) {
+      fadeFrame = requestAnimationFrame(step);
+    } else {
+      fadeFrame = null;
+      fadeLevel = fadeTarget;
+      applyVolume();
+    }
+  };
+  if (fadeFrame) {
+    cancelAnimationFrame(fadeFrame);
+    fadeFrame = null;
+  }
+  fadeFrame = requestAnimationFrame(step);
+}
+
+function handleWindowBlur() {
+  focusSuppressed = true;
+  applyFocusState();
+}
+
+function handleWindowFocus() {
+  focusSuppressed = false;
+  applyFocusState();
+}
+
+function handleVisibilityChange() {
+  applyFocusState();
+}
+
+function applyFocusState() {
+  const hidden = document.hidden === true;
+  const shouldMute = hidden || focusSuppressed;
+  if (shouldMute) {
+    if (hidden) {
+      const wasPlaying = Boolean(audioElement && !audioElement.paused && playbackUnlocked);
+      fadeTo(0, 0);
+      if (wasPlaying) {
+        focusPaused = true;
+        try {
+          audioElement.pause();
+        } catch (error) {
+          console.warn('Music pause failed on focus loss', error);
+        }
+      }
+      pendingFocusResume = false;
+    } else {
+      fadeTo(0, FADE_OUT_DURATION);
+    }
+    return;
+  }
+
+  if (focusPaused && playbackUnlocked && !pendingFocusResume) {
+    pendingFocusResume = true;
+    fadeTo(0, 0);
+    setTimeout(() => {
+      pendingFocusResume = false;
+      if (!audioElement) {
+        ensureAudioElement();
+      }
+      beginPlayback()
+        .then(() => {
+          fadeTo(1, FADE_IN_DURATION);
+        })
+        .catch(error => {
+          focusPaused = true;
+          console.warn('Music resume failed after focus change', error);
+        });
+    }, 0);
+    focusPaused = false;
+    return;
+  }
+
+  fadeTo(1, FADE_IN_DURATION);
+}
+
+function applyInitialFocusState() {
+  const hasFocus = typeof document.hasFocus === 'function' ? document.hasFocus() : true;
+  focusSuppressed = !hasFocus;
+  const hidden = document.hidden === true;
+  if (hidden || focusSuppressed) {
+    fadeLevel = 0;
+    fadeTarget = 0;
+    if (audioElement && !audioElement.paused && playbackUnlocked) {
+      focusPaused = true;
+      try {
+        audioElement.pause();
+      } catch (error) {
+        console.warn('Music pause failed during initial focus state', error);
+      }
+    }
+  } else {
+    fadeLevel = 1;
+    fadeTarget = 1;
+    focusPaused = false;
+  }
+  applyVolume();
+}

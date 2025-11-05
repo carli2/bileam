@@ -139,6 +139,7 @@ let grassPhase = 0;
 let lastTime = performance.now();
 let pendingSpeechAck = null;
 let sceneStarted = false;
+let sceneSuspended = false;
 
 let ambiencePresets;
 export const levelAmbiencePlan = createLevelSceneMap();
@@ -417,6 +418,10 @@ export async function fadeToBlack(duration) {
   throwIfSkipRequested();
 }
 
+export function setSceneSuspended(suspended) {
+  sceneSuspended = Boolean(suspended);
+}
+
 export function setSkipHandler(handler) {
   sceneState.skipRequested = false;
   sceneState.skipReason = null;
@@ -617,12 +622,18 @@ function handleSpeechAdvance(event) {
 }
 
 function loop(time) {
+  const delta = Math.min(0.05, (time - lastTime) / 1000);
+  lastTime = time;
+
+  if (sceneSuspended) {
+    pressedKeys.clear();
+    requestAnimationFrame(loop);
+    return;
+  }
+
   if (titleOverlay.active && time >= titleOverlay.until) {
     deactivateTitleOverlay('done');
   }
-
-  const delta = Math.min(0.05, (time - lastTime) / 1000);
-  lastTime = time;
 
   updateWizard(delta);
   updateDonkey(delta, time);
@@ -970,7 +981,23 @@ function drawTerrain() {
 
 function drawProps() {
   if (sceneProps.length === 0) return;
-  for (const prop of sceneProps) {
+  const sorted = sceneProps
+    .map((prop, index) => ({ prop, index }))
+    .sort((a, b) => {
+      const layerA = a.prop.layer ?? 0;
+      const layerB = b.prop.layer ?? 0;
+      if (layerA !== layerB) {
+        return layerA - layerB;
+      }
+      const parallaxA = a.prop.parallax ?? 1;
+      const parallaxB = b.prop.parallax ?? 1;
+      if (parallaxA !== parallaxB) {
+        return parallaxA - parallaxB;
+      }
+      return a.index - b.index;
+    });
+  for (const entry of sorted) {
+    const prop = entry.prop;
     if (!prop || prop.visible === false || !prop.sprite) continue;
     const parallax = prop.parallax ?? 1;
     const screenX = Math.round(prop.x - cameraX * parallax);
@@ -992,6 +1019,7 @@ function instantiatePropDefinition(definition) {
     x: definition.x ?? 0,
     y: definition.y ?? computePropY(sprite, definition.align ?? 'ground', definition.offsetY ?? 0),
     parallax: definition.parallax ?? 1,
+    layer: definition.layer ?? 0,
     visible: definition.visible !== false,
     data: definition.data ?? null,
   };

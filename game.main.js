@@ -23,8 +23,6 @@ import { runLevelFive } from './levels/level5.js';
 import { runLevelFiveFive } from './levels/level5_5.js';
 import { runLevelSix } from './levels/level6.js';
 
-startScene(mainFlow);
-
 const LEVELS = [
   { id: 'level1', run: runLevelOne },
   { id: 'level2', run: runLevelTwo },
@@ -161,4 +159,8 @@ async function showEndingScreen(state) {
     }
     throw error;
   }
+}
+
+export function beginGame() {
+  startScene(mainFlow);
 }
