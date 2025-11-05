@@ -90,16 +90,16 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
 
 | Level | Umgebungstyp | Stimmung & Thema | Balaks Präsenz | Primärfarben | Materialien / Texturen | Partikel / Licht |
 |--------|---------------|------------------|----------------|---------------|------------------------|------------------|
-| 1 – אוֹר (*aor*) | Hütte des Erwachens | Geborgenheit → Erkenntnis | Unsichtbar | Ocker, Bernstein | Lehm, Holz, Stoff | Staub, Lichtfunken |
-| 2 – מַיִם (*mayim*) | Flussufer | Bewegung, Reinigung | Abwesend | Jade, Blau, Weiß | Wasser, Stein | Tropfen, Nebel |
-| 3 – קוֹל (*qol*) | Felsenschlucht | Resonanz, Erkenntnis | Gerüchte von Balaks Reich | Grau, Kobalt | Basalt, Kristalladern | Schallringe, Staub |
-| 4 – חַיִּים (*xayim*) | Garten der Erneuerung | Wachstum, Leben, Verführung | Balak bittet um „Wunder für sein Reich“ | Smaragd, Gold | Pflanzen, Erde | Pollen, Glühpartikel |
-| 5 – אֵשׁ (*aw*) | Schmiede der Flammen | Macht, Schöpfung, Prüfung | Balak lobt Bileam für „die Macht seiner Zunge“ | Rot, Schwarz, Weißglut | Metall, Lava | Funken, Rauch |
-| 6 – דָּבָר (*dabar*) | Stadt der Worte | Manipulation, Täuschung | Balak nutzt Sprache zur Kontrolle | Ocker, Messing, Purpur | Stoff, Stein, Gold | Schriftstaub |
-| 7 – אֱמֶת (*emet*) | Turm der Spiegel | Wahrheit, Selbstbild | Balak spiegelt sich als göttliche Autorität | Silber, Mondblau | Glas, Stein | Splitterlicht |
-| 8 – מַלְאַךְ (*malak*) | Wüste der Offenbarung | Einsicht, göttliche Warnung | Balaks Macht verblasst, Engel erscheint | Sandgold, Azur | Salz, Staub | Strahlfäden |
-| 9 – אָרוּר / בְּרָכָה (*arur / beraka*) | Königshof | Versuchung, Entscheidung | Balak fordert Fluch auf Israel | Purpur, Smaragd, Gold | Marmor, Teppich | Hofstaub, Glanz |
-| 10 – הַמִּלְחָמָה (*hamilchama*) | Hochplateau | Endkampf, Erlösung | Finaler Kampf gegen Balak | Mitternachtsblau, Weißgold | Fels, Licht, Wind | Sternpartikel |
+| 1 – אור (*aor*) | Hütte des Erwachens | Geborgenheit → Erkenntnis | Unsichtbar | Ocker, Bernstein | Lehm, Holz, Stoff | Staub, Lichtfunken |
+| 2 – מים (*mayim*) | Flussufer | Bewegung, Reinigung | Abwesend | Jade, Blau, Weiß | Wasser, Stein | Tropfen, Nebel |
+| 3 – קול (*qol*) | Felsenschlucht | Resonanz, Erkenntnis | Gerüchte von Balaks Reich | Grau, Kobalt | Basalt, Kristalladern | Schallringe, Staub |
+| 4 – חיים (*xayim*) | Garten der Erneuerung | Wachstum, Leben, Verführung | Balak bittet um „Wunder für sein Reich“ | Smaragd, Gold | Pflanzen, Erde | Pollen, Glühpartikel |
+| 5 – אש (*aw*) | Schmiede der Flammen | Macht, Schöpfung, Prüfung | Balak lobt Bileam für „die Macht seiner Zunge“ | Rot, Schwarz, Weißglut | Metall, Lava | Funken, Rauch |
+| 6 – דבר (*dabar*) | Stadt der Worte | Manipulation, Täuschung | Balak nutzt Sprache zur Kontrolle | Ocker, Messing, Purpur | Stoff, Stein, Gold | Schriftstaub |
+| 7 – אמת (*emet*) | Turm der Spiegel | Wahrheit, Selbstbild | Balak spiegelt sich als göttliche Autorität | Silber, Mondblau | Glas, Stein | Splitterlicht |
+| 8 – מלאך (*malak*) | Wüste der Offenbarung | Einsicht, göttliche Warnung | Balaks Macht verblasst, Engel erscheint | Sandgold, Azur | Salz, Staub | Strahlfäden |
+| 9 – ארור / ברכה (*arur / beraka*) | Königshof | Versuchung, Entscheidung | Balak fordert Fluch auf Israel | Purpur, Smaragd, Gold | Marmor, Teppich | Hofstaub, Glanz |
+| 10 – המלחמה (*hamilchama*) | Hochplateau | Endkampf, Erlösung | Finaler Kampf gegen Balak | Mitternachtsblau, Weißgold | Fels, Licht, Wind | Sternpartikel |
 
 ### 4.2. Farbphilosophie
 - **Erde → Wasser → Stein → Leben → Feuer → Sprache → Wahrheit → Geist → Macht → Erlösung.**  

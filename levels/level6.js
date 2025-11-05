@@ -112,7 +112,7 @@ async function phaseMarketWalk(props) {
   setSceneContext({ phase: 'market' });
   await narratorSay('Händler rufen, Kinder laufen, Schriftrollen flattern im Wind. Worte leuchten wie kleine Geister.');
   await wizardSay('Was geschieht hier?');
-  await donkeySay('Das ist דָּבָר – die Stadt, in der Worte gehandelt werden.');
+  await donkeySay('Das ist דבר – die Stadt, in der Worte gehandelt werden.');
   await wizardSay('Gehandelt?');
   await donkeySay('Manche kaufen Lob, andere verkaufen Lüge. Balak sammelt Worte, als wären sie Gold.');
   await wizardSay('Kann man Wahrheit kaufen?');
@@ -147,7 +147,7 @@ async function phaseLearnDabar(props) {
 
   await scribeSay(props, 'Ich höre, du suchst das Wort hinter allen Worten.');
   await wizardSay('Ich suche zu verstehen, warum sie wirken.');
-  await scribeSay(props, 'Dann lerne דָּבָר – dabar. Es bedeutet Wort – und Sache. Alles Gesagte nimmt Gestalt an.');
+  await scribeSay(props, 'Dann lerne דבר – dabar. Es bedeutet Wort – und Sache. Alles Gesagte nimmt Gestalt an.');
   await donkeySay('Wenn du dabar sprichst, achte darauf, was du fühlst. Wer das Wort spricht, erschafft die Sache.');
 
   const spirit = findProp(props, 'marketWordSpirit');
@@ -222,4 +222,3 @@ async function phaseEmissaryTrial(props) {
     }
   }
 }
-

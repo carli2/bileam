@@ -68,11 +68,8 @@ export const SPELL_DUEL_MACHINE = {
     transitions: {
       'מים': {
         next: 'start',
-        keepActor: true,
         text_player: 'מים! Nebel, nimm die Glut.',
         text_enemy: 'מים! Ich ersticke mein Feuer und wende mich gegen dich.',
-        damage: 18,
-        damageText: 'Der Gegner erleidet 18 Schaden, Dampf reißt ihm den Atem.',
       },
       'קול': {
         next: 'echoing',
@@ -137,7 +134,6 @@ export const SPELL_DUEL_MACHINE = {
     transitions: {
       'קול': {
         next: 'start',
-        keepActor: true,
         text_player: 'קול! Gehorche mir und werde still.',
         text_enemy: 'קול! Schweig und gehorche mir.',
       },

@@ -58,7 +58,25 @@ export async function runLevelFiveFive() {
   const fightOutcome = await executeFight(canyonProps);
 
   if (fightOutcome === 'win') {
-    await narratorSay('Der Golem erstarrt. Moos wächst über seinen Leib, und die Schlucht wird still.');
+    await narratorSay('Der Golem erstarrt. Die Schlucht wird still.');
+    const golem = findProp(canyonProps, 'golemGuardian');
+    const bounds = getScenePropBounds('golemGuardian');
+    const baseX = bounds ? bounds.left + bounds.width / 2 : (golem?.x ?? wizard.x);
+    const baseY = bounds ? bounds.top + bounds.height - 18 : (golem?.y ?? wizard.y);
+    addProp(canyonProps, {
+      id: 'golemMossLeft',
+      type: 'gardenForegroundPlant',
+      x: baseX - 26,
+      y: baseY - 12,
+      parallax: 1.02,
+    });
+    addProp(canyonProps, {
+      id: 'golemMossRight',
+      type: 'gardenForegroundPlant',
+      x: baseX + 14,
+      y: baseY - 6,
+      parallax: 1.04,
+    });
     await donkeySay('Du hast nicht zerstört – du hast verstanden. Weiter nach Moab, Meister.');
     await fadeToBlack(480);
     setLifeBars(null);

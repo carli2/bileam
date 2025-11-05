@@ -455,7 +455,7 @@ export function showGlyphReveal(letter, label, meaning, duration = 2100) {
   }
 
   const previousInput = gameplayInputEnabled;
-  deactivateGlyphOverlay(null, { immediate: true });
+  deactivateGlyphOverlay(null);
   gameplayInputEnabled = false;
   haltPlayerMotion();
 

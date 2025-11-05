@@ -127,6 +127,8 @@ export async function runFightLoop({
     } else {
       life.player.current = clamp(life.player.current - amount, 0, life.player.max);
     }
+    lastDamageTarget = target;
+    nextRoundActor = target;
     if (message) {
       await onEvent({ speaker: 'narrator', text: message });
     }
@@ -276,12 +278,36 @@ export async function runFightLoop({
   let actor = initialActor === 'enemy' ? 'enemy' : 'player';
   let lastFailure = null;
   let recentEnemyWord = null;
+  let lastDamageTarget = null;
+  let nextRoundActor = actor;
+  let pendingRoundAnnouncement = stateKey === 'start';
+  let roundsObserved = 0;
   renderStatus();
 
   while (life.player.current > 0 && life.enemy.current > 0) {
+    if (stateKey === 'start') {
+      const desiredActor = nextRoundActor ?? lastDamageTarget ?? actor;
+      if (desiredActor && desiredActor !== actor) {
+        actor = desiredActor === 'enemy' ? 'enemy' : 'player';
+        if (actor === 'enemy') {
+          recentEnemyWord = null;
+        }
+      }
+    }
+
     const state = states[stateKey];
     if (!state) {
       throw new Error(`Missing fight state definition for "${stateKey}"`);
+    }
+
+    if (stateKey === 'start' && pendingRoundAnnouncement) {
+      roundsObserved += 1;
+      pendingRoundAnnouncement = false;
+      await onEvent({
+        speaker: 'sequence',
+        text: `Runde ${roundsObserved}`,
+        duration: 1200,
+      });
     }
 
     const actorName = actor === 'player' ? playerName : enemyName;
@@ -363,6 +389,9 @@ export async function runFightLoop({
           recentEnemyWord = null;
         }
       }
+      if (stateKey === 'start') {
+        pendingRoundAnnouncement = true;
+      }
       const transitions = Object.keys(stateTransitions ?? {});
       lastFailure = {
         actor,
@@ -442,6 +471,9 @@ export async function runFightLoop({
       if (actor === 'enemy') {
         recentEnemyWord = null;
       }
+    }
+    if (stateKey === 'start') {
+      pendingRoundAnnouncement = true;
     }
   }
 
