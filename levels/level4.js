@@ -211,7 +211,7 @@ async function phaseXayimReveal(props) {
     parallax: 0.8,
     layer: 3,
   });
-  await narratorSay('Licht, Wasser und Klang verweben sich. Eine neue Glyphe entsteht im Boden.');
+  await narratorSay('Licht, Wasser und Klang verweben sich und erfüllen den Garten.');
   await balakSay(props, 'Höre zu: Das ist חיים – Leben. Es ernährt mein Reich... oder lässt es verhungern.');
   await donkeySay('Das ist חיים – xayim. Es bedeutet Leben... und Brot.');
 
@@ -328,8 +328,7 @@ function walkBalak(props, targetX, options = {}) {
 
     const step = now => {
       const t = Math.min(1, (now - startTime) / Math.max(1, travelDuration));
-      const eased = t * t * (3 - 2 * t);
-      const current = Math.round(startX + distance * eased);
+      const current = Math.round(startX + distance * t);
       updateProp(props, 'gardenBalakFigure', { x: current, visible: true });
       if (t < 1) {
         requestAnimationFrame(step);

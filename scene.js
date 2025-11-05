@@ -45,7 +45,6 @@ const JUMP_FORCE = 180;
 const TEXT_WRAP = 26;
 const CAMERA_MARGIN = 96;
 const CAMERA_EASE = 0.12;
-const GRASS_SWAY_SPEED = 4;
 const MAX_INPUT_LENGTH = 18;
 
 const canvas = document.getElementById('screen');
@@ -131,11 +130,17 @@ const heldKeys = new Set();
 const pressedKeys = new Set();
 const SPEECH_ACK_KEYS = new Set(['Enter', ' ', 'Space', 'Spacebar']);
 
+function haltPlayerMotion() {
+  wizard.vx = 0;
+  donkey.vx = 0;
+  heldKeys.clear();
+  pressedKeys.clear();
+}
+
 let gameplayInputEnabled = true;
 let activePrompt = null;
 let cameraX = 0;
 let cameraDelta = 0;
-let grassPhase = 0;
 let lastTime = performance.now();
 let pendingSpeechAck = null;
 let sceneStarted = false;
@@ -205,6 +210,7 @@ export function say(x, y, text) {
     throwIfSkipRequested();
     const wasEnabled = gameplayInputEnabled;
     gameplayInputEnabled = false;
+    haltPlayerMotion();
     try {
       pendingSpeechAck = narrationSpeech;
       await beginSpeech(
@@ -642,10 +648,6 @@ function loop(time) {
   const previousCameraX = cameraX;
   updateCamera();
   cameraDelta = cameraX - previousCameraX;
-  if (cameraDelta !== 0) {
-    grassPhase = (grassPhase + delta * GRASS_SWAY_SPEED) % (Math.PI * 2);
-  }
-
   processWaiters();
 
   drawScene();
@@ -917,9 +919,14 @@ function drawTerrain() {
           const idx = rowStart + x;
           const worldX = worldOffset + x;
           if (layer >= 6) {
-            const phase = cameraDelta !== 0 ? grassPhase + worldX * 0.05 : worldX * 0.05;
-            const sway = Math.sin(phase);
-            pixels[idx] = sway > 0 ? palette.bright : palette.dark;
+            const wave = Math.sin(worldX * 0.045);
+            if (wave > 0.3) {
+              pixels[idx] = palette.bright;
+            } else if (wave < -0.3) {
+              pixels[idx] = palette.dark;
+            } else {
+              pixels[idx] = palette.shadow;
+            }
           } else if (layer >= 4) {
             pixels[idx] = palette.shadow;
           } else {
@@ -1793,41 +1800,42 @@ function createDonkeySprites(c) {
 
 function createBalakFigureSprite(c) {
   const art = [
-    '........ggggg.................',
-    '.......ggggggg................',
-    '......gggsssggg...............',
-    '.....ggsssssssgg..............',
-    '.....gssbsssbbsgg.............',
-    '....gssbbbbbbbssgg............',
-    '....gssbbbbbbbssgg............',
-    '....gsssssssssssgg............',
-    '....gssssddddsssgg............',
-    '....gssssbbbbsssgg............',
-    '....gsssppppppssgg............',
-    '...ggssppPPPPpssgg............',
-    '...ggsppPPPPPPpssgg...........',
-    '...gsppPPppPPPPpssgg..........',
-    '...gsppPPppPPPPpssgg..........',
-    '...gsppPPPPPPPPpssgg..........',
-    '...gsppPPPPPPPPpssgg..........',
-    '...gsppPPPPPPPPpssgg..........',
-    '...gsppPPPPPPPPpssgg..........',
-    '...gssppPPPPPPpssgg...........',
-    '...gsssppPPPPpsssg............',
-    '...gsssppppppsssgg............',
-    '...gsssssssssssggg............',
-    '...gsssssssssssggg............',
-    '...ggggggggggggggg............',
-    '...gg..............gg.........',
+    '............okko.............',
+    '...........okkkko............',
+    '..........ookkkkoo...........',
+    '.........oosssssoo...........',
+    '........oossssssoo...........',
+    '.......oosssssssso...........',
+    '.......oosssssssso...........',
+    '......oossnnnsssoo...........',
+    '......oossnnnsssoo...........',
+    '......oossnnnsssoo...........',
+    '......oossnnnsssoo...........',
+    '......oossnnnsssoo...........',
+    '.....oorrRRRRRroo............',
+    '....oorrRRRRRRroo............',
+    '....oorrRRRRRRroo............',
+    '...oorrRRRRRRRRoo............',
+    '...oorrRRRRRRRRoo............',
+    '...oorrRRRRRRRRoo............',
+    '...oorrBBBBBBRRoo............',
+    '...oorrBBBBBBRRoo............',
+    '...oorrRRRRRRRRoo............',
+    '...oorrRRRRRRRRoo............',
+    '...oorrRRRRRRRRoo............',
+    '...oorrRRRRRRRRoo............',
+    '...oorrRRRRRRRRoo............',
+    '...oo............oo..........',
   ];
   const legend = {
     '.': c.transparent,
-    'g': c.wizardBelt,
+    'o': c.wizardBoot,
+    'k': c.wizardBelt,
     's': c.wizardSkin,
-    'b': c.wizardBeard,
-    'd': c.wizardBeardShadow,
-    'p': c.marketFabric,
-    'P': c.wizardRobeHighlight,
+    'n': c.wizardBeardShadow,
+    'r': c.wizardHat,
+    'R': c.wizardHatHighlight,
+    'B': c.marketFabric,
   };
   return spriteFromStrings(art, legend);
 }
