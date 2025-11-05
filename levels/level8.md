@@ -1,151 +1,164 @@
-# Level 8 – arur / beraka – Die Höhen von Moab  
+# Level 8 – Der erste Blick vom Bamot-Baal
+
+## Neues Wort
+**barak** (ברך) – *segnen, segnen statt fluchen*  
+> Wo andere verfluchen, kann, wer hört, den Segen sprechen.
 
 ---
 
-## 🎨 Assets & Sprites  
+## Szene 1 – Ankunft in Moab
 
-**Charaktere**  
-- **Bileam:** mit Stab, Umhang vom Reiseweg, müde, aber ehrfurchtsvoll.  
-- **Balak:** König von Moab, goldene Maske, schwere Gewänder, energische Gestik.  
-- **Eselin:** ruhig, aufmerksam, kommentiert nur gelegentlich.  
-- **Knechte / Priester:** tragen Opfergaben, reagieren auf Befehle Balaks.  
-
-**Umgebung & Effekte**  
-- Landschaft: terrassierte Höhenzüge mit Blick über das Lager Israels im Tal.  
-- Drei Opferstätten (Altäre) aus Stein, Rauchpartikeleffekte, Wind über den Höhen.  
-- Wetter: Sonne glüht grell, dann dämpft sich, sobald ein Wort gesprochen wird.  
-- Musik: tiefe Trommeln, Harfentöne, später Chor aus Stimmen, die sich in Wind auflösen.  
-- Lichteffekte: Flammen auf Altären wechseln von Rot (Zorn) zu Gold (Segen).  
-- Übergangseffekt aus Level 7: Fade-In aus Licht, sanftes Wiehern der Eselin, Windgeräusch.  
-
----
-
-## 🌄 Szene & Ambiente  
-
-Die Sonne steht über den Felsen Moabs, das Land glüht wie Metall.  
-Das Volk Israel lagert unten im Tal – unzählige Zelte, die im Licht flimmern.  
-Balak erwartet Bileam mit einer Mischung aus Angst und Stolz.  
-
-> **Ziel:** Der Spieler erlebt, wie Bileam das erste Mal versucht, Israel zu verfluchen,  
-> aber stattdessen zum Werkzeug des Segens wird.  
-
----
-
-## 🧭 Didaktisches Ziel  
-
-- **Wiederholung:** *malak* (Engel, Gehorsam)  
-- **Neue Wörter:**  
-  - `arur` – Fluch  
-  - `beraka` – Segen  
-- **Lernprinzip:** Anwendung von Gegensätzen – Spieler muss experimentell erkennen,  
-  dass *arur* die Welt schwächt, *beraka* sie heilt.  
-- **Schwierigkeitsgrad:** Keine direkten Tipps; der Spieler lernt durch Umkehrung der Wirkung.  
-
----
-
-## 🎬 Handlung & Dialoge  
-
-### Szene 1 – Der König ruft  
-
-**[Regieanweisung:]** Kamera: Schwenk über die Höhen von Moab; Rauch zieht von Altären auf.  
-**Balak** steht in prunkvoller Haltung, seine Stimme hallt über den Felsen.  
-
-**Balak:** „Da bist du also, Bileam, Sohn Beors! Ich sandte zweimal nach dir. Warum kamst du nicht?“  
-**Bileam:** „Ich komme, doch nicht um zu tun, was ich will. Nur das, was mir gegeben wird, darf ich reden.“  
-**Balak:** „Dann rede, aber sprich mir den Fluch, bevor sie uns verschlingen.“  
-
-**[Regieanweisung:]** Licht blendet kurz; Kamera zeigt Israels Lager in der Ferne – endlos, still, friedlich.  
-
----
-
-### Szene 2 – Die Altäre von Bamot-Baal  
-
-**[Regieanweisung:]** Balak errichtet sieben Altäre.  
-Knechte tragen Tiere, Rauch steigt auf, der Wind trägt Asche über die Berge.  
-
-**Bileam (nachdenklich):** „Sieben Altäre... sieben Opfer... und doch nur ein Ohr, das hört.“  
-**Eselin:** „Man kann viel Rauch machen, aber wer hört den Klang der Absicht?“  
-
-**Balak:** „Jetzt sprich, Zauberer! Rufe deinen Gott an, und verfluche sie!“  
-
-> *Prompt:* *Type:* `arur`  
-
-⚠️ **Effekt:** Der Himmel wird dunkler. Rauch senkt sich, Wind schneidet.  
-Flammen verlöschen kurz, dann schlagen sie zurück in Richtung Balaks Thron.  
-**Balak (erschrocken):** „Was geschieht?“  
-**Eselin:** „Das Wort hat den Weg verfehlt.“  
-
-> *Prompt:* *Type:* `beraka`  
-
-✅ **Ergebnis:** Licht kehrt zurück; Wind legt sich, die Altäre glühen golden.  
-Flammen tanzen, Rauch steigt nach oben und wird zu Lichtfäden.  
-Ein murmelnder Ton – fast wie Gesang – erfüllt die Luft.  
-
-**Bileam:** „Wie soll ich fluchen, den Gott nicht flucht?  
-Wie soll ich verwünschen, den der Ewige nicht verwünscht?“  
-
-**Balak (zornig):** „Du segnest sie! Ich befahl dir zu fluchen!“  
-**Bileam:** „Ich sprach, was gehört wurde – nicht, was ich wollte.“  
-
----
-
-### Szene 3 – Philosophischer Dialog  
-
-**[Regieanweisung:]**  
-Windstille. Nur der Klang der Flammen und ein ferner Donner.  
-
-**Balak:** „Deine Zunge verrät dich.  
-Glaubst du, Worte hätten einen eigenen Willen?“  
-**Bileam:** „Vielleicht sind Worte die Werkzeuge der Welt – und wir sind nur die Hand, die sie hält.“  
-**Eselin:** „Oder die Zunge, die sie formt, ohne zu wissen, wer spricht.“  
-**Balak (spöttisch):** „Dann segne mich, wenn du kannst!“  
-**Bileam:** „Segen kommt nicht aus Besitz. Er kommt, wenn das Herz still ist.“  
-
-**[Regieanweisung:]** Goldene Partikel lösen sich aus den Flammen; sie steigen auf und verschwinden im Wind.  
-
----
-
-### Szene 4 – Nachklang  
-
-**[Regieanweisung:]**  
-Kamera zeigt Israels Lager in der Ferne.  
-Ein Lichtkreis schwebt über den Zelten. Balak schaut hinab, wortlos.  
-
-**Balak (flüsternd):** „Ihre Zelte... sie glühen. Selbst der Staub scheint heilig.“  
-**Bileam:** „Gott hat sie gesegnet. Ich kann’s nicht wenden.“  
-**Eselin:** „Und du, König? Willst du das Licht bekämpfen?“  
-
-**Balak (zornig):** „Dann komm mit mir an einen anderen Ort.  
-Vielleicht gefällt es deinem Gott, dass du sie mir dort verfluchst.“  
-
-**[Regieanweisung:]** Kamera schwenkt auf die Berge im Westen, wo der Himmel rot glüht.  
-Musik wird dunkler – leises Motiv von Versuchung.  
-Fade-Out.  
-
----
-
-### Übergang zu Level 9  
+*Staubiger Wind fegt über die Hügel. Balak wartet auf einer steinernen Anhöhe; hinter ihm glimmt das Lager Moabs wie ein leuchtendes Gitter aus Punkten.*
 
 **Erzähler:**  
-„So führte Balak den Bileam auf den Gipfel Pisgah,  
-dass er das Volk von einem anderen Ort aus sähe.  
-Doch der, der sieht, sieht nicht anders, nur tiefer.“  
+Als Balak hörte, dass Bileam kam, zog er ihm entgegen nach Ar in Moab, an der Grenze des Arnon.  
+Und Balak sprach:  
+„Hab ich nicht zu dir gesandt und dich rufen lassen? Meinst du, ich könnte dich nicht ehren?“
+
+**Bileam:**  
+„Siehe, ich bin zu dir gekommen.  
+Aber wie kann ich etwas anderes reden als das, was mir Gott in den Mund gibt?  
+Nur das kann ich reden.“
+
+*(Systemhinweis blendet ein)*  
+> **Aktive Wörter:** lo – nicht | shama – hören | **Neu:** barak – segnen.  
+> **Kombination:** shama lo barak → „höre das Nein und segne“.  
 
 ---
 
-## 🧠 Didaktische Struktur  
+## Szene 2 – Die sieben Altäre
 
-| Phase | Lernziel | Prinzip | Spieleraktion | Feedback |
-|--------|-----------|----------|----------------|-----------|
-| I – Einführung | Begegnung mit Balak, Wiederholung *malak* | Kontextlernen | Dialoge | visuelle Bestätigung |
-| II – Erkenntnis | Neues Wort *arur* | Selbstentdeckung durch Versuch | Eingabe & Umgebungsreaktion | negative Rückkopplung |
-| III – Anwendung | Neues Wort *beraka* | Problemlösung | Eingabe & Resonanz | positive Rückkopplung |
-| IV – Reflexion | Ethik des Wortes | Philosophisches Lernen | Dialoge | moralisch-intuitive Erkenntnis |
+*Balak führt Bileam auf den Hügel von Bamot-Baal. Unter ihnen breitet sich das Volk Israel aus – zahllose Punkte aus Licht. Die Luft flimmert wie eine Netzstruktur.*
+
+**Bileam:**  
+„Baue mir hier sieben Altäre und schaffe mir her sieben junge Stiere und sieben Widder.“
+
+**Balak:**  
+„Ich tue, wie du sagst.“
+
+*(Gameplay: der Spieler muss nacheinander sieben Altäre mit Zeichenmustern aktivieren; jeder Altar ein Teil eines Wortes. Nach jedem Altar flackert die Welt kurz – der Code reagiert.)*
+
+**Erzähler:**  
+Beide opferten auf jedem Altar einen Stier und einen Widder.  
+Und Bileam sprach:  
+„Tritt zu deinem Brandopfer. Ich will hingehen, ob mir vielleicht der HERR begegnet.“
+
+*(Kurzes Minispiel: Spieler spricht **shama** → Klangräume öffnen sich, geometrische Linien bilden sich im Himmel.)*
 
 ---
 
-## 🌌 Lehrkern  
+## Szene 3 – Die Begegnung
 
-- **Biblisch:** Numeri 22:36–23:12 – Balaks erste Begegnung mit Bileam, erstes Orakel.  
-- **Theologisch:** Der Prophet erkennt, dass Worte nicht ihm gehören, sondern ihrem Urs
+*Die Welt steht still. Kein Wind. Kein Ton. Dann spricht etwas – nicht mit Laut, sondern als Resonanz.*
+
+**Gottes Stimme:**  
+„Sieben Altäre hast du errichtet.  
+Doch du kannst nicht fluchen, was ich gesegnet habe.“
+
+**Systemmeldung:**  
+> *Du spürst das Gegenwort in dir: „barak“. Das Wort des Segens erwacht.*
+
+---
+
+## Szene 4 – Das erste Orakel
+
+*Balak wartet am Opferplatz, umgeben von den Fürsten der Moabiter.*
+
+**Erzähler:**  
+Da hob Bileam an mit seinem Spruch und sprach:
+
+> „Aus Aram hat mich Balak holen lassen,  
+> vom Gebirge des Ostens:  
+> Komm, verfluche mir Jakob,  
+> komm, verwünsche Israel!  
+>  
+> Wie soll ich fluchen, dem Gott nicht flucht?  
+> Wie soll ich verwünschen, den der HERR nicht verwünscht?  
+>  
+> Denn von der Höhe der Felsen sehe ich ihn,  
+> und von den Hügeln schaue ich ihn.  
+> Siehe, das Volk wohnt abgesondert  
+> und wird sich nicht zu den Völkern rechnen.“
+
+*(Beim Aussprechen des Orakels erscheinen Schriftzeichen über der Steppe. Der Spieler muss das richtige Wort wählen: [lo], [shama], [barak].  
+Nur bei der Reihenfolge **shama lo barak** bleibt die Welt stabil – sonst glitcht sie.)*
+
+**System:**  
+> **Ergebnis:** Fluch in Segen verwandelt.  
+> **Weltstabilität +25**  
+
+**Balak (verzweifelt):**  
+„Was tust du mir an? Ich habe dich holen lassen, um meine Feinde zu verfluchen – und siehe, du segnest sie!“
+
+**Bileam:**  
+„Muss ich nicht reden, was der HERR in meinen Mund gibt?“
+
+---
+
+## Szene 5 – Philosophisches Zwischenspiel
+
+*Der Wind trägt flüsternde Stimmen. Der Boden unter den Füßen zeigt feine Linien – als wäre die Welt ein Teppich aus Licht.*
+
+**Innere Stimme (Bileam):**  
+„Ich sprach das Wort, und das Wort sprach zurück.  
+Vielleicht ist kein Laut je verloren,  
+vielleicht webt jeder Klang eine Faser im Gewand des Himmels.“
+
+**Eselin (aus der Ferne):**  
+„Wer segnet, richtet den Faden neu aus.  
+Siehst du, wie das Muster flimmert?  
+Es hört dich, bevor du sprichst.“
+
+---
+
+## Szene 6 – Balaks Ungeduld
+
+**Balak:**  
+„Komm mit mir an einen andern Ort.  
+Von hier siehst du zu viel.  
+Vielleicht kannst du mir dort das Ende verfluchen.“
+
+*(Das Licht um Balak pulsiert unruhig – rote Strahlen durchziehen die Luft, als würde er selbst am Gewebe reißen.)*
+
+**Erzähler:**  
+So führte Balak ihn zum Feld des Spähers,  
+auf den Gipfel des Pisga.  
+Und er baute dort abermals sieben Altäre.
+
+> **Nächstes Ziel:** Folge Balak auf den Pisga-Gipfel.  
+> **Fortfahren zu Level 9 →**
+
+---
+
+## Spielmechanik
+
+**Aktive Wörter:**  
+- lo (לא) – „nicht“ → verhindert falsche Befehle.  
+- shama (שמע) – „hören“ → öffnet göttliche Kommunikation.  
+- barak (ברך) – „segnen“ → verwandelt destruktive Energie in Heilung oder Schutz.  
+
+**Kombinationen:**  
+- *shama lo* = „höre das Nein“ – bewahrt Stabilität.  
+- *shama lo barak* = „höre das Nein und segne“ – mächtigste Formel gegen Zorn- oder Fluchmagie.  
+
+**Systemeffekte:**  
+- Fehlversuch („fluchen“) → Welt-Flimmern + Fehlercode / Glitch.  
+- Richtige Formel → Segen-Welle, visuelle Synchronisation des Weltmusters.  
+
+---
+
+## Ästhetik & Atmosphäre
+
+- **Licht:** sanftes Flimmern → strahlt aus Israel-Lager → Pixel-Muster („Weltmatrix“-Andeutung).  
+- **Ton:** dumpfer Herzschlag + fernes „Summen der Fäden“.  
+- **Symbolik:** jeder Altar = ein Code-Segment; die sieben Altäre zusammen = vollständige Schleife des göttlichen Programms.  
+
+---
+
+## Philosophischer Kern
+
+> Der Mensch glaubt, er spräche –  
+> doch in Wahrheit ist er das Gesprochene.  
+> Wenn er segnet statt flucht,  
+> repariert er das Wort, aus dem er besteht.
 

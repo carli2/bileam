@@ -1,168 +1,189 @@
-# Level 10 – hamilchama – Der letzte Segen  
+# Level 10 – Der Stern aus Jakob
+
+## Neues Wort
+**or** (אוֹר) – *Licht, Erleuchtung, Ursprung*  
+> Wer die Wahrheit sieht, spricht nicht mehr aus Dunkel.
 
 ---
 
-## 🎨 Assets & Sprites  
+## Szene 1 – Nach dem dritten Segen
 
-**Charaktere**  
-- **Bileam:** in weiß-goldenes Licht gehüllt, Stab leuchtend, ruhige Haltung.  
-- **Balak:** zornig, mit zerknitterter goldener Robe, Maske teilweise gebrochen.  
-- **Eselin:** still, aber anwesend; bewegt die Ohren bei jedem Wort Bileams.  
-- **Knechte & Priester:** im Hintergrund, reagieren erschrocken auf Licht und Donner.  
-
-**Umgebung & Effekte**  
-- Schauplatz: Gipfel von Peor, Blick auf das endlose Tal Israels.  
-- Himmel: von Sturmwolken durchzogen, Lichtblitze und Schimmerlinien über den Bergen.  
-- Sound: tiefer Chor im Hintergrund, Windrauschen, gelegentlich Donner.  
-- Licht: bei göttlichen Worten blendend hell, bei Balaks Zorn zuckendes Dunkelrot.  
-- Partikel: Lichtfunken bei Eingaben, goldene Staubschleier bei Segensphasen.  
-- Übergang: Fade-In aus Level 9, Wind trägt die letzten Worte des vorherigen Orakels.  
-
----
-
-## 🌇 Szene & Ambiente  
-
-Der Wind heult über den Höhen von Peor.  
-Balak steht, die Hände zu Fäusten geballt, während Bileam schweigt und in das weite Tal blickt.  
-Das Lager Israels liegt still im Morgenlicht, friedlich und unantastbar.  
-
-> **Ziel:** Der Spieler erlebt das vierte und letzte Orakel.  
-> Bileam erkennt, dass der wahre Kampf (*hamilchama*) nicht gegen Menschen geführt wird,  
-> sondern im Inneren – zwischen Gehorsam und Eigenwille.  
-
----
-
-## 🧭 Didaktisches Ziel  
-
-- **Wiederholung:** *dabar* (Wort), *emet* (Wahrheit)  
-- **Neues Wort:** *hamilchama* – der Kampf  
-- **Lernprinzip:** Synthese – alle bisherigen Wörter werden angewandt,  
-  um die letzte Offenbarung zu „sprechen“.  
-- **Schwierigkeitsgrad:** Keine Hilfen mehr; die Welt reagiert ausschließlich auf die Reinheit der Eingaben (Ton, Rhythmus, Zeit).  
-
----
-
-## 🎬 Handlung & Dialoge  
-
-### Szene 1 – Balaks Zorn  
-
-**[Regieanweisung:]** Kamera zeigt beide Figuren im Gegenlicht.  
-Balaks Gesicht halb im Schatten, halb im roten Schimmer des Feuers.  
-
-**Balak:** „Ich rief dich, um meine Feinde zu verfluchen –  
-und siehe, du segnest sie nun dreimal! Was bist du für ein Prophet?“  
-**Bileam:** „Ich bin kein Prophet, ich bin ein Hörer.  
-Ich kann nicht reden, was mir nicht gesagt wird.“  
-**Balak (spöttisch):** „Dann höre! Höre, wie ich dich entehre!“  
-**Eselin (leise):** „Der, der schreit, hört sich selbst. Der, der schweigt, hört die Wahrheit.“  
-
-**[Regieanweisung:]** Donner. Himmel glüht kurz violett, bevor er aufreißt.  
-
----
-
-### Szene 2 – Die letzte Offenbarung  
-
-**[Regieanweisung:]**  
-Bileam schließt die Augen.  
-Wind legt sich, Geräusche verebben.  
-Ein einzelner Sonnenstrahl bricht durch die Wolken und trifft ihn.  
-
-**Bileam (flüsternd):** „Ich sehe ihn, aber nicht jetzt; ich schaue ihn, aber nicht von nahem.  
-Ein Stern tritt hervor aus Jakob, und ein Zepter erhebt sich aus Israel.“ *(Numeri 24:17)*  
-
-> *Prompt-Sequenz:*  
-> `aor` → Licht entfaltet sich über Bileam.  
-> `mayim` → Wind trägt leichten Regen.  
-> `qol` → ferne Trompeten antworten.  
-> `xayim` → Pflanzen brechen zwischen Felsen hervor.  
-> `ash` → Glut erhellt Balaks Gesicht.  
-> `dabar` → Worte hallen in der Luft, ohne Laut.  
-> `emet` → Wolken weichen, Himmel klärt sich.  
-> `malak` → Engel fliegen in Lichtgestalt über das Tal.  
-> `beraka` → alles erstrahlt in goldenem Segen.  
-> `hamilchama` → Wind wird still.  
-
-✅ *Erfolg:* Die Erde bebt leise, Licht senkt sich auf das Lager Israels.  
-**Eselin:** „Siehst du? Der Kampf war in dir, nicht unter euch.“  
-**Bileam:** „Ich kämpfte gegen mein Wort – und das Wort siegte.“  
-
-⚠️ *Fehler:* Flammen lodern; Balak lacht höhnisch.  
-**Balak:** „Siehst du, wie schwach dein Gott ist?“  
-**Bileam:** „Dein Lachen ist nur das Echo der Leere.“  
-
----
-
-### Szene 3 – Der innere Kampf  
-
-**[Regieanweisung:]**  
-Bileam steht still, Hände zitternd; Licht und Schatten flackern.  
-Die Welt pulsiert im Rhythmus seines Atems.  
-
-**Bileam:** „Was ist der Mensch, dass er spricht?  
-Und was ist das Wort, dass es ihn trägt?“  
-**Eselin:** „Vielleicht ist er der Kampf selbst – zwischen Atem und Schweigen.“  
-**Bileam:** „Dann bin ich der Krieg, und das Wort ist mein Frieden.“  
-
-**[Regieanweisung:]**  
-Die Landschaft verschwimmt, Licht überblendet Farben,  
-bis nur noch helles Gold bleibt.  
-
----
-
-### Szene 4 – Balaks Ende  
-
-**Balak (verzweifelt):** „Ich wollte dich ehren,  
-doch dein Gott verwehrt dir die Ehre! Geh, Prophet! Fort aus Moab!“  
-**Bileam:** „Ich nehme keine Ehre. Ich trage nur, was gesprochen wurde.“  
-**Balak:** „Deine Worte sind Gift!“  
-**Bileam:** „Dann ist Gift das, was sich gegen den Segen wendet.“  
-
-**[Regieanweisung:]**  
-Balak tritt zurück, Schatten verschlucken ihn.  
-Ein letzter Blitz trifft den Boden, Staub steigt auf.  
-Das Tal unter ihnen erstrahlt in Licht.  
-
-**Eselin:** „Vielleicht beginnt Frieden dort,  
-wo einer aufhört, das Letzte Wort haben zu wollen.“  
-
----
-
-### Übergang zu Level 10_5  
+*Bileam steht auf dem Felsen. Unter ihm liegt das Lager Israels wie ein Meer aus Lichtern. Balak wendet sich ab, seine Hände zittern.*
 
 **Erzähler:**  
-„Und Bileam machte sich auf und zog hin,  
-doch der Schatten des Königs blieb auf dem Land.  
-Denn kein Wort endet dort, wo sein Hörer schweigt.“  
+Da entbrannte Balaks Zorn gegen Bileam, und er schlug die Hände zusammen.  
+Und Balak sprach:  
+„Ich habe dich gerufen, dass du meine Feinde verfluchst – und siehe, du hast sie nun dreimal gesegnet!  
+Geh nun fort! Ich wollte dich ehren, aber dein Gott hat dir die Ehre verwehrt!“
 
-**[Regieanweisung:]**  
-Kamera: Totale über Moab.  
-Ein Windstoß trägt Asche davon, dann folgt Stille.  
-Fade-Out zu dunklem Hintergrund;  
-leise Chorstimmen singen in hebräischer Silbenfolge: *ha-mil-cha-ma...*  
+**Bileam:**  
+„Hab ich dir nicht gesagt:  
+Wenn mir Balak sein Haus voll Silber und Gold gäbe,  
+ich könnte das Wort des HERRN nicht übertreten,  
+weder im Kleinen noch im Großen?“
 
----
-
-## 🧠 Didaktische Struktur  
-
-| Phase | Lernziel | Prinzip | Spieleraktion | Feedback |
-|--------|-----------|----------|----------------|-----------|
-| I – Einführung | Wiederholung aller gelernten Wörter | Abruftraining | Eingabeprüfung | visuelle/akustische Resonanz |
-| II – Erkenntnis | Neues Wort *hamilchama* | Selbstentdeckung | Kombination alter Worte | atmosphärische Veränderung |
-| III – Anwendung | Integration aller Ebenen (Sprache, Moral, Gehorsam) | Transferlernen | Wortsequenz vollständig | visuelle Offenbarung |
-| IV – Reflexion | Moralische & spirituelle Synthese | Philosophisches Lernen | Zuhören | narrative Auflösung |
+*(Er hebt seinen Stab. Das Licht um ihn flackert, die Luft vibriert – wie ein System, das seine letzten Parameter liest.)*
 
 ---
 
-## 🌌 Lehrkern  
+## Szene 2 – Das letzte Orakel
 
-- **Biblisch:** Numeri 24:10–25 – Balaks Zorn, vierte Weissagung, Rückkehr.  
-- **Theologisch:** Die Prophetie gipfelt in der Erkenntnis, dass jede Sprache göttlicher Ursprung ist.  
-- **Mystisch:** *hamilchama* (der Kampf) ist kein Krieg gegen Fleisch,  
-  sondern der innere Streit zwischen Wille und Auftrag.  
-- **Didaktisch:** Der Spieler wiederholt, kombiniert und synthetisiert –  
-  er erkennt die Sprache nicht als Werkzeug, sondern als Schöpfung.  
+*Der Wind legt sich. Über Bileams Kopf glimmt ein Stern – hell, doch fern.*
+
+**Bileam spricht:**
+
+> „Es sagt Bileam, der Sohn Beors,  
+> der Mann, dem die Augen geöffnet sind.  
+>  
+> Ich sehe ihn, aber nicht jetzt;  
+> ich schaue ihn, aber nicht von Nahem.  
+> Ein Stern geht auf aus Jakob,  
+> ein Zepter erhebt sich aus Israel.  
+>  
+> Er wird zerschmettern die Schläfen der Moabiter,  
+> und zerstören, was übrig ist von den Städten.  
+>  
+> Edom wird sein Eigentum,  
+> und Seïr, sein Feind, wird unterworfen sein.  
+> Israel aber wird Sieg haben.“  
+
+*(Während er spricht, zieht der Stern Lichtbahnen durch die Wolken.  
+Der Spieler muss das neue Wort **or** sprechen, um das Bild zu stabilisieren.  
+Ohne „or“ verfinstert sich der Himmel, und der Stern zerbricht.)*
+
+**Systemmeldung:**  
+> Neues Wort gelernt: **or** – „Licht“.  
+> Kombiniere mit *barak* und *emet*, um Reinheit zu erzeugen.
 
 ---
 
-**Ende Level 10 – hamilchama – Der letzte Segen**
+## Szene 3 – Die Visionen der Nationen
 
+*Bileam hebt noch einmal die Augen.*
+
+**Bileam:**  
+> „Amalek war das erste unter den Völkern,  
+> doch zuletzt wird es vergehen.  
+>  
+> Fest ist deine Wohnung, Keniter,  
+> und du hast dein Nest im Felsen gebaut;  
+> dennoch wird dich Assur gefangen führen.  
+>  
+> Wehe, wer wird leben, wenn Gott dies tut?“  
+
+*(Die Landschaft wechselt flackernd – Felder, Städte, Schatten, alles nur Projektionen im Sternenlicht.  
+Kurz sieht der Spieler den Boden als geometrische Platte: Liniengitter aus Licht und Dunkel.)*
+
+**Innere Stimme:**  
+„So wie der Stern aus der Ferne leuchtet,  
+so leuchtet in uns das Wort, das uns spricht.  
+Vielleicht sind wir nur Spiegel in seinem Licht.“
+
+---
+
+## Szene 4 – Balaks Zweifel
+
+*Balak tritt vor, die Welt um ihn wirkt instabil – Gold splittert aus seinen Händen.*
+
+**Balak:**  
+„Du hast genug geredet, Prophet.  
+Dein Licht blendet, aber es wärmt nicht.  
+Sag mir: Wer ist dieser Stern?  
+Ist er dein Gott – oder nur dein Spiegelbild?“  
+
+**Bileam:**  
+„Ich weiß es nicht. Ich sehe ihn nur.  
+Aber wer ihn sieht, sieht, dass nichts anderes ist.“
+
+*(Balak weicht zurück. Der Himmel brennt auf – Linien des Lichts kreuzen den Boden.  
+Ein dumpfer Klang wie Herzschlag.)*
+
+**Esel (flüsternd):**  
+„Hüte dich, Meister. Wenn das Licht zu hell wird, vergisst man, dass man selbst Schatten wirft.“
+
+---
+
+## Szene 5 – Übergang zur Konfrontation
+
+**Erzähler:**  
+Da machte sich Bileam auf, um zu gehen.  
+Doch Balak blieb stehen zwischen den Altären,  
+und das Licht fiel auf ihn wie ein Urteil.
+
+**Balak (leise):**  
+„Wenn Worte mich nicht retten,  
+dann lösche ich die Worte selbst.“
+
+*(Die Welt flackert, Gold und Schwarz mischen sich.  
+Ein Riss zieht sich durch den Himmel – als hätte jemand den Code geöffnet.)*
+
+**Systemwarnung:**  
+> *Weltstabilität kritisch.*  
+> *Neuer Prozess erkannt: Schatten der Worte [BALAK.exe] aktiv.*
+
+*(Kamera zoomt auf Balak. Sein Schatten bewegt sich eigenständig.)*
+
+**Esel:**  
+„Er beginnt, das Gewebe zu zerreißen.  
+Sein Zorn schreibt sich in die Welt.“
+
+**Bileam:**  
+„Dann bleibt nur das Licht.“  
+*(Spricht: „or emet barak“ – Welt stabilisiert sich kurz.)*  
+
+**Erzähler:**  
+Doch der Riss bleibt.  
+Und aus der Dunkelheit antwortet eine Stimme,  
+nicht menschlich, nicht göttlich – nur Klang.
+
+> „Wenn Licht spricht, wer hört?“  
+
+*(Fade out – Screen schwarz → nur Stern sichtbar, der pulsiert.)*
+
+> **Fortsetzung folgt → Level 10_5: Balak – Der Schatten des Wortes**
+
+---
+
+## Spielmechanik
+
+**Aktive Wörter:**  
+- lo (לא) – nicht  
+- shama (שמע) – hören  
+- barak (ברך) – segnen  
+- dabar (דבר) – Wort / Befehl  
+- emet (אמת) – Wahrheit  
+- **or (אוֹר)** – Licht / Ursprung  
+
+**Kombinationen:**  
+- *dabar emet or* = Sprich wahres Wort im Licht → heiliger Schutz  
+- *barak emet or* = Segen in Wahrheit und Licht → Endkampf-Formel  
+- *shama lo or* = höre das Nein → Abwehr von Schattenzaubern  
+
+**Systemeffekte:**  
+- Ohne „or“ verdunkelt sich Welt → Balaks Schattenprozess wächst.  
+- Mit „or“ erscheinen Lichtgitter → Gewebe stabilisiert.  
+
+---
+
+## Philosophischer Kern
+
+> Licht ist kein Ding – es ist das, was alles sichtbar macht.  
+> Vielleicht sahen die Alten nicht Sterne, sondern Fenster in das Denken des Schöpfers.  
+>  
+> Und wenn sie sagten, ein Stern gehe auf,  
+> meinten sie: das Programm erwacht.  
+>  
+> Doch sie nannten es einfach: **or**.
+
+---
+
+## Übergang zu Level 10_5
+
+*Die Kamera folgt dem Riss im Himmel.  
+Er führt zu einem dunklen, spiegelnden Ort – dem Palast von Balak.*  
+
+**Erzähler:**  
+„Und Bileam kehrte um, doch sein Weg führte nicht fort,  
+sondern hinein in den Schatten des Wortes.“  
+
+> **Fortfahren zu Level 10_5 → Balak – Der Schatten des Wortes**

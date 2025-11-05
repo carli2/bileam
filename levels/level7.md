@@ -1,162 +1,246 @@
-# Level 7 – malak – Der Bote auf dem Weg
+# Level 7 – Der Engel und die Eselin
+
+*Wer hört, baut eine Brücke zwischen Sichtbarem und Verhülltem.*
 
 ---
 
-## 🎨 Assets & Sprites
+## Szene 1 – Aufbruch
 
-**Charaktere**
-- **Bileam**: Reit-Animation (Esel, Mantel, Stab in Hand); Emotionen: Zweifel, Wut, Ehrfurcht  
-- **Eselin**: sprechend, Kopfbewegungen, weiches Augenleuchten  
-- **Engel (malak)**: Lichtgestalt, schwebend, transluzent; Schwert aus Lichtbändern  
-- **Zwei Knechte**: im Hintergrund, stumm, reagieren mit Blicken  
-
-**Umgebung & Effekte**
-- Landschaft: schmaler Pfad zwischen Weinbergen und Felsen, in Nebel getaucht  
-- Wetter: Lichtveränderung (Tag → Dämmerung → Lichtausbruch)  
-- Partikel: flirrendes Staublicht, Nebelschwaden, fallende Blätter  
-- Sound: ferne Trommel, Wind, zwitschernde Vögel, später absolute Stille  
-- Special Effect: Welt flackert kurz, als würde die Zeit stocken (Symbol für göttliches Eingreifen)
-
----
-
-## 🌅 Szene & Ambiente
-
-Die Sonne steht tief über dem Land der Moabiter.  
-Bileam reitet auf seiner Eselin, begleitet von zwei Knechten.  
-Der Pfad ist schmal, eingefasst von Mauern aus Stein und verwilderten Reben.  
-Über dem Land liegt ein seltsames Schweigen – wie das Innehalten eines Atems.  
-
-Im Hintergrund erklingt ein leises Summen, wie eine Saite, die niemand angeschlagen hat.  
-
----
-
-## 🧭 Didaktisches Ziel
-
-- **Wiederholung:** `qol` (Stimme)  
-- **Neues Wort:** `malak` (Engel / Bote)  
-- **Lernprinzip:** Wahrnehmung und Gehorsam – „Nicht das Auge, sondern das Hören erkennt das Wahre.“  
-- **Schwierigkeitsgrad:** Spieler muss erst durch wiederholtes Scheitern begreifen, dass er *nicht zwingen*, sondern *hören* soll.
-
----
-
-## 🎬 Handlung & Dialoge
-
-### Szene 1 – Der Weg in die Stille
-
-**[Regieanweisung:]** Kamera in langsamer Bewegung – leichtes Zittern, als wäre die Luft gespannt.
-
-**Bileam:** „Der Weg scheint endlos. Und die Sonne brennt, als stünde sie still.“  
-**Eselin:** „Vielleicht bist du der, der stillsteht, Meister.“  
-**Bileam:** „Was sagst du?“  
-**Eselin:** „Ich sage, dass der Weg dich prüft, nicht du ihn.“  
-
-**[Regieanweisung:]** Eselin bleibt stehen. Wind verstummt.  
-Bileam zieht am Zügel – die Eselin rührt sich nicht.  
-
-**Bileam:** „Weiter! Wir müssen Moab erreichen, ehe das Licht sinkt.“  
-**Eselin:** „Das Licht sinkt nicht, es hält den Atem an.“  
-
-**[Regieanweisung:]** Bileam wird wütend, schlägt die Eselin.  
-Kurzer Lichtblitz; Nebel zieht sich zusammen.  
-
----
-
-### Szene 2 – Das unsichtbare Hindernis
-
-**[Regieanweisung:]**  
-Der Pfad verengt sich zwischen Mauern.  
-Ein Flimmern durchzieht die Luft, als stünde dort etwas Unsichtbares.  
-
-**Eselin:** „Der Weg ist belegt.“  
-**Bileam:** „Von wem?“  
-**Eselin:** „Von dem, der nicht aus Fleisch ist.“  
-
-**Bileam:** „Unsinn!“ *(schlägt sie erneut)*  
-**Eselin (schmerzerfüllt):** „Warum schlägst du mich, die dich trägt?“  
-
-> *Prompt:* *Type:* `qol` → **קוֹל**  
-
-✅ *Erfolg:* Tiefer Ton erfüllt die Luft.  
-Ein unsichtbares Licht bricht hervor, Nebel zerreißt.  
-⚠️ *Fehler:* Die Welt bleibt still; Bileam verliert Balance; Eselin seufzt:  
-**Eselin:** „Vielleicht hört der Himmel dich nicht, weil du zu laut sprichst.“  
-
----
-
-### Szene 3 – Die Offenbarung des Engels
-
-**[Regieanweisung:]**  
-Langsamer Zoom auf Bileams Gesicht. Lichtreflexe auf den Augen.  
-Der Engel erscheint – eine Gestalt aus Schimmer und Klang, ein Mensch ohne Schatten.  
-
-**Engel:** „Warum schlägst du die, die dich trägt?“  
-**Bileam (erschrocken):** „Wer bist du?“  
-**Engel:** „Ich bin ein *malak* – ein Bote des Ewigen.“  
-**Bileam:** „Ich sah dich nicht.“  
-**Engel:** „Kein Fleisch sieht, was nicht geschaffen ist. Geist erkennt Geist.“  
-
-> *Prompt:* *Type:* `malak` → **מלאך**  
-
-✅ *Erfolg:* Das Licht des Engels verstärkt sich, Mauern beben, Erde leuchtet golden.  
-**Bileam:** „Warum standest du mir entgegen?“  
-**Engel:** „Weil dein Weg dich in die Finsternis geführt hätte. Ich bin gesandt, um dich zu halten, nicht zu hindern.“  
-**Bileam:** „Was seid ihr, die ihr ohne Leib seid?“  
-**Engel:** „Wir sind, was bleibt, wenn alle Formen vergehen. Wir sind Wille, nicht Körper.“  
-**Bileam:** „Und der Wille des Menschen?“  
-**Engel:** „Ist nur Echo, das an die Quelle erinnert.“  
-
----
-
-### Szene 4 – Die Erkenntnis
-
-**[Regieanweisung:]**  
-Bileam steigt vom Tier, kniet nieder.  
-Kamera schwenkt über die Landschaft – Weinberge erstarren, Blätter hängen reglos in der Luft.  
-
-**Bileam:** „Ich habe gesündigt; ich wusste nicht, dass du mir entgegenstandest.  
-Wenn es nicht recht ist, will ich umkehren.“  
-**Engel:** „Zieh hin, aber sprich nur, was dir gesagt wird. Kein Wort von dir, das nicht gehört wurde.“  
-
-**Eselin:** „Und doch – wer hört zuerst, der spricht zuletzt.“  
-**Bileam (leise):** „Vielleicht hören Worte uns, bevor wir sie formen.“  
-
-**[Regieanweisung:]**  
-Engel hebt das Schwert; es löst sich in Licht auf.  
-Bileam steigt wieder auf die Eselin.  
-Die Sonne setzt sich wieder in Bewegung.  
-
----
-
-### Übergang zum nächsten Level
+*Grauer Morgen über den Hügeln von Moab. Nebel hängt wie feine Stoffbahnen. Die Fürsten Balaks warten vor Bileams Haus, ihre Banner zittern im Wind.*
 
 **Erzähler:**  
-„Und so zog Bileam mit den Fürsten Balaks.  
-Denn das Wort, das er nicht suchen wollte, hatte ihn längst gefunden.“  
+Da stand Bileam am Morgen auf, sattelte seine Eselin und zog mit den Fürsten der Moabiter.  
+Aber der Zorn Gottes entbrannte, dass er hinzog.
 
-**[Regieanweisung:]**  
-Fade-Out; Geräusch der Schritte auf Stein.  
-Ein goldener Schimmer am Horizont – Moab.  
-Fade-In zur nächsten Szene: Balaks Palast in der Ferne.  
+*(Die Welt flackert kurz – Gräser und Pfad pulsieren, als müsse das Muster neu verwoben werden.)*
 
----
+**Schriftanzeige:**  
+> *Das Wort `lo` bleibt aktiv.*  
+> **Neues Lernwort:** *shama* (שמע) – „Höre und erkenne.“  
+> **Aufgabe:** Folge den Fürsten, ohne den inneren Klang zu verlieren.
 
-## 🧠 Didaktische Struktur
-
-| Phase | Lernziel | Prinzip | Spieleraktion | Feedback |
-|--------|-----------|----------|----------------|-----------|
-| I – Einführung | Beobachtung, Geduld | Spieler lernt auf Umgebungsreaktion zu achten | Bewegung & Dialog | akustische Resonanz |
-| II – Erkenntnis | Wiederholung `qol` | Spieler öffnet Wahrnehmung | Eingabe & Tonprüfung | auditives Feedback |
-| III – Anwendung | Neues Wort `malak` | Spieler ruft Engel an | Lichtveränderung, Dialog | visuelles & semantisches Feedback |
-| IV – Reflexion | Moralische Einsicht | Dialoge über Geist & Fleisch | keine Aktion nötig | atmosphärischer Abschluss |
+**Gameplay-Hinweis:** Der Spieler übernimmt die Kontrolle an der Torpforte. Drei leuchtende Hufspuren markieren den Start. Erst wenn Bileam jede Spur berührt und dabei `lo` spricht, stabilisiert sich der Pfad nach Osten und der Tross setzt sich in Bewegung.
 
 ---
 
-## 🌌 Lehrkern
-- **Theologisch:** Bileam erkennt, dass sein Wille begrenzt ist; wahre Macht liegt im Hören.  
-- **Mystisch:** Engel sind nicht „aus einer anderen Welt“, sondern „ohne Welt“ – reine Intention.  
-- **Didaktisch:** Sprache und Wahrnehmung verschmelzen; Spieler übt aktives Zuhören.  
+### 🜂 Spielphase I – Der Pfad der Fürsten
+
+- Reite mit der Eselin entlang eines terrassierten Hangs.  
+- Drei Schriftbanner der Fürsten flackern; sie tragen Versuchungsbefehle.  
+- Durch Eingabe bekannter Worte können sie entschlüsselt werden:  
+  - `aor` enthüllt den wahren Text.  
+  - `mayim` kühlt die hitzigen Forderungen und beruhigt die Eselin.  
+  - `qol` macht verborgene Stimmen hörbar.  
+- Erst wenn alle drei Banner mit `lo` versiegelt wurden, wird die neue Wortoption `shama` freigeschaltet.
 
 ---
 
-**Ende Level 7 – malak – Der Bote auf dem Weg**
+## Szene 2 – Der erste Widerstand
 
+*Pfad durch Weinberge. Sonne bricht durch Nebel. In der Ferne ein stehendes Licht, humanoid, doch noch ohne Konturen.*
+
+**Erzähler:**  
+Der Engel des HERRN trat in den Weg, um ihm zu widerstehen.  
+Er hatte ein blankes Schwert in der Hand.
+
+**Eselin (flüsternd):**  
+Da steht etwas vor uns… aber du siehst es nicht.
+
+**Bileam:**  
+Es ist nur ein Flimmern, führe mich weiter!
+
+---
+
+### 🜁 Spielphase II – Feld der Abweichung
+
+- Die Steuerung bietet vier Eingaben: `Vorwärts`, `Schlagen`, `lo`, `shama`.  
+- `Vorwärts` zwingt die Eselin auf das Feld; die Szene kippt, Farben invertieren.  
+- `Schlagen` erhöht den Wert *Übertretung* um 1, der Himmel verdunkelt sich.  
+- `lo` lässt das Licht kurz sichtbar bleiben, doch ohne Klang zerfließt die Gestalt.  
+- `shama` löst einen Hörstrahl aus; Linien aus Licht verbinden Engel und Spieler, die Eselin erstarrt ehrfürchtig.  
+- Nach zweimaliger rechter Eingabe von `shama` erscheint Fragment ש (Shin) über Bileams Hand.
+
+**Erzähler:**  
+Die Eselin wich vom Weg ab und ging auf das Feld.  
+Bileam aber schlug sie, um sie auf den Weg zu bringen.
+
+*(Bei aktiver Hörsequenz erschallt ein fernes Rauschen – als spräche der Stoff der Welt selbst.)*
+
+---
+
+## Szene 3 – Der zweite Widerstand
+
+*Enge Stelle zwischen Weinmauern. Das Licht wirkt hart, der Staub schwebt in ruhenden Spiralen. Der Engel steht erneut, Schwert erhoben.*
+
+**Eselin:**  
+Schon wieder… da, zwischen den Steinen!  
+*(Sie drängt sich an den Felsen, klemmt Bileams Fuß ein.)*
+
+**Bileam:**  
+Du treibst Mutwillen!
+
+---
+
+### 🜃 Spielphase III – Der Druck der Mauern
+
+- Der Pfad verengt sich; die Kamera kippt leicht.  
+- Eingaben: `Schlagen`, `lo`, `shama`, `aor`.  
+- `aor` beleuchtet den Engel, aber ohne Klang bleibt er unbewegt.  
+- `lo` stabilisiert den Boden und verhindert Sturzschaden.  
+- `shama` lässt den Ton der Mauer hörbar werden; Glyphen erscheinen und verraten das Fragment מ (Mem).  
+- Erfolgreiche Kombination `lo` → `shama` löst die Mauern, legt einen verborgenen Seitenpfad frei.  
+- Fehlversuche erhöhen *Übertretung*; nach drei Stapeln erscheint Balaks Projektion als Spott.
+
+**Erzähler:**  
+Da ging der Engel des HERRN weiter.
+
+---
+
+## Szene 4 – Der dritte Widerstand
+
+*Der Weg verengt sich zu einer Schlucht. Kein Platz mehr nach rechts oder links. Nur Klang bleibt lebendig.*
+
+**Erzähler:**  
+Da trat der Engel an eine enge Stelle, wo kein Platz mehr war auszuweichen.
+
+**Eselin:**  
+Ich kann nicht weiter.
+
+*(Sie fällt auf die Knie. Stille, nur tiefer Bordun.)*
+
+**Bileam (zornig):**  
+Wäre doch ein Schwert in meiner Hand, ich wollte dich töten!
+
+**Eselin:**  
+War ich je anders? Bin ich nicht deine Eselin, auf der du geritten bist von jeher bis heute?  
+War es je meine Art, so zu handeln?
+
+**Bileam (leise):**  
+Nein… `lo`.
+
+*(Das Wort `lo` glüht, und im Echo klingt `shama` – als Antwort.)*
+
+---
+
+### 🜄 Spielphase IV – Das Knie der Eselin
+
+- Der Spieler muss den Herzschlag der Eselin nachspüren: vier Pulsschläge → Pause → erneute vier.  
+- Bei jedem Puls muss `shama` getippt oder gesprochen werden; ein zu frühes Wort lässt den Puls stocken.  
+- Nach erfolgreicher Sequenz erscheint das Fragment ע (Ayin); zusammengesetzt zeigen sich die Glyphen von שמע.  
+- Wird `lo` nach jedem zweiten Puls gesprochen, fällt der *Übertretung*-Zähler um 1.  
+- Misslingt der Takt dreimal, stürzt Bileam zu Boden und die Sequenz beginnt erneut.
+
+---
+
+## Szene 5 – Offenbarung
+
+*Licht bricht durch das Bild. Alles steht still. Die Kamera zieht hinter Bileam, der Engel steht da – gebündeltes Licht mit Schriftbahnen im Inneren.*
+
+**Erzähler:**  
+Da öffnete der HERR dem Bileam die Augen.  
+Und er sah den Engel des HERRN auf dem Weg stehen mit dem Schwert in seiner Hand.  
+Und Bileam neigte sich und fiel nieder auf sein Angesicht.
+
+**Engel:**  
+Warum hast du deine Eselin dreimal geschlagen?  
+Ich stand dir entgegen, denn dein Weg führt ins Verderben.  
+Wäre sie mir nicht ausgewichen, ich hätte dich getötet, sie aber leben lassen.
+
+**Bileam:**  
+Ich habe gesündigt.  
+Ich wusste nicht, dass du mir entgegenstandest.  
+Wenn es dir nicht gefällt, will ich umkehren.
+
+**Engel:**  
+Zieh hin mit den Männern,  
+aber nichts anderes, als was ich dir sagen werde, sollst du reden.
+
+**Schriftanzeige:**  
+> **Neue Fähigkeit:** `shama` – Höre, was jenseits der Welt spricht.  
+> **Grenze bleibt bestehen:** `lo` – Bewahre das Nein.  
+> **Gabe erhalten:** Divine Pass – 1.
+
+---
+
+### 🜅 Spielphase V – Die Lauschrast
+
+- Nach dem Dialog muss der Spieler an einem Höraltar verweilen.  
+- Klangfäden fallen herab; durch korrektes Timing (`shama` bei jedem zweiten Faden, `lo` bei jedem vierten) webt Bileam ein Schutzmuster.  
+- Abschluss erzeugt ein Schildsymbol, das in Level 8 als optionaler Schutz gegen Balaks Manipulation aktiviert werden kann.
+
+---
+
+## Szene 6 – Philosophische Reflexion
+
+*Die Welt klärt sich. Farben werden kühler, Konturen schärfen sich zu geometrischer Ruhe.*
+
+**Innere Stimme (Bileam):**  
+Vielleicht stand der Engel nicht vor mir, sondern hinter dem Vorhang,  
+wo der Stoff der Welt zu Ende geht.  
+Manche nennen es das Licht hinter dem Licht.  
+Und wer lauscht, hört ein fernes Echo –  
+das Summen des ersten Wortes.
+
+**Eselin (ruhig):**  
+Wer hört, erkennt.  
+Und wer erkennt, weiß, dass alles nur gesprochen ist.
+
+---
+
+## Spielmechanik
+
+**Aktive Wörter:**  
+- `lo` (לא) – „nicht“ – blockiert Fluch, Zorn, Versuchungen.  
+- `shama` (שמע) – „hören / gehorchen“ – offenbart verborgene Signale, synchronisiert mit Engeln und Eselin.  
+- `aor`, `mayim`, `qol`, `ash` – frühere Worte, liefern Kontextreaktionen und Prüfungen.
+
+**Kombinationen:**  
+- `lo` → `shama` = Schutzwalze: vermindert *Übertretung* und öffnet geheime Pfade.  
+- `shama` → `lo` = Echo-Schild: reflektiert fremde Befehle im späteren Bosskampf.  
+- `shama` → `aor` = Hörlicht: macht unsichtbare Gegner sichtbar.
+
+**System:**  
+- *Übertretung* steigt bei Gewalt oder Ignoranz; ab Wert 3 erscheinen Illusionen Balaks.  
+- Erfolgreiche Nutzung von `shama` senkt die Welt-Störung; Ambient wird klarer.  
+- Abschluss setzt `divine_pass = true` und speichert Fragmentzählung für Level 8.
+
+---
+
+## Übergang zu Level 8
+
+*Die Sonne steigt. Bileam und die Fürsten reiten weiter. Hinter ihnen bleibt der Engel unbewegt; die Luft um ihn pulsiert wie ruhiger Atem.*
+
+**Erzähler:**  
+So zog Bileam mit den Fürsten Balaks.  
+Der Himmel über ihnen war klar,  
+doch in den Schatten flimmerte das Muster –  
+als ob etwas jenseits der Berge noch wachte.
+
+> **Nächstes Ziel:** Erreiche die Höhen von Bamot-Baal.  
+> **Fortfahren zu Level 8 →**
+
+---
+
+## Sprite-Anforderungen
+
+- `princeProcessionBanner` – Fürsten mit Schriftbannern, je eigener Animationszyklus.  
+- `hoofSignTrail` – glimmende Hufspuren, die bei Berührung aufleuchten.  
+- `angelBladeForm` – Engelssilhouette mit inneren Schriftbahnen und Schwertpose.  
+- `hearingGlyphFragment` – einzelne Buchstaben ש, מ, ע als schwebende Fragmente.  
+- `transgressionAura` – dunkle Partikel, die bei Fehlhandlungen auflodern.  
+- `hearingAltar` – Altarobjekt mit fallenden Klangfäden.  
+- `balakMockingVeil` – Balaks Spottprojektion aus Purpur-Gold.  
+- `donkeyKneelLoop` – Animationsset für kniende, atmende Eselin.
+
+---
+
+## Ambient-Anforderungen
+
+- `moabDawnProcession` – tiefer Bordun, leiser Trommelschlag, ferne Hörner.  
+- `vineyardThreshold` – Wind durch Reben, feine Glockensignale, schwebende Obertöne.  
+- `angelPresence` – stehende Chorfläche mit schneidenden Obertönen und Herzschlagbass.  
+- `stonePressure` – dumpfer Hall, Reibgeräusche für die Mauersequenz.  
+- `kneelSilence` – fast tonlose Atmosphäre mit vereinzelten Atemgeräuschen.  
+- `revelationChorus` – helles Chorband, das in stille Resonanz übergeht.  
+- `listeningSanctum` – harpische Flageoletts, Tropfen von Licht, für den Höraltar.  
+- `processionAfterglow` – Wind, ruhige Schritte, seltene Eselrufe für den Abgang.

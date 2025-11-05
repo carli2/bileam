@@ -1,168 +1,199 @@
-# Level 6 – דָּבָר (*dabar*) – Die Stadt der Worte
+# Level 6 – Der Ruf des Königs
+
+*In der Stadt der Worte lernt Bileam, dass das Nein die Ordnung bewahrt.*
 
 ---
 
-## 🌆 Szene & Ambiente
+## Szene 1 – Das Volk im Osten
 
-**Ort:** Die Stadt Moab – Marktplatz am Fuß des Königspalastes.  
-**Umgebung:**
-- Händler rufen, Kinder laufen, Schriftrollen flattern im Wind.  
-- Überall hängen Zeichen, Inschriften und Banner mit Worten, die wie lebendig schimmern.  
-- Auf dem Hügel thront Balaks Palast – goldene Dächer, aber dunkle Schatten darunter.  
-- Die Stadt wirkt gleichzeitig geschäftig und unruhig, als ob die Worte selbst miteinander streiten.  
+*Weite Steppe. Nebel zieht vom Jordan herauf. Im Hintergrund glimmt das Lager Israels – tausend Lichter, die im Sand flackern wie eine geordnete Zeichenflut.*
 
-**Musik:** Rhythmische Oud-Klänge, gemischt mit Stimmengewirr; der Klang ist lebendig, fast zu lebendig.  
+**Erzähler:**  
+Danach lagerten sich die Israeliten in den Steppen Moabs, gegenüber Jericho.  
+Und Balak, der Sohn Zippors, sah alles, was Israel den Amoritern angetan hatte.  
+Und die Moabiter fürchteten sich sehr, denn das Volk war groß, und ihnen graute vor den Israeliten.
 
-**Ziel:**  
-Bileam versteht erstmals, dass **Worte selbst Lebewesen** sind – sie haben Schwingung, Form und Geist.  
-Er lernt das Wort **דָּבָר (*dabar*)**, das zugleich „Wort“ und „Sache“ bedeutet,  
-und er erfährt, wie Sprache zwischen Körpern und Geistern wirkt.
+**Balak (auf der Mauer von Ar Moab):**  
+Sieh nur, sie bedecken das ganze Land...  
+Wenn sie weitergehen, bleibt nur Staub.  
+Wie ein Tier, das das Gras des Feldes frisst, so werden sie uns verzehren.
 
----
+**Ältester der Midianiter:**  
+Es gibt einen Seher jenseits des Flusses.  
+Was er spricht, geschieht – als folge die Welt seiner Stimme.
 
-## 🧭 Phase I – Einführung: Das Geheimnis der Worte
+**Balak:**  
+Dann ruft ihn.  
+Vielleicht kann er das Muster wenden, bevor alles ausgelöscht ist.
 
-**Sprechblasen / Dialog:**
+*(Kurzer Kameraschwenk: Die Welt unter den Mauern flimmert, als wäre sie nur halb aus Klang gewebt.)*
 
-- **Bileam:** „Esel, ich verstehe nicht – wie kann ein Laut etwas bewegen? Es sind doch nur Schwingungen in der Luft.“  
-- **Esel:** „So ist es. Schwingungen, aber nicht leere. Jede Schwingung trägt Bedeutung – wie Wellen im Wasser.“  
-- **Bileam:** „Und wer hört sie?“  
-- **Esel:** „Zwei Arten von Wesen, Meister: solche aus Fleisch – wie wir – und solche aus Geist.“  
-- **Bileam:** „Geistwesen?“  
-- **Esel:** „Du wirst sie noch treffen. Sie hören nicht mit Ohren, sondern mit dem Herzen.  
-  Beide, Fleisch und Geist, spüren, wenn ein Wort wahr gesprochen ist. Denn jedes Wort ist ein Atem des Geistes.“  
-- **Esel:** „Erinner dich an *qol* – die Stimme. Sprich es, und du wirst spüren, wie die Luft dich hört.“  
-
-**Eingabeaufforderung:**  
-> *Type:* `qol` → **קוֹל**
-
-**Reaktion:**  
-- ✅ *Erfolg:* Der Marktplatz wird still. Die Händler verstummen, als hätten sie das Echo gehört.  
-- ⚠️ *Fehler (1×):* **Esel:** „Lass es aus deinem Bauch kommen, nicht aus dem Kopf.“  
-- ⚠️ *Fehler (2×):* Leises Flüstern erklingt, als würde jemand antworten – „Wer ruft?“  
-- ❌ *Mehrfach falsch:* Rückblende zeigt die Felsenschlucht aus Level 3; Spieler darf erneut versuchen.
-
-**Nach dem Erfolg:**  
-> **Erzähler:** „Und der Lehrling begriff: Die Stimme ist kein Werkzeug – sie ist ein Wesen, das gehört werden will.“
+**Gameplay-Hinweis:** Nach Balaks Monolog übernimmt der Spieler Bileam am Fuß der Stadtmauer. Drei sandglühende Aussichtsringe (links, mitte, rechts) müssen besucht werden. Jeder Ring zeigt eine Vision von Israels Lager und lässt die Schrittspur des Spielers in Licht übergehen. Erst wenn alle drei Ringe berührt wurden, gleitet die Szene nach Petor.
 
 ---
 
-## 🏙️ Phase II – Die Stadt der Worte
+## Szene 2 – Bileam empfängt die Gesandten
 
-**Beschreibung:**
-- Der Spieler betritt den Markt.  
-- Über jedem Stand schweben Worte in hebräischen Buchstaben, die sich bewegen wie kleine Geister:  
-  einige freundlich, andere aggressiv.  
-- NPCs sprechen in Halbsätzen, aber jedes Wort verändert kurz das Licht um sie.  
+*Ort: Petor, am Euphrat. Der Seher sitzt vor einem stillen Feuer. Lichtlinien laufen unter dem Sand wie leuchtende Fäden.*
 
-**Sprechblasen / Dialog:**
-- **Bileam:** „Was geschieht hier?“  
-- **Esel:** „Das ist *Davar*, die Stadt, in der Worte gehandelt werden.“  
-- **Bileam:** „Gehandelt?“  
-- **Esel:** „Ja. Manche kaufen Lob, andere verkaufen Lüge.  
-  Balak liebt es, Worte zu sammeln – je schöner sie klingen, desto reicher glaubt er zu sein.“  
-- **Bileam:** „Kann man Wahrheit kaufen?“  
-- **Esel:** „Du wirst sehen.“
+**Gesandter:**  
+Siehe, ein Volk ist aus Ägypten gezogen, es bedeckt das ganze Land und lagert uns gegenüber.  
+So komm nun und verfluche mir dieses Volk, denn es ist mir zu mächtig.  
+Denn ich weiß: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist verflucht.
 
----
+**Bileam:**  
+Bleibt hier über Nacht.  
+Ich will hören, was der HERR mir sagt.
 
-## 🧩 Phase III – Rätsel 1: Der Händler der leeren Worte
-
-**Beschreibung:**  
-Ein Händler bietet Bileam eine Schriftrolle an.  
-Darauf steht ein Wort, das hell leuchtet – aber ohne Schatten.  
-Er sagt: „Dieses Wort bringt Reichtum. Sprich es, und alle werden dir folgen.“
-
-**Ziel:** Spieler muss entscheiden, ob er das Wort sprechen will.  
-Wenn er es spricht (beliebiger Tasteneingabeversuch), passiert Folgendes:
-
-- Das Wort klingt hohl, die Luft flackert, die Buchstaben zerfallen zu Staub.  
-- **Esel:** „Leere Worte klingen schön, aber tragen nichts. Nur *wahre Worte* bewegen das Herz.“
-
-> **Erkenntnis:** Worte haben Form nur, wenn sie mit Geist erfüllt sind.
+*(Schriftanzeige blendet ein:)*  
+> **Ziel:** Warte auf die Stimme in der Nacht.  
+> **Neues Lernwort verfügbar:** lo (לא) = *nicht / nein*.
 
 ---
 
-## 🔤 Phase IV – Neues Wort lernen: דָּבָר (*dabar*)
+### 🜂 Spielphase I – Die Spur der Gesandten
 
-**Szene:**  
-Am Rand des Marktes sitzt ein alter Schreiber mit einem Buch aus Stein.  
-Er ruft Bileam herbei.
-
-**Dialog:**
-- **Schreiber:** „Ich höre, du suchst das Wort hinter allen Worten.“  
-- **Bileam:** „Ich suche zu verstehen, warum sie wirken.“  
-- **Schreiber:** „Dann lerne das Wort *דָּבָר* – *dabar*. Es bedeutet *Wort*, aber auch *Ding*.  
-  Denn alles, was gesagt wird, nimmt Gestalt an.“  
-- **Esel:** „Wenn du *dabar* sprichst, achte darauf, was du fühlst –  
-  denn wer das Wort spricht, erschafft die Sache.“  
-
-**Eingabeaufforderung:**  
-> *Type:* `dabar` → **דָּבָר**
-
-**Ergebnisse:**
-- ✅ *Erfolg:* Die Buchstaben fliegen vom Stein und ordnen sich in der Luft.  
-  Händler, Menschen und selbst die Schatten bleiben stehen.  
-  Das Wort hallt über den Platz und hinterlässt goldenes Licht auf jeder Zunge.  
-- ⚠️ *Fehler (1×):* **Esel:** „Langsam, das *dalet* ist stark, nicht gehaucht.“  
-- ⚠️ *Fehler (2×):* Das Buch pulsiert, aber kein Laut kommt – Rückblende erlaubt zweiten Versuch.  
-
-**Erklärung:**  
-> **Schreiber:** „Jetzt weißt du: Das Wort *ist* die Sache.  
-> Sprich falsch, und du erschaffst nur Lärm.  
-> Sprich wahr, und selbst Stein hört zu.“
+- Der Spieler führt Bileam vom Feuerplatz zu drei leuchtenden Sandringen (Nord, Ost, Süd).  
+- In jedem Ring erscheint ein Gesandter-Schatten mit einer Prüfungsfrage.  
+- Durch Eingabe der bekannten Worte reagiert die Szene:
+  - `aor` erhellt die Gesichter, offenbart Angst.  
+  - `mayim` beruhigt die Pferde; Sand wird zu Wellenlinien.  
+  - `qol` lässt die Luft vibrieren, enthüllt Balaks Versprechen als Echo.  
+- Nach jeder richtigen Antwort fliegt ein Fragment des neuen Wortes (ל und א) in Bileams Grimoire. Falsche Eingaben lassen die Schatten dichter werden; drei Fehlversuche pro Ring setzen den Fortschritt dieses Rings zurück.
 
 ---
 
-## 💬 Phase V – Anwendung: Gespräch mit Balaks Gesandtem
+## Szene 3 – Die erste Nacht
 
-**Szene:**  
-Ein Gesandter des Königs erscheint.  
-Er trägt eine goldene Maske und spricht mit samtiger Stimme:
+*Dunkelheit. Nur das Flackern des Feuers. Das Rauschen klingt, als atme die Welt selbst. Das Bild flimmert, als löste sich die Verdichtung der Materie.*
 
-> „Balak wünscht, dass du deine Gabe nutzt –  
-> ein Wort genügt, um ihm neue Anhänger zu bringen.“
+**Gottes Stimme (tief, verzerrt):**  
+Wer sind die Männer, die bei dir sind?
 
-**Gameplay:**  
-Der Spieler darf `dabar` sprechen, um das Wort zu prüfen.
+**Bileam:**  
+Balak, Sohn Zippors, hat mich gerufen, zu verfluchen ein Volk, das das Land bedeckt.
 
-- Wenn richtig gesprochen:  
-  - Maske des Gesandten reißt Risse, darunter erscheint Leere.  
-  - **Esel:** „Du hast die Lüge erkannt.“  
-- Wenn falsch gesprochen:  
-  - Gesandter lacht, der Markt verfällt in Chaos.  
-  - Rückblende, um das Wort erneut zu üben.
+**Gott:**  
+Geh *nicht* mit ihnen.  
+Verfluche das Volk *nicht* – denn es ist gesegnet.
 
----
+*(Das Wort לא erscheint in der Luft, geschrieben aus Licht. Alles erstarrt. Der Spieler muss das Wort aussprechen oder anklicken.)*
 
-## 🧩 Didaktische Struktur
+**Systemmeldung:**  
+> Neues Wort gelernt: **lo** – das Nein, das die Welt zusammenhält.
 
-| Phase | Lernziel | Prinzip | Feedback |
-|--------|-----------|----------|-----------|
-| I – Einführung | Verständnis der akustischen Wirklichkeit von Sprache | Gespräch / Reflexion | Interaktives Dialoglernen |
-| II – Stadtphase | Erkennen der Macht und Gefahr von Kommunikation | Beobachtung / Immersion | Umwelt reagiert dynamisch |
-| III – Rätsel | Erkennen der Differenz zwischen leeren und echten Worten | Exploratives Lernen | Konsequenz statt Tipp |
-| IV – Erkenntnis | Neues Wort *דָּבָר* verstehen (Wort = Sache) | Konstruktivistisches Lernen | Buchstabenmaterialisierung |
-| V – Anwendung | Anwendung im ethischen Kontext (Balaks Manipulation) | Transferlernen | Moralisches Feedback |
+*(Für einen Moment löst sich die Umgebung auf: Sandkörner werden zu glühenden Zeichen, als sähe man den Plan des Unsichtbaren. Dann fällt alles wieder in seine Form zurück.)*
 
-**Merksatz des Esels:**  
-> „Jedes Wort ist Fleisch, jedes Ding ein Gedanke.  
-> Doch nicht jedes Gedachte ist schon wahr.“
+**Innere Stimme (Gedanke Bileams):**  
+Das Nein hallt nach.  
+Und in seinem Echo höre ich den Raum zwischen den Dingen –  
+das, worauf alles ruht, das Unsichtbare, das doch alles trägt.
 
 ---
 
-## 🔠 Technische Hinweise (für Engine)
+### 🜁 Spielphase II – Die Nacht der Stille
 
-- **Eingaben erkannt:** `aor`, `mayim`, `qol`, `xayim`, `ash`, `dabar`  
-- **Neue Mechanik:** `spoken_truth`-Variable → misst, ob Wort mit Absicht oder mechanisch gesprochen wurde.  
-- **Audio:**  
-  - *dabar* → tiefer Hallton, leicht metallisch.  
-  - *qol* → kurze Resonanz mit Nachklang.  
-- **Partikel:** Schriftzeichen aus Goldstaub, die sich ordnen und zerfallen.  
-- **Soundfilter:** Leichte Verzerrung bei Lügenworten, klare Harmonie bei Wahrheiten.  
-- **Speicherpunkt:** nach Balak-Gesandten-Szene (`progress.level = 6 complete`)
+- Ein Hörkreis aus Licht erscheint um Bileam. Der Spieler muss ihn zwölf Atemzüge lang darin halten.  
+- Schatten aus Balaks Palast greifen nach dem Kreis; mit `qol` kann der Spieler die Schatten kurz vertreiben (Cooldown: 4 Sekunden).  
+- Verlässt Bileam den Kreis oder schweigt zu lange, kehrt die Sequenz an den Anfang zurück.  
+- Nach bestandener Meditation verdichtet sich das Wort לא, und der Grimoire-Eintrag „lo“ wird dauerhaft freigeschaltet.
 
 ---
 
-**Ende Level 6 – דָּבָר (*dabar*) – Die Stadt der Worte**
+## Szene 4 – Der Morgen danach
 
+**Bileam (zu den Fürsten):**  
+Geht hin in euer Land.  
+Der HERR will’s *nicht* gestatten, dass ich mit euch ziehe.
+
+*(Die Fürsten verbeugen sich, reiten ab. Über der Steppe liegt wieder jenes matte Flackern, als sei der Himmel nur ein dünnes Tuch.)*
+
+**Erzähler:**  
+So kehrten die Fürsten zurück zu Balak und sprachen:  
+„Bileam weigert sich, mit uns zu ziehen.“
+
+---
+
+### 🜃 Spielphase III – Die Verweigerung
+
+- Die Gesandten halten noch einmal, bieten Geschenke in Lichtgefäßen dar.  
+- Jeder Versuch, die Gefäße zu berühren, beschwört einen Bannkreis.  
+- Durch Eingabe von `lo` zerfällt der Kreis, die Gabe verglimmt zu Staub, und Balaks Stimme knistert wütend im Hintergrund.  
+- Optionale Reaktionen: `aor` zeigt kurz den wahren Zustand der Gesandten (erschöpft, furchtsam); `ash` lässt die Gaben gefährlich aufflammen und erzwingt sofort den Einsatz von `lo`, um Schaden zu verhindern.
+
+---
+
+## Szene 5 – Übergang
+
+*Balaks Palast. Goldene Linien fließen über die Wände, aber flackern unruhig.*
+
+**Balak:**  
+Dann sendet mehr. Stärkere Männer.  
+Vielleicht lässt er sich doch bewegen.  
+Gebt ihm Gold, und sagt: Der König wird ihn ehren.
+
+*(Das Licht hinter Balak verformt sich. Für einen Moment sieht man, dass der Palast aus Zeichen besteht.)*
+
+**Erzähler:**  
+Und so sandte Balak noch mächtigere Fürsten,  
+und mit ihnen begann der Weg, der zur Grenze führt.
+
+---
+
+### 🜄 Spielphase IV – Aufbruch entlang der Grenze
+
+- Der Spieler begleitet Bileam und die Eselin auf einem zweigeteilten Parallax-Pfad zur Grenze.  
+- Drei Stationen markieren den Weg:
+  1. **Schriftstein:** Mit `lo` löst der Spieler einen Versuchungsbefehl (Fluch gegen Israel) auf.  
+  2. **Dornbusch:** `mayim` lässt Tau fallen, damit die Eselin passieren kann.  
+  3. **Wachfeuer Balaks:** `aor` zeigt einen geheimen Pfad, doch nur nach einem gesprochenen `lo` schließt sich der Schein, damit Balaks Spione nichts sehen.  
+- Am Ende wartet ein Rastplatz; hier speichert das Spiel den Fortschritt vor Level 7.
+
+---
+
+## Spielmechanik
+
+**Neues Wort:** lo (לא) = *nicht / nein*  
+- Blockiert destruktive Aktionen, Bannkreise und Versuchungen.  
+- Kann mit anderen Worten kombiniert werden (z. B. `lo` → `aor`) – dabei wird die Wortsequenz zu einem Schutzlicht.  
+
+**Erweiterte Nutzung bekannter Worte:**  
+- `aor`, `mayim`, `qol`, `ash` bleiben aktiv und liefern alternative Lösungswege oder Einsichten.  
+- Fehlversuche nähren Balaks Schatten; die Szene wird dunkler, bis das nächste `lo` ausgesprochen wird.  
+- Der Level trackt, wie oft `lo` bewusst eingesetzt wurde; hohe Zählung verändert Balaks Dialog in Level 7.
+
+---
+
+## Übergang zu Level 7
+
+*Die Kamera folgt den neuen Fürsten auf ihrem Weg. Das Licht bricht sich in Schleiern, die wie feiner Schriftstaub wirken.*
+
+**Eselin (Stimme im Hintergrund):**  
+Er lernt, zu hören, was man *nicht* sagen darf.  
+Und wer das Nicht versteht, hat den ersten Faden des Himmels in der Hand.
+
+> **Nächstes Ziel:** Folge den Fürsten nach Moab.  
+> **Fortfahren zu Level 7 →**
+
+---
+
+## Sprite-Anforderungen
+
+- `moabWallWatcher` – Balaks Wachen auf der Stadtmauer, mit Stofffahnen und leuchtenden Augen.  
+- `sandVisionRing` – glimmende Kreise, die beim Betreten Glyphen projizieren.  
+- `envoyShadow` – halbtransparente Gesandten-Silhouetten mit unterschiedlichen Gaben.  
+- `noGlyphShard` – die beiden Fragmente ל und א, die zusammen das Wort לא bilden.  
+- `temptationVessel` – goldene Gefäße mit pulsierenden Lichtadern, zerfallen zu Staub nach `lo`.  
+- `palaceEchoVeil` – Balaks Projektion aus Schriftbanden.  
+- `borderMilestone` – Schriftsteine, Dornbusch-Assets, Wachfeuer inkl. Partikel.  
+- `donkeyNightHarness` – Nachtgeschirr der Eselin für den Aufbruch.
+
+---
+
+## Ambient-Anforderungen
+
+- `steppeDreadDawn` – dumpfer Wind, ferne Hörner, leises Heuschreckenrascheln (Balaks Mauer).  
+- `petorEmberNight` – Feuerknistern, tiefer Bordun, flüsternde Glyphen.  
+- `visionStatic` – sanftes Rauschen und Herzschlag für die Hörkreissequenz.  
+- `palacePulse` – kratziger Chor und metallische Pulse während Balaks Befehlen.  
+- `borderProcession` – langsamer Trommeltakt, Windglocken, ab und zu ein Eselruf.
