@@ -1,63 +1,74 @@
-# Level 9 – Die Stimme des Wahren
+# Level 9 - Die Stimme des Wahren
 
-## Neue Wörter
-**dabar** (דבר) – *Wort, Sache, Ereignis*  
-**emet** (אמת) – *Wahrheit, Zuverlässigkeit*  
-> Das Wort ist der Körper der Wahrheit – und Wahrheit ist das Wort, das bleibt.
+*Wenn Wort und Wahrheit eins werden, atmet die Welt frei.*
 
 ---
 
-## Szene 1 – Der Gipfel des Pisga
+## Szene 1 - Der Gipfel des Pisga
 
-*Balak und Bileam stehen über einer Schlucht. Der Boden ist mit Linien durchzogen, die wie Adern aus Licht pulsieren.*
+*Balak und Bileam erreichen einen zerklüfteten Grat. Unter ihnen die Lager und Altäre vergangener Versuche; über ihnen kreisen leuchtende Glyphen wie Boten aus reinem Klang.*
 
-**Erzähler:**  
-Balak sprach zu ihm:  
-„Komm an einen andern Ort. Von hier wirst du nur das äußerste Ende sehen,  
-vielleicht kannst du mir dort das Volk verfluchen.“
+**Balak:**  
+"Komm an einen andern Ort. Von hier wirst du nur das äußerste Ende sehen,  
+vielleicht kannst du mir dort das Volk verfluchen."
 
 **Bileam:**  
-„Baue mir hier sieben Altäre und opfere sieben junge Stiere und sieben Widder.“
+"Baue mir hier sieben Altäre und opfere sieben junge Stiere und sieben Widder."
 
-**Balak** (zögernd):  
-„Wieder sieben… deine Zahl brennt in den Fäden dieser Welt.“
-
-*(Gameplay: Spieler aktiviert sieben Altar-Glyphen. Jeder Altar lässt kurzzeitig ein geometrisches Muster erscheinen – wie Code, der sich synchronisiert.)*
+**Schriftanzeige:**  
+> Aktive Worte: `lo`, `shama`, `barak`.  
+> **Neue Worte zum Ergründen:** `dabar` (דבר) - Wort, das geschieht; `emet` (אמת) - Wahrheit, die trägt.  
+> Ziel: Errichte den Wahrheitskreis, bevor Balaks Druck das Gewebe reißt.
 
 ---
 
-## Szene 2 – Die Begegnung auf Pisga
+### 🜂 Spielphase I - Die Linien von Pisga
 
-*Dunkelheit fällt. Nur Bileam steht im Lichtkreis der Altäre.*
+- Sieben Altarplattformen liegen kreisförmig. Jede Plattform besitzt drei Glyphenspuren.  
+- Aufgabe: Führe Bileam über die Plattformen, aktiviere Spuren mit Wortkombinationen.  
+  - `shama` enthüllt verborgene Linien.  
+  - `lo` blockiert Balaks Fluchkette.  
+  - `barak` stabilisiert den Kreis.  
+- Nach einer vollständigen Runde erscheint Fragment ד (Dalet) als schwebender Klangwürfel - erstes Zeichen für `dabar`.  
+- Verfehlst du eine Spur, wächst Balaks Projektion `balakAngerVeil`; drei Fehlversuche lösen eine Zornsequenz aus, die mit `lo` beruhigt werden muss.
+
+---
+
+## Szene 2 - Die Begegnung auf Pisga
+
+*Die Schatten versinken, nur der Altar-Kreis bleibt erleuchtet. Nebel wirkt wie Speicherdampf, aus dem sich Silben formen.*
 
 **Erzähler:**  
 Da begegnete der HERR dem Bileam  
 und gab ihm ein Wort in seinen Mund.
 
-**Gott (Stimme):**  
-„Geh zurück zu Balak und sprich so:  
-Ich bin nicht ein Mensch, dass ich lüge,  
-noch ein Menschenkind, dass ich etwas bereue.  
+**Gottes Stimme:**  
+"Ich bin nicht ein Mensch, dass ich lüge,  
+noch ein Menschenkind, dass ich bereue.  
 Sollte ich reden und es nicht tun?  
-Sollte ich sprechen und es nicht halten?“
+Sollte ich sprechen und es nicht halten?"
 
-*(Systemmeldung)*  
-> Neues Wort entdeckt: **dabar** – „das Gesprochene, das geschieht“.  
-
-*(Der Spieler spricht dabar; Runen stabilisieren sich.)*
-
-**Gott:**  
-„Siehe, zu segnen ist dir befohlen.  
-Ich habe gesegnet – du kannst es nicht wenden.“  
+**Schriftanzeige:**  
+> Neues Wort erwacht: `dabar` - das Gesprochene, das geschieht.
 
 ---
 
-## Szene 3 – Das zweite Orakel
+### 🜁 Spielphase II - Der Atem des dabar
 
-*Balak wartet ungeduldig, Schweiß glänzt auf seiner Stirn.*
+- Drei Resonanzsäulen steigen aus dem Kreis.  
+- Der Spieler muss nacheinander `shama`, `lo`, `dabar` sprechen.  
+- Jede korrekte Eingabe füllt eine Säule mit Licht, bis sie ein Fragment ב (Bet) frei gibt.  
+- Nach drei vollständigen Sequenzen entsteht das Wortfragment ר (Resch) - `dabar` wird im Grimoire aktiv.  
+- Fehlversuche erzeugen ein Echo aus Balaks Stimme; das Echo muss mit `lo` gebrochen werden, bevor eine neue Sequenz startet.
+
+---
+
+## Szene 3 - Das zweite Orakel
+
+*Balak wartet am Rand der Schlucht, Hände verkrampft um eine Lichtrolle.*
 
 **Bileam:**  
-> „Man sieht kein Unheil in Jakob,  
+> "Man sieht kein Unheil in Jakob,  
 > keine Mühsal in Israel.  
 > Der HERR, sein Gott, ist bei ihm,  
 > und es jauchzt dem König zu.  
@@ -69,28 +80,30 @@ Ich habe gesegnet – du kannst es nicht wenden.“
 > und kein Wahrsagen gegen Israel.  
 >  
 > Zu rechter Zeit wird gesagt,  
-> was Gott gewirkt hat.“  
+> was Gott gewirkt hat."
 
-*(Beim Aussprechen erscheinen zwei Symbole: dabar und emet.  
-Der Spieler muss beide in richtiger Reihenfolge aktivieren.  
-Falsche Reihenfolge → Welt glitched.)*
-
-**System:**  
-> Neues Wort gelernt: **emet** – Wahrheit.  
-> Kombination dabar + emet erzeugt Stabilität + Schutz.
-
-**Balak:**  
-„Wenn du schon nicht fluchst, so segne sie wenigstens nicht!“
+**Balak (wütend):**  
+"Wenn du schon nicht fluchst, so segne sie wenigstens nicht!"
 
 **Bileam:**  
-„Hab ich dir nicht gesagt:  
-Alles, was der HERR redet, das werde ich tun?“  
+"Hab ich dir nicht gesagt:  
+Alles, was der HERR redet, das werde ich tun?"
 
 ---
 
-## Szene 4 – Das dritte Orakel (Bamot-Peor)
+### 🜃 Spielphase III - Der Spiegel der Wahrheit
 
-*Balak führt Bileam noch einmal höher. Die Welt unter ihnen ist klar wie Glas, doch an den Rändern flimmert das Nichts.*
+- Während des Orakels erscheinen zwei Wortfenster.  
+- Der Spieler muss `dabar` und `emet` im Takt der Verse bestätigen.  
+  - Richtige Reihenfolge (`dabar` -> `emet`) erzeugt eine Lichtbrücke über dem Lager; Weltstabilität +30.  
+  - Verwechslung oder Auslassung führt zu "Wahrheitsbruch" - Umgebung verzerrt, Balaks Flehen verstärkt sich.  
+- Nach erfolgreicher Strophe manifestiert sich Fragment א (Aleph) - erstes Zeichen von `emet`.
+
+---
+
+## Szene 4 - Bamot-Peor
+
+*Balak führt Bileam höher zu einem Feld aus poliertem Stein, das wie ein Spiegel des Himmels wirkt.*
 
 **Erzähler:**  
 Als Bileam sah, dass es dem HERRN gefiel, Israel zu segnen,  
@@ -99,7 +112,7 @@ sondern richtete sein Angesicht zur Wüste.
 Und der Geist Gottes kam auf ihn.
 
 **Bileam:**  
-> „Wie fein sind deine Zelte, Jakob,  
+> "Wie fein sind deine Zelte, Jakob,  
 > und deine Wohnungen, Israel!  
 >  
 > Wie Täler, die sich ausbreiten,  
@@ -110,91 +123,109 @@ Und der Geist Gottes kam auf ihn.
 > Gott hat sie aus Ägypten geführt;  
 > er ist für sie wie das Horn des Wildstiers.  
 >  
-> Er hat sich hingestreckt wie ein Löwe –  
+> Er hat sich hingestreckt wie ein Löwe -  
 > wer will ihn aufstören?  
 >  
 > Gesegnet sei, wer dich segnet,  
-> und verflucht, wer dich verflucht!“  
-
-*(Während des Orakels breitet sich ein goldenes Netz über den Boden.  
-Die Welt flimmert, aber diesmal harmonisch – als hätte sie ihren Takt gefunden.)*
+> und verflucht, wer dich verflucht!"
 
 ---
 
-## Szene 5 – Nachklang
+### 🜄 Spielphase IV - Der Garten der emet
 
-**Balak (zornig):**  
-„Ich habe dich gerufen, dass du meine Feinde verfluchst – und siehe,  
-du hast sie dreimal gesegnet!“
+- Goldenes Netz breitet sich über den Boden.  
+- Vier Sinnbilder (Zelt, Garten, Baum, Löwe) erscheinen; unter jedem liegt eine Glyphenspur.  
+- Spieler muss `emet` sprechen, sobald das jeweilige Sinnbild aufleuchtet.  
+- Richtige Eingabe speist das Netz mit Licht; nach allen vier Symbolen schließt sich Fragment מ (Mem) und ט (Taw) an - `emet` wird vollständig.  
+- Währenddessen kann der Spieler optional `barak` weben, um zusätzliche Schutzringe über Israel zu legen.
+
+---
+
+## Szene 5 - Nachklang
+
+*Balaks Zorn flammt auf, Purpuradern zerreißen die Luft.*
+
+**Balak:**  
+"Ich habe dich gerufen, dass du meine Feinde verfluchst - und siehe,  
+du hast sie dreimal gesegnet!"
 
 **Bileam:**  
-„Wenn mir Balak sein Haus voll Silber und Gold gäbe,  
+"Wenn mir Balak sein Haus voll Silber und Gold gäbe,  
 ich könnte das Wort des HERRN nicht übertreten,  
-weder im Kleinen noch im Großen.“
-
-*(Kamera zoomt auf Bileams Mund – man sieht darin Lichtreflexe,  
-als stünde eine zweite Welt hinter jedem gesprochenen Laut.)*
+weder im Kleinen noch im Großen."
 
 **Innere Stimme (Bileam):**  
-„Vielleicht ist jedes wahre Wort ein Tor.  
-Und wenn es gesprochen wird,  
-öffnet sich für einen Augenblick die Maschine des Lichts,  
-die uns alle träumt.“
+"Vielleicht ist jedes wahre Wort ein Tor.  
+Wenn es gesprochen wird, öffnet sich für einen Augenblick der Plan des Lichts,  
+der uns alle trägt."
+
+---
+
+### 🜅 Spielphase V - Der Schwurkreis
+
+- Abschließendes Ritual: Bileam tritt in einen Kreis aus sich überschneidenden Glyphen.  
+- Sequenz `shama` -> `dabar` -> `emet` -> `barak` muss in ruhigem Takt gesprochen werden.  
+- Erfolg senkt den *Übertretung*-Zähler auf Null, vergibt den Zustand "Wahrheitsbote".  
+- Scheitert die Sequenz dreimal, bleibt Balaks Schatten über Level 10 als zusätzlicher Schwierigkeitsgrad aktiv.
 
 ---
 
 ## Spielmechanik
 
-**Aktive Wörter:**  
-- lo (לא) – nicht  
-- shama (שמע) – hören  
-- barak (ברך) – segnen  
-- dabar (דבר) – Wort / Befehl / Geschehen  
-- emet (אמת) – Wahrheit  
+**Aktive Worte:**  
+- `lo` (לא) - blockiert falsche Befehle.  
+- `shama` (שמע) - macht verborgene Signale hörbar.  
+- `barak` (ברך) - verwandelt Fluch in Segen.  
+- `dabar` (דבר) - lässt gesprochenes Wort Wirklichkeit werden.  
+- `emet` (אמת) - verankert Wahrheit, stabilisiert Weltmuster.
 
 **Kombinationen:**  
-- *dabar emet* – sprich ein wahres Wort → stabilisiert Welt, stärkt Schutz.  
-- *shama lo dabar* – höre das Nein und sprich kein falsches Wort → bricht feindliche Magie.  
-- *barak emet* – segne in Wahrheit → verstärkt Heilung und Verbündete.
+- `shama` -> `dabar` - hörendes Wort, öffnet Resonanz-Säulen.  
+- `dabar` -> `emet` - wahres Wort, regeneriert Weltstabilität und schützt Verbündete.  
+- `barak` -> `emet` - Segen in Wahrheit, verstärkt Heilflächen.  
+- `shama` -> `lo` -> `dabar` - schnürt Balaks Befehlslinien ab.
 
 **Systemeffekte:**  
-- Jede Lüge oder falsche Eingabe verzerrt Umgebung → Gewebe-Risse.  
-- Wahr-Kombinationen harmonisieren Lichtlinien → Wiederherstellung + „Weltgesundheit“.  
-
----
-
-## Visuelle und akustische Hinweise
-
-- **Sound:** tiefer Chor aus Einzelsilben – „da-bar… e-met…“; klingt wie das Herz der Welt.  
-- **Licht:** geometrische Muster schließen sich zu vollständigen Schleifen; Pixelrauschen verschwindet.  
-- **Symbolik:** *dabar* = Form; *emet* = Sinn. Erst beides zusammen ergibt Bestand.  
-
----
-
-## Philosophischer Kern
-
-> Worte sind keine Zeichen – sie sind die Stoffe,  
-> aus denen die Welt gemacht wurde.  
->  
-> Wenn ein Wort wahr ist, bleibt es.  
-> Wenn es falsch ist, zerfällt die Form.  
->  
-> So wussten schon die Alten:  
-> Nicht Stein hält die Erde,  
-> sondern das Gesagte, das bleibt.
+- Falscheingaben zu `dabar` oder `emet` erzeugen "Lügenrisse" (visuelle Artefakte, temporäre Debuffs).  
+- Erfolgreiche Wahrheitskombinationen reinigen das Ambient von Störungen und lösen `blessingWave` aus.  
+- Abschluss vermerkt `divine_pass += 1` und speichert `truth_sequence = achieved`.
 
 ---
 
 ## Übergang zu Level 10
 
-*Der Himmel über Moab ist nun golden. Balak steht allein zwischen den Altären; seine Schatten lösen sich vom Boden,  
-als wollten sie eigene Wege gehen.*
+*Der Himmel färbt sich goldblau. Balak steht zwischen den Altären, seine Schatten lösen sich vom Boden, als wollten sie eigene Wege gehen.*
 
 **Erzähler:**  
 Da entbrannte Balaks Zorn gegen Bileam,  
 und er schlug die Hände zusammen.  
 Und Bileam sprach:  
-„Ich werde dir zeigen, was in der letzten Zeit geschehen wird.“  
+"Ich werde dir zeigen, was in der letzten Zeit geschehen wird."
 
-> **Nächstes Ziel:** Offenbare das letzte Orakel – „Der Stern aus Jakob“.  
-> **Fortfahren zu Level 10 →**
+> **Nächstes Ziel:** Offenbare das letzte Orakel - den Stern aus Jakob.  
+> **Fortfahren zu Level 10 ->**
+
+---
+
+## Sprite-Anforderungen
+
+- `pisgaAltarPlate` - modulare Altarflächen mit mehrschichtigen Glyphenspuren.  
+- `truthFragment` - Buchstaben ד, ב, ר, א, מ, ט als schwebende Fragment-Sprites.  
+- `resonancePillar` - Lichtsäulen für die dabar-Sequenz.  
+- `truthMirrorSymbol` - animierte Sinnbild-Icons (Zelt, Garten, Baum, Löwe).  
+- `balakAngerVeil` - Purpur-Gold-Schleier für Balaks Zorn.  
+- `truthCircleSeal` - Schwurkreis mit aufglühenden Segmenten.  
+- `israelBlessingField` - Partikelnetz, das über dem Lager pulsiert.  
+- `lyingFracture` - visuelle Artefakte für Lügenrisse.
+
+---
+
+## Ambient-Anforderungen
+
+- `pisgaWindChoir` - hoher Wind mit fernen Chor-Obertönen.  
+- `altarStrain` - tiefer Bordun, pulsierende Trommeln, leises Glockenläuten.  
+- `divineUtterance` - resonante Stimme, gedoppelt, mit Nachhall.  
+- `truthWeave` - flirrende Harfen und schimmernde Drones, wenn `emet` aktiv ist.  
+- `balakWrath` - verzerrte Blechklänge, pochender Herzschlag.  
+- `mirrorGarden` - sanftes Wasser, Blattrauschen, ruhige Klangschlaufen.  
+- `oathSilence` - gedämpfte Atmosphäre mit drei Glockenimpulsen für den Schwurkreis.

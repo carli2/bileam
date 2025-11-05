@@ -58,7 +58,7 @@ Es ist nur ein Flimmern, führe mich weiter!
 - `Schlagen` erhöht den Wert *Übertretung* um 1, der Himmel verdunkelt sich.  
 - `lo` lässt das Licht kurz sichtbar bleiben, doch ohne Klang zerfließt die Gestalt.  
 - `shama` löst einen Hörstrahl aus; Linien aus Licht verbinden Engel und Spieler, die Eselin erstarrt ehrfürchtig.  
-- Nach zweimaliger rechter Eingabe von `shama` erscheint Fragment ש (Shin) über Bileams Hand.
+- Nach zweimaliger richtiger Eingabe von `shama` erscheint Fragment ש (Shin) über Bileams Hand.
 
 **Erzähler:**  
 Die Eselin wich vom Weg ab und ging auf das Feld.  

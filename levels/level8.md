@@ -1,14 +1,12 @@
 # Level 8 – Der erste Blick vom Bamot-Baal
 
-## Neues Wort
-**barak** (ברך) – *segnen, segnen statt fluchen*  
-> Wo andere verfluchen, kann, wer hört, den Segen sprechen.
+*Wer segnet, korrigiert den Riss im Wort.*
 
 ---
 
 ## Szene 1 – Ankunft in Moab
 
-*Staubiger Wind fegt über die Hügel. Balak wartet auf einer steinernen Anhöhe; hinter ihm glimmt das Lager Moabs wie ein leuchtendes Gitter aus Punkten.*
+*Staubiger Wind fegt über terrassierte Hügel. Balak wartet auf einer Basaltplattform; hinter ihm glimmt Moabs Lager wie ein Raster aus goldenen Punkten.*
 
 **Erzähler:**  
 Als Balak hörte, dass Bileam kam, zog er ihm entgegen nach Ar in Moab, an der Grenze des Arnon.  
@@ -20,15 +18,29 @@ Und Balak sprach:
 Aber wie kann ich etwas anderes reden als das, was mir Gott in den Mund gibt?  
 Nur das kann ich reden.“
 
-*(Systemhinweis blendet ein)*  
-> **Aktive Wörter:** lo – nicht | shama – hören | **Neu:** barak – segnen.  
-> **Kombination:** shama lo barak → „höre das Nein und segne“.  
+**Schriftanzeige:**  
+> Aktive Worte: `lo`, `shama`.  
+> **Neues Wort zum Erwachen:** `barak` (ברך) – segnen, Segen freisetzen.  
+> Ziel: Halte Balaks Erwartungen in Grenzen und bereite die sieben Altäre vor.
+
+**Gameplay-Hinweis:** Der Spieler erreicht mit Bileam einen dreistufigen Vorplatz. Jede Stufe ist von Schriftwächtern bewacht. Erst wenn `lo` gesprochen wurde, um Balaks Befehlslinien zu blockieren, und `shama` das Flüstern der Wachen offenlegt, öffnet sich der Pfad zur nächsten Stufe.
+
+---
+
+### 🜂 Spielphase I – Die Stufen von Bamot-Baal
+
+- Drei Plattformen mit `princeProcessionBanner`-Wächtern.  
+- Aufgabe: Kombiniere bekannte Worte, um den Zugang freizuschalten.  
+  - `lo` löst die Purpurkette, die Balaks Befehl überträgt.  
+  - `shama` deckt versteckte Glyphen auf und zeigt den sicheren Weg.  
+  - Optional: `aor` erleuchtet die Schriftzüge, `mayim` beruhigt die glühenden Steine.  
+- Nach erfolgreichem Durchgang erscheint das Fragment ב (Bet) als schwebender Lichtwürfel – erster Hinweis auf `barak`.
 
 ---
 
 ## Szene 2 – Die sieben Altäre
 
-*Balak führt Bileam auf den Hügel von Bamot-Baal. Unter ihnen breitet sich das Volk Israel aus – zahllose Punkte aus Licht. Die Luft flimmert wie eine Netzstruktur.*
+*Balak führt Bileam auf den Kamm von Bamot-Baal. Unter ihnen breitet sich Israel wie ein Meer aus glühenden Punkten aus; der Himmel pulsiert in sanften Wellen.*
 
 **Bileam:**  
 „Baue mir hier sieben Altäre und schaffe mir her sieben junge Stiere und sieben Widder.“
@@ -36,33 +48,54 @@ Nur das kann ich reden.“
 **Balak:**  
 „Ich tue, wie du sagst.“
 
-*(Gameplay: der Spieler muss nacheinander sieben Altäre mit Zeichenmustern aktivieren; jeder Altar ein Teil eines Wortes. Nach jedem Altar flackert die Welt kurz – der Code reagiert.)*
-
 **Erzähler:**  
-Beide opferten auf jedem Altar einen Stier und einen Widder.  
-Und Bileam sprach:  
-„Tritt zu deinem Brandopfer. Ich will hingehen, ob mir vielleicht der HERR begegnet.“
+Balak und Bileam richteten die Altäre aus. Jeder Altar trägt vier Linien, die ein leuchtendes Mosaik bilden.
 
-*(Kurzes Minispiel: Spieler spricht **shama** → Klangräume öffnen sich, geometrische Linien bilden sich im Himmel.)*
+---
+
+### 🜁 Spielphase II – Baukreis der Altäre
+
+- Der Spieler positioniert Bileam an jedem Altar.  
+- Minispiel: Richtige Wortsequenzen aktivieren die Altarplatten.  
+  - `shama` öffnet die Glyphenringe.  
+  - `lo` verhindert, dass Fluchcode in den Altar fließt.  
+  - Abschluss jeder Sequenz lässt Fragment ר (Resch) aus dem Rauch steigen.  
+- Bei falschen Eingaben flackert der Boden, und Balak wird ungeduldig (Dialogvariante: „Beeile dich, Seher!“).
 
 ---
 
 ## Szene 3 – Die Begegnung
 
-*Die Welt steht still. Kein Wind. Kein Ton. Dann spricht etwas – nicht mit Laut, sondern als Resonanz.*
+*Nebel schließt sich. Der Klang erstirbt. Nur ein tiefes Summen bleibt, wie das Atmen des Steins.*
+
+**Erzähler:**  
+Bileam stieg allein auf den Fels, um zu hören, ob der HERR ihm begegnete.
 
 **Gottes Stimme:**  
 „Sieben Altäre hast du errichtet.  
 Doch du kannst nicht fluchen, was ich gesegnet habe.“
 
 **Systemmeldung:**  
-> *Du spürst das Gegenwort in dir: „barak“. Das Wort des Segens erwacht.*
+> Das Wort `barak` formt sich über deinen Händen.  
+> Drei Fragmente vereinen sich – ב, ר, ך – sie warten auf deine Zustimmung.
+
+---
+
+### 🜃 Spielphase III – Resonanz des Segens
+
+- Hörarena mit drei konzentrischen Ringen.  
+- Ablauf:  
+  1. Der äußere Ring verlangt `shama` zur Öffnung.  
+  2. Der mittlere Ring nimmt `lo` auf, um Fluchimpulse zu bannen.  
+  3. Der innere Ring reagiert erst, wenn der Spieler `barak` korrekt spricht oder tippt.  
+- Jede richtige Sequenz erhöht die Segenresonanz und setzt das Fragment ך (Kaf) frei.  
+- Misslingt `barak`, zerstreuen sich die Fragmente und die Sequenz beginnt erneut.
 
 ---
 
 ## Szene 4 – Das erste Orakel
 
-*Balak wartet am Opferplatz, umgeben von den Fürsten der Moabiter.*
+*Balak wartet mit seinen Fürsten am Opferplatz. Goldene Linien drehen sich um die Altäre, während Israel in der Ferne wie eine Sternenwüste ruht.*
 
 **Erzähler:**  
 Da hob Bileam an mit seinem Spruch und sprach:
@@ -80,14 +113,7 @@ Da hob Bileam an mit seinem Spruch und sprach:
 > Siehe, das Volk wohnt abgesondert  
 > und wird sich nicht zu den Völkern rechnen.“
 
-*(Beim Aussprechen des Orakels erscheinen Schriftzeichen über der Steppe. Der Spieler muss das richtige Wort wählen: [lo], [shama], [barak].  
-Nur bei der Reihenfolge **shama lo barak** bleibt die Welt stabil – sonst glitcht sie.)*
-
-**System:**  
-> **Ergebnis:** Fluch in Segen verwandelt.  
-> **Weltstabilität +25**  
-
-**Balak (verzweifelt):**  
+**Balak (entsetzt):**  
 „Was tust du mir an? Ich habe dich holen lassen, um meine Feinde zu verfluchen – und siehe, du segnest sie!“
 
 **Bileam:**  
@@ -95,7 +121,17 @@ Nur bei der Reihenfolge **shama lo barak** bleibt die Welt stabil – sonst glit
 
 ---
 
-## Szene 5 – Philosophisches Zwischenspiel
+### 🜄 Spielphase IV – Segenformel
+
+- Während Bileam spricht, erscheinen drei Wortfenster.  
+- Der Spieler muss die Reihenfolge `shama` → `lo` → `barak` bestätigen.  
+- Erfolgreiche Eingabe erzeugt eine Segenwelle, die über das Volk rollt; Weltstabilität +25.  
+- Falsche Reihenfolge führt zu Flimmern, Übertretung +1 und erzwingt Wiederholung der Strophe.  
+- Optional: `aor` verstärkt die Sichtbarkeit Israels, `mayim` streut Taupartikel, `qol` fügt Echoeffekte hinzu.
+
+---
+
+## Szene 5 – Philosophische Reflexion
 
 *Der Wind trägt flüsternde Stimmen. Der Boden unter den Füßen zeigt feine Linien – als wäre die Welt ein Teppich aus Licht.*
 
@@ -113,52 +149,84 @@ Es hört dich, bevor du sprichst.“
 
 ## Szene 6 – Balaks Ungeduld
 
+*Balak versucht, den Segen zu zerreißen; rote Lichtadern schlagen aus seinen Händen.*
+
 **Balak:**  
 „Komm mit mir an einen andern Ort.  
 Von hier siehst du zu viel.  
 Vielleicht kannst du mir dort das Ende verfluchen.“
-
-*(Das Licht um Balak pulsiert unruhig – rote Strahlen durchziehen die Luft, als würde er selbst am Gewebe reißen.)*
 
 **Erzähler:**  
 So führte Balak ihn zum Feld des Spähers,  
 auf den Gipfel des Pisga.  
 Und er baute dort abermals sieben Altäre.
 
-> **Nächstes Ziel:** Folge Balak auf den Pisga-Gipfel.  
-> **Fortfahren zu Level 9 →**
+---
+
+### 🜅 Spielphase V – Aufbruch zum Pisga
+
+- Spieler navigiert Bileam entlang eines Brückenpfades aus Schrift.  
+- Drei Kontrollpunkte:
+  1. **Späherstein:** `barak` beruhigt den wachsamen Geist.  
+  2. **Kluft aus Licht:** `shama` hört den sicheren Schritt, `lo` schließt Balaks Befehlslinie.  
+  3. **Pisga-Portal:** Sequenz `lo` → `barak` lässt den Durchgang erscheinen.  
+- Abschlussszene setzt Speicherstand `progress.level8 = complete`.
 
 ---
 
 ## Spielmechanik
 
-**Aktive Wörter:**  
-- lo (לא) – „nicht“ → verhindert falsche Befehle.  
-- shama (שמע) – „hören“ → öffnet göttliche Kommunikation.  
-- barak (ברך) – „segnen“ → verwandelt destruktive Energie in Heilung oder Schutz.  
+**Aktive Worte:**  
+- `lo` (לא) – blockiert Fluch- und Befehlsimpulse.  
+- `shama` (שמע) – öffnet göttliche Resonanz und deckt verborgene Muster auf.  
+- `barak` (ברך) – wandelt destruktive Energie in Schutz und Heilung.
 
 **Kombinationen:**  
-- *shama lo* = „höre das Nein“ – bewahrt Stabilität.  
-- *shama lo barak* = „höre das Nein und segne“ – mächtigste Formel gegen Zorn- oder Fluchmagie.  
+- `shama` → `lo` = Stabilisierung, senkt Balaks Einfluss.  
+- `shama` → `lo` → `barak` = Segenstoß; erhöht Weltstabilität, löst Segenpartikel aus.  
+- `barak` → `aor` = Lichtsegen; beleuchtet Verbündete in späteren Levels.
 
 **Systemeffekte:**  
-- Fehlversuch („fluchen“) → Welt-Flimmern + Fehlercode / Glitch.  
-- Richtige Formel → Segen-Welle, visuelle Synchronisation des Weltmusters.  
+- Fehlversuche in Segenritualen erhöhen *Übertretung* und erzeugen Glitches.  
+- Erfolgreiche `barak`-Sequenzen reduzieren `transgressionAura`-Stacks und verstärken Ambient-Harmonie.  
+- Abschluss vergibt `divine_pass` Bonus +1, falls Sequenz ohne Fehlversuch absolviert wurde.
 
 ---
 
-## Ästhetik & Atmosphäre
+## Übergang zu Level 9
 
-- **Licht:** sanftes Flimmern → strahlt aus Israel-Lager → Pixel-Muster („Weltmatrix“-Andeutung).  
-- **Ton:** dumpfer Herzschlag + fernes „Summen der Fäden“.  
-- **Symbolik:** jeder Altar = ein Code-Segment; die sieben Altäre zusammen = vollständige Schleife des göttlichen Programms.  
+*Kamera folgt Balak und Bileam über den Pisga-Kamm. Unter ihnen glimmt das Lager Israels wie ruhende Sterne.*
+
+**Erzähler:**  
+So zog Bileam mit Balak weiter.  
+Der Himmel über ihnen schimmerte klar,  
+doch hinter jedem Windschleier pulsierte das Muster –  
+als hätte der Segen selbst ein Gedächtnis.
+
+> **Nächstes Ziel:** Besteige den Pisga-Gipfel.  
+> **Fortfahren zu Level 9 →**
 
 ---
 
-## Philosophischer Kern
+## Sprite-Anforderungen
 
-> Der Mensch glaubt, er spräche –  
-> doch in Wahrheit ist er das Gesprochene.  
-> Wenn er segnet statt flucht,  
-> repariert er das Wort, aus dem er besteht.
+- `balakThronePresence` – Balak auf Basaltplattform mit pulsierenden Purpuradern.  
+- `moabWatcherGuard` – Schriftwächter für die Stufen-Segmente.  
+- `altarGlyphPlate` – modulare Altarplatten mit animierten Glyphen.  
+- `blessingFragment` – schwebende Buchstaben ב, ר, ך mit Leuchtspur.  
+- `resonanceRing` – konzentrische Hörkreise für die Segen-Resonanz.  
+- `blessingWave` – Partikeleffekt für Segenstoß über Israel.  
+- `pisgaBridgeRunes` – Schriftbrücken und Portalglyphen für den Übergang.  
+- `balakAngerVeil` – rote Lichtadern, die Balaks Ungeduld visualisieren.
 
+---
+
+## Ambient-Anforderungen
+
+- `moabWindRaster` – trockener Wind, ferne Hörner, leise Sandklänge.  
+- `altarPulse` – tiefe Trommeln, gedämpftes Knistern, ritualisierte Atemzüge.  
+- `divineResonance` – schwebende Chorfläche mit langsamer Modulation.  
+- `blessingSurge` – arpeggierte Harfen und Lichtglissandi für Segenstoß.  
+- `balakTension` – gespannter Bordun mit metallischen Reibungen.  
+- `pisgaAscent` – weite Klangräume, zarter Wind, ferne Shofar-Echos.  
+- `reflectionWhisper` – sanfte Flüstern und Steinresonanzen für philosophische Szene.
