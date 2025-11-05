@@ -296,6 +296,21 @@ export const FORGE_SCENE = {
   ],
 };
 
+export const MARKET_SCENE = {
+  ambience: 'marketBazaar',
+  wizardStartX: 62,
+  donkeyOffset: -38,
+  props: [
+    { id: 'marketBackdrop', type: 'marketBackdrop', x: -48, align: 'ground', parallax: 0.4 },
+    { id: 'marketBanner', type: 'marketBanner', x: 96, align: 'ground', offsetY: -32, parallax: 0.85 },
+    { id: 'marketStallEast', type: 'marketStall', x: 180, align: 'ground', parallax: 0.95 },
+    { id: 'marketStallWest', type: 'marketStall', x: 310, align: 'ground', parallax: 1 },
+    { id: 'marketScribeBooth', type: 'scribeBooth', x: 420, align: 'ground', parallax: 1.02 },
+    { id: 'marketWordSpirit', type: 'wordSpirit', x: 444, align: 'ground', offsetY: -46, parallax: 1.02, visible: false },
+    { id: 'marketEmissary', type: 'balakEmissary', x: 560, align: 'ground', parallax: 1.08 },
+  ],
+};
+
 export function applySceneConfig(config, options = {}) {
   if (!config) return;
   const {

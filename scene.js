@@ -536,6 +536,12 @@ function initSprites() {
   propSprites.gardenAltar = createGardenAltarSprite(colors);
   propSprites.gardenBreadLight = createGardenBreadLightSprite(colors);
   propSprites.golemGuardian = createGolemGuardianSprite(colors);
+  propSprites.marketBackdrop = createMarketBackdropSprite(colors);
+  propSprites.marketStall = createMarketStallSprite(colors);
+  propSprites.marketBanner = createMarketBannerSprite(colors);
+  propSprites.scribeBooth = createScribeBoothSprite(colors);
+  propSprites.wordSpirit = createWordSpiritSprite(colors);
+  propSprites.balakEmissary = createBalakEmissarySprite(colors);
   sceneProps = [];
 
   wizard.sprites = wizardSprites;
@@ -1796,6 +1802,216 @@ function createBalakFigureSprite(c) {
     'P': c.wizardRobeHighlight,
   };
   return spriteFromStrings(art, legend);
+}
+
+function createMarketBackdropSprite(c) {
+  const width = 240;
+  const height = 68;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+
+  const roofHeight = 10;
+  for (let y = 0; y < roofHeight; y++) {
+    const offset = y * width;
+    for (let x = 0; x < width; x++) {
+      pixels[offset + x] = c.marketFabric;
+    }
+  }
+
+  const wallTop = roofHeight;
+  const wallBottom = height - 12;
+  for (let y = wallTop; y < wallBottom; y++) {
+    const offset = y * width;
+    for (let x = 8; x < width - 8; x++) {
+      pixels[offset + x] = c.courtMarble;
+      if (y % 14 === 6 && x > 12 && x < width - 12) {
+        pixels[offset + x] = c.marketFabric;
+      }
+    }
+  }
+
+  const baseTop = wallBottom;
+  for (let y = baseTop; y < height; y++) {
+    const offset = y * width;
+    for (let x = 0; x < width; x++) {
+      pixels[offset + x] = c.hutFloor;
+    }
+  }
+
+  for (let y = wallTop + 4; y < wallBottom - 6; y += 18) {
+    for (let x = 24; x < width - 24; x += 28) {
+      for (let yy = 0; yy < 12; yy++) {
+        for (let xx = 0; xx < 12; xx++) {
+          const px = x + xx;
+          const py = y + yy;
+          if (px >= width - 8) continue;
+          const idx = py * width + px;
+          const isBorder = yy === 0 || yy === 11 || xx === 0 || xx === 11;
+          pixels[idx] = isBorder ? c.hutShadow : c.marketFabric;
+        }
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createMarketStallSprite(c) {
+  const width = 72;
+  const height = 44;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+
+  for (let y = 0; y < 8; y++) {
+    for (let x = 2; x < width - 2; x++) {
+      pixels[y * width + x] = c.marketFabric;
+    }
+  }
+
+  for (let y = 8; y < 12; y++) {
+    for (let x = 4; x < width - 4; x++) {
+      pixels[y * width + x] = c.courtMarble;
+    }
+  }
+
+  for (let y = 12; y < height; y++) {
+    for (let x = 6; x < width - 6; x++) {
+      const color = (y - 12) % 8 < 4 ? c.courtMarble : c.marketFabric;
+      pixels[y * width + x] = color;
+    }
+  }
+
+  for (let y = 8; y < height; y++) {
+    pixels[y * width + 6] = c.hutShadow;
+    pixels[y * width + (width - 7)] = c.hutShadow;
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createMarketBannerSprite(c) {
+  const width = 96;
+  const height = 26;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+
+  for (let y = 0; y < 4; y++) {
+    for (let x = 0; x < width; x++) {
+      pixels[y * width + x] = c.marketFabric;
+    }
+  }
+
+  for (let y = 4; y < height; y++) {
+    for (let x = 4; x < width - 4; x++) {
+      pixels[y * width + x] = (y % 6 < 3) ? c.courtMarble : c.marketFabric;
+    }
+  }
+
+  for (let x = 0; x < width; x++) {
+    pixels[(height - 1) * width + x] = c.hutShadow;
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createScribeBoothSprite(c) {
+  const width = 64;
+  const height = 60;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+
+  for (let y = 0; y < 8; y++) {
+    for (let x = 4; x < width - 4; x++) {
+      pixels[y * width + x] = c.marketFabric;
+    }
+  }
+
+  for (let y = 8; y < height - 8; y++) {
+    for (let x = 6; x < width - 6; x++) {
+      pixels[y * width + x] = c.courtMarble;
+    }
+  }
+
+  for (let y = height - 8; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      pixels[y * width + x] = c.hutFloor;
+    }
+  }
+
+  for (let y = 8; y < height - 8; y++) {
+    pixels[y * width + 6] = c.hutShadow;
+    pixels[y * width + (width - 7)] = c.hutShadow;
+  }
+
+  for (let y = 12; y < 28; y++) {
+    for (let x = 20; x < width - 20; x++) {
+      pixels[y * width + x] = c.marketFabric;
+    }
+  }
+
+  for (let y = 28; y < 44; y++) {
+    for (let x = 24; x < width - 24; x++) {
+      pixels[y * width + x] = c.wizardBelt;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createWordSpiritSprite(c) {
+  const width = 26;
+  const height = 32;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+
+  const core = c.marketFabric;
+  const glow = c.wizardRobeHighlight;
+
+  for (let y = 4; y < height - 4; y++) {
+    for (let x = 6; x < width - 6; x++) {
+      const dx = x - width / 2;
+      const dy = y - height / 2;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      const color = dist < 6 ? core : dist < 10 ? glow : null;
+      if (color != null) {
+        pixels[y * width + x] = color;
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createBalakEmissarySprite(c) {
+  const width = 32;
+  const height = 60;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 10; x < width - 10; x++) {
+      let color = c.wizardRobeHighlight;
+      if (y < 12) color = c.marketFabric;
+      else if (y < 24) color = c.courtMarble;
+      else if (y > height - 12) color = c.hutFloor;
+      pixels[y * width + x] = color;
+    }
+  }
+
+  for (let y = 12; y < 24; y++) {
+    for (let x = 12; x < width - 12; x++) {
+      const idx = y * width + x;
+      const border = y === 12 || y === 23 || x === 12 || x === width - 13;
+      pixels[idx] = border ? c.hutShadow : c.marketFabric;
+    }
+  }
+
+  for (let y = 24; y < height - 12; y++) {
+    pixels[y * width + 12] = c.hutShadow;
+    pixels[y * width + (width - 13)] = c.hutShadow;
+  }
+
+  return new Sprite(width, height, pixels);
 }
 
 function createWaterSprite(c) {

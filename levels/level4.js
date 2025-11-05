@@ -9,6 +9,7 @@ import {
   showLevelTitle,
   setSceneProps,
   waitForWizardToReach,
+  getScenePropBounds,
 } from '../scene.js';
 import {
   narratorSay,
@@ -71,7 +72,7 @@ export async function runLevelFour() {
 
 async function phaseIntroduction(props) {
   await narratorSay('Am Tor von Moab liegt Balaks Garten – einst voller Leben, nun nur Staub.');
-  await moveBalak(props, wizard.x + 24);
+  await walkBalak(props, wizard.x + 24, { duration: 600 });
   await balakSay(props, 'Lehrling, mein Garten verdorrt. Erwecke ihn – sonst ist unser Bund dahin.');
   await wizardSay('Majestät Balak – erwartet Ihr, dass Worte den Staub zu Blüte wandeln?');
   await balakSay(props, 'Man pries deine Zunge in meinem Hof. Zeige mir, dass sie Licht und Wasser gebietet.');
@@ -81,10 +82,10 @@ async function phaseIntroduction(props) {
 }
 
 async function phaseGardenFountain(plan, props) {
-  await moveBalak(props, wizard.x + 72);
-  await balakSay(props, 'Sieh zuerst nach dem Brunnen, Lehrling. Wo kein Wasser ist, gibt es kein Leben.');
   const fountainProp = findProp(props, 'gardenDryBasin');
   const target = fountainProp ? fountainProp.x + 26 : wizard.x + 120;
+  await walkBalak(props, Math.max(target - 32, wizard.x + 48));
+  await balakSay(props, 'Sieh zuerst nach dem Brunnen, Lehrling. Wo kein Wasser ist, gibt es kein Leben.');
   await donkeySay('Sieh dir den Brunnen an, Meister – er ist nur noch Staub.');
   await waitForWizardToReach(target, { tolerance: 40 });
   await narratorSay('Der Brunnen ist ausgetrocknet. Auf dem Rand steht: "Durst löscht, wer das Fließen ruft."');
@@ -121,10 +122,10 @@ async function phaseGardenFountain(plan, props) {
 }
 
 async function phaseSunStone(plan, props) {
-  await moveBalak(props, wizard.x + 108);
-  await balakSay(props, 'Die Blüte dort war einst mein Stolz. Vielleicht braucht sie mehr als nur Worte.');
   const sunProp = findProp(props, 'gardenSunStone');
   const target = sunProp ? sunProp.x + 30 : wizard.x + 160;
+  await walkBalak(props, Math.max(target - 36, wizard.x + 60));
+  await balakSay(props, 'Die Blüte dort war einst mein Stolz. Vielleicht braucht sie mehr als nur Worte.');
   await donkeySay('Dort steht der Sonnenstein. Ohne Morgenlicht bleibt er kalt.');
   await waitForWizardToReach(target, { tolerance: 40 });
   await narratorSay('Die Metallblüte ist geschlossen und kalt. Eine Inschrift flüstert: "Was kalt ist, wird warm durch den Hauch des Morgens."');
@@ -159,10 +160,10 @@ async function phaseSunStone(plan, props) {
 }
 
 async function phaseResonanceRock(plan, props) {
-  await moveBalak(props, wizard.x + 146);
-  await balakSay(props, 'Der Fels antwortete mir nie. Vielleicht hört er eher auf dich.');
   const rockProp = findProp(props, 'gardenEchoRock');
   const target = rockProp ? rockProp.x + 24 : wizard.x + 180;
+  await walkBalak(props, Math.max(target - 28, wizard.x + 72));
+  await balakSay(props, 'Der Fels antwortete mir nie. Vielleicht hört er eher auf dich.');
   await donkeySay('Hör auf den Felsen am Rand – er atmet.');
   await waitForWizardToReach(target, { tolerance: 36 });
   await narratorSay('Der Stein brummt tief, als hielte er die Luft an.');
@@ -198,7 +199,7 @@ async function phaseResonanceRock(plan, props) {
 }
 
 async function phaseXayimReveal(props) {
-  await moveBalak(props, wizard.x + 92);
+  await walkBalak(props, wizard.x + 92);
   setSceneContext({ phase: 'revelation' });
   addProp(props, { id: 'gardenGlyph', type: 'waterGlyph', x: wizard.x + 60, y: wizard.y - 10, parallax: 0.8 });
   await narratorSay('Licht, Wasser und Klang verweben sich. Eine neue Glyphe entsteht im Boden.');
@@ -238,7 +239,7 @@ async function phaseXayimReveal(props) {
 }
 
 async function phaseBreadOfLife(plan, props) {
-  await moveBalak(props, wizard.x + 128);
+  await walkBalak(props, wizard.x + 128);
   await balakSay(props, 'Bring das Brot zum Altar. Zeig mir, dass Worte wirklich nähren.');
   setSceneContext({ phase: 'apply' });
   const wheat = findProp(props, 'gardenWheatBundle');
@@ -264,7 +265,43 @@ async function phaseBreadOfLife(plan, props) {
   await transitionAmbience(plan?.apply ?? plan?.learn ?? GARDEN_SCENE.ambience ?? 'gardenBloom', { fade: { toBlack: 180, toBase: 420 } });
 }
 
-function moveBalak(props, x) {
-  updateProp(props, 'gardenBalakFigure', { x });
-  return Promise.resolve();
+function walkBalak(props, targetX, options = {}) {
+  if (!Array.isArray(props)) return Promise.resolve();
+
+  const balak = findProp(props, 'gardenBalakFigure');
+  if (!balak) return Promise.resolve();
+
+  const { duration = 900, minSpacing = 48 } = options;
+  const bounds = getScenePropBounds('gardenBalakFigure');
+  const startX = bounds ? bounds.left : balak.x ?? 0;
+  const rawTarget = typeof targetX === 'number' ? targetX : startX;
+  const finalX = Math.round(Math.max(rawTarget, wizard.x + minSpacing));
+
+  if (!Number.isFinite(finalX)) {
+    return Promise.resolve();
+  }
+
+  if (Math.abs(finalX - startX) < 2) {
+    updateProp(props, 'gardenBalakFigure', { x: finalX, visible: true });
+    return Promise.resolve();
+  }
+
+  return new Promise(resolve => {
+    const startTime = performance.now();
+    const distance = finalX - startX;
+
+    const step = now => {
+      const t = Math.min(1, (now - startTime) / Math.max(1, duration));
+      const eased = t * t * (3 - 2 * t);
+      const current = Math.round(startX + distance * eased);
+      updateProp(props, 'gardenBalakFigure', { x: current, visible: true });
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        resolve();
+      }
+    };
+
+    requestAnimationFrame(step);
+  });
 }

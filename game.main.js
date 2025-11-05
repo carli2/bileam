@@ -21,6 +21,7 @@ import { runLevelThree } from './levels/level3.js';
 import { runLevelFour } from './levels/level4.js';
 import { runLevelFive } from './levels/level5.js';
 import { runLevelFiveFive } from './levels/level5_5.js';
+import { runLevelSix } from './levels/level6.js';
 
 startScene(mainFlow);
 
@@ -31,6 +32,7 @@ const LEVELS = [
   { id: 'level4', run: runLevelFour },
   { id: 'level5', run: runLevelFive },
   { id: 'level5_5', run: runLevelFiveFive },
+  { id: 'level6', run: runLevelSix },
 ];
 
 const STORAGE_KEY = 'bileamProgress';
