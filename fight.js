@@ -418,14 +418,6 @@ export async function runFightLoop({
       word: chosenWord,
     };
 
-    const explicitTarget = transition.damageTarget;
-    const allowDamage = transition.damage && transition.damage > 0 && (
-      explicitTarget === 'player'
-      || explicitTarget === 'enemy'
-      || actor === 'player'
-    );
-    const effectiveDamage = allowDamage ? transition.damage : 0;
-
     const speech = resolveSpeech(
       {
         speaker: transition.speaker,
@@ -437,43 +429,11 @@ export async function runFightLoop({
       speakReplacements,
     );
 
-    if (speech && effectiveDamage > 0) {
-      speech.text = appendDamageMarker(speech.text, effectiveDamage);
-    }
-
     if (!speech?.text) {
       const defaultSpeaker = actor === 'player' ? 'player' : 'enemy';
-      let defaultText = `${actorName} spricht ${chosenWord}.`;
-      defaultText = appendDamageMarker(defaultText, effectiveDamage);
-      await emitSpeech({ speaker: defaultSpeaker, text: defaultText });
+      await emitSpeech({ speaker: defaultSpeaker, text: `${actorName} spricht ${chosenWord}.` });
     } else {
       await emitSpeech(speech);
-    }
-
-    if (allowDamage) {
-      const target = (() => {
-        if (explicitTarget === 'player' || explicitTarget === 'enemy') {
-          return explicitTarget;
-        }
-        return actor === 'player' ? 'enemy' : 'player';
-      })();
-      const targetName = target === 'player' ? playerName : enemyName;
-      const damageText = transition.damageText
-        ? replacePlaceholders(transition.damageText, speakReplacements)
-        : `${targetName} erhält ${transition.damage} Schaden.`;
-      await applyDamage(target, transition.damage, damageText);
-      if (life.player.current <= 0 || life.enemy.current <= 0) {
-        lastFailure = {
-          actor,
-          state: stateKey,
-          word: chosenWord,
-          transitions: transitionKeys,
-          attackerWord: actor === 'enemy' ? chosenWord : recentEnemyWord,
-          damage: transition.damage,
-        };
-        break;
-      }
-      if (life.player.current <= 0 || life.enemy.current <= 0) break;
     }
 
     stateKey = transition.next ?? 'start';

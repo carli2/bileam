@@ -29,6 +29,7 @@ import {
   findProp,
   updateProp,
   addProp,
+  celebrateGlyph,
 } from './utils.js';
 
 const BALAK_WALK_SPEED = 26;
@@ -104,6 +105,7 @@ async function phaseGardenFountain(plan, props) {
     const answer = normalizeHebrewInput(answerInput);
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       updateProp(props, 'gardenDryBasin', { type: 'fountainFilled' });
+      await celebrateGlyph(answer);
       await narratorSay('Wasser steigt aus der Tiefe, füllt den Brunnen und lässt ein zartes Gurgeln erklingen.');
       return;
     }
@@ -144,6 +146,7 @@ async function phaseSunStone(plan, props) {
     const answer = normalizeHebrewInput(answerInput);
     if (spellEquals(answer, 'or', 'אור')) {
       updateProp(props, 'gardenSunStone', { type: 'sunStoneAwakened' });
+      await celebrateGlyph(answer);
       await narratorSay('Die Metallblaetter oeffnen sich, Licht bricht aus der Steinbluete und tanzt auf dem Wasser.');
       return;
     }
@@ -183,6 +186,7 @@ async function phaseResonanceRock(plan, props) {
     const answer = normalizeHebrewInput(answerInput);
     if (spellEquals(answer, 'qol', 'קול')) {
       updateProp(props, 'gardenEchoRock', { type: 'resonanceRockAwakened' });
+      await celebrateGlyph(answer);
       await narratorSay('Der Fels bebt, Risse leuchten, ein klarer Ton mischt sich in das Wasser. Vögel regen sich in den Zweigen.');
       return;
     }
@@ -246,6 +250,7 @@ async function phaseXayimReveal(props) {
         parallax: 0.95,
         layer: 2,
       });
+      await celebrateGlyph(answer);
       await narratorSay('Pflanzen sprießen, Bäume treiben Blüten, Wasser rinnt durch die Kanäle. Über der Statue Balaks wächst Moos.');
       await balakSay(props, 'So sei es – dein Wort weckt den Staub. Vergiss nicht, wessen Auftrag du trägst.');
       return;

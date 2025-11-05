@@ -25,6 +25,7 @@ import {
   findProp,
   updateProp,
   addProp,
+  celebrateGlyph,
 } from './utils.js';
 
 export async function runLevelThree() {
@@ -75,6 +76,7 @@ async function phaseStoneArch(canyonProps, plan) {
 
     if (spellEquals(answer, 'or', 'אור')) {
       updateProp(canyonProps, 'canyonArch', null);
+      await celebrateGlyph(answer);
       await narratorSay('Der Onyx beginnt zu gluehen. Der Bogen spaltet sich lautlos, Lichtadern ziehen durch den Stein.');
       setSceneContext({ phase: 'puzzle-water' });
       return;
@@ -115,6 +117,7 @@ async function phaseDryFountain(canyonProps, plan) {
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       updateProp(canyonProps, 'canyonFountain', { type: 'fountainFilled' });
+      await celebrateGlyph(answer);
       await narratorSay('Ein Rauschen beginnt, das Becken füllt sich. Das Wasser spiegelt kurz ein Ohr aus Licht.');
       return;
     }
@@ -163,6 +166,7 @@ async function phaseRevelation(canyonProps) {
     if (spellEquals(answer, 'qol', 'קול')) {
       updateProp(canyonProps, 'canyonMonolith', { type: 'monolithAwakened' });
       addProp(canyonProps, { id: 'canyonGlyph', type: 'soundGlyph', x: 596, y: 38, parallax: 0.8 });
+      await celebrateGlyph(answer);
       await narratorSay('Der Stein singt zurueck – ein klarer Ton rollt durch die Schlucht, Staub und Licht steigen auf.');
       return;
     }
@@ -213,6 +217,7 @@ async function phaseResonanceWalk(plan, canyonProps) {
       const answer = normalizeHebrewInput(answerInput);
       if (spellEquals(answer, 'qol', 'קול')) {
         correct = true;
+        await celebrateGlyph(answer);
         await narratorSay(sequence.success);
       } else {
         attempts++;

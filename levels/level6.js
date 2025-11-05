@@ -24,6 +24,7 @@ import {
   findProp,
   addProp,
   updateProp,
+  celebrateGlyph,
 } from './utils.js';
 
 export async function runLevelSix() {
@@ -90,6 +91,7 @@ async function phaseIntroduction(props) {
     );
     const answer = normalizeHebrewInput(attempt);
     if (spellEquals(answer, 'qol', 'קול')) {
+      await celebrateGlyph(answer);
       await narratorSay('Der Marktplatz wird still, als wäre ein Echo entstanden.');
       await narratorSay('Der Lehrling begreift: Die Stimme ist kein Werkzeug – sie wartet darauf, gehört zu werden.');
       return;
@@ -165,6 +167,7 @@ async function phaseLearnDabar(props) {
     const answer = normalizeHebrewInput(attempt);
 
     if (spellEquals(answer, 'dabar', 'דבר')) {
+      await celebrateGlyph(answer);
       await narratorSay('Die Buchstaben fliegen vom Steinbuch, ordnen sich in der Luft und hinterlassen goldenes Licht.');
       await scribeSay(props, 'Nun weißt du: Das Wort ist die Sache. Sprich falsch, und du erschaffst nur Lärm. Sprich wahr, und selbst Stein hört zu.');
       return;
@@ -202,6 +205,7 @@ async function phaseEmissaryTrial(props) {
     const answer = normalizeHebrewInput(attempt);
 
     if (spellEquals(answer, 'dabar', 'דבר')) {
+      await celebrateGlyph(answer);
       await narratorSay('Das Wort schlägt gegen die goldene Maske. Risse entstehen, darunter keine Gestalt – nur Leere.');
       await donkeySay('Du hast die Lüge erkannt.');
       return;

@@ -5,6 +5,7 @@ import {
   setSceneProps,
   ensureAmbience,
   getScenePropBounds,
+  showGlyphReveal,
 } from '../scene.js';
 
 /*
@@ -124,6 +125,62 @@ const SPELL_ALIASES = {
   המלחמה: 'המלחמה',
 };
 
+const GLYPH_STORAGE_KEY = 'bileamKnownGlyphs';
+const LETTER_DETAILS = {
+  'א': { glyph: 'א', label: 'Aleph', meaning: 'Stier, Stärke' },
+  'ב': { glyph: 'ב', label: 'Bet', meaning: 'Haus, Zuflucht' },
+  'ג': { glyph: 'ג', label: 'Gimel', meaning: 'Kamel, Gabe' },
+  'ד': { glyph: 'ד', label: 'Dalet', meaning: 'Tür, Durchgang' },
+  'ה': { glyph: 'ה', label: 'He', meaning: 'Fenster, Atem' },
+  'ו': { glyph: 'ו', label: 'Vav', meaning: 'Nagel, Verbindung' },
+  'ז': { glyph: 'ז', label: 'Zajin', meaning: 'Waffe, Nahrung' },
+  'ח': { glyph: 'ח', label: 'Chet', meaning: 'Zaun, Lebenspforte' },
+  'ט': { glyph: 'ט', label: 'Tet', meaning: 'Korb, Güte' },
+  'י': { glyph: 'י', label: 'Yod', meaning: 'Hand, Funke' },
+  'כ': { glyph: 'כ', label: 'Kaf', meaning: 'Handfläche, Empfang' },
+  'ך': { glyph: 'ך', label: 'Finales Kaf', meaning: 'Handfläche, Empfang' },
+  'ל': { glyph: 'ל', label: 'Lamed', meaning: 'Stab, Lehre' },
+  'מ': { glyph: 'מ', label: 'Mem', meaning: 'Wasser, Strömung' },
+  'ם': { glyph: 'ם', label: 'Finales Mem', meaning: 'Wasser, Strömung' },
+  'נ': { glyph: 'נ', label: 'Nun', meaning: 'Fisch, Wachstum' },
+  'ן': { glyph: 'ן', label: 'Finales Nun', meaning: 'Fisch, Wachstum' },
+  'ס': { glyph: 'ס', label: 'Samech', meaning: 'Stütze, Schutz' },
+  'ע': { glyph: 'ע', label: 'Ayin', meaning: 'Auge, Wahrnehmung' },
+  'פ': { glyph: 'פ', label: 'Pe', meaning: 'Mund, Ausdruck' },
+  'ף': { glyph: 'ף', label: 'Finales Pe', meaning: 'Mund, Ausdruck' },
+  'צ': { glyph: 'צ', label: 'Zadi', meaning: 'Angel, Gerechtigkeit' },
+  'ץ': { glyph: 'ץ', label: 'Finales Zadi', meaning: 'Angel, Gerechtigkeit' },
+  'ק': { glyph: 'ק', label: 'Qof', meaning: 'Nacken, Tiefe' },
+  'ר': { glyph: 'ר', label: 'Resh', meaning: 'Kopf, Anführer' },
+  'ש': { glyph: 'ש', label: 'Shin', meaning: 'Zahn, Feuer' },
+  'ת': { glyph: 'ת', label: 'Tav', meaning: 'Zeichen, Bund' },
+};
+
+const knownGlyphs = (() => {
+  if (typeof localStorage === 'undefined') {
+    return new Set();
+  }
+  try {
+    const raw = localStorage.getItem(GLYPH_STORAGE_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return new Set();
+    return new Set(parsed.filter(value => typeof value === 'string').map(value => value.trim()).filter(Boolean));
+  } catch (error) {
+    console.warn('Failed to load glyph progress', error);
+    return new Set();
+  }
+})();
+
+function persistKnownGlyphs() {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(GLYPH_STORAGE_KEY, JSON.stringify(Array.from(knownGlyphs)));
+  } catch (error) {
+    console.warn('Failed to persist glyph progress', error);
+  }
+}
+
 export function normalizeHebrewInput(value) {
   if (value == null) return '';
   return String(value)
@@ -137,6 +194,29 @@ export function canonicalSpell(value) {
   const normalized = normalizeHebrewInput(value);
   if (!normalized) return '';
   return SPELL_ALIASES[normalized] ?? normalized;
+}
+
+export async function celebrateGlyph(spell) {
+  const canonical = canonicalSpell(spell);
+  if (!canonical) return;
+  const letters = Array.from(canonical).filter(char => LETTER_DETAILS[char]);
+  if (letters.length === 0) return;
+  const uniqueLetters = Array.from(new Set(letters));
+  const unknownLetters = uniqueLetters.filter(letter => !knownGlyphs.has(letter));
+
+  let letter;
+  if (unknownLetters.length > 0) {
+    letter = unknownLetters[0];
+    knownGlyphs.add(letter);
+    persistKnownGlyphs();
+  } else {
+    const randomIndex = Math.floor(Math.random() * uniqueLetters.length);
+    letter = uniqueLetters[randomIndex];
+  }
+
+  const details = LETTER_DETAILS[letter];
+  if (!details) return;
+  await showGlyphReveal(details.glyph, details.label, details.meaning);
 }
 
 export function spellEquals(answer, ...variants) {

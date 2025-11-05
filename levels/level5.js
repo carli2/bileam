@@ -25,6 +25,7 @@ import {
   findProp,
   updateProp,
   addProp,
+  celebrateGlyph,
 } from './utils.js';
 
 export async function runLevelFive() {
@@ -84,6 +85,7 @@ async function phaseDormantForge(props) {
     if (spellEquals(answer, 'or', 'אור')) {
       observed.add('or');
       updateProp(props, 'forgeIgnitionRing', { type: 'sunStoneAwakened' });
+      await celebrateGlyph(answer);
       await narratorSay('Licht flammt kurz auf, zittert und erlischt im kalten Eisen.');
       updateProp(props, 'forgeIgnitionRing', { type: 'sunStoneDormant' });
       continue;
@@ -92,6 +94,7 @@ async function phaseDormantForge(props) {
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       observed.add('mayim');
       updateProp(props, 'forgeWaterCistern', { type: 'fountainFilled' });
+      await celebrateGlyph(answer);
       await narratorSay('Dampf steigt auf, der Boden zischt – doch kein Feuer bleibt.');
       updateProp(props, 'forgeWaterCistern', { type: 'fountainDry' });
       continue;
@@ -101,6 +104,7 @@ async function phaseDormantForge(props) {
       observed.add('qol');
       const ring = findForgeRing(props);
       addProp(props, { id: 'forgeResonance', type: 'soundGlyph', x: ring.x + 18, y: ring.y - 26, parallax: 0.85 });
+      await celebrateGlyph(answer);
       await narratorSay('Metall summt, Steine vibrieren – doch keine Flamme erwacht.');
       updateProp(props, 'forgeResonance', null);
       continue;
@@ -141,6 +145,7 @@ async function phaseAshRevelation(props) {
 
     if (spellEquals(answer, 'ash', 'אש')) {
       updateProp(props, 'forgeIgnitionRing', { type: 'sunStoneAwakened' });
+      await celebrateGlyph(answer);
       await narratorSay('Der Ring entzündet sich. Flammen tanzen den Wänden entlang – die Schmiede lebt.');
       return;
     }
@@ -174,6 +179,7 @@ async function phaseAnvilChallenge(props) {
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       updateProp(props, 'forgeWaterCistern', { type: 'fountainFilled' });
+      await celebrateGlyph(answer);
       await narratorSay('Zischendes Wasser löscht das Feuer. Dampf zeichnet Aleph und Shein in die Luft.');
       updateProp(props, 'forgeWaterCistern', { type: 'fountainDry' });
       return;
@@ -213,12 +219,14 @@ async function phaseBalakChoice(props) {
     const answer = normalizeHebrewInput(attempt);
 
     if (spellEquals(answer, 'ash', 'אש')) {
+      await celebrateGlyph(answer);
       await narratorSay('Die Flammen wachsen zu einer Klinge aus Licht. Balaks Lachen hallt – kalt und gierig.');
       await propSay(props, 'forgeBalakEcho', 'So sei es! Mit diesem Feuer wird Moab regiert!');
       return;
     }
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
+      await celebrateGlyph(answer);
       await narratorSay('Wasser umschließt die Flammen. Nur ein glimmender Kern bleibt zurück.');
       await propSay(props, 'forgeBalakEcho', 'Narr! Du vernichtest mein Geschenk!');
       updateProp(props, 'forgeIgnitionRing', { type: 'sunStoneDormant' });

@@ -157,6 +157,25 @@ const titleOverlay = {
   lines: [],
 };
 
+const glyphOverlay = {
+  active: false,
+  letter: '',
+  label: '',
+  meaning: '',
+  until: 0,
+  resolve: null,
+  reject: null,
+  previousInputEnabled: true,
+};
+
+let glyphFadeFrame = null;
+let glyphFadeToken = 0;
+let glyphFadeAlpha = 0;
+let glyphFadeStart = 0;
+let glyphFadeDuration = 0;
+let glyphFadeStartAlpha = 0;
+let glyphFadeTarget = 1;
+
 const TITLE_WRAP_LIMIT = 22;
 
 function prepareTitleLines(text) {
@@ -180,6 +199,42 @@ function prepareTitleLines(text) {
     });
   });
   return lines.length > 0 ? lines : [''];
+}
+
+function cancelGlyphFade() {
+  glyphFadeToken += 1;
+  if (glyphFadeFrame) {
+    cancelAnimationFrame(glyphFadeFrame);
+    glyphFadeFrame = null;
+  }
+}
+
+function startGlyphFade(targetAlpha, duration, { resolveOnComplete = false } = {}) {
+  if (!glyphOverlay.active) return;
+  cancelGlyphFade();
+  const token = ++glyphFadeToken;
+  glyphFadeStart = performance.now();
+  glyphFadeDuration = Math.max(1, duration);
+  glyphFadeStartAlpha = glyphFadeAlpha;
+  glyphFadeTarget = targetAlpha;
+
+  const step = now => {
+    if (glyphFadeToken !== token) return;
+    const t = Math.min(1, (now - glyphFadeStart) / glyphFadeDuration);
+    glyphFadeAlpha = glyphFadeStartAlpha + (glyphFadeTarget - glyphFadeStartAlpha) * t;
+    if (t >= 1) {
+      glyphFadeFrame = null;
+      if (resolveOnComplete) {
+        const resolver = glyphOverlay.resolve;
+        glyphOverlay.resolve = null;
+        resolver?.();
+      }
+      return;
+    }
+    glyphFadeFrame = requestAnimationFrame(step);
+  };
+
+  glyphFadeFrame = requestAnimationFrame(step);
 }
 
 export function startScene(mainCallback) {
@@ -388,6 +443,38 @@ export function showLevelTitle(text, duration = 2600) {
   });
 }
 
+export function showGlyphReveal(letter, label, meaning, duration = 2100) {
+  if (sceneState.skipRequested) {
+    return Promise.reject(ensureSkipSignal());
+  }
+  const trimmedLetter = String(letter ?? '').trim();
+  const trimmedLabel = String(label ?? '').trim();
+  const trimmedMeaning = String(meaning ?? '').trim();
+  if (!trimmedLetter || !trimmedLabel) {
+    return Promise.resolve();
+  }
+
+  const previousInput = gameplayInputEnabled;
+  deactivateGlyphOverlay(null, { immediate: true });
+  gameplayInputEnabled = false;
+  haltPlayerMotion();
+
+  glyphOverlay.active = true;
+  glyphOverlay.letter = trimmedLetter;
+  glyphOverlay.label = trimmedLabel;
+  glyphOverlay.meaning = trimmedMeaning;
+  glyphOverlay.until = Number.POSITIVE_INFINITY;
+  glyphOverlay.previousInputEnabled = previousInput;
+  glyphFadeAlpha = 0;
+  cancelGlyphFade();
+  startGlyphFade(1, Math.max(240, Math.min(duration, 720)));
+
+  return new Promise((resolve, reject) => {
+    glyphOverlay.resolve = resolve;
+    glyphOverlay.reject = reject;
+  });
+}
+
 function deactivateTitleOverlay(reason = null) {
   const resolver = titleOverlay.resolve;
   const rejecter = titleOverlay.reject;
@@ -410,6 +497,54 @@ function deactivateTitleOverlay(reason = null) {
   }
 
   resolver?.();
+}
+
+function deactivateGlyphOverlay(reason = null, { immediate = false } = {}) {
+  if (!glyphOverlay.active) {
+    if (immediate) {
+      const resolver = glyphOverlay.resolve;
+      glyphOverlay.resolve = null;
+      resolver?.();
+    }
+    return;
+  }
+
+  const resolver = glyphOverlay.resolve;
+  const rejecter = glyphOverlay.reject;
+  const previousInput = glyphOverlay.previousInputEnabled ?? true;
+
+  const finalize = finalReason => {
+    cancelGlyphFade();
+    glyphFadeAlpha = 0;
+    glyphOverlay.active = false;
+    glyphOverlay.letter = '';
+    glyphOverlay.label = '';
+    glyphOverlay.meaning = '';
+    glyphOverlay.until = 0;
+    glyphOverlay.resolve = null;
+    glyphOverlay.reject = null;
+    glyphOverlay.previousInputEnabled = true;
+    gameplayInputEnabled = previousInput;
+
+    if (finalReason instanceof SkipSignal) {
+      rejecter?.(finalReason);
+      return;
+    }
+    if (finalReason === 'skip') {
+      rejecter?.(ensureSkipSignal('skip'));
+      return;
+    }
+    resolver?.();
+  };
+
+  if (immediate) {
+    finalize(reason);
+    return;
+  }
+
+  glyphOverlay.resolve = () => finalize(reason ?? 'done');
+  glyphOverlay.reject = rejecter;
+  startGlyphFade(0, 280, { resolveOnComplete: true });
 }
 
 export async function fadeToBase(duration) {
@@ -469,6 +604,7 @@ function requestSkip(reason = 'skip') {
   hudState.enemy = null;
   const skipError = ensureSkipSignal(reason);
   deactivateTitleOverlay(skipError);
+  deactivateGlyphOverlay(skipError, { immediate: true });
   resolveWaitersOnSkip(skipError);
   if (pendingSpeechAck) {
     acknowledgeSpeech(pendingSpeechAck, performance.now());
@@ -607,6 +743,14 @@ function handleKeyUp(event) {
 }
 
 function handleSpeechAdvance(event) {
+  if (glyphOverlay.active) {
+    deactivateGlyphOverlay('done');
+    if (event) {
+      if (typeof event.preventDefault === 'function') event.preventDefault();
+      if (typeof event.stopPropagation === 'function') event.stopPropagation();
+    }
+    return;
+  }
   requestSpeechFastForward();
   if (!pendingSpeechAck || activePrompt) return;
   const state = pendingSpeechAck;
@@ -682,6 +826,25 @@ function loop(time) {
     lines.forEach((line, index) => {
       ctx.fillText(line, canvas.width / 2, startY + index * lineHeight);
     });
+    ctx.restore();
+  }
+
+  if (glyphOverlay.active) {
+    ctx.save();
+    const alpha = Math.max(0, Math.min(1, glyphFadeAlpha));
+    ctx.fillStyle = `rgba(0, 0, 0, ${0.68 * alpha})`;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = `rgba(255, 232, 168, ${alpha})`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.font = '96px \"Frank Ruehl\", \"Noto Sans Hebrew\", serif';
+    ctx.fillText(glyphOverlay.letter, canvas.width / 2, canvas.height / 2 - 52);
+    ctx.font = '32px \"Palatino Linotype\", \"Book Antiqua\", serif';
+    ctx.fillText(glyphOverlay.label, canvas.width / 2, canvas.height / 2 + 6);
+    if (glyphOverlay.meaning) {
+      ctx.font = '20px \"Palatino Linotype\", \"Book Antiqua\", serif';
+      ctx.fillText(glyphOverlay.meaning, canvas.width / 2, canvas.height / 2 + 44);
+    }
     ctx.restore();
   }
 

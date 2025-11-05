@@ -24,6 +24,7 @@ import {
   RIVER_SCENE,
   cloneSceneProps,
   spellEquals,
+  celebrateGlyph,
 } from './utils.js';
 const RIVER_PROP_ID = RIVER_SCENE.props?.[0]?.id ?? 'riverPool';
 const RIVER_X = RIVER_SCENE.props?.[0]?.x ?? 620;
@@ -46,7 +47,7 @@ export async function runLevelTwo() {
 
 
 async function phaseOneRecall(plan) {
-  await narratorSay('Das Licht aus der Huette folgt dir – doch vor dir liegt Dunkel im Nebel.');
+  await narratorSay('Das Licht aus der Hütte folgt dir – doch vor dir liegt Dunkel im Nebel.');
   await donkeySay('Der Nebel verschluckt das Licht. Ruf es noch einmal, so wie vorhin.');
   await wizardSay('Ich erinnere mich ... das Wort AO R.');
 
@@ -62,6 +63,7 @@ async function phaseOneRecall(plan) {
     const answer = normalizeHebrewInput(answerInput);
 
     if (spellEquals(answer, 'or', 'אור')) {
+      await celebrateGlyph(answer);
       await narratorSay('Das Licht legt eine Spur nach draussen.');
       break;
     }
@@ -70,7 +72,7 @@ async function phaseOneRecall(plan) {
     if (attempts === 1) {
       await donkeySay('Fast – denk daran, das O laenger zu ziehen. Aaaor.');
     } else {
-      await narratorSay('Der Nebel bleibt dicht. Stell dir die Huette vor und das Licht darin.');
+      await narratorSay('Der Nebel bleibt dicht. Stell dir die Hütte vor und das Licht darin.');
       await wizardSay('A... O... R.');
     }
   }
@@ -106,6 +108,7 @@ async function phaseTwoLearning(plan) {
     const answer = normalizeHebrewInput(answerInput);
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
+      await celebrateGlyph(answer);
       await narratorSay('Das Wasser beruhigt sich, Nebel hebt sich. Planken steigen aus der Tiefe.');
       break;
     }
@@ -141,6 +144,7 @@ async function phaseThreeApplication(plan, riverProps) {
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       filled = true;
+      await celebrateGlyph(answer);
       await narratorSay('Eine transparente Welle hebt dich sanft an und traegt dich ans andere Ufer.');
       await donkeySay('Gut gemacht, Meister. Worte fliessen – und wer sie kennt, kann Stroeme lenken.');
       await wizardSay('Dann ist Sprache wirklich Kraft?');

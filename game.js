@@ -112,7 +112,7 @@ function drawGateScreen(hintText = gateHint) {
   const centerY = HEIGHT / 2;
   const titleY = centerY - 32;
   const separatorY = centerY - 8;
-  const subtitleY = centerY + 18;
+  const subtitleY = centerY + 34;
   const hintBaseY = centerY + 46;
 
   ctx.fillStyle = '#f4d27f';
@@ -120,6 +120,10 @@ function drawGateScreen(hintText = gateHint) {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText('Bileam', WIDTH / 2, titleY);
+
+  ctx.font = '24px "Frank Ruehl", "Noto Sans Hebrew", serif';
+  ctx.fillStyle = '#ffe8a8';
+  ctx.fillText('בלעם', WIDTH / 2, titleY + 36);
 
   ctx.strokeStyle = 'rgba(244, 210, 127, 0.42)';
   ctx.beginPath();

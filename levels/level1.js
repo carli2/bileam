@@ -24,6 +24,7 @@ import {
   applySceneConfig,
   RIVER_SCENE,
   spellEquals,
+  celebrateGlyph,
 } from './utils.js';
 const HUT_DOOR_ID = 'hutDoor';
 const HUT_DOOR_X = 252;
@@ -52,7 +53,7 @@ export async function runLevelOne() {
 }
 
 async function levelOneIntroduction() {
-  await narratorSay('Es ist dunkel in dieser Huette.');
+  await narratorSay('Es ist dunkel in dieser Hütte.');
   await donkeySay('Sprich אור – OR. Das Alef schweigt, das O ziehst du lang – so ruft man das Licht.');
   await wizardSay('Gut, ich probiere es.');
 }
@@ -81,6 +82,7 @@ async function levelOneLearning(plan) {
         });
         illuminated = true;
       }
+      await celebrateGlyph(answer);
       await narratorSay('Staub faengt an zu glimmen und die Oellampe flammt auf.');
       await donkeySay('Oho! Das war hell!');
       await wizardSay('Das Wort fuehlt sich warm an... wie eine Flamme in der Hand.');
@@ -116,7 +118,7 @@ async function levelOneDoorSequence(plan) {
   await donkeySay('Siehst du die Tuer? Sie leuchtet fuer dich – geh hin, Meister.');
   const target = doorTargetX();
   await waitForWizardToReach(target, { tolerance: 10 });
-  await showLevelTitle('Die Rune erwacht, sobald du das Holz beruehrst.', 1800);
+  await showLevelTitle('Das Tor wartet auf dein Licht.', 1800);
   await fadeToBlack(320);
   applySceneConfig(RIVER_SCENE, { setAmbience: false });
   ensureAmbience(plan?.door ?? RIVER_SCENE.ambience ?? 'riverDawn');

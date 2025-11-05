@@ -11,7 +11,7 @@ Willkommen in einer Welt, in der gesprochene Worte Licht, Wasser und Stein beweg
 - **Dynamische Begleitung:** Die sprechende Eselin bleibt dein humorvoller Mentor, waehrend Koenig Balak immer staerker versucht, Sprache zur Manipulation einzusetzen.
 
 ## Reise durch zehn Welten
-1. *aor* - Licht bricht die Finsternis in der Huette des Erwachens.
+1. *aor* - Licht bricht die Finsternis in der Hütte des Erwachens.
 2. *mayim* - Am Flussufer reinigt fliessendes Wasser alte Zweifel.
 3. *qol* - In der Felsenschlucht hallt jedes Wort als Resonanz wider.
 4. *xayim* - Ein Garten, in dem neue Lebenserkenntnis knospt.
