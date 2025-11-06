@@ -205,7 +205,7 @@ export async function runLevelTen() {
 async function phaseBalakAccusation(props) {
   await narratorSay('Bileam steht auf dem Felsen von Bamot-Peor; unter ihm glimmt das Lager Israels wie ein Meer aus geordneten Sternen.');
   await propSay(props, 'balakStarFigure', 'Ich habe dich gerufen, dass du meine Feinde verfluchst – und siehe, du hast sie dreimal gesegnet! Geh fort; ich wollte dich ehren, aber dein Gott verweigert es dir.', { anchor: 'center', offsetY: -30 });
-  await wizardSay('Hab ich dir nicht gesagt? Gäbe mir Balak sein Haus voll Silber und Gold, ich könnte das Wort des HERRN nicht übertreten, weder im Kleinen noch im Grossen.');
+  await wizardSay('Hab ich dir nicht gesagt? Gäbe mir Balak sein Haus voll Silber und Gold, ich könnte das Wort des HERRN nicht übertreten, weder im Kleinen noch im Großen.');
 }
 
 async function phaseStarTerraces(props) {

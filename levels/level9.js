@@ -223,7 +223,7 @@ async function phasePisgaLines(props) {
 }
 
 async function phaseDabarPillars(props) {
-  await divineSay('Ich bin nicht ein Mensch, dass ich Lüge, noch ein Menschenkind, dass ich bereue. Sollte ich reden und es nicht tun? Sollte ich sprechen und es nicht halten?\nלא איש אל ויכזב ובן אדם ויתנחם ההוא אמר ולא יעשה ודבר ולא יקימנה');
+  await divineSay('לא איש אל ויכזב ובן אדם ויתנחם ההוא אמר ולא יעשה ודבר ולא יקימנה\nIch bin nicht ein Mensch, dass ich Lüge, noch ein Menschenkind, dass ich bereue. Sollte ich reden und es nicht tun? Sollte ich sprechen und es nicht halten?');
   const sequence = ['shama', 'lo', 'dabar'];
   const pillarFragments = ['ב', 'ר'];
   for (let i = 0; i < props.length; i += 1) {

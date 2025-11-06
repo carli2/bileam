@@ -148,34 +148,67 @@ export function createPaletteFader(retroPalette, transparentIndex) {
   };
 }
 
-export function layoutText(text, textRenderer, wrapLimit) {
-  const lines = wrapText(String(text ?? ''), wrapLimit);
+export function layoutText(text, textRenderer, wrapLimit, options = {}) {
+  const { forceDirection = null, reverseHebrewInMixedLines = true } = options;
+  const blocks = String(text ?? '').split(/\r?\n/);
+  const lines = [];
+  blocks.forEach((block, index) => {
+    const wrapped = wrapText(block, wrapLimit);
+    if (wrapped.length === 0) {
+      lines.push('');
+    } else {
+      lines.push(...wrapped);
+    }
+  });
   const sequence = [];
   const lineLengths = [];
+  const lineDirections = [];
   let maxLineLength = 0;
 
   for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
     const line = lines[lineIndex];
+    const rtlLine = forceDirection === 'rtl'
+      ? true
+      : forceDirection === 'ltr'
+        ? false
+        : isRtlLine(line);
+    lineDirections[lineIndex] = rtlLine;
     let column = 0;
-    for (const { chars, hebrew } of segmentLine(line)) {
-      const drawChars = hebrew ? [...chars].reverse() : chars;
-      for (const rawChar of drawChars) {
+    for (const segment of segmentLine(line)) {
+      const { chars, hebrew } = segment;
+      const segmentLength = chars.length;
+      for (let i = 0; i < segmentLength; i++) {
+        const rawChar = chars[i];
+        const shouldReverseSegment = hebrew && !rtlLine && reverseHebrewInMixedLines;
+        const placementOffset = shouldReverseSegment
+          ? segmentLength - 1 - i
+          : i;
         const glyphChar = mapGlyphChar(rawChar, textRenderer.glyphs);
-        sequence.push({ line: lineIndex, column, char: glyphChar });
-        column++;
+        sequence.push({
+          line: lineIndex,
+          column: column + placementOffset,
+          char: glyphChar,
+        });
       }
+      column += segmentLength;
     }
     maxLineLength = Math.max(maxLineLength, column);
     lineLengths[lineIndex] = column;
   }
 
-  return { lines, sequence, lineLengths, maxLineLength };
+  return { lines, sequence, lineLengths, maxLineLength, lineDirections };
 }
 
 export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text, options = {}) {
   return new Promise((resolve, reject) => {
     const now = performance.now();
-    const { lines, sequence, lineLengths, maxLineLength } = layoutText(text, textRenderer, wrapLimit);
+    const {
+      lines,
+      sequence,
+      lineLengths,
+      maxLineLength,
+      lineDirections,
+    } = layoutText(text, textRenderer, wrapLimit);
 
     const charWidth = textRenderer.width;
     const charSpacing = textRenderer.spacing;
@@ -203,6 +236,7 @@ export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text, op
     speechState.sequence = sequence;
     speechState.totalChars = sequence.length;
     speechState.visible = 0;
+    speechState.lineDirections = lineDirections;
     speechState.fastForward = false;
     speechState.charDelay = speechState.charDelaySlow;
     speechState.nextCharTime = speechState.charDelay > 0 ? now + speechState.charDelay : now;
@@ -215,7 +249,11 @@ export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text, op
     speechState.awaitingAck = false;
     speechState.resolve = resolve;
     speechState.reject = reject;
-    speechState.tipDirection = options.tipDirection ?? speechState.tipDirection ?? 'down';
+    speechState.tipDirection = options.tipDirection ?? 'down';
+    speechState.bubbleFillColor = null;
+    speechState.bubbleBorderColor = null;
+    speechState.bubbleBorderWidth = 1;
+    speechState.tipBaseHalf = speechState.defaultTipBaseHalf ?? 5;
     if (options.bubbleStyle) {
       const { bubbleStyle } = options;
       if (bubbleStyle.fill !== undefined) {
@@ -393,14 +431,15 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
   const charAdvance = textRenderer.width + charSpacing;
   const lineAdvance = textRenderer.height + textRenderer.lineSpacing;
   const lineLengths = speechState.lineLengths || [];
-  const align = speechState.align || 'ltr';
 
+  const lineDirections = speechState.lineDirections || [];
   const lineOffsets = [];
   const totalLines = speechState.lines ? speechState.lines.length : 0;
   for (let lineIndex = 0; lineIndex < totalLines; lineIndex++) {
     const length = lineLengths[lineIndex] ?? 0;
-    if (align === 'rtl') {
-      const lineWidth = length > 0 ? length * charAdvance - charSpacing : 0;
+    const rtl = lineDirections[lineIndex];
+    const lineWidth = length > 0 ? length * charAdvance - charSpacing : 0;
+    if (rtl) {
       const base = bubbleX + speechState.width - speechState.paddingX - lineWidth;
       lineOffsets[lineIndex] = Math.max(textStartX, base);
     } else {
@@ -414,8 +453,13 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
     const glyph = textRenderer.glyphs[node.char];
     if (!glyph) continue;
 
+    const rtl = lineDirections[node.line];
     const baseX = lineOffsets[node.line] ?? textStartX;
-    const gx = Math.round(baseX + node.column * charAdvance);
+    const lineLength = lineLengths[node.line] ?? 0;
+    const positionIndex = rtl
+      ? Math.max(0, lineLength - 1 - node.column)
+      : node.column;
+    const gx = Math.round(baseX + positionIndex * charAdvance);
     const gy = textStartY + node.line * lineAdvance;
     blitSprite(buffer, glyph, gx, gy, { transparent: colors.transparent });
   }
@@ -434,6 +478,14 @@ function segmentLine(line) {
     current.chars.push(char);
   }
   return segments;
+}
+
+function isRtlLine(line) {
+  if (!line) return false;
+  const hasHebrew = /[\u0590-\u05FF]/.test(line);
+  if (!hasHebrew) return false;
+  const hasLatin = /[A-Za-z]/.test(line);
+  return !hasLatin;
 }
 
 function isHebrewChar(char) {
@@ -530,6 +582,7 @@ export function createSpeechState() {
     paddingY: 4,
     tipHeight: 10,
     tipBaseHalf: 5,
+    defaultTipBaseHalf: 5,
     tipDirection: 'down',
     bubbleFillColor: null,
     bubbleBorderColor: null,
@@ -543,6 +596,7 @@ export function createSpeechState() {
     align: 'ltr',
     lines: [],
     lineLengths: [],
+    lineDirections: [],
     sequence: [],
     totalChars: 0,
     visible: 0,

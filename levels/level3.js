@@ -169,7 +169,7 @@ async function phaseRevelation(canyonProps) {
       addProp(canyonProps, { id: 'canyonGlyph', type: 'soundGlyph', x: 596, y: 38, parallax: 0.8 });
       await celebrateGlyph(answer);
       await narratorSay('Der Stein singt zurück – ein klarer Ton rollt durch die Schlucht, Staub und Licht steigen auf.');
-      await divineSay('Vor meiner Stimme erzittern die Völker.\nבקולי ירעדו גוים');
+      await divineSay('בקולי ירעדו גוים\nVor meiner Stimme erzittern die Völker.');
       return;
     }
 

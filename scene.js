@@ -699,6 +699,7 @@ function initSprites() {
   propSprites.scribeBooth = createScribeBoothSprite(colors);
   propSprites.wordSpirit = createWordSpiritSprite(colors);
   propSprites.balakEmissary = createBalakEmissarySprite(colors);
+  propSprites.balakAdvisor = createBalakAdvisorSprite(colors);
   sceneProps = [];
 
   wizard.sprites = wizardSprites;
@@ -1708,7 +1709,16 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     const hebrew = transliterateToHebrew(ascii);
     state.transliterated = hebrew;
     const display = '|' + hebrew;
-    const { lines, sequence, lineLengths, maxLineLength } = layoutText(display, textRenderer, TEXT_WRAP);
+    const {
+      lines,
+      sequence,
+      lineLengths,
+      maxLineLength,
+      lineDirections,
+    } = layoutText(display, textRenderer, TEXT_WRAP, {
+      forceDirection: 'ltr',
+      reverseHebrewInMixedLines: false,
+    });
 
     const cursorGlyph = state.cursorVisible ? '|' : ' ';
     const cursorNode = sequence.find(node => node.line === 0 && node.column === 0);
@@ -1728,6 +1738,7 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     inputState.lines = lines;
     inputState.lineLengths = lineLengths;
     inputState.sequence = sequence;
+    inputState.lineDirections = lineDirections;
     inputState.totalChars = sequence.length;
     inputState.visible = sequence.length;
     inputState.width = Math.max(18, textWidth + inputState.paddingX * 2);
@@ -2011,6 +2022,48 @@ function createBalakFigureSprite(c) {
     'r': c.wizardHat,
     'R': c.wizardHatHighlight,
     'B': c.marketFabric,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createBalakAdvisorSprite(c) {
+  const art = [
+    '............hh............',
+    '...........hHHh...........',
+    '..........hHHHHh..........',
+    '.........hHHHHHHh.........',
+    '........hHHHHHHHHh........',
+    '.......hHHHHHHHHHHh.......',
+    '.......hHHbbbbbbHHh.......',
+    '......hHHbbbbbbbbHHh......',
+    '......hHHssssssssHHh......',
+    '......hHHssssssssHHh......',
+    '......hHHssssssssHHh......',
+    '......hHHssssssssHHh......',
+    '.....ooorrrrrrrrrroo......',
+    '....ooorrrrrrrrrrroo......',
+    '....oRRRRrrrrrrrrRRoo.....',
+    '...oRRRRrrrrrrrrRRRoo.....',
+    '...oRRRRrrrrrrrrRRRoo.....',
+    '...oRRggggggggggRRRoo.....',
+    '...oRRggggggggggRRRoo.....',
+    '...oRRRRrrrrrrrrRRRoo.....',
+    '...oRRRRrrrrrrrrRRRoo.....',
+    '...oRRRRrrrrrrrrRRRoo.....',
+    '...oRRRRrrrrrrrrRRRoo.....',
+    '...oRRRRrrrrrrrrRRRoo.....',
+    '...oo............oo.......',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'h': c.wizardHat,
+    'H': c.wizardHatHighlight,
+    'b': c.wizardBeardShadow,
+    's': c.wizardSkin,
+    'o': c.wizardBoot,
+    'r': c.marketFabric,
+    'R': c.sanctumSky,
+    'g': c.wizardBelt,
   };
   return spriteFromStrings(art, legend);
 }

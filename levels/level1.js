@@ -88,7 +88,7 @@ async function levelOneLearning(plan) {
       await donkeySay('Oho! Das war hell!');
       await wizardSay('Das Wort fühlt sich warm an... wie eine Flamme in der Hand.');
       await wizardSay('אור (aor)');
-      await divineSay('Bedenke, Bileam, Sohn des Beor, ich habe dir diese Kraft gegeben. Benutze sie gut.\nזכר בלעם בן בעור אני נתתי לך הכח הזה השתמש בו טוב');
+      await divineSay('זכר בלעם בן בעור אני נתתי לך הכח הזה השתמש בו טוב\nBedenke, Bileam, Sohn des Beor, ich habe dir diese Kraft gegeben. Benutze sie gut.');
       setSceneContext({ phase: 'exploration' });
       break;
     }

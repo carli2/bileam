@@ -253,7 +253,7 @@ async function phaseXayimReveal(props) {
       });
       await celebrateGlyph(answer);
       await narratorSay('Pflanzen sprießen, Bäume treiben Blüten, Wasser rinnt durch die Kanäle. Über der Statue Balaks wächst Moos.');
-      await divineSay('Ich habe das Leben erschaffen.\nאני בראתי את החיים');
+      await divineSay('אני בראתי את החיים\nIch habe das Leben erschaffen.');
       await balakSay(props, 'So sei es – dein Wort weckt den Staub. Vergiss nicht, wessen Auftrag du trägst.');
       return;
     }

@@ -30,8 +30,6 @@ const MOAB_APPROACH_SCENE = {
   wizardStartX: 74,
   donkeyOffset: -38,
   props: [
-    { id: 'moabBackdrop', type: 'marketBackdrop', x: -120, align: 'ground', parallax: 0.28, layer: -4 },
-    { id: 'moabBannerNorth', type: 'marketBanner', x: 82, align: 'ground', offsetY: -36, parallax: 0.78, layer: -1 },
     { id: 'moabStallWest', type: 'marketStall', x: 214, align: 'ground', parallax: 0.9, layer: 0 },
     { id: 'moabStallEast', type: 'marketStall', x: 388, align: 'ground', parallax: 0.96, layer: 0 },
     { id: 'moabScribeBooth', type: 'scribeBooth', x: 536, align: 'ground', parallax: 1.04, layer: 1 },
@@ -39,7 +37,7 @@ const MOAB_APPROACH_SCENE = {
     { id: 'moabWatcherNorth', type: 'moabWallWatcher', x: 156, align: 'ground', parallax: 0.88 },
     { id: 'moabWatcherSouth', type: 'moabWallWatcher', x: 492, align: 'ground', parallax: 1.06 },
     { id: 'balakWallFigure', type: 'balakFigure', x: 628, align: 'ground', parallax: 1.12 },
-    { id: 'midianElder', type: 'envoyShadow', x: 586, align: 'ground', parallax: 1.08 },
+    { id: 'balakAdvisor', type: 'balakAdvisor', x: 586, align: 'ground', parallax: 1.08 },
     { id: 'israelCampGlow', type: 'hoofSignTrail', x: 708, align: 'ground', parallax: 1.18 },
     { id: 'moabVisionRingWest', type: 'sandVisionRingDormant', x: 182, align: 'ground', parallax: 1 },
     { id: 'moabVisionRingCenter', type: 'sandVisionRingDormant', x: 326, align: 'ground', parallax: 1 },
@@ -197,11 +195,11 @@ async function phaseMoabPrelude(props) {
   await withCameraFocusOnProp(props, 'balakWallFigure', async () => {
     await narratorSay('Danach lagerten sich die Israeliten in den Steppen Moabs, gegenüber Jericho.');
     await narratorSay('Und Balak, der Sohn Zippors, sah alles, was Israel den Amoritern angetan hatte.');
-    await narratorSay('Und die Moabiter fürchteten sich sehr, denn das Volk war gross, und ihnen graute vor den Israeliten.');
+    await narratorSay('Und die Moabiter fürchteten sich sehr, denn das Volk war groß, und ihnen graute vor den Israeliten.');
     await propSay(props, 'balakWallFigure', 'Sieh nur, sie bedecken das ganze Land...', { anchor: 'center', offsetX: -12 });
     await propSay(props, 'balakWallFigure', 'Wenn sie weitergehen, bleibt nur Staub.', { anchor: 'center', offsetX: -12 });
     await propSay(props, 'balakWallFigure', 'Wie ein Tier, das das Gras des Feldes frisst, so werden sie uns verzehren.', { anchor: 'center', offsetX: -12 });
-    await propSay(props, 'midianElder', 'Es gibt einen Seher jenseits des Flusses. Was er spricht, geschieht – als folge die Welt seiner Stimme.', { anchor: 'center' });
+    await propSay(props, 'balakAdvisor', 'Es gibt einen Seher jenseits des Flusses. Was er spricht, geschieht – als folge die Welt seiner Stimme.', { anchor: 'center', offsetY: -34 });
     await propSay(props, 'balakWallFigure', 'Dann ruft ihn. Vielleicht kann er das Muster wenden, bevor alles ausgelöscht ist.', { anchor: 'center', offsetX: -12 });
     await narratorSay('Unter den Mauern flimmert die Welt, als waere sie nur halb aus Klang gewebt.');
 
@@ -299,9 +297,9 @@ async function phaseEnvoyResponses(props) {
 async function phaseNightVision(props) {
   setSceneContext({ phase: 'night' });
   await narratorSay('Dunkelheit senkt sich. Nur das Flackern des Feuers und ein Rauschen, als atme die Welt selbst.');
-  await divineSay('Wer sind die Männer, die bei dir sind?\nמי האנשים האלה עמך');
+  await divineSay('מי האנשים האלה עמך\nWer sind die Männer, die bei dir sind?');
   await wizardSay('Balak, Sohn Zippors, hat mich gerufen, zu verfluchen ein Volk, das das Land bedeckt.');
-  await divineSay('Geh nicht mit ihnen. Verfluche das Volk nicht – denn es ist gesegnet.\nלא תלך עמהם לא תאר את העם כי ברוך הוא');
+  await divineSay('לא תלך עמהם לא תאר את העם כי ברוך הוא\nGeh nicht mit ihnen. Verfluche das Volk nicht – denn es ist gesegnet.');
 
   await celebrateGlyph('לא');
   addProp(props, { id: 'petorGlyphComplete', type: 'noGlyphShard', x: wizard.x + 20, y: wizard.y - 48, parallax: 0.9, letter: 'לא' });
