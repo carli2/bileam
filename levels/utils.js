@@ -6,6 +6,8 @@ import {
   ensureAmbience,
   getScenePropBounds,
   showGlyphReveal,
+  pushCameraFocus,
+  popCameraFocus,
 } from '../scene.js';
 
 /*
@@ -49,6 +51,7 @@ export function narratorSay(text) {
     () => (actorCenterX(wizard) + actorCenterX(donkey)) / 2,
     () => Math.min(actorTopY(wizard), actorTopY(donkey)) - 70,
     text,
+    { tipDirection: 'up' },
   );
 }
 
@@ -315,6 +318,48 @@ export function updateProp(list, id, changes) {
     list[index] = { ...list[index], ...changes };
   }
   setSceneProps(list);
+}
+
+export function getPropCenterX(props, id) {
+  const bounds = getScenePropBounds(id);
+  if (bounds) {
+    return (bounds.left + bounds.right) / 2;
+  }
+  const prop = findProp(props, id);
+  if (!prop) return wizard.x;
+  const width = prop.sprite?.width ?? prop.width ?? 0;
+  return (prop.x ?? 0) + width / 2;
+}
+
+export function withCameraFocus(centerX, task) {
+  pushCameraFocus(centerX);
+  const finalize = () => popCameraFocus();
+  const run = async () => {
+    try {
+      if (typeof task === 'function') {
+        return await task();
+      }
+      return undefined;
+    } finally {
+      finalize();
+    }
+  };
+  return run();
+}
+
+export function withCameraFocusOnProp(props, id, task) {
+  const centerX = getPropCenterX(props, id);
+  return withCameraFocus(centerX, task);
+}
+
+export function sleep(ms) {
+  return new Promise(resolve => {
+    if (!(ms > 0)) {
+      resolve();
+      return;
+    }
+    setTimeout(resolve, ms);
+  });
 }
 
 export function addProp(list, definition) {

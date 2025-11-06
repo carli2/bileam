@@ -215,6 +215,7 @@ export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text, op
     speechState.awaitingAck = false;
     speechState.resolve = resolve;
     speechState.reject = reject;
+    speechState.tipDirection = options.tipDirection ?? speechState.tipDirection ?? 'down';
   });
 }
 
@@ -297,38 +298,48 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
 
   const anchorX = Math.round(anchorXWorld - cameraX);
   let anchorY = Math.round(anchorYWorld);
+  const tipDirection = speechState.tipDirection === 'up' ? 'up' : 'down';
 
   const width = speechState.width;
   const height = speechState.height;
   const bubbleLeftLimit = 2;
   const bubbleRightLimit = buffer.width - width - 2;
   let bubbleX = clamp(anchorX - Math.floor(width / 2), bubbleLeftLimit, bubbleRightLimit);
-  let bubbleBottom = anchorY - speechState.tipHeight;
-  let bubbleY = bubbleBottom - height;
-  const bubbleRight = bubbleX + width;
+  let bubbleTop;
+  let bubbleBottom;
 
+  if (tipDirection === 'up') {
+    bubbleTop = anchorY + speechState.tipHeight;
+    bubbleBottom = bubbleTop + height;
+  } else {
+    bubbleBottom = anchorY - speechState.tipHeight;
+    bubbleTop = bubbleBottom - height;
+  }
+
+  const bubbleRight = bubbleX + width;
   const topMargin = 2;
   const bottomMargin = 2;
 
-  if (bubbleY < topMargin) {
-    const delta = topMargin - bubbleY;
-    bubbleY += delta;
+  if (bubbleTop < topMargin) {
+    const delta = topMargin - bubbleTop;
+    bubbleTop += delta;
     bubbleBottom += delta;
     anchorY += delta;
   }
 
-  const projectedBottom = bubbleY + height;
+  const projectedBottom = bubbleTop + height;
   const maxBottom = buffer.height - bottomMargin;
   if (projectedBottom > maxBottom) {
     const delta = projectedBottom - maxBottom;
-    bubbleY -= delta;
+    bubbleTop -= delta;
     bubbleBottom -= delta;
     anchorY -= delta;
   }
 
-  fillRect(buffer.pixels, buffer.width, buffer.height, bubbleX, bubbleY, width, height, colors.bubbleFill);
+  fillRect(buffer.pixels, buffer.width, buffer.height, bubbleX, bubbleTop, width, height, colors.bubbleFill);
   drawBubbleTip(
     bubbleX,
+    bubbleTop,
     bubbleBottom,
     bubbleRight,
     anchorX,
@@ -339,11 +350,12 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
     buffer.pixels,
     buffer.width,
     buffer.height,
+    tipDirection,
   );
-  strokeRect(buffer.pixels, buffer.width, buffer.height, bubbleX, bubbleY, width, height, colors.bubbleBorder);
+  strokeRect(buffer.pixels, buffer.width, buffer.height, bubbleX, bubbleTop, width, height, colors.bubbleBorder);
 
   const textStartX = bubbleX + speechState.paddingX;
-  const textStartY = bubbleY + speechState.paddingY;
+  const textStartY = bubbleTop + speechState.paddingY;
   const charSpacing = textRenderer.spacing;
   const charAdvance = textRenderer.width + charSpacing;
   const lineAdvance = textRenderer.height + textRenderer.lineSpacing;
@@ -485,6 +497,7 @@ export function createSpeechState() {
     paddingY: 4,
     tipHeight: 10,
     tipBaseHalf: 5,
+    tipDirection: 'down',
     charDelay: 60,
     charDelaySlow: 60,
     charDelayFast: 12,
@@ -552,25 +565,62 @@ export function mapGlyphChar(char, glyphs) {
   return glyphs[upper] ? upper : ' ';
 }
 
-export function drawBubbleTip(left, bubbleBottom, right, anchorX, anchorY, baseHalf, fillColor, borderColor, buffer, width, height) {
-  const tipHeight = Math.max(1, Math.min(24, anchorY - bubbleBottom));
+export function drawBubbleTip(
+  left,
+  bubbleTop,
+  bubbleBottom,
+  right,
+  anchorX,
+  anchorY,
+  baseHalf,
+  fillColor,
+  borderColor,
+  buffer,
+  width,
+  height,
+  direction = 'down',
+) {
   const clampedAnchorX = clamp(anchorX, left + 2, right - 3);
-  for (let i = 0; i < tipHeight; i++) {
-    const rowY = bubbleBottom + i;
-    if (rowY < 0 || rowY >= height) continue;
-    const t = tipHeight > 1 ? i / (tipHeight - 1) : 1;
-    const half = Math.max(0, Math.round(baseHalf * (1 - t)));
-    const start = clamp(clampedAnchorX - half, left, right - 1);
-    const end = clamp(clampedAnchorX + half, left, right - 1);
-    for (let x = start; x <= end; x++) {
-      buffer[rowY * width + x] = fillColor;
-    }
-    if (rowY > bubbleBottom) {
-      if (start >= left && start < right) {
-        buffer[rowY * width + start] = borderColor;
+  if (direction === 'up') {
+    const tipHeight = Math.max(1, Math.min(24, bubbleTop - anchorY));
+    for (let i = 0; i < tipHeight; i++) {
+      const rowY = bubbleTop - 1 - i;
+      if (rowY < 0 || rowY >= height) continue;
+      const t = tipHeight > 1 ? i / (tipHeight - 1) : 1;
+      const half = Math.max(0, Math.round(baseHalf * (1 - t)));
+      const start = clamp(clampedAnchorX - half, left, right - 1);
+      const end = clamp(clampedAnchorX + half, left, right - 1);
+      for (let x = start; x <= end; x++) {
+        buffer[rowY * width + x] = fillColor;
       }
-      if (end >= left && end < right) {
-        buffer[rowY * width + end] = borderColor;
+      if (rowY < bubbleTop - 1) {
+        if (start >= left && start < right) {
+          buffer[rowY * width + start] = borderColor;
+        }
+        if (end >= left && end < right) {
+          buffer[rowY * width + end] = borderColor;
+        }
+      }
+    }
+  } else {
+    const tipHeight = Math.max(1, Math.min(24, anchorY - bubbleBottom));
+    for (let i = 0; i < tipHeight; i++) {
+      const rowY = bubbleBottom + i;
+      if (rowY < 0 || rowY >= height) continue;
+      const t = tipHeight > 1 ? i / (tipHeight - 1) : 1;
+      const half = Math.max(0, Math.round(baseHalf * (1 - t)));
+      const start = clamp(clampedAnchorX - half, left, right - 1);
+      const end = clamp(clampedAnchorX + half, left, right - 1);
+      for (let x = start; x <= end; x++) {
+        buffer[rowY * width + x] = fillColor;
+      }
+      if (rowY > bubbleBottom) {
+        if (start >= left && start < right) {
+          buffer[rowY * width + start] = borderColor;
+        }
+        if (end >= left && end < right) {
+          buffer[rowY * width + end] = borderColor;
+        }
       }
     }
   }

@@ -308,7 +308,7 @@ async function phaseGardenEmet(props) {
 
 async function phaseSecondOracle(props) {
   await narratorSay('Bileam spricht:');
-  await wizardSay('Man sieht kein Unheil in Jakob, keine Muehsal in Israel. Der HERR, sein Gott, ist bei ihm, und es jauchzt dem Koenig zu.');
+  await wizardSay('Man sieht kein Unheil in Jakob, keine Muehsal in Israel. Der HERR, sein Gott, ist bei ihm, und es jauchzt dem König zu.');
   await wizardSay('Daher hilft kein Zaubern gegen Jakob und kein Wahrsagen gegen Israel. Zu rechter Zeit wird gesagt, was Gott gewirkt hat.');
   await wizardSay('Gott hat sie aus Aegypten gefuehrt; er ist fuer sie wie das Horn des Wildstiers.');
   await wizardSay('Wie Taeeler, die sich ausbreiten, wie Gaerten an Wassern, wie Aloebaeume, die der HERR pflanzt, wie Zedern an den Wassern.');

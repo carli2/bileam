@@ -20,6 +20,8 @@ import {
   updateProp,
   celebrateGlyph,
   propSay,
+  withCameraFocusOnProp,
+  sleep,
 } from './utils.js';
 
 const MOAB_APPROACH_SCENE = {
@@ -146,7 +148,7 @@ export async function runLevelSix() {
   applySceneConfig({ ...MOAB_APPROACH_SCENE, props: moabProps });
   ensureAmbience(plan?.review ?? MOAB_APPROACH_SCENE.ambience ?? 'marketBazaar');
   setSceneContext({ level: 'level6', phase: 'approach' });
-  await showLevelTitle('Level 6 - Der Ruf des Koenigs');
+  await showLevelTitle('Level 6 - Der Ruf des Königs');
   await fadeToBase(600);
 
   await phaseMoabPrelude(moabProps);
@@ -174,20 +176,29 @@ export async function runLevelSix() {
 }
 
 async function phaseMoabPrelude(props) {
-  const balak = props.find(entry => entry.id === 'balakWallFigure');
-  const targetX = balak ? balak.x - 42 : wizard.x + 220;
+  await withCameraFocusOnProp(props, 'balakWallFigure', async () => {
+    await narratorSay('Danach lagerten sich die Israeliten in den Steppen Moabs, gegenueber Jericho.');
+    await narratorSay('Und Balak, der Sohn Zippors, sah alles, was Israel den Amoritern angetan hatte.');
+    await narratorSay('Und die Moabiter fuerchteten sich sehr, denn das Volk war gross, und ihnen graute vor den Israeliten.');
+    await propSay(props, 'balakWallFigure', 'Sieh nur, sie bedecken das ganze Land...');
+    await propSay(props, 'balakWallFigure', 'Wenn sie weitergehen, bleibt nur Staub.');
+    await propSay(props, 'balakWallFigure', 'Wie ein Tier, das das Gras des Feldes frisst, so werden sie uns verzehren.');
+    await propSay(props, 'midianElder', 'Es gibt einen Seher jenseits des Flusses. Was er spricht, geschieht – als folge die Welt seiner Stimme.');
+    await propSay(props, 'balakWallFigure', 'Dann ruft ihn. Vielleicht kann er das Muster wenden, bevor alles ausgelöscht ist.');
+    await narratorSay('Unter den Mauern flimmert die Welt, als waere sie nur halb aus Klang gewebt.');
+
+    const balakProp = props.find(entry => entry.id === 'balakWallFigure');
+    const startX = balakProp?.x ?? wizard.x + 220;
+    const meetingX = startX - 120;
+    await movePropHorizontally(props, 'balakWallFigure', meetingX, { duration: 1200, steps: 6 });
+    await narratorSay('Balak steigt von der Mauer herab und kommt dir entgegen.');
+  });
+
+  const balakAfter = props.find(entry => entry.id === 'balakWallFigure');
+  const targetX = balakAfter ? (balakAfter.x ?? wizard.x + 220) - 42 : wizard.x + 220;
   if (targetX > wizard.x + 16) {
     await waitForWizardToReach(targetX, { tolerance: 22 });
   }
-  await narratorSay('Danach lagerten sich die Israeliten in den Steppen Moabs, gegenueber Jericho.');
-  await narratorSay('Und Balak, der Sohn Zippors, sah alles, was Israel den Amoritern angetan hatte.');
-  await narratorSay('Und die Moabiter fuerchteten sich sehr, denn das Volk war gross, und ihnen graute vor den Israeliten.');
-  await propSay(props, 'balakWallFigure', 'Sieh nur, sie bedecken das ganze Land...');
-  await propSay(props, 'balakWallFigure', 'Wenn sie weitergehen, bleibt nur Staub.');
-  await propSay(props, 'balakWallFigure', 'Wie ein Tier, das das Gras des Feldes frisst, so werden sie uns verzehren.');
-  await propSay(props, 'midianElder', 'Es gibt einen Seher jenseits des Flusses. Was er spricht, geschieht – als folge die Welt seiner Stimme.');
-  await propSay(props, 'balakWallFigure', 'Dann ruft ihn. Vielleicht kann er das Muster wenden, bevor alles ausgelöscht ist.');
-  await narratorSay('Unter den Mauern flimmert die Welt, als waere sie nur halb aus Klang gewebt.');
 }
 
 async function phaseMoabVisionRings(props) {
@@ -299,7 +310,7 @@ async function phaseBalakEdict(props) {
   addProp(props, { id: balakId, type: 'balakFigure', x: wizard.x + 160, align: 'ground', parallax: 0.96 });
   await propSay(props, balakId, 'Dann sendet mehr. Staerkere Maenner.');
   await propSay(props, balakId, 'Vielleicht laesst er sich doch bewegen.');
-  await propSay(props, balakId, 'Gebt ihm Gold, und sagt: Der Koenig wird ihn ehren.');
+  await propSay(props, balakId, 'Gebt ihm Gold, und sagt: Der König wird ihn ehren.');
   await narratorSay('So sandte Balak noch maechtigere Fuersten, und mit ihnen begann der Weg, der zur Grenze fuehrt.');
 }
 
@@ -348,6 +359,28 @@ async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
   setSceneProps(props);
   setSceneContext({ level: 'level6', phase });
   await fadeToBase(480);
+}
+
+async function movePropHorizontally(props, id, targetX, { duration = 900, steps = 6 } = {}) {
+  if (!Array.isArray(props)) return;
+  const prop = props.find(entry => entry.id === id);
+  if (!prop) return;
+  const startX = prop.x ?? 0;
+  const distance = targetX - startX;
+  if (Math.abs(distance) < 1) {
+    updateProp(props, id, { x: targetX });
+    return;
+  }
+  const clampedSteps = Math.max(1, steps);
+  const stepDuration = duration > 0 ? duration / clampedSteps : 0;
+  for (let index = 1; index <= clampedSteps; index += 1) {
+    const progress = index / clampedSteps;
+    const nextX = startX + distance * progress;
+    updateProp(props, id, { x: nextX });
+    if (index < clampedSteps) {
+      await sleep(stepDuration);
+    }
+  }
 }
 
 function applyMoabRingEffect(props, taskId) {

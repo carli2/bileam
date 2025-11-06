@@ -141,6 +141,7 @@ let gameplayInputEnabled = true;
 let activePrompt = null;
 let cameraX = 0;
 let cameraDelta = 0;
+const cameraFocusStack = [];
 let lastTime = performance.now();
 let pendingSpeechAck = null;
 let sceneStarted = false;
@@ -256,7 +257,7 @@ export function startScene(mainCallback) {
   }
 }
 
-export function say(x, y, text) {
+export function say(x, y, text, options = {}) {
   if (sceneState.skipRequested) {
     return Promise.reject(ensureSkipSignal());
   }
@@ -275,7 +276,7 @@ export function say(x, y, text) {
         x,
         y,
         text,
-        { awaitAck: true },
+        { ...options, awaitAck: options.awaitAck ?? true },
       );
       throwIfSkipRequested();
     } finally {
@@ -334,6 +335,15 @@ export function getSceneContext() {
 
 export function getCurrentAmbienceKey() {
   return ambienceState.key;
+}
+
+export function pushCameraFocus(worldX) {
+  const target = Math.max(0, worldX - CAMERA_MARGIN);
+  cameraFocusStack.push(target);
+}
+
+export function popCameraFocus() {
+  cameraFocusStack.pop();
 }
 
 export function setSceneProps(definitions = []) {
@@ -1551,8 +1561,10 @@ function renderSpeechLayers() {
 }
 
 function updateCamera() {
-  const targetX = Math.max(0, wizard.x - CAMERA_MARGIN);
-  cameraX += (targetX - cameraX) * CAMERA_EASE;
+  const focusTarget = cameraFocusStack.length > 0
+    ? cameraFocusStack[cameraFocusStack.length - 1]
+    : Math.max(0, wizard.x - CAMERA_MARGIN);
+  cameraX += (focusTarget - cameraX) * CAMERA_EASE;
 }
 function createPromptBubble(x1, y1, text, x2, y2) {
   if (sceneState.skipRequested) {
