@@ -35,7 +35,8 @@ const GUARDIAN_KNOWN_WORDS = ['אור', 'מים', 'קול', 'חיים', 'אש']
 const GOLEM_MACHINE = cropStateMachine(SPELL_DUEL_MACHINE, GUARDIAN_KNOWN_WORDS);
 GOLEM_MACHINE.meta = {
   ...(SPELL_DUEL_MACHINE.meta ? { ...SPELL_DUEL_MACHINE.meta } : {}),
-  enemyAccuracy: 0.5,
+  enemyAccuracy: 0.45,
+  enemyAccuracyStreakLimit: 1,
 };
 
 export async function runLevelFiveFive() {

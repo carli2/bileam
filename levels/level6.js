@@ -23,81 +23,23 @@ import {
   cloneSceneProps,
   MARKET_SCENE,
   spellEquals,
-  updateProp,
   addProp,
+  updateProp,
   celebrateGlyph,
 } from './utils.js';
 
-const MOAB_RING_DEFS = [
-  {
-    id: 'moabRingWest',
-    label: 'westlichen',
-    x: 172,
-    success: 'Der Ring zeigt das Lager Israels wie ein ruhendes Meer aus Waechtern.',
-  },
-  {
-    id: 'moabRingCenter',
-    label: 'mittleren',
-    x: 316,
-    success: 'Die Mitte des Rings glaenzt, als wuerde der Sand selbst Schrift bilden.',
-  },
-  {
-    id: 'moabRingEast',
-    label: 'oestlichen',
-    x: 472,
-    success: 'Der oestliche Ring laesst Balaks Stadt wie ein flackerndes Gitter erscheinen.',
-  },
-];
-
-const PETOR_RING_DEFS = [
-  {
-    id: 'petorRingNorth',
-    label: 'noerdlichen',
-    x: 164,
-    prompt: 'Welche deiner Erinnerungen bringt Licht in ihre Gesichter?',
-    spells: ['or', 'אור'],
-    fragmentId: 'petorFragmentLamed',
-    fragmentLetter: 'ל',
-    success: 'Licht legt sich auf die Gesichter der Gesandten. Angst bricht wie Frost.',
-  },
-  {
-    id: 'petorRingEast',
-    label: 'oestlichen',
-    x: 316,
-    prompt: 'Welches Wort beruhigt die Pferde und laesst den Sand fliessen?',
-    spells: ['mayim', 'majim', 'mjm', 'מים'],
-    fragmentId: 'petorFragmentAleph',
-    fragmentLetter: 'א',
-    success: 'Wasserlaute gleiten durch die Luft. Sand wird zu Wellenlinien.',
-  },
-  {
-    id: 'petorRingSouth',
-    label: 'suedlichen',
-    x: 468,
-    prompt: 'Welches Wort laesst verborgene Stimmen hoerbar werden?',
-    spells: ['qol', 'קול'],
-    fragmentId: null,
-    fragmentLetter: null,
-    success: 'Der Klang legt sich wie Resonanz auf das Lager. Die Gesandten blicken auf.',
-  },
-];
-
-const BORDER_STATIONS = [
-  {
-    id: 'borderStone',
-    x: 208,
-    prompt: 'Der Schriftstein verlangt nach einem Nein, das Flueche bricht.',
-    spells: ['lo', 'לא'],
-    success: 'Die Glyphen blinken auf und zerfallen zu Staub. Balaks Worte loesen sich.',
-  },
-  {
-    id: 'borderBush',
-    x: 332,
-    prompt: 'Tau aus der Wuste rettet den Weg der Eselin.',
-    spells: ['mayim', 'majim', 'mjm', 'מים'],
-    success: 'Feiner Tau legt sich auf die Dornen. Ein Pfad oeffnet sich fuer die Eselin.',
-  },
-];
+const MOAB_APPROACH_SCENE = {
+  ambience: 'marketBazaar',
+  wizardStartX: 74,
+  donkeyOffset: -38,
+  props: [
+    { id: 'moabWatcherNorth', type: 'moabWallWatcher', x: 156, align: 'ground', parallax: 0.88 },
+    { id: 'moabWatcherSouth', type: 'moabWallWatcher', x: 492, align: 'ground', parallax: 1.06 },
+    { id: 'moabVisionRingWest', type: 'sandVisionRingDormant', x: 182, align: 'ground', parallax: 1 },
+    { id: 'moabVisionRingCenter', type: 'sandVisionRingDormant', x: 326, align: 'ground', parallax: 1 },
+    { id: 'moabVisionRingEast', type: 'sandVisionRingDormant', x: 472, align: 'ground', parallax: 1 },
+  ],
+};
 
 const PETOR_SCENE = {
   ambience: 'marketBazaar',
@@ -107,389 +49,303 @@ const PETOR_SCENE = {
     { id: 'petorCampfire', type: 'nightCampfire', x: 236, align: 'ground', parallax: 0.92 },
     { id: 'petorEnvoyNorth', type: 'envoyShadow', x: 156, align: 'ground', parallax: 0.96 },
     { id: 'petorEnvoyEast', type: 'envoyShadow', x: 316, align: 'ground', parallax: 0.96 },
-    { id: 'petorEnvoySouth', type: 'envoyShadow', x: 468, align: 'ground', parallax: 0.96 },
+    { id: 'petorEnvoySouth', type: 'envoyShadow', x: 472, align: 'ground', parallax: 0.96 },
   ],
 };
 
 const BORDER_SCENE = {
   ambience: 'marketBazaar',
-  wizardStartX: 70,
+  wizardStartX: 72,
   donkeyOffset: -38,
   props: [
-    { id: 'borderBackdrop', type: 'borderProcessionPath', x: -42, align: 'ground', parallax: 0.6 },
+    { id: 'borderBackdrop', type: 'borderProcessionPath', x: -36, align: 'ground', parallax: 0.6 },
     { id: 'borderStone', type: 'borderMilestone', x: 212, align: 'ground', parallax: 0.95 },
     { id: 'borderBush', type: 'borderThorn', x: 332, align: 'ground', parallax: 0.98 },
     { id: 'borderWatchFire', type: 'watchFireDormant', x: 492, align: 'ground', parallax: 1.02 },
   ],
 };
 
+const MOAB_RING_TASKS = [
+  {
+    id: 'moabVisionRingWest',
+    prompt: 'Stell dich in den Ring und sprich אור.',
+    spells: ['or', 'אור'],
+    response: 'Das Lager Israels leuchtet wie ein ruhendes Meer aus Waechtern.',
+  },
+  {
+    id: 'moabVisionRingCenter',
+    prompt: 'Welche Erinnerung beruhigt die Szene?',
+    spells: ['mayim', 'majim', 'mjm', 'מים'],
+    response: 'Der Sand bewegt sich wie Wasser; die Vision ordnet sich.',
+  },
+  {
+    id: 'moabVisionRingEast',
+    prompt: 'Welches Wort offenbart Balaks Fluester-Befehl?',
+    spells: ['qol', 'קול'],
+    response: 'Ein Echo laesst Balaks Angst als Klang erscheinen.',
+  },
+];
+
+const ENVOY_TASKS = [
+  {
+    id: 'petorEnvoyNorth',
+    prompt: 'Gib ihnen Licht als Antwort.',
+    spells: ['or', 'אור'],
+    response: 'Die Gesichter der Gesandten werden warm und ruhig.',
+    fragment: 'ל',
+  },
+  {
+    id: 'petorEnvoyEast',
+    prompt: 'Beruhige Balaks Pferde.',
+    spells: ['mayim', 'majim', 'mjm', 'מים'],
+    response: 'Tau legt sich auf die Zaegel. Der Atem wird sanft.',
+    fragment: 'א',
+  },
+  {
+    id: 'petorEnvoySouth',
+    prompt: 'Lausche und gib ihnen Klang.',
+    spells: ['qol', 'קול'],
+    response: 'Die Luft vibriert, ein fernes Echo bestaetigt deine Worte.',
+  },
+];
+
+const BORDER_TASKS = [
+  {
+    id: 'borderStone',
+    prompt: 'Der Schriftstein fordert ein Nein.',
+    spells: ['lo', 'לא'],
+    response: 'Der Befehl zerfaellt zu Staub.',
+  },
+  {
+    id: 'borderBush',
+    prompt: 'Leg Tau auf die Dornen.',
+    spells: ['mayim', 'majim', 'mjm', 'מים'],
+    response: 'Tau glaenzt auf den Zweigen, der Weg wird frei.',
+  },
+];
+
 export async function runLevelSix() {
   const plan = levelAmbiencePlan.level6;
-  const approachProps = createMoabProps();
 
-  applySceneConfig({ ...MARKET_SCENE, props: approachProps });
-  ensureAmbience(plan?.review ?? MARKET_SCENE.ambience ?? 'marketBazaar');
+  const moabProps = cloneSceneProps(MOAB_APPROACH_SCENE.props);
+  applySceneConfig({ ...MOAB_APPROACH_SCENE, props: moabProps });
+  ensureAmbience(plan?.review ?? MOAB_APPROACH_SCENE.ambience ?? 'marketBazaar');
   setSceneContext({ level: 'level6', phase: 'approach' });
   await showLevelTitle('Level 6 - Der Ruf des Koenigs');
   await fadeToBase(600);
 
-  await phaseMoabApproach(approachProps);
+  await phaseMoabVisionRings(moabProps);
 
-  const petorProps = createPetorProps();
-  await transitionToPetor(plan, petorProps);
-
-  await phaseEnvoyReception();
-  await phaseEnvoyRings(petorProps);
-  await phaseNightRevelation(petorProps);
-  await phaseNightMeditation(petorProps);
+  const petorProps = cloneSceneProps(PETOR_SCENE.props);
+  await transitionToScene(plan?.learn, PETOR_SCENE, petorProps, 'petor');
+  await phaseEnvoyDialogue();
+  await phaseEnvoyResponses(petorProps);
+  await phaseNightVision(petorProps);
+  await phaseNightMeditation();
   await phaseMorningRefusal(petorProps);
 
-  const borderProps = cloneSceneProps(BORDER_SCENE.props);
-  await transitionToBorder(plan, borderProps);
-  await phaseBorderStations(borderProps);
-  await phaseWatchfire(borderProps);
+  await phaseBalakEdict();
 
-  setSceneContext({ phase: 'departure' });
-  await donkeySay('Der Pfad nach Moab ist offen. Doch Balak hat neue Fuersten gesandt.');
-  await narratorSay('Du folgst ihnen in die Nacht. Hinter euch glimmt das Wort לא wie ein stilles Schild.');
+  const borderProps = cloneSceneProps(BORDER_SCENE.props);
+  await transitionToScene(plan?.apply, BORDER_SCENE, borderProps, 'border');
+  await phaseBorderStations(borderProps);
+  await phaseWatchFire(borderProps);
+
+  await narratorSay('Die neuen Fuersten reiten voraus. Es geht nach Moab.');
+  await donkeySay('Bewahre das Nein – Balak wird es pruefen.');
   await fadeToBlack(720);
 }
 
-function createMoabProps() {
-  const props = cloneSceneProps(MARKET_SCENE.props);
-  props.push({ id: 'moabWatcherWest', type: 'moabWallWatcher', x: 122, align: 'ground', parallax: 0.82 });
-  props.push({ id: 'moabWatcherEast', type: 'moabWallWatcher', x: 524, align: 'ground', parallax: 0.94 });
-  MOAB_RING_DEFS.forEach(def => {
-    props.push({
-      id: def.id,
-      type: 'sandVisionRingDormant',
-      x: def.x,
-      align: 'ground',
-      parallax: 1,
-    });
-  });
-  return props;
-}
+async function phaseMoabVisionRings(props) {
+  await narratorSay('Balaks Waechter blicken nach Osten. Drei Ringe aus Licht warten auf deine Worte.');
+  for (const task of MOAB_RING_TASKS) {
+    const target = props.find(entry => entry.id === task.id)?.x ?? wizard.x + 120;
+    await waitForWizardToReach(target, { tolerance: 18 });
 
-function createPetorProps() {
-  const props = cloneSceneProps(PETOR_SCENE.props);
-  PETOR_RING_DEFS.forEach(def => {
-    props.push({
-      id: def.id,
-      type: 'sandVisionRingDormant',
-      x: def.x,
-      align: 'ground',
-      parallax: 1,
-    });
-  });
-  return props;
-}
-
-async function phaseMoabApproach(props) {
-  await narratorSay('Auf den Mauern von Moab blicken Wachen in die Steppe. Unter ihnen schimmern drei Ringe aus Licht.');
-  await donkeySay('Balak will sehen, was Israel ist. Geh zu den Ringen, Meister, und schau hin.');
-
-  for (const def of MOAB_RING_DEFS) {
-    await donkeySay(`Stell dich in den ${def.label} Ring und blicke hinaus.`);
-    await waitForWizardToReach(def.x, { tolerance: 18 });
-    updateProp(props, def.id, { type: 'sandVisionRingActive' });
-    await narratorSay(def.success);
-    addProp(props, {
-      id: `${def.id}Trail`,
-      type: 'hoofSignTrail',
-      x: wizard.x + 12,
-      y: wizard.y - 18,
-      parallax: 1.05,
-    });
-  }
-
-  await narratorSay('Alle drei Ringe brennen nun still. Der Sand zeichnet eine Spur aus Licht hinter deinen Schritten.');
-  await donkeySay('Was du gesehen hast, wird Balak hoeren wollen. Doch erst wartet Petor und die Nacht.');
-}
-
-async function transitionToPetor(plan, props) {
-  await fadeToBlack(420);
-  ensureAmbience(plan?.learn ?? 'marketBazaar');
-  setSceneProps([]);
-  applySceneConfig({ ...PETOR_SCENE, props }, { setAmbience: false });
-  setSceneProps(props);
-  setSceneContext({ level: 'level6', phase: 'envoys' });
-  await fadeToBase(520);
-}
-
-async function phaseEnvoyReception() {
-  await narratorSay('In Petor lodert nur ein stilles Feuer. Die Gesandten Balaks warten geduldig.');
-  await donkeySay('Sie tragen Balaks Worte. Hoehre sie an, doch entscheide weise.');
-  await wizardSay('Ich werde ueber Nacht hoeren, was der HERR spricht.');
-}
-
-async function phaseEnvoyRings(props) {
-  setSceneContext({ phase: 'envoy-trial' });
-  await donkeySay('Jeder Ring prueft dich mit dem, was du schon gelernt hast.');
-
-  for (const def of PETOR_RING_DEFS) {
-    await narratorSay(`Der ${def.label} Ring wabert. Schatten erwarten deine Antwort.`);
-    await waitForWizardToReach(def.x, { tolerance: 18 });
-
-    let attempts = 0;
-    while (true) {
-      const answerInput = await promptBubble(
-        anchorX(wizard, -8),
-        anchorY(wizard, -62),
-        def.prompt,
-        anchorX(wizard, -2),
-        anchorY(wizard, -34),
-      );
-      const answer = normalizeHebrewInput(answerInput);
-
-      if (def.spells.some(spell => spellEquals(answer, spell))) {
-        updateProp(props, def.id, { type: 'sandVisionRingActive' });
+    let solved = false;
+    while (!solved) {
+      const answer = await readWord(task.prompt);
+      if (task.spells.some(spell => spellEquals(answer, spell))) {
+        solved = true;
+        updateProp(props, task.id, { type: 'sandVisionRingActive' });
         await celebrateGlyph(answer);
-        if (def.fragmentId && def.fragmentLetter) {
-          addProp(props, {
-            id: def.fragmentId,
-            type: 'noGlyphShard',
-            x: wizard.x + 10,
-            y: wizard.y - 40,
-            parallax: 0.9,
-            letter: def.fragmentLetter,
-          });
-        }
-        await narratorSay(def.success);
-        break;
-      }
-
-      attempts++;
-      if (spellEquals(answer, 'lo', 'לא')) {
-        await narratorSay('Das Wort לא ist noch verborgen. Die Schatten bleiben dicht.');
-        continue;
-      }
-      if (spellEquals(answer, 'ash', 'אש')) {
-        await narratorSay('Feuer flackert kurz auf, doch die Gesandten schrecken zurueck.');
-        continue;
-      }
-      if (attempts === 1) {
-        await donkeySay('Denk an das Wort, das dieser Ring verlangt. Du kennst es bereits.');
-      } else if (attempts === 2) {
-        await narratorSay('Der Ring verengt sich. Hoere in dich hinein und waehle erneut.');
+        await narratorSay(task.response);
+        addProp(props, { id: `${task.id}Trail`, type: 'hoofSignTrail', x: wizard.x + 12, y: wizard.y - 16, parallax: 1.05 });
       } else {
-        attempts = 0;
-        await donkeySay('Atme. Erinner dich an deine Reise: Licht, Wasser, Klang.');
+        await donkeySay('Nutze, was du bereits gelernt hast.');
       }
     }
   }
-
-  addProp(props, {
-    id: 'petorGlyphFusion',
-    type: 'noGlyphShard',
-    x: wizard.x + 24,
-    y: wizard.y - 46,
-    parallax: 0.92,
-  });
-  await narratorSay('Zwei Fragmente glimmen ueber deinem Grimoire: ל und א. Sie warten auf ihre Gestalt.');
+  await narratorSay('Die Ringe glimmen weiter. Balaks Gesandte reiten nach Petor.');
 }
 
-async function phaseNightRevelation(props) {
-  setSceneContext({ phase: 'night' });
-  await donkeySay('Die Nacht kommt. Hoere, bevor Balaks Stimme dich erreicht.');
-  addProp(props, { id: 'petorMeditationCircle', type: 'hearingGlyphFragment', x: wizard.x + 24, y: wizard.y - 18, parallax: 1 });
+async function phaseEnvoyDialogue() {
+  await narratorSay('In Petor lodert ein stilles Feuer. Die Gesandten Balaks treten vor Bileam.');
+  await donkeySay('Höre ihnen zu, und antworte mit dem, was du weisst.');
+}
 
-  await narratorSay('Der HERR spricht: Geh nicht mit ihnen. Verfluche das Volk nicht, denn es ist gesegnet.');
+async function phaseEnvoyResponses(props) {
+  setSceneContext({ phase: 'envoys' });
+  const collected = [];
+  for (const task of ENVOY_TASKS) {
+    const target = props.find(entry => entry.id === task.id)?.x ?? wizard.x + 160;
+    await waitForWizardToReach(target, { tolerance: 18 });
+    let done = false;
+    while (!done) {
+      const answer = await readWord(task.prompt);
+      if (task.spells.some(spell => spellEquals(answer, spell))) {
+        done = true;
+        await celebrateGlyph(answer);
+        await narratorSay(task.response);
+        if (task.fragment) {
+          collected.push(task.fragment);
+          addProp(props, {
+            id: `petorFragment${task.fragment}`,
+            type: 'noGlyphShard',
+            x: wizard.x + 16 + collected.length * 6,
+            y: wizard.y - 42 - collected.length * 2,
+            parallax: 0.92,
+            letter: task.fragment,
+          });
+        }
+      } else {
+        await donkeySay('Sprich das Wort, das du gelernt hast.');
+      }
+    }
+  }
+  await narratorSay('Die Fragmente schimmern: ל und א. Ein neues Wort wartet.');
+}
+
+async function phaseNightVision(props) {
+  setSceneContext({ phase: 'night' });
+  await narratorSay('In der Nacht spricht Gott: Geh nicht mit ihnen. Verfluche das Volk nicht, denn es ist gesegnet.');
 
   let attempts = 0;
   while (true) {
-    const answerInput = await promptBubble(
-      anchorX(wizard, -6),
-      anchorY(wizard, -64),
-      'Das Wort formt sich: sprich לא (lo).',
-      anchorX(wizard, -2),
-      anchorY(wizard, -36),
-    );
-    const answer = normalizeHebrewInput(answerInput);
-
+    const answer = await readWord('Das Wort formt sich: sprich לא (lo).');
     if (spellEquals(answer, 'lo', 'לא')) {
       await celebrateGlyph(answer);
-      await narratorSay('Das Nein legt sich wie ein Schild um dich. Die Fragmente verbinden sich zu לא.');
+      addProp(props, { id: 'petorGlyphComplete', type: 'noGlyphShard', x: wizard.x + 20, y: wizard.y - 48, parallax: 0.9, letter: 'לא' });
+      await narratorSay('Das Nein legt sich wie ein Schild um dich.');
       break;
     }
-
-    attempts++;
+    attempts += 1;
     if (attempts === 1) {
-      await donkeySay('Sprich es klar. Zwei Buchstaben, stark wie ein Tor.');
-    } else if (attempts === 2) {
-      await narratorSay('Die Luft flimmert. Das Wort wartet, bis du es richtig sprichst.');
+      await donkeySay('Nur zwei Buchstaben. Sprich sie klar.');
     } else {
       attempts = 0;
-      await wizardSay('Ich atme ein und lasse alles andere schweigen.');
+      await wizardSay('L ... א ... ich spreche es erneut.');
     }
   }
 }
 
-async function phaseNightMeditation(props) {
+async function phaseNightMeditation() {
   setSceneContext({ phase: 'meditation' });
-  await narratorSay('Ein Hoerkreis aus Licht erscheint. Du musst ihn mit לא halten.');
-
-  const cycles = 3;
-  for (let index = 0; index < cycles; index++) {
-    const attemptInput = await promptBubble(
-      anchorX(wizard, -4),
-      anchorY(wizard, -62),
-      'Halte den Kreis. Sprich לא (lo).',
-      anchorX(wizard, 0),
-      anchorY(wizard, -34),
-    );
-    const attempt = normalizeHebrewInput(attemptInput);
-
-    if (spellEquals(attempt, 'lo', 'לא')) {
-      await narratorSay('Der Kreis leuchtet heller. Der Atem der Welt wird ruhiger.');
-      continue;
-    }
-
-    if (spellEquals(attempt, 'qol', 'קול')) {
+  await narratorSay('Ein Hoerkreis erscheint. Halte ihn dreimal mit dem Nein, das du gelernt hast.');
+  let successes = 0;
+  while (successes < 3) {
+    const answer = await readWord('Halte den Kreis. Sprich לא (lo).');
+    if (spellEquals(answer, 'lo', 'לא')) {
+      successes += 1;
+      await narratorSay('Der Kreis leuchtet heller.');
+    } else if (spellEquals(answer, 'qol', 'קול')) {
       await narratorSay('Ein Ton jagt die Schatten fort, doch der Kreis verlangt weiter nach לא.');
-      index--;
-      continue;
+    } else {
+      await donkeySay('Nur lo haelt den Kreis. Versuch es erneut.');
     }
-
-    await donkeySay('Noch einmal. Atme vier Herzschlaege und sage nicht mehr als לא.');
-    index--;
   }
-
-  updateProp(props, 'petorMeditationCircle', { type: 'listeningSanctum', x: wizard.x + 24 });
-  await narratorSay('Die Nacht antwortet. Nicht jedes Wort muss gesprochen werden – manche muessen verneint werden.');
+  await narratorSay('Der Kreis schliesst sich. Der Atem der Nacht wird ruhig.');
 }
 
 async function phaseMorningRefusal(props) {
   setSceneContext({ phase: 'morning' });
-  addProp(props, { id: 'petorGift', type: 'temptationVessel', x: wizard.x + 44, align: 'ground', parallax: 1.04 });
-  await narratorSay('Am Morgen liegen Geschenke bereit. Gold flackert in Balaks Farben.');
+  addProp(props, { id: 'petorGift', type: 'temptationVessel', x: wizard.x + 42, align: 'ground', parallax: 1.02 });
+  await narratorSay('Am Morgen liegen Geschenke bereit. Balak verspricht Ehre und Gold.');
 
-  let resolved = false;
-  let attempts = 0;
-  while (!resolved) {
-    const answerInput = await promptBubble(
-      anchorX(wizard, -2),
-      anchorY(wizard, -58),
-      'Welches Wort loescht Balaks Gabe?',
-      anchorX(wizard, 4),
-      anchorY(wizard, -32),
-    );
-    const answer = normalizeHebrewInput(answerInput);
-
+  while (true) {
+    const answer = await readWord('Welches Wort loescht Balaks Gabe?');
     if (spellEquals(answer, 'lo', 'לא')) {
-      resolved = true;
-      await celebrateGlyph(answer);
       updateProp(props, 'petorGift', { type: 'temptationVesselAshes' });
-      await narratorSay('Die Gabe verglimmt zu Staub. Balaks Stimme knistert vergeblich in der Luft.');
+      await celebrateGlyph(answer);
+      await narratorSay('Die Gabe verglimmt zu Staub.');
       break;
     }
-
-    attempts++;
-    if (spellEquals(answer, 'ash', 'אש')) {
-      await narratorSay('Flammen schlagen hoch und verglimmen. Ohne לא bleiben sie gefaehrlich.');
-      continue;
-    }
-    if (attempts === 1) {
-      await donkeySay('Denke an das Wort der Nacht. Es reicht, um jeden Fluch zu bremsen.');
-    } else if (attempts === 2) {
-      await narratorSay('Goldene Linien kriechen auf dich zu. Sie warten auf ein klares Nein.');
-    } else {
-      attempts = 0;
-      await wizardSay('Ich wiederhole das Wort, bis es bleibt: ל... א.');
-    }
+    await donkeySay('Bleib beim Wort der Nacht.');
   }
 }
 
-async function transitionToBorder(plan, props) {
-  await transitionAmbience(plan?.apply ?? 'marketBazaar', { fade: { toBlack: 360, toBase: 520 } });
-  setSceneProps([]);
-  applySceneConfig({ ...BORDER_SCENE, props }, { setAmbience: false });
-  setSceneProps(props);
-  setSceneContext({ level: 'level6', phase: 'border' });
+async function phaseBalakEdict() {
+  await narratorSay('Die Fuersten berichten Balak: Bileam weigert sich, zu kommen.');
+  await narratorSay('Balak sendet mächtigere Maenner und verspricht große Ehre.');
 }
 
 async function phaseBorderStations(props) {
-  await narratorSay('Der Weg nach Moab fuehrt entlang einer Grenze aus Sand und Schrift.');
+  setSceneContext({ phase: 'border' });
+  await narratorSay('Der Weg nach Moab fuehrt entlang einer Grenze voller Schrift.');
 
-  for (const station of BORDER_STATIONS) {
-    await donkeySay('Dort vorn wartet ein weiteres Zeichen. Geh hin.');
-    await waitForWizardToReach(station.x, { tolerance: 18 });
-
-    let attempts = 0;
-    while (true) {
-      const answerInput = await promptBubble(
-        anchorX(wizard, -6),
-        anchorY(wizard, -58),
-        station.prompt,
-        anchorX(wizard, 0),
-        anchorY(wizard, -32),
-      );
-      const answer = normalizeHebrewInput(answerInput);
-
-      if (station.spells.some(spell => spellEquals(answer, spell))) {
+  for (const task of BORDER_TASKS) {
+    const target = props.find(entry => entry.id === task.id)?.x ?? wizard.x + 160;
+    await waitForWizardToReach(target, { tolerance: 18 });
+    let complete = false;
+    while (!complete) {
+      const answer = await readWord(task.prompt);
+      if (task.spells.some(spell => spellEquals(answer, spell))) {
+        complete = true;
         await celebrateGlyph(answer);
-        await narratorSay(station.success);
-        break;
-      }
-
-      attempts++;
-      if (attempts === 1) {
-        await donkeySay('Du kennst das Wort, Meister. Sprich es klar.');
-      } else if (attempts === 2) {
-        await narratorSay('Der Wind wird lauter. Ohne das richtige Wort bleibt der Weg verborgen.');
+        await narratorSay(task.response);
       } else {
-        attempts = 0;
-        await wizardSay('Noch einmal. Ich erinnere mich.');
+        await donkeySay('Nutze das richtige Wort.');
       }
     }
   }
 }
 
-async function phaseWatchfire(props) {
-  const fireProp = props.find(entry => entry.id === 'borderWatchFire');
-  const target = fireProp ? fireProp.x + 18 : 508;
-  await donkeySay('Das Wachfeuer Balaks glimmt. Zeig ihm Licht und verschliesse seinen Blick.');
+async function phaseWatchFire(props) {
+  const fire = props.find(entry => entry.id === 'borderWatchFire');
+  const target = fire ? fire.x + 18 : wizard.x + 260;
   await waitForWizardToReach(target, { tolerance: 18 });
 
   let stage = 0;
   while (stage < 2) {
     const prompt = stage === 0
-      ? 'Ein Schimmer im Feuer wartet auf אור.'
-      : 'Verberge den Pfad vor Balaks Blick. Sprich לא.';
-    const answerInput = await promptBubble(
-      anchorX(wizard, -4),
-      anchorY(wizard, -60),
-      prompt,
-      anchorX(wizard, 2),
-      anchorY(wizard, -34),
-    );
-    const answer = normalizeHebrewInput(answerInput);
-
+      ? 'Das Wachfeuer verlangt nach אור.'
+      : 'Verberge den Pfad. Sprich לא.';
+    const answer = await readWord(prompt);
     if (stage === 0 && spellEquals(answer, 'or', 'אור')) {
       updateProp(props, 'borderWatchFire', { type: 'watchFireAwakened' });
       await celebrateGlyph(answer);
-      await narratorSay('Licht hebt sich vom Feuer und zeigt einen versteckten Pfad durch die Steppe.');
+      await narratorSay('Ein heller Schein offenbart den Pfad.');
       stage = 1;
       continue;
     }
-
     if (stage === 1 && spellEquals(answer, 'lo', 'לא')) {
-      await celebrateGlyph(answer);
       updateProp(props, 'borderWatchFire', { type: 'watchFireVeiled' });
-      await narratorSay('Der Pfad verduestert sich fuer Balaks Spione. Nur du siehst ihn noch.');
+      await celebrateGlyph(answer);
+      await narratorSay('Der Pfad verschwindet vor Balaks Augen.');
       stage = 2;
       break;
     }
-
-    if (spellEquals(answer, 'ash', 'אש')) {
-      await narratorSay('Die Flammen lodern kurz hoch. Ohne אור oder לא bleibt der Pfad offen sichtbar.');
-      continue;
-    }
-
-    if (stage === 0) {
-      await donkeySay('Zuerst das Licht, Meister.');
-    } else {
-      await donkeySay('Du musst Nein sagen, damit der Weg verborgen bleibt.');
-    }
+    await donkeySay('Zuerst Licht, dann das Nein.');
   }
+}
+
+async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
+  await fadeToBlack(360);
+  ensureAmbience(ambienceKey ?? sceneConfig.ambience ?? 'marketBazaar');
+  setSceneProps([]);
+  applySceneConfig({ ...sceneConfig, props }, { setAmbience: false });
+  setSceneProps(props);
+  setSceneContext({ level: 'level6', phase });
+  await fadeToBase(480);
+}
+
+async function readWord(promptText) {
+  const input = await promptBubble(
+    anchorX(wizard, -6),
+    anchorY(wizard, -60),
+    promptText,
+    anchorX(wizard, 0),
+    anchorY(wizard, -34),
+  );
+  return normalizeHebrewInput(input);
 }

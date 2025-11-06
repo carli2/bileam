@@ -257,6 +257,9 @@ export async function runFightLoop({
     if (typeof machineMeta.enemyMistakeChance === 'number') return clamp01(1 - machineMeta.enemyMistakeChance);
     return 0.7;
   })();
+  const streakLimit = typeof machineMeta.enemyAccuracyStreakLimit === 'number'
+    ? Math.max(0, Math.floor(machineMeta.enemyAccuracyStreakLimit))
+    : 2;
 
   const collectedVocabulary = (() => {
     if (Array.isArray(enemyVocabulary) && enemyVocabulary.length > 0) {
@@ -280,15 +283,21 @@ export async function runFightLoop({
   let nextRoundActor = actor;
   let pendingRoundAnnouncement = stateKey === 'start';
   let roundsObserved = 0;
+  let enemySuccessStreak = 0;
+  let enemyAccurateChoice = false;
   renderStatus();
 
   while (life.player.current > 0 && life.enemy.current > 0) {
+    if (actor !== 'enemy') {
+      enemyAccurateChoice = false;
+    }
     if (stateKey === 'start') {
       const desiredActor = nextRoundActor ?? lastDamageTarget ?? actor;
       if (desiredActor && desiredActor !== actor) {
         actor = desiredActor === 'enemy' ? 'enemy' : 'player';
         if (actor === 'enemy') {
           recentEnemyWord = null;
+          enemySuccessStreak = 0;
         }
       }
     }
@@ -423,12 +432,15 @@ export async function runFightLoop({
       const pickRandom = list => (list.length > 0 ? list[Math.floor(randomFn() * list.length)] : undefined);
       const startTransitionKeys = Object.keys(states.start?.transitions ?? {});
       const accuracyRoll = randomFn();
-      if (accuracyRoll < resolvedAccuracy) {
+      const forceFreestyle = streakLimit > 0 && enemySuccessStreak >= streakLimit;
+      enemyAccurateChoice = !forceFreestyle && accuracyRoll < resolvedAccuracy;
+      if (enemyAccurateChoice) {
         chosenWord = pickRandom(transitionKeys) ?? null;
         if (!chosenWord) {
           chosenWord = pickRandom(startTransitionKeys) ?? pickRandom(collectedVocabulary) ?? '';
         }
-      } else {
+      }
+      if (!chosenWord) {
         chosenWord = pickRandom(startTransitionKeys) ?? null;
         if (!chosenWord) {
           chosenWord = pickRandom(collectedVocabulary) ?? null;
@@ -436,6 +448,7 @@ export async function runFightLoop({
         if (!chosenWord) {
           chosenWord = pickRandom(transitionKeys) ?? '';
         }
+        enemyAccurateChoice = false;
       }
       recentEnemyWord = chosenWord;
     }
@@ -443,6 +456,9 @@ export async function runFightLoop({
     const transition = normalizeTransition(stateTransitions[chosenWord], actor);
 
     if (!transition) {
+      if (actor === 'enemy') {
+        enemySuccessStreak = 0;
+      }
       await resolveFailure(chosenWord);
       if (life.player.current <= 0 || life.enemy.current <= 0) break;
       continue;
@@ -472,10 +488,17 @@ export async function runFightLoop({
     }
 
     stateKey = transition.next ?? 'start';
+    if (actor === 'enemy') {
+      enemySuccessStreak += 1;
+    }
+    if (actor === 'enemy') {
+      enemySuccessStreak = enemyAccurateChoice ? enemySuccessStreak + 1 : 0;
+    }
     if (!transition.keepActor) {
       actor = actor === 'player' ? 'enemy' : 'player';
       if (actor === 'enemy') {
         recentEnemyWord = null;
+        enemySuccessStreak = 0;
       }
     }
     if (stateKey === 'start') {

@@ -31,421 +31,316 @@ const PISGA_LINE_SCENE = {
   wizardStartX: 84,
   donkeyOffset: -40,
   props: [
-    { id: 'truthPlateOne', type: 'pisgaAltarPlate', x: 148, align: 'ground', parallax: 0.92 },
-    { id: 'truthPlateTwo', type: 'pisgaAltarPlate', x: 212, align: 'ground', parallax: 0.94 },
-    { id: 'truthPlateThree', type: 'pisgaAltarPlate', x: 276, align: 'ground', parallax: 0.96 },
-    { id: 'truthPlateFour', type: 'pisgaAltarPlate', x: 340, align: 'ground', parallax: 0.98 },
-    { id: 'truthPlateFive', type: 'pisgaAltarPlate', x: 404, align: 'ground', parallax: 1.0 },
-    { id: 'truthPlateSix', type: 'pisgaAltarPlate', x: 468, align: 'ground', parallax: 1.02 },
-    { id: 'truthPlateSeven', type: 'pisgaAltarPlate', x: 532, align: 'ground', parallax: 1.04 },
-    { id: 'truthBalakVeil', type: 'balakAngerVeilDormant', x: 596, align: 'ground', parallax: 1.06 },
+    { id: 'truthPlateOne', type: 'pisgaAltarPlate', x: 152, align: 'ground', parallax: 0.92 },
+    { id: 'truthPlateTwo', type: 'pisgaAltarPlate', x: 216, align: 'ground', parallax: 0.94 },
+    { id: 'truthPlateThree', type: 'pisgaAltarPlate', x: 280, align: 'ground', parallax: 0.96 },
+    { id: 'truthPlateFour', type: 'pisgaAltarPlate', x: 344, align: 'ground', parallax: 0.98 },
+    { id: 'truthPlateFive', type: 'pisgaAltarPlate', x: 408, align: 'ground', parallax: 1.0 },
+    { id: 'truthPlateSix', type: 'pisgaAltarPlate', x: 472, align: 'ground', parallax: 1.02 },
+    { id: 'truthPlateSeven', type: 'pisgaAltarPlate', x: 536, align: 'ground', parallax: 1.04 },
   ],
 };
 
 const DABAR_SCENE = {
   ambience: 'courtAudience',
   wizardStartX: 96,
-  donkeyOffset: -42,
+  donkeyOffset: -40,
   props: [
     { id: 'dabarPillarOne', type: 'resonancePillarDormant', x: 216, align: 'ground', parallax: 0.94 },
-    { id: 'dabarPillarTwo', type: 'resonancePillarDormant', x: 318, align: 'ground', parallax: 0.96 },
-    { id: 'dabarPillarThree', type: 'resonancePillarDormant', x: 420, align: 'ground', parallax: 0.98 },
+    { id: 'dabarPillarTwo', type: 'resonancePillarDormant', x: 320, align: 'ground', parallax: 0.96 },
+    { id: 'dabarPillarThree', type: 'resonancePillarDormant', x: 424, align: 'ground', parallax: 0.98 },
   ],
 };
 
 const MIRROR_SCENE = {
   ambience: 'courtAudience',
   wizardStartX: 90,
-  donkeyOffset: -42,
+  donkeyOffset: -40,
   props: [
-    { id: 'mirrorSymbolDabar', type: 'truthMirrorSymbolDormant', x: 262, align: 'ground', parallax: 0.94 },
-    { id: 'mirrorSymbolEmet', type: 'truthMirrorSymbolDormant', x: 360, align: 'ground', parallax: 0.96 },
+    { id: 'mirrorDabar', type: 'truthMirrorSymbolDormant', x: 268, align: 'ground', parallax: 0.94 },
+    { id: 'mirrorEmet', type: 'truthMirrorSymbolDormant', x: 360, align: 'ground', parallax: 0.96 },
   ],
 };
 
 const GARDEN_SCENE = {
   ambience: 'courtAudience',
   wizardStartX: 92,
-  donkeyOffset: -42,
+  donkeyOffset: -40,
   props: [
     { id: 'gardenNet', type: 'truthWeaveNetDormant', x: 140, align: 'ground', parallax: 0.9 },
-    { id: 'gardenSymbolTent', type: 'truthMirrorSymbolDormant', x: 220, align: 'ground', parallax: 0.94 },
-    { id: 'gardenSymbolGarden', type: 'truthMirrorSymbolDormant', x: 300, align: 'ground', parallax: 0.96 },
-    { id: 'gardenSymbolTree', type: 'truthMirrorSymbolDormant', x: 380, align: 'ground', parallax: 0.98 },
-    { id: 'gardenSymbolLion', type: 'truthMirrorSymbolDormant', x: 460, align: 'ground', parallax: 1.0 },
+    { id: 'symbolTent', type: 'truthMirrorSymbolDormant', x: 220, align: 'ground', parallax: 0.94 },
+    { id: 'symbolGarden', type: 'truthMirrorSymbolDormant', x: 300, align: 'ground', parallax: 0.96 },
+    { id: 'symbolTree', type: 'truthMirrorSymbolDormant', x: 380, align: 'ground', parallax: 0.98 },
+    { id: 'symbolLion', type: 'truthMirrorSymbolDormant', x: 460, align: 'ground', parallax: 1.0 },
   ],
 };
 
 const OATH_SCENE = {
   ambience: 'courtAudience',
-  wizardStartX: 94,
-  donkeyOffset: -40,
+  wizardStartX: 96,
+  donkeyOffset: -38,
   props: [
-    { id: 'truthCircle', type: 'truthCircleSealDormant', x: 304, align: 'ground', parallax: 0.94 },
+    { id: 'truthCircle', type: 'truthCircleSealDormant', x: 332, align: 'ground', parallax: 0.96 },
   ],
 };
 
 const PISGA_TASKS = [
   {
     id: 'truthPlateOne',
-    x: 148,
-    steps: [
-      {
-        prompt: 'Hoere, bevor du gehst.',
-        spells: ['shama', 'שמע'],
-        effect: props => updateProp(props, 'truthPlateOne', { type: 'pisgaAltarPlateLit' }),
-        success: 'Die Linien offenbaren den Weg vor dir.',
-      },
-      {
-        prompt: 'Blockiere Balaks Befehl.',
-        spells: ['lo', 'לא'],
-        effect: null,
-        success: 'Eine Purpurkette reisst.',
-      },
-      {
-        prompt: 'Segne, was du siehst.',
-        spells: ['barak', 'ברכה'],
-        effect: props => addProp(props, { id: 'truthFragmentDalet', type: 'truthFragment', x: wizard.x + 10, y: wizard.y - 44, parallax: 0.92, letter: 'ד' }),
-        success: 'Fragment ד ruht ueber deinem Grimoire.',
-      },
+    words: ['shama', 'lo', 'barak'],
+    descriptions: [
+      'Hoere den ersten Kreis.',
+      'Versiegle ihn mit לא.',
+      'Segne, was du gesehen hast.',
     ],
+    fragment: 'ד',
   },
   {
     id: 'truthPlateTwo',
-    x: 212,
-    steps: [
-      {
-        prompt: 'Hoere erneut.',
-        spells: ['shama', 'שמע'],
-        success: 'Der zweite Pfad wird sichtbar.',
-      },
-      {
-        prompt: 'Sag Nein zu Balaks Wunsch.',
-        spells: ['lo', 'לא'],
-        success: 'Ein Schatten sinkt nieder.',
-      },
-      {
-        prompt: 'Segne den Pfad.',
-        spells: ['barak', 'ברכה'],
-        success: 'Der Sand legt sich zu Linien.',
-      },
+    words: ['shama', 'lo', 'barak'],
+    descriptions: [
+      'Hoere erneut.',
+      'Sag erneut Nein.',
+      'Segne Balaks Furcht.',
     ],
   },
   {
     id: 'truthPlateThree',
-    x: 276,
-    steps: [
-      { prompt: 'Hoere auf die ferne Stimme.', spells: ['shama', 'שמע'], success: 'Der Wind bringt Fluestern.' },
-      { prompt: 'Errichte ein Nein gegen den Fluch.', spells: ['lo', 'לא'], success: 'Fluchschrift zerfaellt.' },
-      { prompt: 'Segne den Kreis.', spells: ['barak', 'ברכה'], success: 'Ein goldener Kreis schliesst sich.' },
+    words: ['shama', 'lo', 'barak'],
+    descriptions: [
+      'Lausche auf das Echo.',
+      'Verneine den Fluch.',
+      'Segne den Kreis.',
     ],
   },
   {
     id: 'truthPlateFour',
-    x: 340,
-    steps: [
-      { prompt: 'Hoere den Herzschlag des Berges.', spells: ['shama', 'שמע'], success: 'Der Berg antwortet mit einem Ton.' },
-      { prompt: 'Sprich Nein zum Zorn.', spells: ['lo', 'לא'], success: 'Balaks Echo verstummt kurz.' },
-      { prompt: 'Schenke Segen.', spells: ['barak', 'ברכה'], success: 'Ein warmer Hauch gleitet ueber den Pfad.' },
+    words: ['shama', 'lo', 'barak'],
+    descriptions: [
+      'Hoere den Herzschlag des Berges.',
+      'Sag Nein zum Zorn.',
+      'Schenke Segen.',
     ],
   },
   {
     id: 'truthPlateFive',
-    x: 404,
-    steps: [
-      { prompt: 'Hoere auf Israel.', spells: ['shama', 'שמע'], success: 'Du hoerst Jubel wie fernes Rauschen.' },
-      { prompt: 'Sag Nein zu der Forderung.', spells: ['lo', 'לא'], success: 'Der Boden wird fest.' },
-      { prompt: 'Segne das Volk.', spells: ['barak', 'ברכה'], success: 'Ein Lichtstrahl zieht ueber das Lager.' },
+    words: ['shama', 'lo', 'barak'],
+    descriptions: [
+      'Hoere auf Israel.',
+      'Sag Nein zum Fluch.',
+      'Segne das Volk.',
     ],
   },
   {
     id: 'truthPlateSix',
-    x: 468,
-    steps: [
-      { prompt: 'Hoere den Engel hinter dir.', spells: ['shama', 'שמע'], success: 'Die Luft klingt wie Metall.' },
-      { prompt: 'Verneine den Fluch.', spells: ['lo', 'לא'], success: 'Ein Fluchzeichen zerreisst.' },
-      { prompt: 'Segne Balaks Angst.', spells: ['barak', 'ברכה'], success: 'Ein sanfter Ton legt sich auf den Pfad.' },
+    words: ['shama', 'lo', 'barak'],
+    descriptions: [
+      'Hoere auf den Engel hinter dir.',
+      'Verneine Balaks Stimme.',
+      'Segne Balaks Angst.',
     ],
   },
   {
     id: 'truthPlateSeven',
-    x: 532,
-    steps: [
-      { prompt: 'Hoere noch einmal.', spells: ['shama', 'שמע'], success: 'Die Linien brummen im Takt.' },
-      { prompt: 'Sage Nein zu dir selbst.', spells: ['lo', 'לא'], success: 'Stolz verfluessigt sich.' },
-      { prompt: 'Segne den kommenden Stern.', spells: ['barak', 'ברכה'], success: 'Ein Sternfunke haelt ueber dem Pfad.' },
+    words: ['shama', 'lo', 'barak'],
+    descriptions: [
+      'Hoere ein letztes Mal.',
+      'Sag Nein zu dir selbst.',
+      'Segne den Stern, der kommt.',
     ],
   },
 ];
 
 export async function runLevelNine() {
   const plan = levelAmbiencePlan.level9;
-  const lineProps = cloneSceneProps(PISGA_LINE_SCENE.props);
 
-  applySceneConfig({ ...PISGA_LINE_SCENE, props: lineProps });
+  const pisgaProps = cloneSceneProps(PISGA_LINE_SCENE.props);
+  applySceneConfig({ ...PISGA_LINE_SCENE, props: pisgaProps });
   ensureAmbience(plan?.review ?? PISGA_LINE_SCENE.ambience ?? 'courtAudience');
   setSceneContext({ level: 'level9', phase: 'pisga-lines' });
   await showLevelTitle('Level 9 - Die Stimme des Wahren');
   await fadeToBase(600);
 
-  await phasePisgaLines(lineProps);
+  await phasePisgaLines(pisgaProps);
 
   const dabarProps = cloneSceneProps(DABAR_SCENE.props);
-  await transitionToScene(DABAR_SCENE, plan?.learn, dabarProps, 'dabar-pillar');
+  await transitionToScene(plan?.learn, DABAR_SCENE, dabarProps, 'dabar');
   await phaseDabarPillars(dabarProps);
 
   const mirrorProps = cloneSceneProps(MIRROR_SCENE.props);
-  await transitionToScene(MIRROR_SCENE, plan?.learn, mirrorProps, 'mirror');
+  await transitionToScene(plan?.learn, MIRROR_SCENE, mirrorProps, 'mirror');
   await phaseTruthMirror(mirrorProps);
 
   const gardenProps = cloneSceneProps(GARDEN_SCENE.props);
-  await transitionToScene(GARDEN_SCENE, plan?.learn, gardenProps, 'truth-garden');
+  await transitionToScene(plan?.learn, GARDEN_SCENE, gardenProps, 'garden');
   await phaseGardenEmet(gardenProps);
 
   await phaseSecondOracle();
 
   const oathProps = cloneSceneProps(OATH_SCENE.props);
-  await transitionToScene(OATH_SCENE, plan?.apply, oathProps, 'oath');
+  await transitionToScene(plan?.apply, OATH_SCENE, oathProps, 'oath');
   await phaseOathCircle(oathProps);
 
-  await narratorSay('Balak stampft mit den Fuessen. Seine Schatten loesen sich vom Boden.');
-  await donkeySay('Die Wahrheit steht. Doch Balak wird sie noch pruefen.');
+  await narratorSay('Balak stampft. Seine Schatten loesen sich vom Boden.');
+  await donkeySay('Du hast das wahre Wort gesprochen. Bereite dich auf seine letzte Forderung vor.');
   await fadeToBlack(720);
 }
 
-function getPropX(props, id, fallback = wizard.x) {
-  const prop = props.find(entry => entry.id === id);
-  return prop ? prop.x : fallback;
-}
-
 async function phasePisgaLines(props) {
-  await narratorSay('Der Gipfel von Pisga zeichnet Kreise aus Licht. Jeder Kreis wartet auf dein Wort.');
-  await donkeySay('Halte den Wahrheitskreis, bevor Balaks Zorn ihn zerreisst.');
-
+  await narratorSay('Der Gipfel des Pisga zeichnet sieben Kreise aus Licht. Halte sie mit Hoeren, Nein und Segen.');
   for (const plate of PISGA_TASKS) {
-    const target = getPropX(props, plate.id, plate.x);
+    const target = props.find(entry => entry.id === plate.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 18 });
-
-    for (const step of plate.steps) {
-      let solved = false;
-      let attempts = 0;
-      while (!solved) {
-        const answerInput = await promptBubble(
-          anchorX(wizard, -6),
-          anchorY(wizard, -60),
-          step.prompt,
-          anchorX(wizard, 0),
-          anchorY(wizard, -34),
-        );
-        const answer = normalizeHebrewInput(answerInput);
-
-        if (step.spells.some(spell => spellEquals(answer, spell))) {
-          solved = true;
-          if (step.effect) step.effect(props);
+    for (let i = 0; i < plate.words.length; i += 1) {
+      const expected = plate.words[i];
+      const prompt = plate.descriptions[i];
+      let done = false;
+      while (!done) {
+        const answer = await readWord(prompt);
+        const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'ברכה';
+        if (spellEquals(answer, expected, variant)) {
+          done = true;
           await celebrateGlyph(answer);
-          await narratorSay(step.success);
-          continue;
-        }
-
-        attempts++;
-        if (attempts === 1) {
-          await donkeySay('Erinnere dich: Hoeren, Nein, Segen.');
         } else {
-          attempts = 0;
-          await narratorSay('Der Kreis bleibt offen. Versuche es erneut mit Klarheit.');
+          await donkeySay('Erinnere dich: hoere, verneine, segne.');
         }
       }
     }
+    updateProp(props, plate.id, { type: 'pisgaAltarPlateLit' });
+    if (plate.fragment) {
+      addProp(props, { id: `truthFragment${plate.fragment}`, type: 'truthFragment', x: wizard.x + 14, y: wizard.y - 44, parallax: 0.9, letter: plate.fragment });
+    }
   }
-
   await narratorSay('Der Wahrheitskreis schliesst sich. Balaks Schleier flackert.');
 }
 
 async function phaseDabarPillars(props) {
-  await narratorSay('Drei Saeulen steigen aus Licht. Jede verlangt Hoeren, Nein und das neue Wort.');
-
+  await narratorSay('Gott gibt dir das Wort: „Sollte ich reden und es nicht tun?“');
   const sequence = ['shama', 'lo', 'dabar'];
-  for (let cycle = 0; cycle < 3; cycle++) {
-    for (let index = 0; index < sequence.length; index++) {
-      const expected = sequence[index];
-      const pillarId = cycle === 0 ? 'dabarPillarOne'
-        : cycle === 1 ? 'dabarPillarTwo'
-        : 'dabarPillarThree';
-      const target = getPropX(props, pillarId);
-      await waitForWizardToReach(target, { tolerance: 16 });
-
-      let satisfied = false;
-      while (!satisfied) {
-        const answerInput = await promptBubble(
-          anchorX(wizard, -4),
-          anchorY(wizard, -58),
-          index === 0 ? 'Hoere zuerst.' : index === 1 ? 'Sprich das Nein.' : 'Sprich dabar.',
-          anchorX(wizard, 2),
-          anchorY(wizard, -32),
-        );
-        const answer = normalizeHebrewInput(answerInput);
-
-        if (spellEquals(answer, expected, expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'דבר')) {
-          satisfied = true;
-          if (index === 2) {
-            updateProp(props, pillarId, { type: 'resonancePillarLit' });
-            const letter = cycle === 0 ? 'ב' : cycle === 1 ? 'ב' : 'ר';
-            addProp(props, { id: `dabarFragment${cycle}`, type: 'truthFragment', x: wizard.x + 12, y: wizard.y - 44, parallax: 0.92, letter });
-          }
+  for (let i = 0; i < props.length; i += 1) {
+    const id = i === 0 ? 'dabarPillarOne' : i === 1 ? 'dabarPillarTwo' : 'dabarPillarThree';
+    const target = props.find(entry => entry.id === id)?.x ?? wizard.x + 180;
+    await waitForWizardToReach(target, { tolerance: 16 });
+    for (const expected of sequence) {
+      let ok = false;
+      while (!ok) {
+        const answer = await readWord(expected === 'shama' ? 'Hoere zuerst.' : expected === 'lo' ? 'Sprich לא.' : 'Sprich דבר (dabar).');
+        const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'דבר';
+        if (spellEquals(answer, expected, variant)) {
+          ok = true;
           await celebrateGlyph(answer);
-          await narratorSay(index === 2 ? 'Die Saeule resonniniert. Ein Fragment loest sich.' : 'Der Klang bewegt sich weiter.');
-          continue;
+        } else {
+          await donkeySay('Reihenfolge: shama, lo, dabar.');
         }
-
-        if (spellEquals(answer, 'barak', 'ברכה')) {
-          await narratorSay('Segen wartet noch. Erst das Wort, das geschieht.');
-          continue;
-        }
-
-        await donkeySay('Lausche, verneine, dann sprich dabar.');
       }
     }
+    updateProp(props, id, { type: 'resonancePillarLit' });
   }
-
-  await narratorSay('Dabar lebt in deinem Mund. Balak spuellt seine Haende im Sand.');
+  await narratorSay('Dabar lebt in deinem Mund.');
   await Promise.all([
-    showLevelTitle('דבר (dabar)', 3000),
+    showLevelTitle('דבר (dabar)', 2800),
     donkeySay('Dabar – das Wort, das geschieht.'),
   ]);
 }
 
 async function phaseTruthMirror(props) {
   await narratorSay('Zwei Spiegel warten: einer fuer das Wort, einer fuer die Wahrheit.');
-
   let stage = 0;
   while (stage < 2) {
-    const prompt = stage === 0
-      ? 'Sprich dabar in den Spiegel.'
-      : 'Nun bestaetige die Wahrheit: emet.';
-    const answerInput = await promptBubble(
-      anchorX(wizard, -4),
-      anchorY(wizard, -60),
-      prompt,
-      anchorX(wizard, 2),
-      anchorY(wizard, -34),
-    );
-    const answer = normalizeHebrewInput(answerInput);
-
-    if (stage === 0 && spellEquals(answer, 'dabar', 'דבר')) {
-      updateProp(props, 'mirrorSymbolDabar', { type: 'truthMirrorSymbolLit' });
-      await celebrateGlyph(answer);
-      await narratorSay('Der Spiegel zeigt das Wort, wie es geschieht.');
-      stage = 1;
-      continue;
+    if (stage === 0) {
+      const answer = await readWord('Sprich דבר (dabar) in den Spiegel.');
+      if (spellEquals(answer, 'dabar', 'דבר')) {
+        updateProp(props, 'mirrorDabar', { type: 'truthMirrorSymbolLit' });
+        await celebrateGlyph(answer);
+        stage = 1;
+      } else {
+        await donkeySay('Zuerst das Wort.');
+      }
+    } else {
+      const answer = await readWord('Sprich אמת (emet), damit der Spiegel die Wahrheit zeigt.');
+      if (spellEquals(answer, 'emet', 'אמת')) {
+        updateProp(props, 'mirrorEmet', { type: 'truthMirrorSymbolLit' });
+        addProp(props, { id: 'emetFragmentAleph', type: 'truthFragment', x: wizard.x + 16, y: wizard.y - 44, parallax: 0.9, letter: 'א' });
+        await celebrateGlyph(answer);
+        stage = 2;
+      } else {
+        await donkeySay('Erst das wahre Wort, dann die Wahrheit selbst.');
+      }
     }
-
-    if (stage === 1 && spellEquals(answer, 'emet', 'אמת')) {
-      updateProp(props, 'mirrorSymbolEmet', { type: 'truthMirrorSymbolLit' });
-      addProp(props, { id: 'emetFragmentAleph', type: 'truthFragment', x: wizard.x + 12, y: wizard.y - 44, parallax: 0.92, letter: 'א' });
-      await celebrateGlyph(answer);
-      await narratorSay('Wahrheit spiegelt die Welt. Fragment א verbindet sich mit deinem Grimoire.');
-      stage = 2;
-      break;
-    }
-
-    await donkeySay('Erst das Wort, dann die Wahrheit.');
-    stage = 0;
   }
 }
 
 async function phaseGardenEmet(props) {
-  await narratorSay('Ein Garten aus Licht wartet. Jedes Zeichen verlangt Wahrheit.');
-
-  const symbols = ['gardenSymbolTent', 'gardenSymbolGarden', 'gardenSymbolTree', 'gardenSymbolLion'];
+  await narratorSay('Ein Garten aus Licht breitet sich aus: Zelte, Gaerten, Baeume, Loewen warten auf Wahrheit.');
+  const symbols = ['symbolTent', 'symbolGarden', 'symbolTree', 'symbolLion'];
   for (const id of symbols) {
-    const target = getPropX(props, id);
+    const target = props.find(entry => entry.id === id)?.x ?? wizard.x + 180;
     await waitForWizardToReach(target, { tolerance: 18 });
-
-    let resolved = false;
-    while (!resolved) {
-      const answerInput = await promptBubble(
-        anchorX(wizard, -6),
-        anchorY(wizard, -60),
-        'Sprich אמת (emet), um das Zeichen zu erfuellen.',
-        anchorX(wizard, 0),
-        anchorY(wizard, -34),
-      );
-      const answer = normalizeHebrewInput(answerInput);
+    let ok = false;
+    while (!ok) {
+      const answer = await readWord('Sprich אמת (emet), damit das Bild wahr bleibt.');
       if (spellEquals(answer, 'emet', 'אמת')) {
-        resolved = true;
+        ok = true;
         updateProp(props, id, { type: 'truthMirrorSymbolLit' });
         await celebrateGlyph(answer);
-        await narratorSay('Die Wahrheit legt das Zeichen frei.');
-        continue;
+      } else {
+        await donkeySay('Nur die Wahrheit haelt das Bild.');
       }
-
-      if (spellEquals(answer, 'barak', 'ברכה')) {
-        await narratorSay('Der Garten dankt fuer den Segen, doch wartet noch auf Wahrheit.');
-        continue;
-      }
-
-      await donkeySay('Nenne das Wort der Wahrheit.');
     }
   }
-
-  addProp(props, { id: 'emetFragmentMem', type: 'truthFragment', x: wizard.x + 14, y: wizard.y - 42, parallax: 0.92, letter: 'מ' });
-  addProp(props, { id: 'emetFragmentTaw', type: 'truthFragment', x: wizard.x + 18, y: wizard.y - 46, parallax: 0.92, letter: 'ת' });
-  await celebrateGlyph('emet');
+  addProp(props, { id: 'emetFragmentMem', type: 'truthFragment', x: wizard.x + 18, y: wizard.y - 46, parallax: 0.9, letter: 'מ' });
+  addProp(props, { id: 'emetFragmentTaw', type: 'truthFragment', x: wizard.x + 24, y: wizard.y - 48, parallax: 0.9, letter: 'ת' });
+  await celebrateGlyph('אמת');
   await narratorSay('Emet vollendet sich. Das Netz aus Licht wird stabil.');
 }
 
 async function phaseSecondOracle() {
-  await narratorSay('Du sprichst das zweite und dritte Orakel. Balak schlaegt die Haende verzweifelt zusammen.');
-  await wizardSay('Gesegnet sei, wer dich segnet, und verflucht, wer dich verflucht.');
-  await donkeySay('Worte sind Tore. Du hast sie geoeffnet.');
+  await narratorSay('Bileam spricht: „Gesegnet sei, wer dich segnet, und verflucht, wer dich verflucht.“');
+  await donkeySay('Worte sind Tore. Du hast sie geöffnet.');
 }
 
 async function phaseOathCircle(props) {
-  await narratorSay('Ein Wahrheitskreis erscheint. Er verlangt deine Treue.');
-
-  const sequence = ['shama', 'dabar', 'emet', 'barak'];
+  await narratorSay('Ein Wahrheitskreis verlangt deine Treue. Sprich shama → dabar → emet → barak.');
+  const order = [
+    { word: 'shama', prompt: 'Sprich שמע.' },
+    { word: 'dabar', prompt: 'Sprich דבר.' },
+    { word: 'emet', prompt: 'Sprich אמת.' },
+    { word: 'barak', prompt: 'Sprich ברכה.' },
+  ];
   let index = 0;
-  while (index < sequence.length) {
-    const answerInput = await promptBubble(
-      anchorX(wizard, -4),
-      anchorY(wizard, -60),
-      'Sprich die Wahrheitsformel.',
-      anchorX(wizard, 2),
-      anchorY(wizard, -34),
-    );
-    const answer = normalizeHebrewInput(answerInput);
-    const expected = sequence[index];
-    const variant = expected === 'shama' ? 'שמע'
-      : expected === 'dabar' ? 'דבר'
-      : expected === 'emet' ? 'אמת'
-      : 'ברכה';
-
-    if (spellEquals(answer, expected, variant)) {
-      index++;
-      if (index === sequence.length) {
-        updateProp(props, 'truthCircle', { type: 'truthCircleSealLit' });
-      }
+  while (index < order.length) {
+    const { word, prompt } = order[index];
+    const variant = word === 'shama' ? 'שמע' : word === 'dabar' ? 'דבר' : word === 'emet' ? 'אמת' : 'ברכה';
+    const answer = await readWord(prompt);
+    if (spellEquals(answer, word, variant)) {
+      index += 1;
       await celebrateGlyph(answer);
-      await narratorSay('Der Kreis nimmt das Wort an.');
-      continue;
+    } else {
+      await donkeySay('Reihenfolge: shama, dabar, emet, barak.');
+      index = 0;
     }
-
-    if (spellEquals(answer, 'lo', 'לא')) {
-      await narratorSay('Das Nein schuetzt, aber der Kreis verlangt mehr.');
-      continue;
-    }
-
-    await donkeySay('Reihenfolge: shama, dabar, emet, barak.');
-    index = 0;
   }
+  updateProp(props, 'truthCircle', { type: 'truthCircleSealLit' });
+  await narratorSay('Der Kreis schliesst sich. Du bist Wahrheitsbote.');
 }
 
-async function transitionToScene(scene, ambienceKey, props, phase) {
+async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
   await fadeToBlack(320);
-  ensureAmbience(ambienceKey ?? scene.ambience ?? 'courtAudience');
+  ensureAmbience(ambienceKey ?? sceneConfig.ambience ?? 'courtAudience');
   setSceneProps([]);
-  applySceneConfig({ ...scene, props }, { setAmbience: false });
+  applySceneConfig({ ...sceneConfig, props }, { setAmbience: false });
   setSceneProps(props);
   setSceneContext({ level: 'level9', phase });
   await fadeToBase(360);
+}
+
+async function readWord(promptText) {
+  const input = await promptBubble(
+    anchorX(wizard, -6),
+    anchorY(wizard, -60),
+    promptText,
+    anchorX(wizard, 0),
+    anchorY(wizard, -34),
+  );
+  return normalizeHebrewInput(input);
 }

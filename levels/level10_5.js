@@ -63,6 +63,7 @@ const BALAK_MACHINE = cropStateMachine(SPELL_DUEL_MACHINE, BALAK_KNOWN_WORDS);
 BALAK_MACHINE.meta = {
   ...(BALAK_MACHINE.meta ? { ...BALAK_MACHINE.meta } : {}),
   enemyAccuracy: 0.88,
+  enemyAccuracyStreakLimit: 3,
 };
 
 export async function runLevelTenFive() {
