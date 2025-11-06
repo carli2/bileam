@@ -8,12 +8,14 @@ import {
   showLevelTitle,
   setSceneProps,
   waitForWizardToReach,
+  getCurrentAmbienceKey,
 } from '../scene.js';
 import {
   narratorSay,
   wizardSay,
   donkeySay,
   wizard,
+  donkey,
   applySceneConfig,
   cloneSceneProps,
   addProp,
@@ -34,10 +36,10 @@ const MOAB_APPROACH_SCENE = {
     { id: 'moabStallEast', type: 'marketStall', x: 388, align: 'ground', parallax: 0.96, layer: 0 },
     { id: 'moabScribeBooth', type: 'scribeBooth', x: 536, align: 'ground', parallax: 1.04, layer: 1 },
     { id: 'moabGrainBundle', type: 'gardenWheatBundle', x: 268, align: 'ground', parallax: 1.06, layer: 2 },
-    { id: 'moabWatcherNorth', type: 'moabWallWatcher', x: 156, align: 'ground', parallax: 0.88 },
-    { id: 'moabWatcherSouth', type: 'moabWallWatcher', x: 492, align: 'ground', parallax: 1.06 },
-    { id: 'balakWallFigure', type: 'balakFigure', x: 628, align: 'ground', parallax: 1.12 },
-    { id: 'balakAdvisor', type: 'balakAdvisor', x: 586, align: 'ground', parallax: 1.08 },
+    { id: 'moabWatcherNorth', type: 'moabWallWatcher', x: 146, align: 'ground', parallax: 0.88 },
+    { id: 'moabWatcherSouth', type: 'moabWallWatcher', x: 362, align: 'ground', parallax: 1.02 },
+    { id: 'balakWallFigure', type: 'balakFigure', x: 284, align: 'ground', parallax: 1.06 },
+    { id: 'balakAdvisor', type: 'balakAdvisor', x: 240, align: 'ground', parallax: 1.02 },
     { id: 'israelCampGlow', type: 'hoofSignTrail', x: 708, align: 'ground', parallax: 1.18 },
     { id: 'moabVisionRingWest', type: 'sandVisionRingDormant', x: 182, align: 'ground', parallax: 1 },
     { id: 'moabVisionRingCenter', type: 'sandVisionRingDormant', x: 326, align: 'ground', parallax: 1 },
@@ -81,6 +83,19 @@ const BORDER_SCENE = {
     { id: 'borderBush', type: 'borderThorn', x: 332, align: 'ground', parallax: 0.98 },
     { id: 'borderWatchFire', type: 'watchFireDormant', x: 492, align: 'ground', parallax: 1.02 },
     { id: 'borderTrailGlow', type: 'hoofSignTrail', x: 552, align: 'ground', parallax: 1.1 },
+  ],
+};
+
+const PALACE_SCENE = {
+  ambience: 'courtAudience',
+  props: [
+    { id: 'palaceGlow', type: 'canyonMist', x: -96, align: 'ground', offsetY: -60, parallax: 0.3, layer: -3 },
+    { id: 'palaceFloor', type: 'borderProcessionPath', x: -80, align: 'ground', parallax: 0.5, layer: -2 },
+    { id: 'palaceBannerWest', type: 'marketBanner', x: -12, align: 'ground', offsetY: -36, parallax: 0.76, layer: -1 },
+    { id: 'palaceBannerEast', type: 'marketBanner', x: 188, align: 'ground', offsetY: -36, parallax: 0.78, layer: -1 },
+    { id: 'palaceBalakEcho', type: 'balakFigure', x: 112, align: 'ground', parallax: 1, layer: 1 },
+    { id: 'palaceAdvisorWest', type: 'balakAdvisor', x: 36, align: 'ground', parallax: 1, layer: 1 },
+    { id: 'palaceAdvisorEast', type: 'balakAdvisor', x: 220, align: 'ground', parallax: 1, layer: 1 },
   ],
 };
 
@@ -246,15 +261,11 @@ async function phaseMoabVisionRings(props) {
 
 async function phaseEnvoyDialogue(props) {
   await narratorSay('Petor, am Euphrat. Ein stilles Feuer lodert, Lichtlinien laufen unter dem Sand.');
-  const envoy = props.find(entry => entry.id === 'petorEnvoyNorth');
-  if (envoy) {
-    const meetingX = envoy.x - 36;
-    if (meetingX > wizard.x + 12) {
-      await waitForWizardToReach(meetingX, { tolerance: 18 });
-    }
-  }
+  await ensureWizardBesideProp(props, 'petorEnvoyNorth');
   await propSay(props, 'petorEnvoyNorth', 'Siehe, ein Volk ist aus Ägypten gezogen, es bedeckt das ganze Land und lagert uns gegenüber.', { anchor: 'center' });
+  await ensureWizardBesideProp(props, 'petorEnvoyEast');
   await propSay(props, 'petorEnvoyEast', 'So komm nun und verfluche mir dieses Volk, denn es ist mir zu mächtig.', { anchor: 'center' });
+  await ensureWizardBesideProp(props, 'petorEnvoySouth');
   await propSay(props, 'petorEnvoySouth', 'Denn wir wissen: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist verflucht.', { anchor: 'center' });
   await wizardSay('Bleibt hier über Nacht. Ich will hören, was der HERR mir sagt.');
   ensurePropDefinition(props, {
@@ -270,7 +281,7 @@ async function phaseEnvoyDialogue(props) {
 async function phaseEnvoyResponses(props) {
   setSceneContext({ phase: 'envoys' });
   const collected = [];
-  await showLevelTitle('Spielphase I – Spur der Gesandten', 3600);
+  await showLevelTitle('Der Pfad der Gesandten', 3600);
   for (const step of ENVOY_SEQUENCE) {
     const target = props.find(entry => entry.id === step.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 18 });
@@ -305,11 +316,12 @@ async function phaseNightVision(props) {
   addProp(props, { id: 'petorGlyphComplete', type: 'noGlyphShard', x: wizard.x + 20, y: wizard.y - 48, parallax: 0.9, letter: 'לא' });
   await showLevelTitle('Neues Wort gelernt: לא (lo) – das Nein, das die Welt zusammenhält.', 3600);
   await narratorSay('Innere Stimme: Das Nein hallt nach. In seinem Echo höre ich den Raum zwischen den Dingen – das Unsichtbare, das doch alles trägt.');
+  await narratorSay('לא (lo) heißt Nein. אל (el) heißt Gott. Wenn du אל rückwärts liest, kommt לא heraus – ist das nicht lustig?');
 }
 
 async function phaseNightMeditation() {
   setSceneContext({ phase: 'meditation' });
-  await showLevelTitle('Spielphase II – Nacht der Stille', 3600);
+  await showLevelTitle('Die Nacht der Stille', 3600);
   await showLevelTitle('Ein Hörkreis aus Licht erscheint um dich.', 3200);
   await narratorSay('Schatten aus Balaks Palast greifen nach dir, doch das Nein, das du gelernt hast, hält den Kreis dreimal lang.');
   await narratorSay('Der Kreis schliesst sich. Der Atem der Nacht wird ruhig.');
@@ -328,21 +340,46 @@ async function phaseMorningRefusal(props) {
 }
 
 async function phaseBalakEdict(props) {
-  await withCameraFocusOnProp(props, 'palaceBalakEcho', async () => {
-    await showLevelTitle('Balaks Palast. Goldene Linien fließen über die Wände, doch sie flackern unruhig.', 3600);
-    const balakId = 'palaceBalakEcho';
-    addProp(props, { id: balakId, type: 'balakFigure', x: wizard.x + 160, align: 'ground', parallax: 0.96 });
-    await propSay(props, balakId, 'Dann sendet mehr. Stärkere Männer.', { anchor: 'center', offsetY: -32 });
-    await propSay(props, balakId, 'Vielleicht lässt er sich doch bewegen.', { anchor: 'center', offsetY: -32 });
-    await propSay(props, balakId, 'Gebt ihm Gold, und sagt: Der König wird ihn ehren.', { anchor: 'center', offsetY: -32 });
+  const previousAmbience = getCurrentAmbienceKey();
+  const palaceProps = createPalaceSceneProps();
+  const savedWizard = { x: wizard.x, y: wizard.y, facing: wizard.facing };
+  const savedDonkey = { x: donkey.x, y: donkey.y, facing: donkey.facing };
+  wizard.x = -1200;
+  donkey.x = wizard.x - 48;
+
+  await fadeToBlack(280);
+  setSceneProps(palaceProps);
+  ensureAmbience(PALACE_SCENE.ambience);
+  setSceneContext({ phase: 'palace' });
+  await fadeToBase(420);
+  await showLevelTitle('Balaks Palast. Goldene Linien fließen über die Wände, doch sie flackern unruhig.', 3600);
+
+  await withCameraFocusOnProp(palaceProps, 'palaceBalakEcho', async () => {
+    await propSay(palaceProps, 'palaceAdvisorWest', 'Er weigert sich, mein Herr. Sein Nein liegt schwer auf unseren Fürsten.', { anchor: 'center', offsetY: -28 });
+    await propSay(palaceProps, 'palaceBalakEcho', 'Dann sendet mehr. Stärkere Männer.', { anchor: 'center', offsetY: -34 });
+    await propSay(palaceProps, 'palaceAdvisorEast', 'Wir bringen reiche Gaben, doch seine Rede bleibt wie Stein.', { anchor: 'center', offsetY: -28 });
+    await propSay(palaceProps, 'palaceBalakEcho', 'Vielleicht lässt er sich doch bewegen. Gebt ihm Gold, und sagt: Der König wird ihn ehren.', { anchor: 'center', offsetY: -34 });
   });
+
+  await fadeToBlack(260);
+  setSceneProps(props);
+  ensureAmbience(previousAmbience ?? MOAB_APPROACH_SCENE.ambience ?? 'marketBazaar');
+  setSceneContext({ phase: 'morning' });
+  wizard.x = savedWizard.x;
+  wizard.y = savedWizard.y;
+  wizard.facing = savedWizard.facing;
+  donkey.x = savedDonkey.x;
+  donkey.y = savedDonkey.y;
+  donkey.facing = savedDonkey.facing;
+  await fadeToBase(360);
+
   await narratorSay('So sandte Balak noch mächtigere Fürsten, und mit ihnen begann der Weg, der zur Grenze führt.');
 }
 
 async function phaseBorderStations(props) {
   setSceneContext({ phase: 'border' });
   await narratorSay('Der Weg nach Moab führt entlang einer Grenze voller Schrift.');
-  await showLevelTitle('Spielphase IV – Aufbruch entlang der Grenze', 3600);
+  await showLevelTitle('Grenzweg der Schrift', 3600);
 
   for (const step of BORDER_SEQUENCE) {
     const target = props.find(entry => entry.id === step.id)?.x ?? wizard.x + 160;
@@ -450,4 +487,17 @@ function ensurePropDefinition(list, definition) {
   } else {
     addProp(list, definition);
   }
+}
+
+async function ensureWizardBesideProp(props, id, options = {}) {
+  const prop = Array.isArray(props) ? props.find(entry => entry.id === id) : null;
+  if (!prop) return;
+  const tolerance = Math.max(6, options.tolerance ?? 16);
+  const offset = options.offset ?? -24;
+  const meetingX = (prop.x ?? wizard.x) + offset;
+  await waitForWizardToReach(meetingX, { tolerance });
+}
+
+function createPalaceSceneProps() {
+  return cloneSceneProps(PALACE_SCENE.props);
 }

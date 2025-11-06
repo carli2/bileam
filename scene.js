@@ -2600,11 +2600,15 @@ function createGlyphShardSprite(c, letter) {
 
   const text = String(letter ?? '').trim();
   if (text.length > 0) {
-    const chars = Array.from(text);
+    let chars = Array.from(text);
+    const allHebrew = chars.length > 0 && chars.every(isHebrewChar);
+    if (allHebrew) {
+      chars = chars.reverse();
+    }
     const charWidth = 5;
     const charSpacing = 2;
     const totalChars = Math.min(chars.length, 3);
-    const textWidth = totalChars * charWidth + (totalChars - 1) * charSpacing;
+    const textWidth = totalChars * charWidth + Math.max(0, (totalChars - 1) * charSpacing);
     const offsetX = Math.max(2, Math.floor((width - textWidth) / 2));
     const offsetY = Math.max(2, Math.floor((height - 7) / 2));
     for (let i = 0; i < totalChars; i++) {
@@ -2626,6 +2630,12 @@ function createGlyphShardSprite(c, letter) {
   }
 
   return new Sprite(width, height, pixels);
+}
+
+function isHebrewChar(char) {
+  if (!char) return false;
+  const code = char.charCodeAt(0);
+  return code >= 0x0590 && code <= 0x05FF;
 }
 
 function createMarketBackdropSprite(c) {
