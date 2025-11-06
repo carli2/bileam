@@ -25,6 +25,7 @@ import {
   cloneSceneProps,
   spellEquals,
   celebrateGlyph,
+  divineSay,
 } from './utils.js';
 const RIVER_PROP_ID = RIVER_SCENE.props?.[0]?.id ?? 'riverPool';
 const RIVER_X = RIVER_SCENE.props?.[0]?.x ?? 620;
@@ -110,6 +111,7 @@ async function phaseTwoLearning(plan) {
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       await celebrateGlyph(answer);
       await narratorSay('Das Wasser beruhigt sich, Nebel hebt sich. Planken steigen aus der Tiefe.');
+      await divineSay('אני מי החיים\nIch bin das Wasser des Lebens.');
       break;
     }
 
