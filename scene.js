@@ -1738,7 +1738,7 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     const ascii = bufferChars.join('');
     const hebrew = transliterateToHebrew(ascii);
     state.transliterated = hebrew;
-    const display = '|' + hebrew;
+    const display = hebrew + '|';
     const {
       lines,
       sequence,
@@ -1750,7 +1750,9 @@ function createPromptBubble(x1, y1, text, x2, y2) {
     });
 
     const cursorGlyph = state.cursorVisible ? '|' : ' ';
-    const cursorNode = sequence.find(node => node.line === 0 && node.column === 0);
+    const primaryLineLength = lineLengths[0] ?? 0;
+    const cursorColumn = Math.max(0, primaryLineLength - 1);
+    const cursorNode = sequence.find(node => node.line === 0 && node.column === cursorColumn);
     if (cursorNode) {
       cursorNode.char = cursorGlyph;
     }
