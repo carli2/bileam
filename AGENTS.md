@@ -11,6 +11,10 @@ Der Spieler erlebt, dass **hebräische Wörter** Macht über Licht, Wasser, Stei
 Das Spiel verbindet **biblisch-mythische Atmosphäre** mit einer **subtil futuristischen Ästhetik** –  
 eine Welt, die aussieht, als wäre sie uralt und doch von einer höheren Technologie durchzogen.
 Metaphorisch ist Zaubern wie eine Parallele zur KI: allein durch das Wort wird Wirklichkeit geschaffen.
+Warum das geht?
+Die Welt ist quasi eine Simulation. Die Menschen (fleischliche Wesen) sind die KIs innerhalb der Welt.
+Die Geister, Engel, Dämonen und Gott sind NICHT Teil dieser Welt, sondern stehen über dieser, können aber trotzdem übernatürlich mit der Welt interagieren.
+Bileam bekommt seine Kraft von Gott. Dadurch erhält er auch übernatürliche Kräfte. Das wollen natürlich einige Leute ausnutzen, unter anderem der böse König Balak.
 
 > **Leitmotiv:** *„Worte sind Schlüssel im Bauplan der Schöpfung.“*
 
