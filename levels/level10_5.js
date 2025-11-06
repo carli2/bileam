@@ -79,14 +79,14 @@ export async function runLevelTenFive() {
 
   addProp(throneProps, { id: 'balakBoss', type: 'balakProcessCoreActive', align: 'ground', x: 332 });
 
-  await narratorSay('Balaks Schatten loest sich von seinem Leib. Schriftbahnen wueten wie Sturm.');
+  await narratorSay('Balaks Schatten löst sich von seinem Leib. Schriftbahnen wüten wie Sturm.');
   await donkeySay('Alle Worte stehen dir zu Diensten. Erwarte keine Gnade.');
   await wizardSay('Ich spreche nur, was ich gelernt habe – und nichts anderes.');
   await donkeySay('Dann sprich – und halte stand.');
 
   const outcome = await executeBalakFight(throneProps);
   if (outcome === 'win') {
-    await narratorSay('Balaks Schatten reisst. Sein Koerper sinkt in den Riss aus Licht.');
+    await narratorSay('Balaks Schatten reisst. Sein Körper sinkt in den Riss aus Licht.');
     await donkeySay('Der Stern bleibt – aber sein Griff ist gebrochen.');
     await fadeToBlack(640);
     setLifeBars(null);
@@ -236,7 +236,7 @@ async function handleFightDefeat(lastFailure) {
   if (stateLabel && suggestion) {
     await donkeySay(`Merke dir das Muster: In ${stateLabel} antwortest du am besten mit ${suggestion}.`);
   } else if (suggestion) {
-    await donkeySay(`Versuche es beim naechsten Mal mit ${suggestion}.`);
+    await donkeySay(`Versuche es beim nächsten Mal mit ${suggestion}.`);
   } else {
     await donkeySay('Beobachte seine Worte. Jeder Schatten folgt einem Muster.');
   }

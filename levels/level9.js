@@ -94,7 +94,7 @@ const PISGA_TASKS = [
     id: 'truthPlateOne',
     words: ['shama', 'lo', 'barak'],
     descriptions: [
-      'Hoere den ersten Kreis.',
+      'Höre den ersten Kreis.',
       'Versiegle ihn mit לא.',
       'Segne, was du gesehen hast.',
     ],
@@ -104,7 +104,7 @@ const PISGA_TASKS = [
     id: 'truthPlateTwo',
     words: ['shama', 'lo', 'barak'],
     descriptions: [
-      'Hoere erneut.',
+      'Höre erneut.',
       'Sag erneut Nein.',
       'Segne Balaks Furcht.',
     ],
@@ -122,7 +122,7 @@ const PISGA_TASKS = [
     id: 'truthPlateFour',
     words: ['shama', 'lo', 'barak'],
     descriptions: [
-      'Hoere den Herzschlag des Berges.',
+      'Höre den Herzschlag des Berges.',
       'Sag Nein zum Zorn.',
       'Schenke Segen.',
     ],
@@ -131,7 +131,7 @@ const PISGA_TASKS = [
     id: 'truthPlateFive',
     words: ['shama', 'lo', 'barak'],
     descriptions: [
-      'Hoere auf Israel.',
+      'Höre auf Israel.',
       'Sag Nein zum Fluch.',
       'Segne das Volk.',
     ],
@@ -140,7 +140,7 @@ const PISGA_TASKS = [
     id: 'truthPlateSix',
     words: ['shama', 'lo', 'barak'],
     descriptions: [
-      'Hoere auf den Engel hinter dir.',
+      'Höre auf den Engel hinter dir.',
       'Verneine Balaks Stimme.',
       'Segne Balaks Angst.',
     ],
@@ -149,7 +149,7 @@ const PISGA_TASKS = [
     id: 'truthPlateSeven',
     words: ['shama', 'lo', 'barak'],
     descriptions: [
-      'Hoere ein letztes Mal.',
+      'Höre ein letztes Mal.',
       'Sag Nein zu dir selbst.',
       'Segne den Stern, der kommt.',
     ],
@@ -186,16 +186,16 @@ export async function runLevelNine() {
   await transitionToScene(plan?.apply, OATH_SCENE, oathProps, 'oath');
   await phaseOathCircle(oathProps);
 
-  await narratorSay('Balak stampft. Seine Schatten loesen sich vom Boden.');
+  await narratorSay('Balak stampft. Seine Schatten lösen sich vom Boden.');
   await donkeySay('Du hast das wahre Wort gesprochen. Bereite dich auf seine letzte Forderung vor.');
   await fadeToBlack(720);
 }
 
 async function phasePisgaLines(props) {
-  await narratorSay('Balak und Bileam erreichen den zerkluefteten Grat des Pisga. Unter ihnen liegen die Lager vergangener Versuche, ueber ihnen kreisen Glyphen aus Klang.');
-  await propSay(props, 'pisgaBalak', 'Komm an einen andern Ort. Von hier wirst du nur das aeusserste Ende sehen – vielleicht kannst du mir dort das Volk verfluchen.', { anchor: 'center' });
-  await wizardSay('Baue mir hier sieben Altaere und opfere sieben junge Stiere und sieben Widder.');
-  await narratorSay('Aktive Worte: lo, shama, barak. Neue Worte zum Ergruenden: dabar (דבר) – Wort, das geschieht; emet (אמת) – Wahrheit, die traegt. Ziel: Errichte den Wahrheitskreis, bevor Balaks Druck das Gewebe reisst.');
+  await narratorSay('Balak und Bileam erreichen den zerklüfteten Grat des Pisga. Unter ihnen liegen die Lager vergangener Versuche, über ihnen kreisen Glyphen aus Klang.');
+  await propSay(props, 'pisgaBalak', 'Komm an einen andern Ort. Von hier wirst du nur das äußerste Ende sehen – vielleicht kannst du mir dort das Volk verfluchen.', { anchor: 'center' });
+  await wizardSay('Baue mir hier sieben Altäre und opfere sieben junge Stiere und sieben Widder.');
+  await narratorSay('Aktive Worte: lo, shama, barak. Neue Worte zum Ergründen: dabar (דבר) – Wort, das geschieht; emet (אמת) – Wahrheit, die trägt. Ziel: Errichte den Wahrheitskreis, bevor Balaks Druck das Gewebe reisst.');
   for (const plate of PISGA_TASKS) {
     const target = props.find(entry => entry.id === plate.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 18 });
@@ -210,7 +210,7 @@ async function phasePisgaLines(props) {
           done = true;
           await celebrateGlyph(answer);
         } else {
-          await donkeySay('Erinnere dich: hoere, verneine, segne.');
+          await donkeySay('Erinnere dich: höre, verneine, segne.');
         }
       }
     }
@@ -223,7 +223,7 @@ async function phasePisgaLines(props) {
 }
 
 async function phaseDabarPillars(props) {
-  await divineSay('Ich bin nicht ein Mensch, dass ich luege, noch ein Menschenkind, dass ich bereue. Sollte ich reden und es nicht tun? Sollte ich sprechen und es nicht halten?\nלא איש אל ויכזב ובן אדם ויתנחם ההוא אמר ולא יעשה ודבר ולא יקימנה');
+  await divineSay('Ich bin nicht ein Mensch, dass ich Lüge, noch ein Menschenkind, dass ich bereue. Sollte ich reden und es nicht tun? Sollte ich sprechen und es nicht halten?\nלא איש אל ויכזב ובן אדם ויתנחם ההוא אמר ולא יעשה ודבר ולא יקימנה');
   const sequence = ['shama', 'lo', 'dabar'];
   const pillarFragments = ['ב', 'ר'];
   for (let i = 0; i < props.length; i += 1) {
@@ -233,7 +233,7 @@ async function phaseDabarPillars(props) {
     for (const expected of sequence) {
       let ok = false;
       while (!ok) {
-        const answer = await readWord(expected === 'shama' ? 'Hoere zuerst.' : expected === 'lo' ? 'Sprich לא.' : 'Sprich דבר (dabar).');
+        const answer = await readWord(expected === 'shama' ? 'Höre zuerst.' : expected === 'lo' ? 'Sprich לא.' : 'Sprich דבר (dabar).');
         const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'דבר';
         if (spellEquals(answer, expected, variant)) {
           ok = true;
@@ -257,7 +257,7 @@ async function phaseDabarPillars(props) {
 }
 
 async function phaseTruthMirror(props) {
-  await narratorSay('Zwei Spiegel warten: einer fuer das Wort, einer fuer die Wahrheit.');
+  await narratorSay('Zwei Spiegel warten: einer für das Wort, einer für die Wahrheit.');
   let stage = 0;
   while (stage < 2) {
     if (stage === 0) {
@@ -284,7 +284,7 @@ async function phaseTruthMirror(props) {
 }
 
 async function phaseGardenEmet(props) {
-  await narratorSay('Ein Garten aus Licht breitet sich aus: Zelte, Gaerten, Baeume, Loewen warten auf Wahrheit.');
+  await narratorSay('Ein Garten aus Licht breitet sich aus: Zelte, Gärten, Bäume, Löwen warten auf Wahrheit.');
   const symbols = ['symbolTent', 'symbolGarden', 'symbolTree', 'symbolLion'];
   for (const id of symbols) {
     const target = props.find(entry => entry.id === id)?.x ?? wizard.x + 180;
@@ -297,7 +297,7 @@ async function phaseGardenEmet(props) {
         updateProp(props, id, { type: 'truthMirrorSymbolLit' });
         await celebrateGlyph(answer);
       } else {
-        await donkeySay('Nur die Wahrheit haelt das Bild.');
+        await donkeySay('Nur die Wahrheit hält das Bild.');
       }
     }
   }
@@ -309,17 +309,17 @@ async function phaseGardenEmet(props) {
 
 async function phaseSecondOracle(props) {
   await narratorSay('Bileam spricht:');
-  await wizardSay('Man sieht kein Unheil in Jakob, keine Muehsal in Israel. Der HERR, sein Gott, ist bei ihm, und es jauchzt dem König zu.');
+  await wizardSay('Man sieht kein Unheil in Jakob, keine Mühsal in Israel. Der HERR, sein Gott, ist bei ihm, und es jauchzt dem König zu.');
   await wizardSay('Daher hilft kein Zaubern gegen Jakob und kein Wahrsagen gegen Israel. Zu rechter Zeit wird gesagt, was Gott gewirkt hat.');
-  await wizardSay('Gott hat sie aus Aegypten gefuehrt; er ist fuer sie wie das Horn des Wildstiers.');
-  await wizardSay('Wie Taeeler, die sich ausbreiten, wie Gaerten an Wassern, wie Aloebaeume, die der HERR pflanzt, wie Zedern an den Wassern.');
-  await wizardSay('Er hat sich hingestreckt wie ein Loewe – wer will ihn aufstoeren?');
+  await wizardSay('Gott hat sie aus Ägypten geführt; er ist für sie wie das Horn des Wildstiers.');
+  await wizardSay('Wie Täler, die sich ausbreiten, wie Gärten an Wassern, wie Aloebäume, die der HERR pflanzt, wie Zedern an den Wassern.');
+  await wizardSay('Er hat sich hingestreckt wie ein Löwe – wer will ihn aufstören?');
   await wizardSay('Gesegnet sei, wer dich segnet, und verflucht, wer dich verflucht!');
   await propSay(props, 'gardenBalakShadow', 'Wenn du schon nicht fluchst, so segne sie wenigstens nicht!', { anchor: 'center' });
   await wizardSay('Hab ich dir nicht gesagt: Alles, was der HERR redet, das werde ich tun?');
   await narratorSay('Innere Stimme: Vielleicht ist jedes wahre Wort ein Tor.');
-  await narratorSay('Innere Stimme: Wenn es gesprochen wird, oeffnet sich fuer einen Augenblick der Plan des Lichts, der uns alle traegt.');
-  await donkeySay('Worte sind Tore. Du hast sie geoeffnet.');
+  await narratorSay('Innere Stimme: Wenn es gesprochen wird, öffnet sich für einen Augenblick der Plan des Lichts, der uns alle trägt.');
+  await donkeySay('Worte sind Tore. Du hast sie geöffnet.');
 }
 
 async function phaseOathCircle(props) {

@@ -95,14 +95,14 @@ const TERRACE_STEPS = [
     id: 'terraceOne',
     actions: [
       { prompt: 'Blockiere Balaks Befehl mit לא.', spells: ['lo', 'לא'] },
-      { prompt: 'Hoere auf die Waechter: sprich שמע.', spells: ['shama', 'שמע'] },
+      { prompt: 'Höre auf die Wächter: sprich שמע.', spells: ['shama', 'שמע'] },
     ],
     fragment: 'ב',
   },
   {
     id: 'terraceTwo',
     actions: [
-      { prompt: 'Enthuelle die Schrift mit אור.', spells: ['or', 'אור'] },
+      { prompt: 'Enthülle die Schrift mit אור.', spells: ['or', 'אור'] },
       { prompt: 'Setze erneut ein Nein.', spells: ['lo', 'לא'] },
     ],
   },
@@ -116,17 +116,17 @@ const TERRACE_STEPS = [
 ];
 
 const ALTAR_SEQUENCE = [
-  { id: 'altarNorth', prompt: 'Hoere am nördlichen Altar.', spells: ['shama', 'שמע'] },
+  { id: 'altarNorth', prompt: 'Höre am nördlichen Altar.', spells: ['shama', 'שמע'] },
   { id: 'altarNorthEast', prompt: 'Sichere den Altar mit lo.', spells: ['lo', 'לא'] },
   { id: 'altarEast', prompt: 'Lass Licht auf den Altar fallen.', spells: ['or', 'אור'] },
-  { id: 'altarSouthEast', prompt: 'Hoere erneut.', spells: ['shama', 'שמע'] },
+  { id: 'altarSouthEast', prompt: 'Höre erneut.', spells: ['shama', 'שמע'] },
   { id: 'altarSouth', prompt: 'Verneine Balaks Fluch.', spells: ['lo', 'לא'] },
   { id: 'altarSouthWest', prompt: 'Laß Wasser beruhigen.', spells: ['mayim', 'majim', 'mjm', 'מים'] },
   { id: 'altarWest', prompt: 'Segne, was du erweckt hast.', spells: ['barak', 'ברך'], fragment: 'ר' },
 ];
 
 const RESONANCE_STEPS = [
-  { id: 'resonanceOuter', prompt: 'Hoere den äußeren Ring: sprich שמע.', spells: ['shama', 'שמע'] },
+  { id: 'resonanceOuter', prompt: 'Höre den äußeren Ring: sprich שמע.', spells: ['shama', 'שמע'] },
   { id: 'resonanceMiddle', prompt: 'Banne den Fluch mit לא.', spells: ['lo', 'לא'] },
   { id: 'resonanceInner', prompt: 'Sprich ברך, um den Segen freizusetzen.', spells: ['barak', 'ברך'] },
 ];
@@ -169,14 +169,14 @@ export async function runLevelEight() {
 }
 
 async function phaseBalakGreeting(props) {
-  await narratorSay('Staubiger Wind fegt ueber die terrassierten Huegel. Balak wartet auf einer Basaltplattform, Moabs Lager glimmt wie ein Raster aus goldenen Punkten.');
-  await propSay(props, 'balakArrival', 'Hab ich nicht zu dir gesandt und dich rufen lassen? Meinst du, ich koennte dich nicht ehren?', { anchor: 'center', offsetY: -34 });
+  await narratorSay('Staubiger Wind fegt über die terrassierten Hügel. Balak wartet auf einer Basaltplattform, Moabs Lager glimmt wie ein Raster aus goldenen Punkten.');
+  await propSay(props, 'balakArrival', 'Hab ich nicht zu dir gesandt und dich rufen lassen? Meinst du, ich könnte dich nicht ehren?', { anchor: 'center', offsetY: -34 });
   await wizardSay('Siehe, ich bin zu dir gekommen. Aber wie kann ich etwas anderes reden als das, was mir Gott in den Mund gibt? Nur das kann ich reden.');
-  await narratorSay('Aktive Worte: lo, shama. Neues Wort zum Erwachen: barak (ברך) – Segen freisetzen. Ziel: Halte Balaks Erwartungen in Grenzen und bereite die sieben Altaere vor.');
+  await narratorSay('Aktive Worte: lo, shama. Neues Wort zum Erwachen: barak (ברך) – Segen freisetzen. Ziel: Halte Balaks Erwartungen in Grenzen und bereite die sieben Altäre vor.');
 }
 
 async function phaseTerraceTrials(props) {
-  await narratorSay('Drei Terrassen pruefen deine Worte. Jede Stufe verlangt Hoeren und Nein.');
+  await narratorSay('Drei Terrassen prüfen deine Worte. Jede Stufe verlangt Hören und Nein.');
   for (const step of TERRACE_STEPS) {
     const target = props.find(entry => entry.id === step.id)?.x ?? wizard.x + 140;
     await waitForWizardToReach(target, { tolerance: 18 });
@@ -189,7 +189,7 @@ async function phaseTerraceTrials(props) {
           await celebrateGlyph(answer);
           await narratorSay('Die Stufe reagiert auf dein Wort.');
         } else {
-          await donkeySay('Nutze das passende Wort fuer diese Stufe.');
+          await donkeySay('Nutze das passende Wort für diese Stufe.');
         }
       }
     }
@@ -240,11 +240,11 @@ async function phaseResonance(props) {
         await celebrateGlyph(answer);
         await narratorSay('Der Ring antwortet auf dein Wort.');
       } else {
-        await donkeySay('Hoere, verneine und segne – in dieser Reihenfolge.');
+        await donkeySay('Höre, verneine und segne – in dieser Reihenfolge.');
       }
     }
   }
-  await narratorSay('Das Wort ברך formt sich ueber deinen Haenden.');
+  await narratorSay('Das Wort ברך formt sich über deinen Händen.');
   let learned = false;
   while (!learned) {
     const answer = await readWord('Sprich ברך (barak).');
@@ -262,9 +262,9 @@ async function phaseResonance(props) {
 
 async function phaseFirstOracle(props) {
   await narratorSay('Bileam hebt an mit seinem Spruch und spricht:');
-  await wizardSay('Aus Aram hat mich Balak holen lassen, vom Gebirge des Ostens: Komm, verfluche mir Jakob, komm, verwuensche Israel!');
-  await wizardSay('Wie soll ich fluchen, dem Gott nicht flucht? Wie soll ich verwuenschen, den der HERR nicht verwuenscht?');
-  await wizardSay('Denn von der Hoehe der Felsen sehe ich ihn, und von den Huegeln schaue ich ihn. Siehe, das Volk wohnt abgesondert und wird sich nicht zu den Voelkern rechnen.');
+  await wizardSay('Aus Aram hat mich Balak holen lassen, vom Gebirge des Ostens: Komm, verfluche mir Jakob, komm, verwünsche Israel!');
+  await wizardSay('Wie soll ich fluchen, dem Gott nicht flucht? Wie soll ich verwünschen, den der HERR nicht verwünscht?');
+  await wizardSay('Denn von der Höhe der Felsen sehe ich ihn, und von den Hügeln schaue ich ihn. Siehe, das Volk wohnt abgesondert und wird sich nicht zu den Völkern rechnen.');
   await propSay(props, 'balakWaiting', 'Was tust du mir an? Ich habe dich holen lassen, um meine Feinde zu verfluchen – und siehe, du segnest sie!', { anchor: 'center' });
   await wizardSay('Muss ich nicht reden, was der HERR in meinen Mund gibt?');
 }
@@ -275,9 +275,9 @@ async function phaseBlessingSequence() {
   let index = 0;
   while (index < order.length) {
     const prompts = [
-      'Hoere zuerst: sprich שמע.',
+      'Höre zuerst: sprich שמע.',
       'Blockiere Balaks Wunsch mit לא.',
-      'Vervollstaendige den Segen mit ברך.',
+      'Vervollständige den Segen mit ברך.',
     ];
     const answer = await readWord(prompts[index]);
     const expected = order[index];
@@ -290,7 +290,7 @@ async function phaseBlessingSequence() {
       index = 0;
     }
   }
-  await narratorSay('Eine Segenwelle rollt über das Lager. Balak beisst die Zaehne zusammen.');
+  await narratorSay('Eine Segenwelle rollt über das Lager. Balak beisst die Zähne zusammen.');
 }
 
 async function phaseReflection() {
@@ -299,16 +299,16 @@ async function phaseReflection() {
 }
 
 async function phaseBalakUngeduld(props) {
-  await narratorSay('Balak versucht, den Segen zu zerreissen; rote Lichtadern schlagen aus seinen Haenden.');
+  await narratorSay('Balak versucht, den Segen zu zerreissen; rote Lichtadern schlagen aus seinen Händen.');
   await propSay(props, 'balakWaiting', 'Komm mit mir an einen andern Ort. Von hier siehst du zu viel. Vielleicht kannst du mir dort das Ende verfluchen.', { anchor: 'center' });
 }
 
 async function phasePisgaPath(props) {
-  await narratorSay('Der Weg zum Pisga ist mit Schrift übersaet.');
+  await narratorSay('Der Weg zum Pisga ist mit Schrift übersät.');
   const steps = [
-    { id: 'pisgaStone', prompt: 'Der Spaeherstein verlangt einen Segen: sprich ברך.', spells: ['barak', 'ברך'] },
-    { id: 'pisgaCleft', prompt: 'Hoere und verneine Balaks Linie (שמע, dann לא).', sequence: ['shama', 'lo'] },
-    { id: 'pisgaPortal', prompt: 'Oeffne das Portal mit לא und schliesse mit ברך.', sequence: ['lo', 'barak'] },
+    { id: 'pisgaStone', prompt: 'Der Späherstein verlangt einen Segen: sprich ברך.', spells: ['barak', 'ברך'] },
+    { id: 'pisgaCleft', prompt: 'Höre und verneine Balaks Linie (שמע, dann לא).', sequence: ['shama', 'lo'] },
+    { id: 'pisgaPortal', prompt: 'Öffne das Portal mit לא und schliesse mit ברך.', sequence: ['lo', 'barak'] },
   ];
   for (const step of steps) {
     const target = props.find(entry => entry.id === step.id)?.x ?? wizard.x + 200;

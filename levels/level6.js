@@ -135,7 +135,7 @@ const BORDER_SEQUENCE = [
     id: 'borderStone',
     word: 'lo',
     glyph: 'לא',
-    description: 'Der Schriftstein fordert ein Nein; dein Wort zerfaellt Balaks Befehl zu Staub.',
+    description: 'Der Schriftstein fordert ein Nein; dein Wort zerfällt Balaks Befehl zu Staub.',
     effect: props => ensurePropDefinition(props, {
       id: 'borderStoneGlyph',
       type: 'soundGlyph',
@@ -148,7 +148,7 @@ const BORDER_SEQUENCE = [
     id: 'borderBush',
     word: 'mayim',
     glyph: 'מים',
-    description: 'Tau glaenzt auf den Dornen, die Eselin kann passieren.',
+    description: 'Tau glänzt auf den Dornen, die Eselin kann passieren.',
     effect: props => ensurePropDefinition(props, {
       id: 'borderBushDew',
       type: 'waterGlyph',
@@ -187,17 +187,17 @@ export async function runLevelSix() {
   await phaseBorderStations(borderProps);
   await phaseWatchFire(borderProps);
 
-  await narratorSay('Die neuen Fuersten reiten voraus. Es geht nach Moab.');
-  await donkeySay('Er lernt, zu hoeren, was man nicht sagen darf.');
-  await donkeySay('Wer das Nein versteht, haelt den ersten Faden des Himmels in der Hand.');
+  await narratorSay('Die neuen Fürsten reiten voraus. Es geht nach Moab.');
+  await donkeySay('Er lernt, zu hören, was man nicht sagen darf.');
+  await donkeySay('Wer das Nein versteht, hält den ersten Faden des Himmels in der Hand.');
   await fadeToBlack(720);
 }
 
 async function phaseMoabPrelude(props) {
   await withCameraFocusOnProp(props, 'balakWallFigure', async () => {
-    await narratorSay('Danach lagerten sich die Israeliten in den Steppen Moabs, gegenueber Jericho.');
+    await narratorSay('Danach lagerten sich die Israeliten in den Steppen Moabs, gegenüber Jericho.');
     await narratorSay('Und Balak, der Sohn Zippors, sah alles, was Israel den Amoritern angetan hatte.');
-    await narratorSay('Und die Moabiter fuerchteten sich sehr, denn das Volk war gross, und ihnen graute vor den Israeliten.');
+    await narratorSay('Und die Moabiter fürchteten sich sehr, denn das Volk war gross, und ihnen graute vor den Israeliten.');
     await propSay(props, 'balakWallFigure', 'Sieh nur, sie bedecken das ganze Land...', { anchor: 'center', offsetX: -12 });
     await propSay(props, 'balakWallFigure', 'Wenn sie weitergehen, bleibt nur Staub.', { anchor: 'center', offsetX: -12 });
     await propSay(props, 'balakWallFigure', 'Wie ein Tier, das das Gras des Feldes frisst, so werden sie uns verzehren.', { anchor: 'center', offsetX: -12 });
@@ -220,7 +220,7 @@ async function phaseMoabPrelude(props) {
 }
 
 async function phaseMoabVisionRings(props) {
-  await narratorSay('Balaks Waechter blicken nach Osten. Drei sandgluehende Aussichtsringe warten auf deine Worte.');
+  await narratorSay('Balaks Wächter blicken nach Osten. Drei sandglühende Aussichtsringe warten auf deine Worte.');
   await showLevelTitle('Spielhinweis: Besuche die drei Ringe (links, Mitte, rechts).', 3800);
   const ringOrder = [
     { id: 'moabVisionRingWest', word: 'aor', glyph: 'אור' },
@@ -255,10 +255,10 @@ async function phaseEnvoyDialogue(props) {
       await waitForWizardToReach(meetingX, { tolerance: 18 });
     }
   }
-  await propSay(props, 'petorEnvoyNorth', 'Siehe, ein Volk ist aus Aegypten gezogen, es bedeckt das ganze Land und lagert uns gegenueber.', { anchor: 'center' });
-  await propSay(props, 'petorEnvoyEast', 'So komm nun und verfluche mir dieses Volk, denn es ist mir zu maechtig.', { anchor: 'center' });
+  await propSay(props, 'petorEnvoyNorth', 'Siehe, ein Volk ist aus Ägypten gezogen, es bedeckt das ganze Land und lagert uns gegenüber.', { anchor: 'center' });
+  await propSay(props, 'petorEnvoyEast', 'So komm nun und verfluche mir dieses Volk, denn es ist mir zu mächtig.', { anchor: 'center' });
   await propSay(props, 'petorEnvoySouth', 'Denn wir wissen: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist verflucht.', { anchor: 'center' });
-  await wizardSay('Bleibt hier ueber Nacht. Ich will hoeren, was der HERR mir sagt.');
+  await wizardSay('Bleibt hier über Nacht. Ich will hören, was der HERR mir sagt.');
   ensurePropDefinition(props, {
     id: 'petorNightSignal',
     type: 'resonanceRingDormant',
@@ -293,57 +293,57 @@ async function phaseEnvoyResponses(props) {
     }
     await narratorSay(step.description);
   }
-  await narratorSay('Die Fragmente ל und א schweben ueber deiner Hand. Ein neues Wort wartet.');
+  await narratorSay('Die Fragmente ל und א schweben über deiner Hand. Ein neues Wort wartet.');
 }
 
 async function phaseNightVision(props) {
   setSceneContext({ phase: 'night' });
   await narratorSay('Dunkelheit senkt sich. Nur das Flackern des Feuers und ein Rauschen, als atme die Welt selbst.');
-  await divineSay('Wer sind die Maenner, die bei dir sind?\nמי האנשים האלה עמך');
+  await divineSay('Wer sind die Männer, die bei dir sind?\nמי האנשים האלה עמך');
   await wizardSay('Balak, Sohn Zippors, hat mich gerufen, zu verfluchen ein Volk, das das Land bedeckt.');
   await divineSay('Geh nicht mit ihnen. Verfluche das Volk nicht – denn es ist gesegnet.\nלא תלך עמהם לא תאר את העם כי ברוך הוא');
 
   await celebrateGlyph('לא');
   addProp(props, { id: 'petorGlyphComplete', type: 'noGlyphShard', x: wizard.x + 20, y: wizard.y - 48, parallax: 0.9, letter: 'לא' });
-  await showLevelTitle('Neues Wort gelernt: לא (lo) – das Nein, das die Welt zusammenhaelt.', 3600);
-  await narratorSay('Innere Stimme: Das Nein hallt nach. In seinem Echo hoere ich den Raum zwischen den Dingen – das Unsichtbare, das doch alles traegt.');
+  await showLevelTitle('Neues Wort gelernt: לא (lo) – das Nein, das die Welt zusammenhält.', 3600);
+  await narratorSay('Innere Stimme: Das Nein hallt nach. In seinem Echo höre ich den Raum zwischen den Dingen – das Unsichtbare, das doch alles trägt.');
 }
 
 async function phaseNightMeditation() {
   setSceneContext({ phase: 'meditation' });
   await showLevelTitle('Spielphase II – Nacht der Stille', 3600);
-  await showLevelTitle('Ein Hoerkreis aus Licht erscheint um dich.', 3200);
-  await narratorSay('Schatten aus Balaks Palast greifen nach dir, doch das Nein, das du gelernt hast, haelt den Kreis dreimal lang.');
+  await showLevelTitle('Ein Hörkreis aus Licht erscheint um dich.', 3200);
+  await narratorSay('Schatten aus Balaks Palast greifen nach dir, doch das Nein, das du gelernt hast, hält den Kreis dreimal lang.');
   await narratorSay('Der Kreis schliesst sich. Der Atem der Nacht wird ruhig.');
 }
 
 async function phaseMorningRefusal(props) {
   setSceneContext({ phase: 'morning' });
   addProp(props, { id: 'petorGift', type: 'temptationVessel', x: wizard.x + 42, align: 'ground', parallax: 1.02 });
-  await narratorSay('Der Morgen graut. Geschenke in Lichtgefaessen warten, waehrend Balaks Stimme Ehre und Gold verheisst.');
+  await narratorSay('Der Morgen graut. Geschenke in Lichtgefäßen warten, während Balaks Stimme Ehre und Gold verheisst.');
   await wizardSay('Geht hin in euer Land. Der HERR wills nicht gestatten, dass ich mit euch ziehe.');
   await celebrateGlyph('לא');
   updateProp(props, 'petorGift', { type: 'temptationVesselAshes' });
   await narratorSay('Die Gabe verglimmt zu Staub.');
-  await narratorSay('Die Fuersten verbeugen sich, reiten ab. Ueber der Steppe liegt wieder jenes matte Flackern, als sei der Himmel nur ein duennes Tuch.');
-  await narratorSay('So kehrten die Fuersten zu Balak zurueck und sprachen: „Bileam weigert sich, mit uns zu ziehen.“');
+  await narratorSay('Die Fürsten verbeugen sich, reiten ab. Über der Steppe liegt wieder jenes matte Flackern, als sei der Himmel nur ein duennes Tuch.');
+  await narratorSay('So kehrten die Fürsten zu Balak zurück und sprachen: „Bileam weigert sich, mit uns zu ziehen.“');
 }
 
 async function phaseBalakEdict(props) {
   await withCameraFocusOnProp(props, 'palaceBalakEcho', async () => {
-    await showLevelTitle('Balaks Palast. Goldene Linien fliessen ueber die Waende, doch sie flackern unruhig.', 3600);
+    await showLevelTitle('Balaks Palast. Goldene Linien fliessen über die Wände, doch sie flackern unruhig.', 3600);
     const balakId = 'palaceBalakEcho';
     addProp(props, { id: balakId, type: 'balakFigure', x: wizard.x + 160, align: 'ground', parallax: 0.96 });
-    await propSay(props, balakId, 'Dann sendet mehr. Staerkere Maenner.', { anchor: 'center', offsetY: -32 });
-    await propSay(props, balakId, 'Vielleicht laesst er sich doch bewegen.', { anchor: 'center', offsetY: -32 });
+    await propSay(props, balakId, 'Dann sendet mehr. Stärkere Männer.', { anchor: 'center', offsetY: -32 });
+    await propSay(props, balakId, 'Vielleicht lässt er sich doch bewegen.', { anchor: 'center', offsetY: -32 });
     await propSay(props, balakId, 'Gebt ihm Gold, und sagt: Der König wird ihn ehren.', { anchor: 'center', offsetY: -32 });
   });
-  await narratorSay('So sandte Balak noch maechtigere Fuersten, und mit ihnen begann der Weg, der zur Grenze fuehrt.');
+  await narratorSay('So sandte Balak noch mächtigere Fürsten, und mit ihnen begann der Weg, der zur Grenze führt.');
 }
 
 async function phaseBorderStations(props) {
   setSceneContext({ phase: 'border' });
-  await narratorSay('Der Weg nach Moab fuehrt entlang einer Grenze voller Schrift.');
+  await narratorSay('Der Weg nach Moab führt entlang einer Grenze voller Schrift.');
   await showLevelTitle('Spielphase IV – Aufbruch entlang der Grenze', 3600);
 
   for (const step of BORDER_SEQUENCE) {

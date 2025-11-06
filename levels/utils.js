@@ -65,10 +65,10 @@ const DIVINE_BUBBLE_STYLE = {
 export function divineSay(text) {
   return say(
     () => (actorCenterX(wizard) + actorCenterX(donkey)) / 2,
-    () => Math.min(actorTopY(wizard), actorTopY(donkey)) - 140,
+    () => Math.min(actorTopY(wizard), actorTopY(donkey)) - 120,
     text,
     {
-      tipDirection: 'down',
+      tipDirection: 'up',
       bubbleStyle: DIVINE_BUBBLE_STYLE,
     },
   );

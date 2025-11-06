@@ -84,18 +84,18 @@ async function levelOneLearning(plan) {
         illuminated = true;
       }
       await celebrateGlyph(answer);
-      await narratorSay('Staub faengt an zu glimmen und die Oellampe flammt auf.');
+      await narratorSay('Staub faengt an zu glimmen und die Öllampe flammt auf.');
       await donkeySay('Oho! Das war hell!');
-      await wizardSay('Das Wort fuehlt sich warm an... wie eine Flamme in der Hand.');
+      await wizardSay('Das Wort fühlt sich warm an... wie eine Flamme in der Hand.');
       await wizardSay('אור (aor)');
-      await divineSay('Bedenke, Bileam, Sohn des Beor, ich habe dir diese Kraft gegeben. Benutze sie gut.\nזְכֹר בִּלְעָם בֶּן בְּעוֹר אֲנִי נָתַתִּי לְךָ הַכֹּחַ הַזֶּה הִשְׁתַּמֵּשׁ בּוֹ טוֹב');
+      await divineSay('Bedenke, Bileam, Sohn des Beor, ich habe dir diese Kraft gegeben. Benutze sie gut.\nזכר בלעם בן בעור אני נתתי לך הכח הזה השתמש בו טוב');
       setSceneContext({ phase: 'exploration' });
       break;
     }
 
     attemptsSinceRecap++;
     if (attemptsSinceRecap === 1) {
-      await donkeySay('Fast! Versuch, es laenger zu ziehen: A... O... R.');
+      await donkeySay('Fast! Versuch, es länger zu ziehen: A... O... R.');
     } else if (attemptsSinceRecap === 2) {
       await narratorSay('Das Wort verhallt, aber kein Licht kommt. Versuche, dich zu erinnern.');
       await narratorSay('A  O  R');
@@ -117,7 +117,7 @@ async function levelOneRecap() {
 
 async function levelOneDoorSequence(plan) {
   setSceneContext({ phase: 'apply' });
-  await donkeySay('Siehst du die Tuer? Sie leuchtet fuer dich – geh hin, Meister.');
+  await donkeySay('Siehst du die Tür? Sie leuchtet für dich – geh hin, Meister.');
   const target = doorTargetX();
   await waitForWizardToReach(target, { tolerance: 10 });
   await showLevelTitle('Das Tor wartet auf dein Licht.', 1800);
@@ -127,10 +127,10 @@ async function levelOneDoorSequence(plan) {
   setSceneContext({ phase: 'exit' });
   await fadeToBase(600);
   await showLevelTitle('אור', 2600);
-  await narratorSay('Das Wort אור steht wie ein Feuer ueber dem Eingang, ohne dass du es noch einmal sprichst.');
-  await narratorSay('Du spuerst, wie der Morgen hereinsickert.');
+  await narratorSay('Das Wort אור steht wie ein Feuer über dem Eingang, ohne dass du es noch einmal sprichst.');
+  await narratorSay('Du spürst, wie der Morgen hereinsickert.');
   await donkeySay('Da draussen wartet der Tag.');
-  await narratorSay('Ein warmer Morgen wartet vor der Tuer.');
+  await narratorSay('Ein warmer Morgen wartet vor der Tür.');
   await fadeToBlack(600);
 }
 

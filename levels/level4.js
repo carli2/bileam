@@ -148,7 +148,7 @@ async function phaseSunStone(plan, props) {
     if (spellEquals(answer, 'or', 'אור')) {
       updateProp(props, 'gardenSunStone', { type: 'sunStoneAwakened' });
       await celebrateGlyph(answer);
-      await narratorSay('Die Metallblaetter oeffnen sich, Licht bricht aus der Steinbluete und tanzt auf dem Wasser.');
+      await narratorSay('Die Metallblätter öffnen sich, Licht bricht aus der Steinblüte und tanzt auf dem Wasser.');
       return;
     }
 
@@ -253,7 +253,7 @@ async function phaseXayimReveal(props) {
       });
       await celebrateGlyph(answer);
       await narratorSay('Pflanzen sprießen, Bäume treiben Blüten, Wasser rinnt durch die Kanäle. Über der Statue Balaks wächst Moos.');
-      await divineSay('Ich habe das Leben erschaffen.\nאֲנִי בָּרָאתִי אֶת הַחַיִּים');
+      await divineSay('Ich habe das Leben erschaffen.\nאני בראתי את החיים');
       await balakSay(props, 'So sei es – dein Wort weckt den Staub. Vergiss nicht, wessen Auftrag du trägst.');
       return;
     }
@@ -296,7 +296,7 @@ async function phaseBreadOfLife(plan, props) {
     await narratorSay('Die Ähren legen sich zu einem einfachen Brot. Licht und Erde backen es zusammen.');
   }
 
-  await donkeySay('Wer Leben spricht, saet Brot. Und wer Brot teilt, spricht Leben.');
+  await donkeySay('Wer Leben spricht, sät Brot. Und wer Brot teilt, spricht Leben.');
   await wizardSay('Ich habe mit Worten Brot gemacht.');
   await donkeySay('Oder Brot hat dich gemacht. Wer weiss das schon?');
   await transitionAmbience(plan?.apply ?? plan?.learn ?? GARDEN_SCENE.ambience ?? 'gardenBloom', { fade: { toBlack: 180, toBase: 420 } });

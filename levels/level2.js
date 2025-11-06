@@ -70,7 +70,7 @@ async function phaseOneRecall(plan) {
 
     attempts++;
     if (attempts === 1) {
-      await donkeySay('Fast – denk daran, das O laenger zu ziehen. Aaaor.');
+      await donkeySay('Fast – denk daran, das O länger zu ziehen. Aaaor.');
     } else {
       await narratorSay('Der Nebel bleibt dicht. Stell dir die Hütte vor und das Licht darin.');
       await wizardSay('A... O... R.');
@@ -86,7 +86,7 @@ async function phaseTravelToWater(plan, riverProps) {
   const bounds = getScenePropBounds(RIVER_PROP_ID);
   const target = bounds ? bounds.left + bounds.width * 0.3 : RIVER_X;
   await waitForWizardToReach(target, { tolerance: 14 });
-  await narratorSay('Jetzt rauscht der Fluss zu deinen Fuessen.');
+  await narratorSay('Jetzt rauscht der Fluss zu deinen Füßen.');
 }
 
 async function phaseTwoLearning(plan) {
@@ -94,7 +94,7 @@ async function phaseTwoLearning(plan) {
   await wizardSay('Das Licht reicht nicht weit genug. Der Fluss bleibt wild.');
   await donkeySay('Dann brauchst du ein neues Wort, Meister. Geschrieben mim – gesprochen ma-im. Es bedeutet Wasser.');
   await wizardSay('Ma... im... Wasser.');
-  await donkeySay('Sprich es, und der Fluss hoert auf dich.');
+  await donkeySay('Sprich es, und der Fluss hört auf dich.');
 
   let attempts = 0;
   while (true) {
@@ -117,10 +117,10 @@ async function phaseTwoLearning(plan) {
     if (attempts === 1) {
       await donkeySay('Das i sitzt in der Mitte – m-i-m, lass es fliessen!');
     } else if (attempts === 2) {
-      await narratorSay('Der Fluss bleibt taub. Lass die Buchstaben ueber dem Wasser schweben: M I M.');
+      await narratorSay('Der Fluss bleibt taub. Lass die Buchstaben über dem Wasser schweben: M I M.');
     } else {
       attempts = 0;
-      await wizardSay('Vielleicht sollte ich zum Ufer zurueck.');
+      await wizardSay('Vielleicht sollte ich zum Ufer zurück.');
       await donkeySay('Atme wie der Fluss: maaaa-im. Lass es fliessen.');
     }
   }
@@ -128,8 +128,8 @@ async function phaseTwoLearning(plan) {
 
 async function phaseThreeApplication(plan, riverProps) {
   setSceneContext({ phase: 'apply' });
-  await narratorSay('Die Bruecke traegt dich. Doch mitten auf dem Fluss klafft eine Luecke.');
-  await narratorSay('Der Fluss wartet auf dein Wort, bevor er dich weiter traegt.');
+  await narratorSay('Die Brücke trägt dich. Doch mitten auf dem Fluss klafft eine Lücke.');
+  await narratorSay('Der Fluss wartet auf dein Wort, bevor er dich weiter trägt.');
 
   let filled = false;
   while (!filled) {
@@ -145,8 +145,8 @@ async function phaseThreeApplication(plan, riverProps) {
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       filled = true;
       await celebrateGlyph(answer);
-      await narratorSay('Eine transparente Welle hebt dich sanft an und traegt dich ans andere Ufer.');
-      await donkeySay('Gut gemacht, Meister. Worte fliessen – und wer sie kennt, kann Stroeme lenken.');
+      await narratorSay('Eine transparente Welle hebt dich sanft an und trägt dich ans andere Ufer.');
+      await donkeySay('Gut gemacht, Meister. Worte fliessen – und wer sie kennt, kann Ströme lenken.');
       await wizardSay('Dann ist Sprache wirklich Kraft?');
       await donkeySay('Vielleicht. Aber vergiss nicht: Zu viel Fluss – und du wirst davongetragen.');
       const glyphId = 'riverGlyph';
@@ -161,7 +161,7 @@ async function phaseThreeApplication(plan, riverProps) {
       await transitionAmbience(plan?.apply ?? plan?.learn ?? 'riverDawn', { fade: { toBlack: 140, toBase: 420 } });
       await fadeToBlack(800);
     } else {
-      await narratorSay('Das Wasser wartet noch. Hoere in den Fluss hinein und sprich es klar aus.');
+      await narratorSay('Das Wasser wartet noch. Höre in den Fluss hinein und sprich es klar aus.');
     }
   }
 }

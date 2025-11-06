@@ -48,9 +48,9 @@ export async function runLevelThree() {
 }
 
 async function phasePreparation() {
-  await narratorSay('Die Schlucht fluestert – doch kein Wort ist zu verstehen.');
-  await wizardSay('Ich spuere, dass hier ein Zauber aus Stein ruht.');
-  await donkeySay('Dann findest du ihn wohl nur, wenn du zuhoerst, was der Fels verlangt.');
+  await narratorSay('Die Schlucht flüstert – doch kein Wort ist zu verstehen.');
+  await wizardSay('Ich spüre, dass hier ein Zauber aus Stein ruht.');
+  await donkeySay('Dann findest du ihn wohl nur, wenn du zuhörst, was der Fels verlangt.');
   await wizardSay('Aber ich kenne das Wort noch nicht.');
   await donkeySay('Nutze, was du gelernt hast. Manchmal braucht der Stein Licht – manchmal Wasser.');
 }
@@ -60,7 +60,7 @@ async function phaseStoneArch(canyonProps, plan) {
 
   const archProp = findProp(canyonProps, 'canyonArch');
   const archTarget = archProp ? archProp.x + 36 : wizard.x + 140;
-  await donkeySay('Der Steinbogen dort vorne pulsiert. Geh hin und hoer hin.');
+  await donkeySay('Der Steinbogen dort vorne pulsiert. Geh hin und hör hin.');
   await waitForWizardToReach(archTarget, { tolerance: 16 });
   await narratorSay('Ein Onyxauge sitzt im Bogen – es atmet schwach und wartet auf Licht.');
 
@@ -78,7 +78,7 @@ async function phaseStoneArch(canyonProps, plan) {
     if (spellEquals(answer, 'or', 'אור')) {
       updateProp(canyonProps, 'canyonArch', null);
       await celebrateGlyph(answer);
-      await narratorSay('Der Onyx beginnt zu gluehen. Der Bogen spaltet sich lautlos, Lichtadern ziehen durch den Stein.');
+      await narratorSay('Der Onyx beginnt zu glühen. Der Bogen spaltet sich lautlos, Lichtadern ziehen durch den Stein.');
       setSceneContext({ phase: 'puzzle-water' });
       return;
     }
@@ -168,19 +168,19 @@ async function phaseRevelation(canyonProps) {
       updateProp(canyonProps, 'canyonMonolith', { type: 'monolithAwakened' });
       addProp(canyonProps, { id: 'canyonGlyph', type: 'soundGlyph', x: 596, y: 38, parallax: 0.8 });
       await celebrateGlyph(answer);
-      await narratorSay('Der Stein singt zurueck – ein klarer Ton rollt durch die Schlucht, Staub und Licht steigen auf.');
-      await divineSay('Vor meiner Stimme erzittern die Voelker.\nבקולי ירעדו גויים');
+      await narratorSay('Der Stein singt zurück – ein klarer Ton rollt durch die Schlucht, Staub und Licht steigen auf.');
+      await divineSay('Vor meiner Stimme erzittern die Völker.\nבקולי ירעדו גוים');
       return;
     }
 
     attempts++;
     if (attempts === 1) {
-      await donkeySay('Versuch, den Laut aus dem Bauch zu holen. Nicht fluestern – sprechen.');
+      await donkeySay('Versuch, den Laut aus dem Bauch zu holen. Nicht flüstern – sprechen.');
     } else if (attempts === 2) {
       await narratorSay('Der Fels bleibt stumm. Die Schrift verblasst und wartet.');
     } else {
       attempts = 0;
-      await narratorSay('Meditation: Du siehst die Buchstaben, hoerst die Laute – קול. Atme und versuche es erneut.');
+      await narratorSay('Meditation: Du siehst die Buchstaben, hörst die Laute – קול. Atme und versuche es erneut.');
     }
   }
 }
@@ -194,12 +194,12 @@ async function phaseResonanceWalk(plan, canyonProps) {
   await waitForWizardToReach(echoMarker, { tolerance: 14 });
   const echoSequences = [
     {
-      prompt: 'Ein Echo rollt von den Waenden. Sprich קול, um den Pfad zu staerken.',
-      success: 'Der Klang stabilisiert den Weg unter deinen Fuessen.',
+      prompt: 'Ein Echo rollt von den Wänden. Sprich קול, um den Pfad zu stärken.',
+      success: 'Der Klang stabilisiert den Weg unter deinen Füßen.',
     },
     {
       prompt: 'Ein zweites Echo antwortet tiefer aus dem Stein. Sprich קול erneut.',
-      success: 'Die Schlucht traegt deine Stimme weiter. Der Pfad bleibt offen.',
+      success: 'Die Schlucht trägt deine Stimme weiter. Der Pfad bleibt offen.',
     },
   ];
 

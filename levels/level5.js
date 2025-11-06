@@ -148,7 +148,7 @@ async function phaseAshRevelation(props) {
       updateProp(props, 'forgeIgnitionRing', { type: 'sunStoneAwakened' });
       await celebrateGlyph(answer);
       await narratorSay('Der Ring entzündet sich. Flammen tanzen den Wänden entlang – die Schmiede lebt.');
-      await divineSay('Mit Feuer werde ich richten.\nבָּאֵשׁ אֶשְׁפֹּט');
+      await divineSay('Mit Feuer werde ich richten.\nבאש אשפט');
       return;
     }
 

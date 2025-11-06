@@ -93,7 +93,7 @@ const PROCESSION_BANNERS = [
     wordPrompt: 'Sprich אור (or).',
     spells: ['or', 'אור'],
     sealPrompt: 'Versiegle das Banner mit לא (lo).',
-    response: 'Das Banner klaert sich. Balaks Befehl verliert an Kraft.',
+    response: 'Das Banner klärt sich. Balaks Befehl verliert an Kraft.',
   },
   {
     id: 'bannerTwo',
@@ -101,11 +101,11 @@ const PROCESSION_BANNERS = [
     wordPrompt: 'Sprich מים (mayim).',
     spells: ['mayim', 'majim', 'mjm', 'מים'],
     sealPrompt: 'Sprich לא, um Balaks Auftrag zu verneinen.',
-    response: 'Tau legt sich ueber die Schrift, das Banner wird still.',
+    response: 'Tau legt sich über die Schrift, das Banner wird still.',
   },
   {
     id: 'bannerThree',
-    introPrompt: 'Fluestern reisst an deinen Ohren.',
+    introPrompt: 'Flüstern reisst an deinen Ohren.',
     wordPrompt: 'Sprich קול (qol).',
     spells: ['qol', 'קול'],
     sealPrompt: 'Beende das Echo mit לא.',
@@ -146,17 +146,17 @@ export async function runLevelSeven() {
   await transitionToScene(plan?.apply, ALTAR_SCENE, altarProps, 'altar');
   await phaseListeningAltar(altarProps);
 
-  await narratorSay('Die Fuersten reiten weiter nach Moab. Die Eselin folgt, der Engel bleibt auf dem Weg.');
-  await donkeySay('Wer hoert, erkennt.');
+  await narratorSay('Die Fürsten reiten weiter nach Moab. Die Eselin folgt, der Engel bleibt auf dem Weg.');
+  await donkeySay('Wer hört, erkennt.');
   await donkeySay('Und wer erkennt, weiss, dass alles nur gesprochen ist. Bewahre shama und lo.');
   await fadeToBlack(720);
 }
 
 async function phaseProcessionIntro() {
-  await narratorSay('Da stand Bileam am Morgen auf, sattelte seine Eselin und zog mit den Fuersten der Moabiter. Doch der Zorn Gottes entbrannte, dass er hinzog.');
-  await narratorSay('Grauer Morgen ueber den Huegeln, Nebel haengt wie feine Stoffbahnen, Banner zittern im Wind.');
-  await showLevelTitle('Das Wort לא bleibt aktiv. Neues Lernwort: שמע (shama) – hoere und erkenne. Aufgabe: Folge den Fuersten, ohne den inneren Klang zu verlieren.', 5200);
-  await donkeySay('Bewahre das Nein, Meister. Wir werden hoeren muessen, nicht nur sehen.');
+  await narratorSay('Da stand Bileam am Morgen auf, sattelte seine Eselin und zog mit den Fürsten der Moabiter. Doch der Zorn Gottes entbrannte, dass er hinzog.');
+  await narratorSay('Grauer Morgen über den Hügeln, Nebel hängt wie feine Stoffbahnen, Banner zittern im Wind.');
+  await showLevelTitle('Das Wort לא bleibt aktiv. Neues Lernwort: שמע (shama) – höre und erkenne. Aufgabe: Folge den Fürsten, ohne den inneren Klang zu verlieren.', 5200);
+  await donkeySay('Bewahre das Nein, Meister. Wir werden hören müssen, nicht nur sehen.');
 }
 
 async function phaseHoofSteps(props) {
@@ -179,7 +179,7 @@ async function phaseHoofSteps(props) {
 }
 
 async function phaseProcessionBanners(props) {
-  await narratorSay('Die Fuersten tragen Schriftbanner. Pruefe sie mit deinen Worten.');
+  await narratorSay('Die Fürsten tragen Schriftbanner. Prüfe sie mit deinen Worten.');
   for (const banner of PROCESSION_BANNERS) {
     const anchor = props.find(entry => entry.id === banner.id)?.x ?? wizard.x + 180;
     await waitForWizardToReach(anchor, { tolerance: 16 });
@@ -214,19 +214,19 @@ async function phaseProcessionBanners(props) {
 async function phaseFirstResistance(props) {
   await narratorSay('Der Engel des HERRN steht im Weinberg. Sonne bricht durch Nebel, doch du siehst ihn nicht.');
   await donkeySay('Da steht etwas vor uns... aber du siehst es nicht.');
-  await wizardSay('Es ist nur ein Flimmern, fuehre mich weiter!');
+  await wizardSay('Es ist nur ein Flimmern, führe mich weiter!');
   let shamaCount = 0;
   while (shamaCount < 2) {
     const answer = await readWord('Wie antwortest du dem Licht im Weg?');
     if (spellEquals(answer, 'shama', 'שמע')) {
       shamaCount += 1;
-      await narratorSay('Ein Hoerstrahl verbindet dich mit dem Engel.');
+      await narratorSay('Ein Hörstrahl verbindet dich mit dem Engel.');
     } else if (spellEquals(answer, 'lo', 'לא')) {
-      await narratorSay('Das Nein haelt die Zeit an, doch der Engel bleibt.');
+      await narratorSay('Das Nein hält die Zeit an, doch der Engel bleibt.');
     } else if (spellEquals(answer, 'ash', 'אש')) {
       await narratorSay('Hitze flackert, aber der Engel ruht unbewegt.');
     } else {
-      await donkeySay('Hoere zuerst. Sprich שמע.');
+      await donkeySay('Höre zuerst. Sprich שמע.');
     }
   }
   await narratorSay('Die Eselin weicht auf das Feld aus. Der Engel wartet weiter.');
@@ -246,11 +246,11 @@ async function phaseSecondResistance(props) {
       await narratorSay('Die Mauern beginnen zu singen. Glyphen glimmen.');
     } else if (!denied && spellEquals(answer, 'lo', 'לא')) {
       denied = true;
-      await narratorSay('Der Boden stabilisiert sich. Die Eselin haelt stand.');
+      await narratorSay('Der Boden stabilisiert sich. Die Eselin hält stand.');
     } else if (spellEquals(answer, 'aor', 'or', 'אור')) {
-      await narratorSay('Licht beleuchtet den Engel, doch ohne Hoeren bleibt er still.');
+      await narratorSay('Licht beleuchtet den Engel, doch ohne Hören bleibt er still.');
     } else {
-      await donkeySay('Hoere – und sag Nein. Sonst kommen wir nicht weiter.');
+      await donkeySay('Höre – und sag Nein. Sonst kommen wir nicht weiter.');
     }
   }
   await narratorSay('Die Eselin drängt sich an der Mauer vorbei. Dein Fuß schmerzt, aber der Weg wird frei.');
@@ -260,7 +260,7 @@ async function phaseThirdResistance(props) {
   await narratorSay('Der Pfad verengt sich zur Schlucht. Kein Platz mehr zum Ausweichen.');
   await donkeySay('Ich kann nicht weiter.');
   await narratorSay('Die Eselin faellt auf die Knie. Stille, nur tiefer Bordun.');
-  await wizardSay('Waere doch ein Schwert in meiner Hand, ich wollte dich toeten!');
+  await wizardSay('Wäre doch ein Schwert in meiner Hand, ich wollte dich töten!');
   await donkeySay('War ich je anders? Bin ich nicht deine Eselin, auf der du geritten bist von jeher bis heute?');
   let loCount = 0;
   let shamaHeard = false;
@@ -271,24 +271,24 @@ async function phaseThirdResistance(props) {
       await narratorSay('Dein Zorn verstummt.');
     } else if (spellEquals(answer, 'shama', 'שמע')) {
       shamaHeard = true;
-      await narratorSay('Du hoerst den Herzschlag der Eselin – und den Engel deutlicher.');
+      await narratorSay('Du hörst den Herzschlag der Eselin – und den Engel deutlicher.');
     } else {
-      await donkeySay('Nie schlagen. Sag Nein – und hoere.');
+      await donkeySay('Nie schlagen. Sag Nein – und höre.');
     }
   }
   await wizardSay('Nein... lo.');
-  await narratorSay('Der Himmel oeffnet sich. Du siehst den Engel klar vor dir.');
+  await narratorSay('Der Himmel öffnet sich. Du siehst den Engel klar vor dir.');
 }
 
 async function phaseAngelRevelation(props) {
-  await narratorSay('Der HERR oeffnet dir die Augen. Du faellst nieder vor dem Engel aus gebuendeltem Licht.');
-  await propSay(props, 'revelationAngel', 'Warum hast du deine Eselin dreimal geschlagen? Ich stand dir entgegen, denn dein Weg fuehrt ins Verderben.', { anchor: 'center' });
-  await propSay(props, 'revelationAngel', 'Waere sie mir nicht ausgewichen, ich haette dich getoetet, sie aber leben lassen.', { anchor: 'center' });
-  await wizardSay('Ich habe gesuendigt. Ich wusste nicht, dass du mir entgegenstandest. Wenn es dir nicht gefällt, will ich umkehren.');
-  await propSay(props, 'revelationAngel', 'Zieh hin mit den Maennern, aber nichts anderes, als was ich dir sagen werde, sollst du reden.', { anchor: 'center' });
+  await narratorSay('Der HERR öffnet dir die Augen. Du faellst nieder vor dem Engel aus gebuendeltem Licht.');
+  await propSay(props, 'revelationAngel', 'Warum hast du deine Eselin dreimal geschlagen? Ich stand dir entgegen, denn dein Weg führt ins Verderben.', { anchor: 'center' });
+  await propSay(props, 'revelationAngel', 'Wäre sie mir nicht ausgewichen, ich hätte dich getötet, sie aber leben lassen.', { anchor: 'center' });
+  await wizardSay('Ich habe gesündigt. Ich wusste nicht, dass du mir entgegenstandest. Wenn es dir nicht gefällt, will ich umkehren.');
+  await propSay(props, 'revelationAngel', 'Zieh hin mit den Männern, aber nichts anderes, als was ich dir sagen werde, sollst du reden.', { anchor: 'center' });
   await Promise.all([
     showLevelTitle('שמע (shama)', 2800),
-    donkeySay('Das ist שמע – shama. Hoere, erkenne, gehorche.'),
+    donkeySay('Das ist שמע – shama. Höre, erkenne, gehorche.'),
   ]);
 
   let learnt = false;
@@ -307,7 +307,7 @@ async function phaseAngelRevelation(props) {
 }
 
 async function phaseListeningAltar(props) {
-  await narratorSay('Ein Hoeraltar wartet. Klangfaeden fallen herab.');
+  await narratorSay('Ein Höraltar wartet. Klangfäden fallen herab.');
   for (let index = 1; index <= 6; index += 1) {
     const expectsLo = index % 4 === 0;
     const expected = expectsLo ? 'lo' : 'shama';
@@ -329,9 +329,9 @@ async function phaseListeningAltar(props) {
       }
     }
   }
-  await narratorSay('Die Schutzform vollendet sich. Du fuehlst dich als Wahrheitsbote.');
+  await narratorSay('Die Schutzform vollendet sich. Du fühlst dich als Wahrheitsbote.');
   await narratorSay('Innere Stimme: Vielleicht stand der Engel nicht vor mir, sondern hinter dem Vorhang, wo der Stoff der Welt zu Ende geht.');
-  await narratorSay('Innere Stimme: Manche nennen es das Licht hinter dem Licht. Und wer lauscht, hoert ein fernes Echo – das Summen des ersten Wortes.');
+  await narratorSay('Innere Stimme: Manche nennen es das Licht hinter dem Licht. Und wer lauscht, hört ein fernes Echo – das Summen des ersten Wortes.');
 }
 
 async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
