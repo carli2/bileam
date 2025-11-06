@@ -250,14 +250,12 @@ export async function runFightLoop({
 
   const clamp01 = value => clamp(value, 0, 1);
 
-  const resolvedMistakeChance = (() => {
-    const paramAccuracy = typeof enemyAccuracy === 'number' ? clamp01(enemyAccuracy) : null;
-    const paramMistake = typeof enemyMistakeChance === 'number' ? clamp01(enemyMistakeChance) : null;
-    const metaAccuracy = typeof machineMeta.enemyAccuracy === 'number' ? clamp01(machineMeta.enemyAccuracy) : null;
-    const metaMistake = typeof machineMeta.enemyMistakeChance === 'number' ? clamp01(machineMeta.enemyMistakeChance) : null;
-    const derivedParam = paramMistake ?? (paramAccuracy != null ? 1 - paramAccuracy : null);
-    const derivedMeta = metaMistake ?? (metaAccuracy != null ? 1 - metaAccuracy : null);
-    return derivedParam ?? derivedMeta ?? 0.5;
+  const resolvedAccuracy = (() => {
+    if (typeof enemyAccuracy === 'number') return clamp01(enemyAccuracy);
+    if (typeof enemyMistakeChance === 'number') return clamp01(1 - enemyMistakeChance);
+    if (typeof machineMeta.enemyAccuracy === 'number') return clamp01(machineMeta.enemyAccuracy);
+    if (typeof machineMeta.enemyMistakeChance === 'number') return clamp01(1 - machineMeta.enemyMistakeChance);
+    return 0.7;
   })();
 
   const collectedVocabulary = (() => {
@@ -423,13 +421,21 @@ export async function runFightLoop({
       chosenWord = normalized ?? '';
     } else {
       const pickRandom = list => (list.length > 0 ? list[Math.floor(randomFn() * list.length)] : undefined);
-      const shouldFreestyle = resolvedMistakeChance > 0 && randomFn() < resolvedMistakeChance;
-      if (shouldFreestyle) {
-        chosenWord = pickRandom(collectedVocabulary) ?? null;
-      }
-      if (!chosenWord) {
-        const fallback = pickRandom(transitionKeys);
-        chosenWord = fallback ?? '';
+      const startTransitionKeys = Object.keys(states.start?.transitions ?? {});
+      const accuracyRoll = randomFn();
+      if (accuracyRoll < resolvedAccuracy) {
+        chosenWord = pickRandom(transitionKeys) ?? null;
+        if (!chosenWord) {
+          chosenWord = pickRandom(startTransitionKeys) ?? pickRandom(collectedVocabulary) ?? '';
+        }
+      } else {
+        chosenWord = pickRandom(startTransitionKeys) ?? null;
+        if (!chosenWord) {
+          chosenWord = pickRandom(collectedVocabulary) ?? null;
+        }
+        if (!chosenWord) {
+          chosenWord = pickRandom(transitionKeys) ?? '';
+        }
       }
       recentEnemyWord = chosenWord;
     }

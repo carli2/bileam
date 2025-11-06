@@ -22,6 +22,11 @@ import { runLevelFour } from './levels/level4.js';
 import { runLevelFive } from './levels/level5.js';
 import { runLevelFiveFive } from './levels/level5_5.js';
 import { runLevelSix } from './levels/level6.js';
+import { runLevelSeven } from './levels/level7.js';
+import { runLevelEight } from './levels/level8.js';
+import { runLevelNine } from './levels/level9.js';
+import { runLevelTen } from './levels/level10.js';
+import { runLevelTenFive } from './levels/level10_5.js';
 
 const LEVELS = [
   { id: 'level1', run: runLevelOne },
@@ -31,6 +36,11 @@ const LEVELS = [
   { id: 'level5', run: runLevelFive },
   { id: 'level5_5', run: runLevelFiveFive },
   { id: 'level6', run: runLevelSix },
+  { id: 'level7', run: runLevelSeven },
+  { id: 'level8', run: runLevelEight },
+  { id: 'level9', run: runLevelNine },
+  { id: 'level10', run: runLevelTen },
+  { id: 'level10_5', run: runLevelTenFive },
 ];
 
 const STORAGE_KEY = 'bileamProgress';

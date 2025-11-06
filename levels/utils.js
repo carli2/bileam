@@ -78,6 +78,13 @@ const SPELL_ALIASES = {
   majim: 'מים',
   mjm: 'מים',
   מים: 'מים',
+  // לא
+  lo: 'לא',
+  לא: 'לא',
+  // שמע
+  shama: 'שמע',
+  shema: 'שמע',
+  שמע: 'שמע',
   // קול
   qol: 'קול',
   kol: 'קול',
@@ -116,6 +123,7 @@ const SPELL_ALIASES = {
   bracha: 'ברכה',
   brcha: 'ברכה',
   ברכה: 'ברכה',
+  ברך: 'ברכה',
   // המלחמה
   hamilchama: 'המלחמה',
   milchama: 'המלחמה',
