@@ -24,6 +24,7 @@ import {
   updateProp,
   addProp,
   celebrateGlyph,
+  propSay,
 } from './utils.js';
 
 const PISGA_LINE_SCENE = {
@@ -38,6 +39,8 @@ const PISGA_LINE_SCENE = {
     { id: 'truthPlateFive', type: 'pisgaAltarPlate', x: 408, align: 'ground', parallax: 1.0 },
     { id: 'truthPlateSix', type: 'pisgaAltarPlate', x: 472, align: 'ground', parallax: 1.02 },
     { id: 'truthPlateSeven', type: 'pisgaAltarPlate', x: 536, align: 'ground', parallax: 1.04 },
+    { id: 'pisgaBanner', type: 'princeProcessionBanner', x: 112, align: 'ground', parallax: 0.9 },
+    { id: 'pisgaBalak', type: 'balakFigure', x: 612, align: 'ground', parallax: 1.08 },
   ],
 };
 
@@ -72,6 +75,7 @@ const GARDEN_SCENE = {
     { id: 'symbolGarden', type: 'truthMirrorSymbolDormant', x: 300, align: 'ground', parallax: 0.96 },
     { id: 'symbolTree', type: 'truthMirrorSymbolDormant', x: 380, align: 'ground', parallax: 0.98 },
     { id: 'symbolLion', type: 'truthMirrorSymbolDormant', x: 460, align: 'ground', parallax: 1.0 },
+    { id: 'gardenBalakShadow', type: 'balakFigure', x: 520, align: 'ground', parallax: 1.02 },
   ],
 };
 
@@ -175,7 +179,7 @@ export async function runLevelNine() {
   await transitionToScene(plan?.learn, GARDEN_SCENE, gardenProps, 'garden');
   await phaseGardenEmet(gardenProps);
 
-  await phaseSecondOracle();
+  await phaseSecondOracle(gardenProps);
 
   const oathProps = cloneSceneProps(OATH_SCENE.props);
   await transitionToScene(plan?.apply, OATH_SCENE, oathProps, 'oath');
@@ -187,7 +191,10 @@ export async function runLevelNine() {
 }
 
 async function phasePisgaLines(props) {
-  await narratorSay('Der Gipfel des Pisga zeichnet sieben Kreise aus Licht. Halte sie mit Hoeren, Nein und Segen.');
+  await narratorSay('Balak und Bileam erreichen den zerkluefteten Grat des Pisga. Unter ihnen liegen die Lager vergangener Versuche, ueber ihnen kreisen Glyphen aus Klang.');
+  await propSay(props, 'pisgaBalak', 'Komm an einen andern Ort. Von hier wirst du nur das aeusserste Ende sehen – vielleicht kannst du mir dort das Volk verfluchen.');
+  await wizardSay('Baue mir hier sieben Altaere und opfere sieben junge Stiere und sieben Widder.');
+  await narratorSay('Aktive Worte: lo, shama, barak. Neue Worte zum Ergruenden: dabar (דבר) – Wort, das geschieht; emet (אמת) – Wahrheit, die traegt. Ziel: Errichte den Wahrheitskreis, bevor Balaks Druck das Gewebe reisst.');
   for (const plate of PISGA_TASKS) {
     const target = props.find(entry => entry.id === plate.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 18 });
@@ -215,8 +222,9 @@ async function phasePisgaLines(props) {
 }
 
 async function phaseDabarPillars(props) {
-  await narratorSay('Gott gibt dir das Wort: „Sollte ich reden und es nicht tun?“');
+  await narratorSay('Gottes Stimme: „Ich bin nicht ein Mensch, dass ich luege, noch ein Menschenkind, dass ich bereue. Sollte ich reden und es nicht tun? Sollte ich sprechen und es nicht halten?“');
   const sequence = ['shama', 'lo', 'dabar'];
+  const pillarFragments = ['ב', 'ר'];
   for (let i = 0; i < props.length; i += 1) {
     const id = i === 0 ? 'dabarPillarOne' : i === 1 ? 'dabarPillarTwo' : 'dabarPillarThree';
     const target = props.find(entry => entry.id === id)?.x ?? wizard.x + 180;
@@ -235,6 +243,10 @@ async function phaseDabarPillars(props) {
       }
     }
     updateProp(props, id, { type: 'resonancePillarLit' });
+    const fragment = pillarFragments[i];
+    if (fragment) {
+      addProp(props, { id: `dabarFragment${fragment}`, type: 'truthFragment', x: wizard.x + 18 + i * 4, y: wizard.y - 44 - i * 3, parallax: 0.9, letter: fragment });
+    }
   }
   await narratorSay('Dabar lebt in deinem Mund.');
   await Promise.all([
@@ -294,9 +306,14 @@ async function phaseGardenEmet(props) {
   await narratorSay('Emet vollendet sich. Das Netz aus Licht wird stabil.');
 }
 
-async function phaseSecondOracle() {
-  await narratorSay('Bileam spricht: „Gesegnet sei, wer dich segnet, und verflucht, wer dich verflucht.“');
-  await donkeySay('Worte sind Tore. Du hast sie geöffnet.');
+async function phaseSecondOracle(props) {
+  await narratorSay('Bileam spricht:');
+  await narratorSay('„Man sieht kein Unheil in Jakob, keine Muehsal in Israel. Der HERR, sein Gott, ist bei ihm, und es jauchzt dem Koenig zu.“');
+  await narratorSay('„Daher hilft kein Zaubern gegen Jakob und kein Wahrsagen gegen Israel. Zu rechter Zeit wird gesagt, was Gott gewirkt hat.“');
+  await narratorSay('„Wie Taeeler, die sich ausbreiten, wie Gaerten an Wassern, wie Aloebaeume, die der HERR pflanzt, wie Zedern an den Wassern.“');
+  await narratorSay('„Gesegnet sei, wer dich segnet, und verflucht, wer dich verflucht!“');
+  await propSay(props, 'gardenBalakShadow', 'Wenn du schon nicht fluchst, so segne sie wenigstens nicht!');
+  await donkeySay('Worte sind Tore. Du hast sie geoeffnet.');
 }
 
 async function phaseOathCircle(props) {

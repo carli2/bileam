@@ -24,6 +24,7 @@ import {
   updateProp,
   addProp,
   celebrateGlyph,
+  propSay,
 } from './utils.js';
 
 const BAMOT_TERRACE_SCENE = {
@@ -34,6 +35,8 @@ const BAMOT_TERRACE_SCENE = {
     { id: 'terraceOne', type: 'altarGlyphPlateDormant', x: 168, align: 'ground', parallax: 0.96 },
     { id: 'terraceTwo', type: 'altarGlyphPlateDormant', x: 316, align: 'ground', parallax: 0.98 },
     { id: 'terraceThree', type: 'altarGlyphPlateDormant', x: 464, align: 'ground', parallax: 1.0 },
+    { id: 'balakArrival', type: 'balakFigure', x: 552, align: 'ground', parallax: 1.06 },
+    { id: 'terraceBanner', type: 'princeProcessionBanner', x: 112, align: 'ground', parallax: 0.94 },
   ],
 };
 
@@ -49,6 +52,8 @@ const ALTAR_FIELD_SCENE = {
     { id: 'altarSouth', type: 'altarGlyphPlateDormant', x: 428, align: 'ground', parallax: 0.98 },
     { id: 'altarSouthWest', type: 'altarGlyphPlateDormant', x: 500, align: 'ground', parallax: 0.99 },
     { id: 'altarWest', type: 'altarGlyphPlateDormant', x: 572, align: 'ground', parallax: 1.0 },
+    { id: 'altarAttendantOne', type: 'envoyShadow', x: 96, align: 'ground', parallax: 0.92 },
+    { id: 'altarAttendantTwo', type: 'envoyShadow', x: 608, align: 'ground', parallax: 1.04 },
   ],
 };
 
@@ -67,7 +72,10 @@ const ORACLE_SCENE = {
   ambience: 'desertTravel',
   wizardStartX: 100,
   donkeyOffset: -38,
-  props: [],
+  props: [
+    { id: 'balakWaiting', type: 'balakFigure', x: 268, align: 'ground', parallax: 0.94 },
+    { id: 'oracleBanner', type: 'princeProcessionBanner', x: 404, align: 'ground', parallax: 0.98 },
+  ],
 };
 
 const PISGA_SCENE = {
@@ -78,6 +86,7 @@ const PISGA_SCENE = {
     { id: 'pisgaStone', type: 'borderMilestone', x: 204, align: 'ground', parallax: 0.94 },
     { id: 'pisgaCleft', type: 'pisgaBridgeRunesDormant', x: 316, align: 'ground', parallax: 0.96 },
     { id: 'pisgaPortal', type: 'pisgaBridgeSegmentDormant', x: 432, align: 'ground', parallax: 0.98 },
+    { id: 'pisgaWindVeil', type: 'resonanceRingDormant', x: 508, align: 'ground', parallax: 1.08 },
   ],
 };
 
@@ -113,7 +122,7 @@ const ALTAR_SEQUENCE = [
   { id: 'altarSouthEast', prompt: 'Hoere erneut.', spells: ['shama', 'שמע'] },
   { id: 'altarSouth', prompt: 'Verneine Balaks Fluch.', spells: ['lo', 'לא'] },
   { id: 'altarSouthWest', prompt: 'Laß Wasser beruhigen.', spells: ['mayim', 'majim', 'mjm', 'מים'] },
-  { id: 'altarWest', prompt: 'Segne, was du erweckt hast.', spells: ['barak', 'ברכה'] },
+  { id: 'altarWest', prompt: 'Segne, was du erweckt hast.', spells: ['barak', 'ברכה'], fragment: 'ר' },
 ];
 
 const RESONANCE_STEPS = [
@@ -132,7 +141,7 @@ export async function runLevelEight() {
   await showLevelTitle('Level 8 - Der erste Blick vom Bamot-Baal');
   await fadeToBase(600);
 
-  await phaseBalakGreeting();
+  await phaseBalakGreeting(terraceProps);
   await phaseTerraceTrials(terraceProps);
 
   const altarProps = cloneSceneProps(ALTAR_FIELD_SCENE.props);
@@ -143,11 +152,12 @@ export async function runLevelEight() {
   await transitionToScene(plan?.learn, RESONANCE_SCENE, resonanceProps, 'resonance');
   await phaseResonance(resonanceProps);
 
-  await transitionToScene(plan?.learn, ORACLE_SCENE, [], 'oracle');
+  const oracleProps = cloneSceneProps(ORACLE_SCENE.props);
+  await transitionToScene(plan?.learn, ORACLE_SCENE, oracleProps, 'oracle');
   await phaseFirstOracle();
   await phaseBlessingSequence();
   await phaseReflection();
-  await phaseBalakUngeduld();
+  await phaseBalakUngeduld(oracleProps);
 
   const pisgaProps = cloneSceneProps(PISGA_SCENE.props);
   await transitionToScene(plan?.apply, PISGA_SCENE, pisgaProps, 'pisga');
@@ -158,9 +168,11 @@ export async function runLevelEight() {
   await fadeToBlack(720);
 }
 
-async function phaseBalakGreeting() {
-  await narratorSay('Balak kommt Bileam entgegen und spricht: „Hab ich dich nicht rufen lassen? Meinst du, ich koennte dich nicht ehren?“');
-  await wizardSay('„Siehe, ich bin gekommen – aber nur, was Gott in meinen Mund legt, kann ich reden.“');
+async function phaseBalakGreeting(props) {
+  await narratorSay('Staubiger Wind fegt ueber die terrassierten Huegel. Balak wartet auf einer Basaltplattform, Moabs Lager glimmt wie ein Raster aus goldenen Punkten.');
+  await propSay(props, 'balakArrival', 'Hab ich nicht zu dir gesandt und dich rufen lassen? Meinst du, ich koennte dich nicht ehren?');
+  await wizardSay('Siehe, ich bin zu dir gekommen. Aber wie kann ich etwas anderes reden als das, was mir Gott in den Mund gibt? Nur das kann ich reden.');
+  await narratorSay('Aktive Worte: lo, shama. Neues Wort zum Erwachen: barak (ברך) – Segen freisetzen. Ziel: Halte Balaks Erwartungen in Grenzen und bereite die sieben Altaere vor.');
 }
 
 async function phaseTerraceTrials(props) {
@@ -202,6 +214,9 @@ async function phaseSevenAltars(props) {
         updateProp(props, altar.id, { type: 'altarGlyphPlateLit' });
         await celebrateGlyph(answer);
         await narratorSay('Der Altar nimmt das Wort an. Rauch steigt ruhig empor.');
+        if (altar.fragment) {
+          addProp(props, { id: `altarFragment${altar.fragment}`, type: 'blessingFragment', x: wizard.x + 16, y: wizard.y - 44, parallax: 0.9, letter: altar.fragment });
+        }
       } else {
         await donkeySay('Der Altar reagiert nur auf das rechte Wort.');
       }
@@ -237,6 +252,7 @@ async function phaseResonance(props) {
       addProp(props, { id: 'barakFragmentKaf', type: 'blessingFragment', x: wizard.x + 18, y: wizard.y - 46, parallax: 0.9, letter: 'ך' });
       await celebrateGlyph(answer);
       await narratorSay('Segen strahlt wie warme Glut.');
+      await narratorSay('Fragmente ב, ר und ך drehen sich umeinander – sie warten auf deine Zustimmung.');
     } else {
       await donkeySay('Sprich es klar: ba-rak.');
     }
@@ -244,8 +260,11 @@ async function phaseResonance(props) {
 }
 
 async function phaseFirstOracle() {
-  await narratorSay('Bileam hebt an: „Wie soll ich fluchen, dem Gott nicht flucht?“');
-  await wizardSay('Von den Felsen sehe ich Israel – ein Volk, abgesondert und gesegnet.');
+  await narratorSay('Bileam hebt an mit seinem Spruch und spricht:');
+  await narratorSay('„Aus Aram hat mich Balak holen lassen, vom Gebirge des Ostens: Komm, verfluche mir Jakob, komm, verwuensche Israel!');
+  await narratorSay('Wie soll ich fluchen, dem Gott nicht flucht? Wie soll ich verwuenschen, den der HERR nicht verwuenscht?“');
+  await narratorSay('„Denn von der Hoehe der Felsen sehe ich ihn, und von den Huegeln schaue ich ihn. Siehe, das Volk wohnt abgesondert und wird sich nicht zu den Voelkern rechnen.“');
+  await wizardSay('Wie soll ich fluchen, dem Gott nicht flucht?');
 }
 
 async function phaseBlessingSequence() {
@@ -277,8 +296,9 @@ async function phaseReflection() {
   await donkeySay('Wer segnet, richtet den Faden neu aus.');
 }
 
-async function phaseBalakUngeduld() {
-  await narratorSay('Balak reisst an seinem Mantel: „Komm mit mir an einen andern Ort. Vielleicht kannst du mir dort das Ende verfluchen.“');
+async function phaseBalakUngeduld(props) {
+  await narratorSay('Balak versucht, den Segen zu zerreissen; rote Lichtadern schlagen aus seinen Haenden.');
+  await propSay(props, 'balakWaiting', 'Komm mit mir an einen andern Ort. Von hier siehst du zu viel. Vielleicht kannst du mir dort das Ende verfluchen.');
 }
 
 async function phasePisgaPath(props) {

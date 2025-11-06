@@ -24,6 +24,7 @@ import {
   updateProp,
   addProp,
   celebrateGlyph,
+  propSay,
 } from './utils.js';
 
 const STAR_TERRACE_SCENE = {
@@ -34,6 +35,8 @@ const STAR_TERRACE_SCENE = {
     { id: 'starTerraceOne', type: 'starShardDormant', x: 168, align: 'ground', parallax: 0.96 },
     { id: 'starTerraceTwo', type: 'starShardDormant', x: 316, align: 'ground', parallax: 0.98 },
     { id: 'starTerraceThree', type: 'starShardDormant', x: 464, align: 'ground', parallax: 1.0 },
+    { id: 'starTerraceBanner', type: 'princeProcessionBanner', x: 112, align: 'ground', parallax: 0.9 },
+    { id: 'balakStarFigure', type: 'balakFigure', x: 556, align: 'ground', parallax: 1.08 },
   ],
 };
 
@@ -70,6 +73,7 @@ const SHADOW_SCENE = {
     { id: 'shadowEchoNorth', type: 'shadowEchoDormant', x: 232, align: 'ground', parallax: 0.94 },
     { id: 'shadowEchoEast', type: 'shadowEchoDormant', x: 332, align: 'ground', parallax: 0.96 },
     { id: 'shadowEchoSouth', type: 'shadowEchoDormant', x: 432, align: 'ground', parallax: 0.98 },
+    { id: 'balakShadowCore', type: 'balakFigure', x: 296, align: 'ground', parallax: 0.96 },
   ],
 };
 
@@ -125,10 +129,26 @@ const CROWN_SEQUENCE = [
 ];
 
 const NATION_SEQUENCE = [
-  { id: 'visionAmalek', combo: ['dabar', 'or'] },
-  { id: 'visionKenite', combo: ['shama', 'lo'] },
-  { id: 'visionAsshur', combo: ['lo', 'dabar'] },
-  { id: 'visionWoe', combo: ['shama', 'lo', 'barak'] },
+  {
+    id: 'visionAmalek',
+    combo: ['dabar', 'or'],
+    quote: '„Amalek war das erste unter den Voelkern, doch zuletzt wird es vergehen.“',
+  },
+  {
+    id: 'visionKenite',
+    combo: ['shama', 'lo'],
+    quote: '„Fest ist deine Wohnung, Keniter, und du hast dein Nest im Felsen gebaut.“',
+  },
+  {
+    id: 'visionAsshur',
+    combo: ['dabar', 'or'],
+    quote: '„Dennoch wird dich Assur gefangen fuehren.“',
+  },
+  {
+    id: 'visionWoe',
+    combo: ['shama', 'lo', 'barak'],
+    quote: '„Wehe, wer wird leben, wenn Gott dies tut?“',
+  },
 ];
 
 const SHADOW_SEQUENCE = [
@@ -157,7 +177,7 @@ export async function runLevelTen() {
   await showLevelTitle('Level 10 - Der Stern aus Jakob');
   await fadeToBase(600);
 
-  await phaseBalakAccusation();
+  await phaseBalakAccusation(terraceProps);
   await phaseStarTerraces(terraceProps);
 
   const crownProps = cloneSceneProps(CROWN_SCENE.props);
@@ -182,9 +202,10 @@ export async function runLevelTen() {
   await fadeToBlack(720);
 }
 
-async function phaseBalakAccusation() {
-  await narratorSay('Balak schreit: „Ich habe dich gerufen, zu verfluchen – und du hast dreimal gesegnet!“');
-  await wizardSay('„Gäbe mir Balak sein Haus voll Silber und Gold, ich könnte das Wort des HERRN nicht übertreten.“');
+async function phaseBalakAccusation(props) {
+  await narratorSay('Bileam steht auf dem Felsen von Bamot-Peor; unter ihm glimmt das Lager Israels wie ein Meer aus geordneten Sternen.');
+  await propSay(props, 'balakStarFigure', 'Ich habe dich gerufen, dass du meine Feinde verfluchst – und siehe, du hast sie dreimal gesegnet! Geh fort; ich wollte dich ehren, aber dein Gott verweigert es dir.');
+  await wizardSay('Hab ich dir nicht gesagt? Gäbe mir Balak sein Haus voll Silber und Gold, ich könnte das Wort des HERRN nicht uebertreten, weder im Kleinen noch im Grossen.');
 }
 
 async function phaseStarTerraces(props) {
@@ -243,6 +264,9 @@ async function phaseNationVisions(props) {
   for (const vision of NATION_SEQUENCE) {
     const target = props.find(entry => entry.id === vision.id)?.x ?? wizard.x + 200;
     await waitForWizardToReach(target, { tolerance: 18 });
+    if (vision.quote) {
+      await narratorSay(vision.quote);
+    }
     let idx = 0;
     while (idx < vision.combo.length) {
       const expected = vision.combo[idx];
@@ -264,6 +288,9 @@ async function phaseNationVisions(props) {
 
 async function phaseShadowRift(props) {
   await narratorSay('Balak tritt in den Sternkreis. Sein Schatten loest sich und greift dich an.');
+  await propSay(props, 'balakShadowCore', 'Dein Licht blendet, aber es waermt nicht. Wer ist dieser Stern? Ein Gott? Ein Spiegel?');
+  await wizardSay('Ich sehe ihn nur. Und wer ihn sieht, weiss, dass nichts anderes ist.');
+  await donkeySay('Huete dich, Meister. Licht kann auch verletzen.');
   for (const shadow of SHADOW_SEQUENCE) {
     const target = props.find(entry => entry.id === shadow.id)?.x ?? wizard.x + 220;
     await waitForWizardToReach(target, { tolerance: 18 });
@@ -287,7 +314,9 @@ async function phaseShadowRift(props) {
 }
 
 async function phaseFirmamentWarning() {
-  await narratorSay('Der Himmel reißt auf. Ein Riss zeigt den Schattenpalast. Eine Stimme warnt: „Verwende אור → אמת → ברכה, um den Riss zu schließen.“');
+  await narratorSay('Der Himmel reisst auf. Ein Riss zeigt den Schattenpalast.');
+  await narratorSay('Systemwarnung: Weltstabilitaet kritisch. Neuer Prozess entdeckt: SHADOW_BALAK.exe.');
+  await narratorSay('Eine Stimme warnt: „Verwende אור → אמת → ברכה, um den Riss zu schliessen.“');
   let idx = 0;
   const combo = ['or', 'emet', 'barak'];
   while (idx < combo.length) {
@@ -327,6 +356,7 @@ async function phaseStarBridge(props) {
     }
     updateProp(props, seg.id, { type: 'starBridgeSegmentLit' });
   }
+  await narratorSay('Der Sternensteg leuchtet und zieht dich in den Schattenpalast. Du traegst den Stern als Schild.');
 }
 
 function makePromptForCrown(arcIndex, stepIndex) {

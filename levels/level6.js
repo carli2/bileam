@@ -21,11 +21,11 @@ import {
   normalizeHebrewInput,
   applySceneConfig,
   cloneSceneProps,
-  MARKET_SCENE,
   spellEquals,
   addProp,
   updateProp,
   celebrateGlyph,
+  propSay,
 } from './utils.js';
 
 const MOAB_APPROACH_SCENE = {
@@ -35,6 +35,9 @@ const MOAB_APPROACH_SCENE = {
   props: [
     { id: 'moabWatcherNorth', type: 'moabWallWatcher', x: 156, align: 'ground', parallax: 0.88 },
     { id: 'moabWatcherSouth', type: 'moabWallWatcher', x: 492, align: 'ground', parallax: 1.06 },
+    { id: 'balakWallFigure', type: 'balakFigure', x: 628, align: 'ground', parallax: 1.12 },
+    { id: 'midianElder', type: 'envoyShadow', x: 586, align: 'ground', parallax: 1.08 },
+    { id: 'israelCampGlow', type: 'hoofSignTrail', x: 708, align: 'ground', parallax: 1.18 },
     { id: 'moabVisionRingWest', type: 'sandVisionRingDormant', x: 182, align: 'ground', parallax: 1 },
     { id: 'moabVisionRingCenter', type: 'sandVisionRingDormant', x: 326, align: 'ground', parallax: 1 },
     { id: 'moabVisionRingEast', type: 'sandVisionRingDormant', x: 472, align: 'ground', parallax: 1 },
@@ -46,10 +49,12 @@ const PETOR_SCENE = {
   wizardStartX: 68,
   donkeyOffset: -40,
   props: [
+    { id: 'petorFootprints', type: 'hoofSignTrail', x: 108, align: 'ground', parallax: 0.9 },
     { id: 'petorCampfire', type: 'nightCampfire', x: 236, align: 'ground', parallax: 0.92 },
     { id: 'petorEnvoyNorth', type: 'envoyShadow', x: 156, align: 'ground', parallax: 0.96 },
     { id: 'petorEnvoyEast', type: 'envoyShadow', x: 316, align: 'ground', parallax: 0.96 },
     { id: 'petorEnvoySouth', type: 'envoyShadow', x: 472, align: 'ground', parallax: 0.96 },
+    { id: 'petorOffering', type: 'temptationVessel', x: 396, align: 'ground', parallax: 1.04 },
   ],
 };
 
@@ -59,9 +64,11 @@ const BORDER_SCENE = {
   donkeyOffset: -38,
   props: [
     { id: 'borderBackdrop', type: 'borderProcessionPath', x: -36, align: 'ground', parallax: 0.6 },
+    { id: 'borderLetterDrift', type: 'resonanceRingDormant', x: 132, align: 'ground', parallax: 0.84 },
     { id: 'borderStone', type: 'borderMilestone', x: 212, align: 'ground', parallax: 0.95 },
     { id: 'borderBush', type: 'borderThorn', x: 332, align: 'ground', parallax: 0.98 },
     { id: 'borderWatchFire', type: 'watchFireDormant', x: 492, align: 'ground', parallax: 1.02 },
+    { id: 'borderTrailGlow', type: 'hoofSignTrail', x: 552, align: 'ground', parallax: 1.1 },
   ],
 };
 
@@ -70,19 +77,16 @@ const MOAB_RING_TASKS = [
     id: 'moabVisionRingWest',
     prompt: 'Stell dich in den Ring und sprich אור.',
     spells: ['or', 'אור'],
-    response: 'Das Lager Israels leuchtet wie ein ruhendes Meer aus Waechtern.',
   },
   {
     id: 'moabVisionRingCenter',
     prompt: 'Welche Erinnerung beruhigt die Szene?',
     spells: ['mayim', 'majim', 'mjm', 'מים'],
-    response: 'Der Sand bewegt sich wie Wasser; die Vision ordnet sich.',
   },
   {
     id: 'moabVisionRingEast',
     prompt: 'Welches Wort offenbart Balaks Fluester-Befehl?',
     spells: ['qol', 'קול'],
-    response: 'Ein Echo laesst Balaks Angst als Klang erscheinen.',
   },
 ];
 
@@ -134,17 +138,18 @@ export async function runLevelSix() {
   await showLevelTitle('Level 6 - Der Ruf des Koenigs');
   await fadeToBase(600);
 
+  await phaseMoabPrelude(moabProps);
   await phaseMoabVisionRings(moabProps);
 
   const petorProps = cloneSceneProps(PETOR_SCENE.props);
   await transitionToScene(plan?.learn, PETOR_SCENE, petorProps, 'petor');
-  await phaseEnvoyDialogue();
+  await phaseEnvoyDialogue(petorProps);
   await phaseEnvoyResponses(petorProps);
   await phaseNightVision(petorProps);
   await phaseNightMeditation();
   await phaseMorningRefusal(petorProps);
 
-  await phaseBalakEdict();
+  await phaseBalakEdict(petorProps);
 
   const borderProps = cloneSceneProps(BORDER_SCENE.props);
   await transitionToScene(plan?.apply, BORDER_SCENE, borderProps, 'border');
@@ -156,8 +161,21 @@ export async function runLevelSix() {
   await fadeToBlack(720);
 }
 
+async function phaseMoabPrelude(props) {
+  const balak = props.find(entry => entry.id === 'balakWallFigure');
+  const targetX = balak ? balak.x - 42 : wizard.x + 220;
+  if (targetX > wizard.x + 16) {
+    await waitForWizardToReach(targetX, { tolerance: 22 });
+  }
+  await narratorSay('Danach lagerten sich die Israeliten in den Steppen Moabs, gegenueber Jericho. Und Balak sah alles, was Israel den Amoritern angetan hatte.');
+  await propSay(props, 'balakWallFigure', 'Sieh nur, sie bedecken das ganze Land... Wenn sie weitergehen, bleibt nur Staub.');
+  await propSay(props, 'midianElder', 'Es gibt einen Seher jenseits des Flusses. Was er spricht, geschieht – als folge die Welt seiner Stimme.');
+  await propSay(props, 'balakWallFigure', 'Dann ruft ihn. Vielleicht kann er das Muster wenden, bevor alles ausgelöscht ist.');
+  await narratorSay('Unter den Mauern flimmert die Welt, als waere sie nur halb aus Klang gewebt.');
+}
+
 async function phaseMoabVisionRings(props) {
-  await narratorSay('Balaks Waechter blicken nach Osten. Drei Ringe aus Licht warten auf deine Worte.');
+  await narratorSay('Die Waechter blicken nach Osten. Drei sandgluehende Aussichtsringe warten auf deine Worte.');
   for (const task of MOAB_RING_TASKS) {
     const target = props.find(entry => entry.id === task.id)?.x ?? wizard.x + 120;
     await waitForWizardToReach(target, { tolerance: 18 });
@@ -169,7 +187,7 @@ async function phaseMoabVisionRings(props) {
         solved = true;
         updateProp(props, task.id, { type: 'sandVisionRingActive' });
         await celebrateGlyph(answer);
-        await narratorSay(task.response);
+        applyMoabRingEffect(props, task.id);
         addProp(props, { id: `${task.id}Trail`, type: 'hoofSignTrail', x: wizard.x + 12, y: wizard.y - 16, parallax: 1.05 });
       } else {
         await donkeySay('Nutze, was du bereits gelernt hast.');
@@ -179,9 +197,13 @@ async function phaseMoabVisionRings(props) {
   await narratorSay('Die Ringe glimmen weiter. Balaks Gesandte reiten nach Petor.');
 }
 
-async function phaseEnvoyDialogue() {
-  await narratorSay('In Petor lodert ein stilles Feuer. Die Gesandten Balaks treten vor Bileam.');
-  await donkeySay('Höre ihnen zu, und antworte mit dem, was du weisst.');
+async function phaseEnvoyDialogue(props) {
+  await narratorSay('Petor, am Euphrat. Ein stilles Feuer lodert, Lichtlinien laufen unter dem Sand.');
+  await propSay(props, 'petorEnvoyNorth', 'Siehe, ein Volk ist aus Aegypten gezogen, es bedeckt das ganze Land und lagert uns gegenueber.');
+  await propSay(props, 'petorEnvoyEast', 'So komm nun und verfluche mir dieses Volk, denn es ist mir zu maechtig.');
+  await propSay(props, 'petorEnvoySouth', 'Denn wir wissen: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist verflucht.');
+  await wizardSay('Bleibt hier ueber Nacht. Ich will hoeren, was der HERR mir sagt.');
+  await narratorSay('Ziel: Warte auf die Stimme in der Nacht. Neues Lernwort verfuegbar: lo (לא) – nicht, nein.');
 }
 
 async function phaseEnvoyResponses(props) {
@@ -218,7 +240,10 @@ async function phaseEnvoyResponses(props) {
 
 async function phaseNightVision(props) {
   setSceneContext({ phase: 'night' });
-  await narratorSay('In der Nacht spricht Gott: Geh nicht mit ihnen. Verfluche das Volk nicht, denn es ist gesegnet.');
+  await narratorSay('Dunkelheit senkt sich. Nur das Flackern des Feuers und ein Rauschen, als atme die Welt selbst.');
+  await narratorSay('Gottes Stimme: „Wer sind die Maenner, die bei dir sind?“');
+  await wizardSay('Balak, Sohn Zippors, hat mich gerufen, zu verfluchen ein Volk, das das Land bedeckt.');
+  await narratorSay('Gott: „Geh nicht mit ihnen. Verfluche das Volk nicht – denn es ist gesegnet.“');
 
   let attempts = 0;
   while (true) {
@@ -226,7 +251,8 @@ async function phaseNightVision(props) {
     if (spellEquals(answer, 'lo', 'לא')) {
       await celebrateGlyph(answer);
       addProp(props, { id: 'petorGlyphComplete', type: 'noGlyphShard', x: wizard.x + 20, y: wizard.y - 48, parallax: 0.9, letter: 'לא' });
-      await narratorSay('Das Nein legt sich wie ein Schild um dich.');
+      await narratorSay('Systemmeldung: Neues Wort gelernt: lo – das Nein, das die Welt zusammenhaelt.');
+      await narratorSay('Innere Stimme: Das Nein hallt nach. In seinem Echo hoere ich den Raum zwischen den Dingen – das Unsichtbare, das doch alles traegt.');
       break;
     }
     attempts += 1;
@@ -260,7 +286,8 @@ async function phaseNightMeditation() {
 async function phaseMorningRefusal(props) {
   setSceneContext({ phase: 'morning' });
   addProp(props, { id: 'petorGift', type: 'temptationVessel', x: wizard.x + 42, align: 'ground', parallax: 1.02 });
-  await narratorSay('Am Morgen liegen Geschenke bereit. Balak verspricht Ehre und Gold.');
+  await narratorSay('Der Morgen graut. Geschenke in Lichtgefaessen warten, waehrend Balaks Stimme Ehre und Gold verheisst.');
+  await wizardSay('Geht hin in euer Land. Der HERR wills nicht gestatten, dass ich mit euch ziehe.');
 
   while (true) {
     const answer = await readWord('Welches Wort loescht Balaks Gabe?');
@@ -272,11 +299,16 @@ async function phaseMorningRefusal(props) {
     }
     await donkeySay('Bleib beim Wort der Nacht.');
   }
+  await narratorSay('Die Fuersten verbeugen sich, reiten ab. Ein mattes Flackern liegt ueber der Steppe.');
 }
 
-async function phaseBalakEdict() {
-  await narratorSay('Die Fuersten berichten Balak: Bileam weigert sich, zu kommen.');
-  await narratorSay('Balak sendet mächtigere Maenner und verspricht große Ehre.');
+async function phaseBalakEdict(props) {
+  await narratorSay('Balaks Palast. Goldene Linien fliessen ueber die Waende, doch sie flackern unruhig.');
+  const balakId = 'palaceBalakEcho';
+  addProp(props, { id: balakId, type: 'balakFigure', x: wizard.x + 160, align: 'ground', parallax: 0.96 });
+  await propSay(props, balakId, 'Dann sendet mehr. Staerkere Maenner.');
+  await propSay(props, balakId, 'Gebt ihm Gold, und sagt: Der Koenig wird ihn ehren.');
+  await narratorSay('So sandte Balak noch maechtigere Fuersten, und mit ihnen begann der Weg, der zur Grenze fuehrt.');
 }
 
 async function phaseBorderStations(props) {
@@ -348,4 +380,48 @@ async function readWord(promptText) {
     anchorY(wizard, -34),
   );
   return normalizeHebrewInput(input);
+}
+
+function applyMoabRingEffect(props, taskId) {
+  switch (taskId) {
+    case 'moabVisionRingWest':
+      ensurePropDefinition(props, {
+        id: 'moabVistaLight',
+        type: 'sunStoneAwakened',
+        x: 684,
+        align: 'ground',
+        parallax: 1.14,
+      });
+      break;
+    case 'moabVisionRingCenter':
+      ensurePropDefinition(props, {
+        id: 'moabVistaWater',
+        type: 'waterGlyph',
+        x: 640,
+        align: 'ground',
+        parallax: 1.1,
+      });
+      break;
+    case 'moabVisionRingEast':
+      ensurePropDefinition(props, {
+        id: 'moabVistaSound',
+        type: 'soundGlyph',
+        x: 604,
+        align: 'ground',
+        parallax: 1.06,
+      });
+      break;
+    default:
+      break;
+  }
+}
+
+function ensurePropDefinition(list, definition) {
+  if (!definition?.id) return;
+  const existing = list.find(entry => entry.id === definition.id);
+  if (existing) {
+    updateProp(list, definition.id, definition);
+  } else {
+    addProp(list, definition);
+  }
 }
