@@ -110,7 +110,7 @@ const TERRACE_STEPS = [
     id: 'terraceThree',
     actions: [
       { prompt: 'Lausche: sprich שמע.', spells: ['shama', 'שמע'] },
-      { prompt: 'Segne den Pfad mit ברכה.', spells: ['barak', 'ברכה'] },
+      { prompt: 'Segne den Pfad mit ברך.', spells: ['barak', 'ברך'] },
     ],
   },
 ];
@@ -122,13 +122,13 @@ const ALTAR_SEQUENCE = [
   { id: 'altarSouthEast', prompt: 'Hoere erneut.', spells: ['shama', 'שמע'] },
   { id: 'altarSouth', prompt: 'Verneine Balaks Fluch.', spells: ['lo', 'לא'] },
   { id: 'altarSouthWest', prompt: 'Laß Wasser beruhigen.', spells: ['mayim', 'majim', 'mjm', 'מים'] },
-  { id: 'altarWest', prompt: 'Segne, was du erweckt hast.', spells: ['barak', 'ברכה'], fragment: 'ר' },
+  { id: 'altarWest', prompt: 'Segne, was du erweckt hast.', spells: ['barak', 'ברך'], fragment: 'ר' },
 ];
 
 const RESONANCE_STEPS = [
   { id: 'resonanceOuter', prompt: 'Hoere den äußeren Ring: sprich שמע.', spells: ['shama', 'שמע'] },
   { id: 'resonanceMiddle', prompt: 'Banne den Fluch mit לא.', spells: ['lo', 'לא'] },
-  { id: 'resonanceInner', prompt: 'Sprich ברכה, um den Segen freizusetzen.', spells: ['barak', 'ברכה'] },
+  { id: 'resonanceInner', prompt: 'Sprich ברך, um den Segen freizusetzen.', spells: ['barak', 'ברך'] },
 ];
 
 export async function runLevelEight() {
@@ -154,7 +154,7 @@ export async function runLevelEight() {
 
   const oracleProps = cloneSceneProps(ORACLE_SCENE.props);
   await transitionToScene(plan?.learn, ORACLE_SCENE, oracleProps, 'oracle');
-  await phaseFirstOracle();
+  await phaseFirstOracle(oracleProps);
   await phaseBlessingSequence();
   await phaseReflection();
   await phaseBalakUngeduld(oracleProps);
@@ -202,7 +202,8 @@ async function phaseTerraceTrials(props) {
 }
 
 async function phaseSevenAltars(props) {
-  await narratorSay('„Baue mir hier sieben Altare“, sagt Bileam. Balak bringt die Tiere.');
+  await wizardSay('Baue mir hier sieben Altare und schaffe mir her sieben junge Stiere und sieben Widder.');
+  await propSay(props, 'altarAttendantOne', 'Ich tue, wie du sagst.');
   for (const altar of ALTAR_SEQUENCE) {
     const target = props.find(entry => entry.id === altar.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 18 });
@@ -243,11 +244,11 @@ async function phaseResonance(props) {
       }
     }
   }
-  await narratorSay('Das Wort ברכה formt sich ueber deinen Haenden.');
+  await narratorSay('Das Wort ברך formt sich ueber deinen Haenden.');
   let learned = false;
   while (!learned) {
-    const answer = await readWord('Sprich ברכה (barak).');
-    if (spellEquals(answer, 'barak', 'ברכה')) {
+    const answer = await readWord('Sprich ברך (barak).');
+    if (spellEquals(answer, 'barak', 'ברך')) {
       learned = true;
       addProp(props, { id: 'barakFragmentKaf', type: 'blessingFragment', x: wizard.x + 18, y: wizard.y - 46, parallax: 0.9, letter: 'ך' });
       await celebrateGlyph(answer);
@@ -259,12 +260,13 @@ async function phaseResonance(props) {
   }
 }
 
-async function phaseFirstOracle() {
+async function phaseFirstOracle(props) {
   await narratorSay('Bileam hebt an mit seinem Spruch und spricht:');
-  await narratorSay('„Aus Aram hat mich Balak holen lassen, vom Gebirge des Ostens: Komm, verfluche mir Jakob, komm, verwuensche Israel!');
-  await narratorSay('Wie soll ich fluchen, dem Gott nicht flucht? Wie soll ich verwuenschen, den der HERR nicht verwuenscht?“');
-  await narratorSay('„Denn von der Hoehe der Felsen sehe ich ihn, und von den Huegeln schaue ich ihn. Siehe, das Volk wohnt abgesondert und wird sich nicht zu den Voelkern rechnen.“');
-  await wizardSay('Wie soll ich fluchen, dem Gott nicht flucht?');
+  await wizardSay('Aus Aram hat mich Balak holen lassen, vom Gebirge des Ostens: Komm, verfluche mir Jakob, komm, verwuensche Israel!');
+  await wizardSay('Wie soll ich fluchen, dem Gott nicht flucht? Wie soll ich verwuenschen, den der HERR nicht verwuenscht?');
+  await wizardSay('Denn von der Hoehe der Felsen sehe ich ihn, und von den Huegeln schaue ich ihn. Siehe, das Volk wohnt abgesondert und wird sich nicht zu den Voelkern rechnen.');
+  await propSay(props, 'balakWaiting', 'Was tust du mir an? Ich habe dich holen lassen, um meine Feinde zu verfluchen – und siehe, du segnest sie!', { anchor: 'center' });
+  await wizardSay('Muss ich nicht reden, was der HERR in meinen Mund gibt?');
 }
 
 async function phaseBlessingSequence() {
@@ -275,11 +277,11 @@ async function phaseBlessingSequence() {
     const prompts = [
       'Hoere zuerst: sprich שמע.',
       'Blockiere Balaks Wunsch mit לא.',
-      'Vervollstaendige den Segen mit ברכה.',
+      'Vervollstaendige den Segen mit ברך.',
     ];
     const answer = await readWord(prompts[index]);
     const expected = order[index];
-    const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'ברכה';
+    const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'ברך';
     if (spellEquals(answer, expected, variant)) {
       await celebrateGlyph(answer);
       index += 1;
@@ -304,9 +306,9 @@ async function phaseBalakUngeduld(props) {
 async function phasePisgaPath(props) {
   await narratorSay('Der Weg zum Pisga ist mit Schrift übersaet.');
   const steps = [
-    { id: 'pisgaStone', prompt: 'Der Späherstein verlangt einen Segen: sprich ברכה.', spells: ['barak', 'ברכה'] },
+    { id: 'pisgaStone', prompt: 'Der Spaeherstein verlangt einen Segen: sprich ברך.', spells: ['barak', 'ברך'] },
     { id: 'pisgaCleft', prompt: 'Hoere und verneine Balaks Linie (שמע, dann לא).', sequence: ['shama', 'lo'] },
-    { id: 'pisgaPortal', prompt: 'Oeffne das Portal mit לא und schliesse mit ברכה.', sequence: ['lo', 'barak'] },
+    { id: 'pisgaPortal', prompt: 'Oeffne das Portal mit לא und schliesse mit ברך.', sequence: ['lo', 'barak'] },
   ];
   for (const step of steps) {
     const target = props.find(entry => entry.id === step.id)?.x ?? wizard.x + 200;
@@ -327,7 +329,7 @@ async function phasePisgaPath(props) {
       let idx = 0;
       while (idx < step.sequence.length) {
         const expected = step.sequence[idx];
-        const labels = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'ברכה';
+        const labels = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'ברך';
         const answer = await readWord(step.prompt);
         if (spellEquals(answer, expected, labels)) {
           idx += 1;

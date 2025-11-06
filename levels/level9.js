@@ -204,7 +204,7 @@ async function phasePisgaLines(props) {
       let done = false;
       while (!done) {
         const answer = await readWord(prompt);
-        const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'ברכה';
+        const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'ברך';
         if (spellEquals(answer, expected, variant)) {
           done = true;
           await celebrateGlyph(answer);
@@ -308,11 +308,16 @@ async function phaseGardenEmet(props) {
 
 async function phaseSecondOracle(props) {
   await narratorSay('Bileam spricht:');
-  await narratorSay('„Man sieht kein Unheil in Jakob, keine Muehsal in Israel. Der HERR, sein Gott, ist bei ihm, und es jauchzt dem Koenig zu.“');
-  await narratorSay('„Daher hilft kein Zaubern gegen Jakob und kein Wahrsagen gegen Israel. Zu rechter Zeit wird gesagt, was Gott gewirkt hat.“');
-  await narratorSay('„Wie Taeeler, die sich ausbreiten, wie Gaerten an Wassern, wie Aloebaeume, die der HERR pflanzt, wie Zedern an den Wassern.“');
-  await narratorSay('„Gesegnet sei, wer dich segnet, und verflucht, wer dich verflucht!“');
+  await wizardSay('Man sieht kein Unheil in Jakob, keine Muehsal in Israel. Der HERR, sein Gott, ist bei ihm, und es jauchzt dem Koenig zu.');
+  await wizardSay('Daher hilft kein Zaubern gegen Jakob und kein Wahrsagen gegen Israel. Zu rechter Zeit wird gesagt, was Gott gewirkt hat.');
+  await wizardSay('Gott hat sie aus Aegypten gefuehrt; er ist fuer sie wie das Horn des Wildstiers.');
+  await wizardSay('Wie Taeeler, die sich ausbreiten, wie Gaerten an Wassern, wie Aloebaeume, die der HERR pflanzt, wie Zedern an den Wassern.');
+  await wizardSay('Er hat sich hingestreckt wie ein Loewe – wer will ihn aufstoeren?');
+  await wizardSay('Gesegnet sei, wer dich segnet, und verflucht, wer dich verflucht!');
   await propSay(props, 'gardenBalakShadow', 'Wenn du schon nicht fluchst, so segne sie wenigstens nicht!');
+  await wizardSay('Hab ich dir nicht gesagt: Alles, was der HERR redet, das werde ich tun?');
+  await narratorSay('Innere Stimme: Vielleicht ist jedes wahre Wort ein Tor.');
+  await narratorSay('Innere Stimme: Wenn es gesprochen wird, oeffnet sich fuer einen Augenblick der Plan des Lichts, der uns alle traegt.');
   await donkeySay('Worte sind Tore. Du hast sie geoeffnet.');
 }
 
@@ -322,12 +327,12 @@ async function phaseOathCircle(props) {
     { word: 'shama', prompt: 'Sprich שמע.' },
     { word: 'dabar', prompt: 'Sprich דבר.' },
     { word: 'emet', prompt: 'Sprich אמת.' },
-    { word: 'barak', prompt: 'Sprich ברכה.' },
+    { word: 'barak', prompt: 'Sprich ברך.' },
   ];
   let index = 0;
   while (index < order.length) {
     const { word, prompt } = order[index];
-    const variant = word === 'shama' ? 'שמע' : word === 'dabar' ? 'דבר' : word === 'emet' ? 'אמת' : 'ברכה';
+    const variant = word === 'shama' ? 'שמע' : word === 'dabar' ? 'דבר' : word === 'emet' ? 'אמת' : 'ברך';
     const answer = await readWord(prompt);
     if (spellEquals(answer, word, variant)) {
       index += 1;

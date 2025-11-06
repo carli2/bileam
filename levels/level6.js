@@ -69,7 +69,7 @@ const BORDER_SCENE = {
 const ENVOY_SEQUENCE = [
   {
     id: 'petorEnvoyNorth',
-    word: 'or',
+    word: 'aor',
     glyph: 'אור',
     fragment: 'ל',
     description: 'Das Licht der Erinnerung erhellt die Gesichter der Gesandten und legt ihre Angst offen.',
@@ -168,7 +168,8 @@ export async function runLevelSix() {
   await phaseWatchFire(borderProps);
 
   await narratorSay('Die neuen Fuersten reiten voraus. Es geht nach Moab.');
-  await donkeySay('Bewahre das Nein – Balak wird es pruefen.');
+  await donkeySay('Er lernt, zu hoeren, was man nicht sagen darf.');
+  await donkeySay('Wer das Nein versteht, haelt den ersten Faden des Himmels in der Hand.');
   await fadeToBlack(720);
 }
 
@@ -181,7 +182,9 @@ async function phaseMoabPrelude(props) {
   await narratorSay('Danach lagerten sich die Israeliten in den Steppen Moabs, gegenueber Jericho.');
   await narratorSay('Und Balak, der Sohn Zippors, sah alles, was Israel den Amoritern angetan hatte.');
   await narratorSay('Und die Moabiter fuerchteten sich sehr, denn das Volk war gross, und ihnen graute vor den Israeliten.');
-  await propSay(props, 'balakWallFigure', 'Sieh nur, sie bedecken das ganze Land... Wenn sie weitergehen, bleibt nur Staub.');
+  await propSay(props, 'balakWallFigure', 'Sieh nur, sie bedecken das ganze Land...');
+  await propSay(props, 'balakWallFigure', 'Wenn sie weitergehen, bleibt nur Staub.');
+  await propSay(props, 'balakWallFigure', 'Wie ein Tier, das das Gras des Feldes frisst, so werden sie uns verzehren.');
   await propSay(props, 'midianElder', 'Es gibt einen Seher jenseits des Flusses. Was er spricht, geschieht – als folge die Welt seiner Stimme.');
   await propSay(props, 'balakWallFigure', 'Dann ruft ihn. Vielleicht kann er das Muster wenden, bevor alles ausgelöscht ist.');
   await narratorSay('Unter den Mauern flimmert die Welt, als waere sie nur halb aus Klang gewebt.');
@@ -191,7 +194,7 @@ async function phaseMoabVisionRings(props) {
   await narratorSay('Balaks Waechter blicken nach Osten. Drei sandgluehende Aussichtsringe warten auf deine Worte.');
   await showLevelTitle('Spielhinweis: Besuche die drei Ringe (links, Mitte, rechts).', 3800);
   const ringOrder = [
-    { id: 'moabVisionRingWest', word: 'or', glyph: 'אור' },
+    { id: 'moabVisionRingWest', word: 'aor', glyph: 'אור' },
     { id: 'moabVisionRingCenter', word: 'mayim', glyph: 'מים' },
     { id: 'moabVisionRingEast', word: 'qol', glyph: 'קול' },
   ];
@@ -266,9 +269,8 @@ async function phaseNightVision(props) {
 
   await celebrateGlyph('לא');
   addProp(props, { id: 'petorGlyphComplete', type: 'noGlyphShard', x: wizard.x + 20, y: wizard.y - 48, parallax: 0.9, letter: 'לא' });
-  await narratorSay('Systemmeldung: Neues Wort gelernt: lo – das Nein, das die Welt zusammenhaelt.');
+  await showLevelTitle('Neues Wort gelernt: לא (lo) – das Nein, das die Welt zusammenhaelt.', 3600);
   await narratorSay('Innere Stimme: Das Nein hallt nach. In seinem Echo hoere ich den Raum zwischen den Dingen – das Unsichtbare, das doch alles traegt.');
-  await showLevelTitle('Neues Lernwort: לא (lo) – nicht, nein.', 3600);
 }
 
 async function phaseNightMeditation() {
@@ -296,6 +298,7 @@ async function phaseBalakEdict(props) {
   const balakId = 'palaceBalakEcho';
   addProp(props, { id: balakId, type: 'balakFigure', x: wizard.x + 160, align: 'ground', parallax: 0.96 });
   await propSay(props, balakId, 'Dann sendet mehr. Staerkere Maenner.');
+  await propSay(props, balakId, 'Vielleicht laesst er sich doch bewegen.');
   await propSay(props, balakId, 'Gebt ihm Gold, und sagt: Der Koenig wird ihn ehren.');
   await narratorSay('So sandte Balak noch maechtigere Fuersten, und mit ihnen begann der Weg, der zur Grenze fuehrt.');
 }

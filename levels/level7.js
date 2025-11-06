@@ -24,6 +24,7 @@ import {
   updateProp,
   addProp,
   celebrateGlyph,
+  propSay,
 } from './utils.js';
 
 const PROCESSION_SCENE = {
@@ -146,14 +147,15 @@ export async function runLevelSeven() {
   await phaseListeningAltar(altarProps);
 
   await narratorSay('Die Fuersten reiten weiter nach Moab. Die Eselin folgt, der Engel bleibt auf dem Weg.');
-  await donkeySay('Wer hoert, erkennt. Bewahre shama und lo.');
+  await donkeySay('Wer hoert, erkennt.');
+  await donkeySay('Und wer erkennt, weiss, dass alles nur gesprochen ist. Bewahre shama und lo.');
   await fadeToBlack(720);
 }
 
 async function phaseProcessionIntro() {
   await narratorSay('Da stand Bileam am Morgen auf, sattelte seine Eselin und zog mit den Fuersten der Moabiter. Doch der Zorn Gottes entbrannte, dass er hinzog.');
   await narratorSay('Grauer Morgen ueber den Huegeln, Nebel haengt wie feine Stoffbahnen, Banner zittern im Wind.');
-  await narratorSay('Schriftanzeige: Das Wort lo bleibt aktiv. Neues Lernwort: shama (שמע) – hoere und erkenne. Aufgabe: Folge den Fuersten, ohne den inneren Klang zu verlieren.');
+  await showLevelTitle('Das Wort לא bleibt aktiv. Neues Lernwort: שמע (shama) – hoere und erkenne. Aufgabe: Folge den Fuersten, ohne den inneren Klang zu verlieren.', 5200);
   await donkeySay('Bewahre das Nein, Meister. Wir werden hoeren muessen, nicht nur sehen.');
 }
 
@@ -280,10 +282,10 @@ async function phaseThirdResistance(props) {
 
 async function phaseAngelRevelation(props) {
   await narratorSay('Der HERR oeffnet dir die Augen. Du faellst nieder vor dem Engel aus gebuendeltem Licht.');
-  await narratorSay('Engel: „Warum hast du deine Eselin dreimal geschlagen? Ich stand dir entgegen, denn dein Weg fuehrt ins Verderben.');
-  await narratorSay('Waere sie mir nicht ausgewichen, ich haette dich getoetet, sie aber leben lassen.“');
+  await propSay(props, 'revelationAngel', 'Warum hast du deine Eselin dreimal geschlagen? Ich stand dir entgegen, denn dein Weg fuehrt ins Verderben.', { anchor: 'center' });
+  await propSay(props, 'revelationAngel', 'Waere sie mir nicht ausgewichen, ich haette dich getoetet, sie aber leben lassen.', { anchor: 'center' });
   await wizardSay('Ich habe gesuendigt. Ich wusste nicht, dass du mir entgegenstandest. Wenn es dir nicht gefällt, will ich umkehren.');
-  await narratorSay('Engel: „Zieh hin mit den Maennern, aber nichts anderes, als was ich dir sagen werde, sollst du reden.“');
+  await propSay(props, 'revelationAngel', 'Zieh hin mit den Maennern, aber nichts anderes, als was ich dir sagen werde, sollst du reden.', { anchor: 'center' });
   await Promise.all([
     showLevelTitle('שמע (shama)', 2800),
     donkeySay('Das ist שמע – shama. Hoere, erkenne, gehorche.'),
@@ -328,6 +330,8 @@ async function phaseListeningAltar(props) {
     }
   }
   await narratorSay('Die Schutzform vollendet sich. Du fuehlst dich als Wahrheitsbote.');
+  await narratorSay('Innere Stimme: Vielleicht stand der Engel nicht vor mir, sondern hinter dem Vorhang, wo der Stoff der Welt zu Ende geht.');
+  await narratorSay('Innere Stimme: Manche nennen es das Licht hinter dem Licht. Und wer lauscht, hoert ein fernes Echo – das Summen des ersten Wortes.');
 }
 
 async function transitionToScene(ambienceKey, sceneConfig, props, phase) {

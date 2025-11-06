@@ -98,7 +98,7 @@ const TERRACE_ACTIONS = [
     steps: [
       { prompt: 'Hoere den ersten Stern: sprich שמע.', spells: ['shama', 'שמע'] },
       { prompt: 'Blockiere Balaks Gegenspruch mit לא.', spells: ['lo', 'לא'] },
-      { prompt: 'Segne den Pfad mit ברכה.', spells: ['barak', 'ברכה'] },
+      { prompt: 'Segne den Pfad mit ברך.', spells: ['barak', 'ברך'] },
     ],
     fragment: 'א',
   },
@@ -107,14 +107,14 @@ const TERRACE_ACTIONS = [
     steps: [
       { prompt: 'Hoere erneut.', spells: ['shama', 'שמע'] },
       { prompt: 'Sag Nein.', spells: ['lo', 'לא'] },
-      { prompt: 'Segne erneut.', spells: ['barak', 'ברכה'] },
+      { prompt: 'Segne erneut.', spells: ['barak', 'ברך'] },
     ],
   },
   {
     id: 'starTerraceThree',
     steps: [
       { prompt: 'Hoere ein drittes Mal.', spells: ['shama', 'שמע'] },
-      { prompt: 'Segne Balaks Furcht.', spells: ['barak', 'ברכה'] },
+      { prompt: 'Segne Balaks Furcht.', spells: ['barak', 'ברך'] },
       { prompt: 'Sag Nein zum Schatten.', spells: ['lo', 'לא'] },
     ],
   },
@@ -217,7 +217,7 @@ async function phaseStarTerraces(props) {
       let ok = false;
       while (!ok) {
         const answer = await readWord(step.prompt);
-        const variant = step.spells[0] === 'שמע' ? 'שמע' : step.spells[0] === 'לא' ? 'לא' : 'ברכה';
+        const variant = step.spells[0] === 'שמע' ? 'שמע' : step.spells[0] === 'לא' ? 'לא' : 'ברך';
         if (step.spells.some(spell => spellEquals(answer, spell))) {
           ok = true;
           await celebrateGlyph(answer);
@@ -236,6 +236,9 @@ async function phaseStarTerraces(props) {
 
 async function phaseStarCrown(props) {
   await narratorSay('Eine Krone aus Licht senkt sich. Haenge jede Bahn mit den richtigen Worten.');
+  await wizardSay('Es sagt Bileam, der Sohn Beors, der Mann, dem die Augen geoeffnet sind.');
+  await wizardSay('Ich sehe ihn, aber nicht jetzt; ich schaue ihn, aber nicht von Nahem.');
+  await wizardSay('Ein Stern geht auf aus Jakob, ein Zepter erhebt sich aus Israel.');
   for (let index = 0; index < CROWN_SEQUENCE.length; index++) {
     const arcId = ['crownArcOne', 'crownArcTwo', 'crownArcThree', 'crownArcFour', 'crownArcFive'][index];
     const combo = CROWN_SEQUENCE[index];
@@ -244,7 +247,7 @@ async function phaseStarCrown(props) {
       const expected = combo[stepIndex];
       const prompt = makePromptForCrown(index, stepIndex);
       const answer = await readWord(prompt);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברכה' : expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
+      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברך' : expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
       if (spellEquals(answer, expected, variant)) {
         stepIndex += 1;
         await celebrateGlyph(answer);
@@ -256,7 +259,6 @@ async function phaseStarCrown(props) {
     updateProp(props, arcId, { type: 'lightCrownArcLit' });
   }
   await narratorSay('Die Krone erglueht. Ein Stern geht auf aus Jakob, ein Zepter erhebt sich aus Israel.');
-  await wizardSay('Ich sehe ihn, aber nicht jetzt; ich schaue ihn, aber nicht von Nahem.');
 }
 
 async function phaseNationVisions(props) {
@@ -272,7 +274,7 @@ async function phaseNationVisions(props) {
       const expected = vision.combo[idx];
       const prompt = makePromptForVision(expected);
       const answer = await readWord(prompt);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברכה' : expected === 'dabar' ? 'דבר' : 'אור';
+      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברך' : expected === 'dabar' ? 'דבר' : 'אור';
       if (spellEquals(answer, expected, variant)) {
         idx += 1;
         await celebrateGlyph(answer);
@@ -297,9 +299,9 @@ async function phaseShadowRift(props) {
     let idx = 0;
     while (idx < shadow.combo.length) {
       const expected = shadow.combo[idx];
-      const prompt = 'Bann den Schatten mit שמע → לא → ברכה → אור.';
+      const prompt = 'Bann den Schatten mit שמע → לא → ברך → אור.';
       const answer = await readWord(prompt);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברכה' : 'אור';
+      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברך' : 'אור';
       if (spellEquals(answer, expected, variant)) {
         idx += 1;
         await celebrateGlyph(answer);
@@ -316,13 +318,13 @@ async function phaseShadowRift(props) {
 async function phaseFirmamentWarning() {
   await narratorSay('Der Himmel reisst auf. Ein Riss zeigt den Schattenpalast.');
   await narratorSay('Systemwarnung: Weltstabilitaet kritisch. Neuer Prozess entdeckt: SHADOW_BALAK.exe.');
-  await narratorSay('Eine Stimme warnt: „Verwende אור → אמת → ברכה, um den Riss zu schliessen.“');
+  await narratorSay('Eine Stimme warnt: „Verwende אור → אמת → ברך, um den Riss zu schliessen.“');
   let idx = 0;
   const combo = ['or', 'emet', 'barak'];
   while (idx < combo.length) {
     const expected = combo[idx];
-    const prompt = 'Sprich אור → אמת → ברכה, um den Riss zu zuegeln.';
-    const variant = expected === 'or' ? 'אור' : expected === 'emet' ? 'אמת' : 'ברכה';
+    const prompt = 'Sprich אור → אמת → ברך, um den Riss zu zuegeln.';
+    const variant = expected === 'or' ? 'אור' : expected === 'emet' ? 'אמת' : 'ברך';
     const answer = await readWord(prompt);
     if (spellEquals(answer, expected, variant)) {
       idx += 1;
@@ -344,7 +346,7 @@ async function phaseStarBridge(props) {
     while (idx < seg.combo.length) {
       const expected = seg.combo[idx];
       const prompt = makePromptForBridge(expected, idx, seg.combo.length);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברכה' : expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
+      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברך' : expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
       const answer = await readWord(prompt);
       if (spellEquals(answer, expected, variant)) {
         idx += 1;
@@ -363,7 +365,7 @@ function makePromptForCrown(arcIndex, stepIndex) {
   const prompts = [
     ['Hoere zuerst: sprich שמע.', 'Forme das Gehoerte mit דבר.'],
     ['Sprich דבר, dann אמת.', 'Besiegle den Klang mit אמת.'],
-    ['Segne und bestaetige: ברכה, dann אמת.', 'Lass אור als drittes folgen.'],
+    ['Segne und bestaetige: ברך, dann אמת.', 'Lass אור als drittes folgen.'],
     ['Hoere den Befehl: שמע.', 'Verneine ihn mit לא.', 'Schliesse mit אור.'],
     ['Halte das Licht: sprich אור.'],
   ];
@@ -381,7 +383,7 @@ function makePromptForVision(expected) {
     case 'lo':
       return 'Verneine den Fluch mit לא.';
     case 'barak':
-      return 'Beende mit ברכה.';
+      return 'Beende mit ברך.';
     default:
       return 'Sprich das geforderte Wort.';
   }
@@ -391,7 +393,7 @@ function makePromptForBridge(expected, index, total) {
   if (total === 1 && expected === 'or') return 'Folge dem Stern: sprich אור.';
   if (expected === 'or') return 'Schliesse den Schritt mit אור.';
   if (expected === 'emet') return 'Fuelle den Schritt mit אמת.';
-  if (expected === 'barak') return 'Segne diesen Abschnitt mit ברכה.';
+  if (expected === 'barak') return 'Segne diesen Abschnitt mit ברך.';
   if (expected === 'shama') return 'Hoere vor jedem Schritt: שמע.';
   if (expected === 'dabar') return 'Setze das Wort als Traeger: דבר.';
   return 'Sprich das geforderte Wort.';
