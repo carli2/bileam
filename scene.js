@@ -28,6 +28,7 @@ import {
  *   control flow – they provide narrative sequencing only.
  */
 import { transliterateToHebrew } from './game.helpers.js';
+import { GLYPH_PATTERNS } from './glyphPatterns.js';
 
 export class SkipSignal extends Error {
   constructor(reason = 'skip') {
@@ -94,6 +95,7 @@ const narrationSpeech = createSpeechState();
 const overlaySpeechStates = new Set();
 let speechQueue = Promise.resolve();
 const propSprites = {};
+const propSpriteFactories = {};
 let sceneProps = [];
 const activeWaiters = new Set();
 
@@ -700,6 +702,26 @@ function initSprites() {
   propSprites.wordSpirit = createWordSpiritSprite(colors);
   propSprites.balakEmissary = createBalakEmissarySprite(colors);
   propSprites.balakAdvisor = createBalakAdvisorSprite(colors);
+  propSprites.moabWallWatcher = createMoabWallWatcherSprite(colors);
+  propSprites.hoofSignTrail = createHoofSignTrailSprite(colors);
+  propSprites.sandVisionRingDormant = createSandVisionRingDormantSprite(colors);
+  propSprites.sandVisionRingActive = createSandVisionRingActiveSprite(colors);
+  propSprites.resonanceRingDormant = createResonanceRingDormantSprite(colors);
+  propSprites.resonanceRingActive = createResonanceRingActiveSprite(colors);
+  propSprites.nightCampfire = createNightCampfireSprite(colors);
+  propSprites.envoyShadow = createEnvoyShadowSprite(colors);
+  propSprites.temptationVessel = createTemptationVesselSprite(colors);
+  propSprites.temptationVesselAshes = createTemptationVesselAshSprite(colors);
+  propSprites.borderProcessionPath = createBorderProcessionPathSprite(colors);
+  propSprites.borderMilestone = createBorderMilestoneSprite(colors);
+  propSprites.borderThorn = createBorderThornSprite(colors);
+  propSprites.watchFireDormant = createWatchFireSprite(colors, 'dormant');
+  propSprites.watchFireAwakened = createWatchFireSprite(colors, 'awakened');
+  propSprites.watchFireVeiled = createWatchFireSprite(colors, 'veiled');
+  propSpriteFactories.noGlyphShard = definition => {
+    const letter = definition?.data?.letter ?? definition?.letter ?? '';
+    return createGlyphShardSprite(colors, letter);
+  };
   sceneProps = [];
 
   wizard.sprites = wizardSprites;
@@ -1190,7 +1212,15 @@ function drawProps() {
 function instantiatePropDefinition(definition) {
   if (!definition) return null;
   const type = definition.type ?? null;
-  const sprite = definition.sprite ?? (type ? propSprites[type] : null);
+  let sprite = definition.sprite ?? null;
+  if (!sprite && type) {
+    const factory = propSpriteFactories[type];
+    if (typeof factory === 'function') {
+      sprite = factory(definition);
+    } else {
+      sprite = propSprites[type];
+    }
+  }
   if (!sprite) return null;
 
   const prop = {
@@ -1202,7 +1232,7 @@ function instantiatePropDefinition(definition) {
     parallax: definition.parallax ?? 1,
     layer: definition.layer ?? 0,
     visible: definition.visible !== false,
-    data: definition.data ?? null,
+    data: definition.data ?? (definition.letter ? { letter: definition.letter } : null),
   };
 
   return prop;
@@ -1716,7 +1746,6 @@ function createPromptBubble(x1, y1, text, x2, y2) {
       maxLineLength,
       lineDirections,
     } = layoutText(display, textRenderer, TEXT_WRAP, {
-      forceDirection: 'ltr',
       reverseHebrewInMixedLines: false,
     });
 
@@ -2066,6 +2095,535 @@ function createBalakAdvisorSprite(c) {
     'g': c.wizardBelt,
   };
   return spriteFromStrings(art, legend);
+}
+
+function createMoabWallWatcherSprite(c) {
+  const art = [
+    '............ttt.............',
+    '............tTTt............',
+    '............tTTTTt..........',
+    '...........tTTTTTTt.........',
+    '..........tTTsSSTTt.........',
+    '..........tTTsSSTTt.........',
+    '.........tTTsSSTTTt.........',
+    '.........tTTddddTTt.........',
+    '........tTTddddddTTt........',
+    '........tTTddddddTTt........',
+    '........tTTddddddTTt........',
+    '........tTTddddddTTt........',
+    '.......mMMDDDDDdMMMm........',
+    '.......mMMDDDDDdMMMm........',
+    '......mMMDDDDDDDMMMm........',
+    '......mMMDDDDDDDMMMm........',
+    '......mMMDDGGGDDMMMm........',
+    '......mMMDDGGGDDMMMm........',
+    '......mMMDDGggDDMMMm........',
+    '......mMMDDGggDDMMMm........',
+    '......mMMDDDDDDDMMMm........',
+    '......mMMDDDDDDDMMMm........',
+    '......mMMDDDDDDDMMMm........',
+    '......mMMDDDDDDDMMMm........',
+    '......mm.........mm.........',
+  ];
+  const legend = {
+    '.': c.transparent,
+    't': c.wizardHat,
+    'T': c.wizardHatHighlight,
+    's': c.wizardSkin,
+    'S': c.wizardBeardShadow,
+    'd': c.marketFabric,
+    'D': c.hutGlow,
+    'm': c.wizardBoot,
+    'M': c.desertSand,
+    'g': c.sanctumSky,
+    'G': c.wizardBelt,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createHoofSignTrailSprite(c) {
+  const art = [
+    '................',
+    '.......dd.......',
+    '......dggd......',
+    '.......gg.......',
+    '......ddgg......',
+    '.....ggggdd.....',
+    '......dd........',
+    '................',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'd': c.desertSand,
+    'g': c.hutGlow,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createOvalRingSprite(width, height, {
+  base,
+  highlight,
+  innerFill = null,
+  glow = null,
+  innerScale = 0.68,
+}) {
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(colors.transparent);
+  const centerX = (width - 1) / 2;
+  const centerY = (height - 1) / 2;
+  const outerRadiusX = Math.max(1, (width - 2) / 2);
+  const outerRadiusY = Math.max(1, (height - 2) / 2);
+  const innerRadiusX = outerRadiusX * innerScale;
+  const innerRadiusY = outerRadiusY * innerScale;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const dxOuter = (x - centerX) / outerRadiusX;
+      const dyOuter = (y - centerY) / outerRadiusY;
+      const outerMag = dxOuter * dxOuter + dyOuter * dyOuter;
+      const dxInner = (x - centerX) / innerRadiusX;
+      const dyInner = (y - centerY) / innerRadiusY;
+      const innerMag = dxInner * dxInner + dyInner * dyInner;
+      const idx = y * width + x;
+
+      if (outerMag <= 1 && innerMag >= 1) {
+        let color = base;
+        if (highlight && (outerMag > 0.82 || innerMag < 1.12)) {
+          color = highlight;
+        }
+        pixels[idx] = color;
+      } else if (innerFill && innerMag < 1) {
+        let color = innerFill;
+        if (glow && innerMag < 0.48) {
+          color = glow;
+        }
+        pixels[idx] = color;
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createSandVisionRingSprite(c, active) {
+  const base = active ? c.hutGlow : c.desertSand;
+  const highlight = active ? c.marketFabric : c.dirt;
+  const innerFill = active ? c.marketFabric : c.desertSand;
+  const glow = active ? c.wizardBelt : null;
+  return createOvalRingSprite(46, 20, {
+    base,
+    highlight,
+    innerFill,
+    glow,
+    innerScale: active ? 0.6 : 0.7,
+  });
+}
+
+function createResonanceRingSprite(c, active) {
+  const base = active ? c.sanctumSky : c.towerGlass;
+  const highlight = active ? c.wizardBelt : c.sanctumSky;
+  const innerFill = active ? c.sanctumSky : c.towerGlass;
+  const glow = active ? c.hutGlow : null;
+  return createOvalRingSprite(44, 18, {
+    base,
+    highlight,
+    innerFill,
+    glow,
+    innerScale: active ? 0.62 : 0.72,
+  });
+}
+
+function createNightCampfireSprite(c) {
+  const art = [
+    '..........',
+    '....kk....',
+    '...kFFk...',
+    '..kFFfFk..',
+    '.kFFFffFk.',
+    '.kFffgFFk.',
+    '.kffffggk.',
+    '.kffffggk.',
+    '.kffffggk.',
+    '..kffggk..',
+    '..kggggk..',
+    '...kkkk...',
+    '....kk....',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'k': c.wizardBoot,
+    'F': c.lavaGlow,
+    'f': c.hutGlow,
+    'g': c.marketFabric,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createEnvoyShadowSprite(c) {
+  const art = [
+    '............',
+    '....sss.....',
+    '...sSSSs....',
+    '...sSSSs....',
+    '..sSSSSSs...',
+    '..sSSSSSs...',
+    '..sSSSSSs...',
+    '..sSSSSSs...',
+    '.sSSSSSSSs..',
+    '.sSSSSSSSs..',
+    '.sSgSSSgSs..',
+    '.sSgSSSgSs..',
+    '.sSSSSSSSs..',
+    '.sSSSSSSSs..',
+    '.sSSSSSSSs..',
+    '.sSSSSSSSs..',
+    '.sSSSSSSSs..',
+    '.sSSSSSSSs..',
+    '.sSSSSSSSs..',
+    '..sSSSSSs...',
+    '..sSSSSSs...',
+    '..sSSSSSs...',
+    '..sSSSSSs...',
+    '..sSSSSSs...',
+    '..sSSSSSs...',
+    '..sssssS....',
+    '..sssssS....',
+    '..s....s....',
+  ];
+  const legend = {
+    '.': c.transparent,
+    's': c.donkeyShadow,
+    'S': c.nightSkyBottom,
+    'g': c.marketFabric,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createTemptationVesselSprite(c) {
+  const art = [
+    '....................',
+    '....................',
+    '.......cccccc.......',
+    '......cFFFFFfc......',
+    '.....cFFgggFFc......',
+    '....cFFgggggFFc.....',
+    '....cFFgggggFFc.....',
+    '...cFFgggggggFFc....',
+    '...cFFgggggggFFc....',
+    '..cFFgggggggggFFc...',
+    '..cFFgggggggggFFc...',
+    '..cFFgggggggggFFc...',
+    '..cFFgggggggggFFc...',
+    '..cFFgggggggggFFc...',
+    '..cFFgggggggggFFc...',
+    '..cFFgggggggggFFc...',
+    '..cFFgggggggggFFc...',
+    '..cFFFFFFFFFFFFc....',
+    '..cccccccccccccc....',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'c': c.wizardBoot,
+    'F': c.wizardBelt,
+    'f': c.hutGlow,
+    'g': c.marketFabric,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createTemptationVesselAshSprite(c) {
+  const art = [
+    '....................',
+    '....................',
+    '.......cccccc.......',
+    '......cSSSSSSc......',
+    '.....cSSgggSSc......',
+    '....cSSgggggSSc.....',
+    '....cSSgggggSSc.....',
+    '...cSSgggggggSSc....',
+    '...cSSgggggggSSc....',
+    '..cSSgggggggggSSc...',
+    '..cSSgggggggggSSc...',
+    '..cSSgggggggggSSc...',
+    '..cSSgggggggggSSc...',
+    '..cSSgggggggggSSc...',
+    '..cSSgggggggggSSc...',
+    '..cSSgggggggggSSc...',
+    '..cSSgggggggggSSc...',
+    '..cSSSSSSSSSSSSc....',
+    '..cccccccccccccc....',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'c': c.wizardBoot,
+    'S': c.donkeyShadow,
+    'g': c.desertSand,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createWatchFireSprite(c, state) {
+  const artDormant = [
+    '.......',
+    '..ccc..',
+    '..cVc..',
+    '..cVc..',
+    '..cVc..',
+    '..cVc..',
+    '..cVc..',
+    '.cVcVc.',
+    '.cVcVc.',
+    '.cVcVc.',
+    '.cVcVc.',
+    '.cVcVc.',
+    '.cVcVc.',
+    '.cVcVc.',
+    '.cVcVc.',
+    '.cVcVc.',
+    '..ccc..',
+    '..ccc..',
+    '...c...',
+    '...c...',
+  ];
+  const artAwakened = [
+    '.......',
+    '..ccc..',
+    '..cVc..',
+    '..cFc..',
+    '..cFc..',
+    '..cFc..',
+    '..cFc..',
+    '.cFFFc.',
+    '.cFFFc.',
+    '.cFfFc.',
+    '.cFfFc.',
+    '.cFFFc.',
+    '.cFFFc.',
+    '.cFFFc.',
+    '.cFfFc.',
+    '.cFfFc.',
+    '..ccc..',
+    '..ccc..',
+    '...c...',
+    '...c...',
+  ];
+  const artVeiled = [
+    '.......',
+    '..ccc..',
+    '..cVc..',
+    '..cFc..',
+    '..cFc..',
+    '..cVc..',
+    '..cVc..',
+    '.cVFVc.',
+    '.cVFVc.',
+    '.cVfVc.',
+    '.cVfVc.',
+    '.cVFVc.',
+    '.cVFVc.',
+    '.cVFVc.',
+    '.cVfVc.',
+    '.cVfVc.',
+    '..ccc..',
+    '..ccc..',
+    '...c...',
+    '...c...',
+  ];
+  const legendDormant = {
+    '.': c.transparent,
+    'c': c.wizardBoot,
+    'V': c.desertSand,
+  };
+  const legendActive = {
+    '.': c.transparent,
+    'c': c.wizardBoot,
+    'F': c.lavaGlow,
+    'f': c.hutGlow,
+    'V': c.desertSand,
+  };
+  const legendVeiled = {
+    '.': c.transparent,
+    'c': c.wizardBoot,
+    'F': c.hutGlow,
+    'f': c.desertSand,
+    'V': c.donkeyShadow,
+  };
+  switch (state) {
+    case 'awakened':
+      return spriteFromStrings(artAwakened, legendActive);
+    case 'veiled':
+      return spriteFromStrings(artVeiled, legendVeiled);
+    case 'dormant':
+    default:
+      return spriteFromStrings(artDormant, legendDormant);
+  }
+}
+
+function createBorderMilestoneSprite(c) {
+  const art = [
+    '......',
+    '..dd..',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '.dDDd.',
+    '..dd..',
+    '..dd..',
+    '.dddd.',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'd': c.desertSand,
+    'D': c.sanctumSky,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createBorderThornSprite(c) {
+  const art = [
+    '..............',
+    '.....ggg......',
+    '....ggggg.....',
+    '...gggggg.....',
+    '..ggggggg.....',
+    '.ggggggggg....',
+    '.gggGGGggg....',
+    '..ggGGGgg.....',
+    '..ggGGGgg.....',
+    '..gggGggg.....',
+    '..ggggggg.....',
+    '..ggggggg.....',
+    '..ggggggg.....',
+    '...ggggg......',
+    '....ggg.......',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'g': c.gardenLeaf,
+    'G': c.donkeyShadow,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createBorderProcessionPathSprite(c) {
+  const width = 240;
+  const height = 48;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const base = c.desertSand;
+  const accent = c.hutGlow;
+  const shadow = c.dirt;
+  const glyph = c.marketFabric;
+
+  for (let y = 0; y < height; y++) {
+    const rowStart = y * width;
+    const gradient = base;
+    const tone = y < 10
+      ? accent
+      : y > height - 10
+        ? shadow
+        : gradient;
+    for (let x = 0; x < width; x++) {
+      let color = tone;
+      if (y >= 10 && y <= height - 12) {
+        const band = ((y - 10) / (height - 20));
+        if (band < 0.12 || band > 0.88) {
+          color = shadow;
+        }
+      }
+      if (y % 6 === 0 && y > 8 && y < height - 8) {
+        color = accent;
+      }
+      if (x % 28 === 0 && y > 12 && y < height - 12) {
+        color = glyph;
+      }
+      pixels[rowStart + x] = color;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createSandVisionRingActiveSprite(c) {
+  return createSandVisionRingSprite(c, true);
+}
+
+function createSandVisionRingDormantSprite(c) {
+  return createSandVisionRingSprite(c, false);
+}
+
+function createResonanceRingActiveSprite(c) {
+  return createResonanceRingSprite(c, true);
+}
+
+function createResonanceRingDormantSprite(c) {
+  return createResonanceRingSprite(c, false);
+}
+
+function createGlyphShardSprite(c, letter) {
+  const width = 22;
+  const height = 20;
+  const pixels = new Uint8Array(width * height);
+  const frameColor = c.wizardHat;
+  const fillColor = c.sanctumSky;
+  const glowColor = c.wizardHatHighlight;
+  const textColor = c.textPrimary;
+  const accentColor = c.marketFabric;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const idx = y * width + x;
+      let color = fillColor;
+      if (x === 0 || y === 0 || x === width - 1 || y === height - 1) {
+        color = frameColor;
+      } else if (x === 1 || y === 1 || x === width - 2 || y === height - 2) {
+        color = glowColor;
+      } else if ((x + y) % 6 === 0) {
+        color = accentColor;
+      }
+      pixels[idx] = color;
+    }
+  }
+
+  const text = String(letter ?? '').trim();
+  if (text.length > 0) {
+    const chars = Array.from(text);
+    const charWidth = 5;
+    const charSpacing = 2;
+    const totalChars = Math.min(chars.length, 3);
+    const textWidth = totalChars * charWidth + (totalChars - 1) * charSpacing;
+    const offsetX = Math.max(2, Math.floor((width - textWidth) / 2));
+    const offsetY = Math.max(2, Math.floor((height - 7) / 2));
+    for (let i = 0; i < totalChars; i++) {
+      const raw = chars[i];
+      const pattern = GLYPH_PATTERNS[raw] || GLYPH_PATTERNS[raw?.toUpperCase?.()] || null;
+      if (!pattern) continue;
+      const left = offsetX + i * (charWidth + charSpacing);
+      for (let gy = 0; gy < pattern.length; gy++) {
+        const row = pattern[gy];
+        for (let gx = 0; gx < row.length; gx++) {
+          if (row[gx] !== '#') continue;
+          const px = left + gx;
+          const py = offsetY + gy;
+          if (px <= 0 || px >= width - 1 || py <= 0 || py >= height - 1) continue;
+          pixels[py * width + px] = textColor;
+        }
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
 }
 
 function createMarketBackdropSprite(c) {
