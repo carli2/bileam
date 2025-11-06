@@ -227,3 +227,6 @@ Er dient als Gegenpol zum Lernprozess: Manipulation vs. Erkenntnis.
 - **Tests:** Nach jeder Änderung `npm test` ausführen und nur mit grünem Ergebnis weiterarbeiten.  
 - **Systemmetriken pflegen:** `transgression`, `divine_pass`, `worldStability`, `shadow_access` müssen sichtbar gespiegelt werden (Aura, Partikel, UI-Hinweis) und dürfen nicht „stumm“ steigen oder fallen.  
 - **Combo-Telegrafie:** Für jede Pflichtkombination (`lo → shama`, `shama → lo → barak`, `dabar → emet → or` usw.) brauchen Props klare Vorzeichen – Lichtband, Klanghinweis oder Esel-Tip – bevor der Spieler scheitern kann.  
+- *Kursiver Szenentext* aus den Level-Markdowns beschreibt Bühne, Kamera, Licht und Effekte – niemals als Dialog ausgeben. Setze entsprechende Props, Partikel, Ambience-Layer oder Animationszustände, damit die Szene ohne zusätzliche Sprechblasen erkennbar wird.  
+- Regiehinweise wie `Ziel:` oder `Gameplay-Hinweis:` erscheinen als Overlays (`showLevelTitle`, UI-Widgets) oder durch geänderte Szene-Kontexte, nicht als Erzähler- oder Figurentext.  
+- Neue Lernwörter, Systemmeldungen oder Missionsziele sollen über bestehende UI (Titelband, Grimoire-Update, Glyph-Reveal) vermittelt werden; keine improvisierten Dialogblasen dafür einsetzen.  
