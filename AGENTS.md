@@ -35,6 +35,7 @@ Bileam bekommt seine Kraft von Gott. Dadurch erhält er auch übernatürliche Kr
 
 ## 🧩 2. Aufbau der Rätsel
 
+Level 1-5:
 Jedes Level folgt einem **drei-phasigen didaktischen Zyklus:**
 
 | Phase | Lernfunktion | Spielerhandlung | Feedback |
@@ -43,12 +44,19 @@ Jedes Level folgt einem **drei-phasigen didaktischen Zyklus:**
 | **II – Erkenntnis** | Neues Wort lernen | Dialog, Nachsprechen, Eingabe | Mehrstufige Korrektur (Esel-Hinweis, Rückblende, Meditation) |
 | **III – Anwendung** | Neues Wort anwenden | Kombinierte Aufgaben / Rätsel | Dynamische Reaktion der Welt |
 
+Level 6-10:
+Diese haben stärker den Fokus auf die wortgenaue biblische Erzählung, aber angereichert mit spielerischen Elementen.
+Top Priorität bei Level 6-10 ist die wortgenaue Rede aus der biblischen Vorlage.
+Dazwischen immer wieder spielerische Elemente, z.B. Rätsel, irgendwohin laufen, visuelle Effekte, Personen, die ins Bild kommen und wieder gehen oder ein neues Wort lernen (meist Mitte oder Ende des Levels) und natürlich anwenden.
+
 ### 2.1. Rätselprinzipien
 - **Keine Zufallslösungen:** Spieler muss *verstehen* und *erinnern*.  
 - **Visuelle oder akustische Hinweise** deuten auf das passende Wort (z. B. Lichtreflex → `aor`, Wasserbewegung → `mayim`).  
 - **Kombinationsrätsel** in höheren Levels: mehrere Worte müssen in richtiger Reihenfolge gesprochen werden.  
 - **Feedback-System:** Welt reagiert organisch – Licht, Wasser, Klang, Pflanzen, Mechanismen.  
 - **Abwechslung:** Die einzelnen Spielelemente müssen sich abwechseln: Mal gibt es Dialoge, mal muss man Rätsel eintippen, mal muss man irgendwohin laufen, dann wieder Zwischensequenzen, bei denen z.B. ein Stein vom Himmel fällt oder Personen ins Bild kommen oder im Himmel Buchstaben erscheinen.
+- **Didaktische Steierung:** In den ersten Leveln muss der Spieler die Wörter nur abtippen. Später werden die Hinweise weniger und er muss immer mehr die Wörter im richtigen Kontext anwenden.
+
 
 ### 2.2. Didaktische Tiefe
 - **Von bekannt zu unbekannt:** jedes Level baut logisch auf den vorigen Wörtern auf.  
@@ -221,9 +229,8 @@ Er dient als Gegenpol zum Lernprozess: Manipulation vs. Erkenntnis.
 ## 🧾 8. Richtlinien für Level-Designer & Artists (erweitert)
 
 - **Leitfrage pro Level:** „Welches Wort wird gelernt – und was bedeutet es *im Kontext* der Welt?“  
-- **Symbolik:** Jedes Objekt soll eine Beziehung zum Wort haben.  
-- **Balaks Einfluss:** Zeige Fortschreiten durch Architektur (von organisch → prunkvoll → zerstört).  
-- **Lichtlogik:** Mehr Macht = mehr Blendung; erst im Endkampf verschmilzt alles Licht zu Klarheit.  
+- **Symbolik:** Jedes Objekt soll eine Beziehung zum Wort haben. Gleichzeitig haben auch die Buchstaben eine Bedeutung und die Einzelbedeutungen setzen dann Wörter zusammen.
+- **Balaks Einfluss:** Balak ist durch und durch narzisstisch. Zuerst freut sich Bileam über das viele Geld, das er mit Balak verdienen kann, aber zum Schluss bemerkt er den Schwindel.
 - **Esel-Dialoge:** bleiben das didaktische Herz des Spiels.  
   - Verwenden einfache Sprache.  
   - Struktur: *Problem – Wort – Erklärung – Anwendung – Moralischer Satz.*  
