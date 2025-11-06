@@ -68,16 +68,16 @@ Jedes Level folgt einem **drei-phasigen didaktischen Zyklus:**
 - Spricht in **Kurzsätzen** mit pädagogischem Kern („Benutze das Wort *MAYIM*, es bedeutet Wasser.“).
 
 ### 3.3. König Balak von Moab
-- Ist am Anfang Auftraggeber, wird später aber zum Endgegner
-- Biblischer König
-- Visuell: prunkvoll, golden
-- Fies und hinterhältig, immer auf seinen eigenen Gewinn bedacht
+- Ist am Anfang Auftraggeber, wird später aber zum Endgegner.  
+- Biblischer König, redet in Befehlsketten; seine Worte versuchen, Bileams Sprache zu überschreiben.  
+- Visuell: prunkvoll, golden; ab Level 8 mit pulsierenden Purpuradern, ab Level 10 trennt sich sein Schatten (violett, transparent).  
+- Motivation: egoistisch, kontrollierend; jede Szene zeigt ihn zwischen Ehrfurcht und Panik vor dem Verlust seiner Macht.
 
 ### 3.4. Engel
-- Erscheinen erst in späteren Levels
-- Wesen aus **gebündeltem Licht** mit **Schriftbahnen im Inneren**.  
-- Visuell: geometrisch-symmetrisch, schwebend, ohne Flügel.  
-- Keine Kampfgegner, sondern Lehrer oder Wächter bestimmter Orte.
+- Erscheinen erstmals sichtbar in Level 7 als Lichtkonturen, materialisieren klar ab Level 8.  
+- Wesen aus **gebündeltem Licht** mit **Schriftbahnen im Inneren**; Licht pulsierend, nie flackernd.  
+- Visuell: geometrisch-symmetrisch, schwebend, ohne Flügel; Schwert aus Lichtband nur, wenn Weg blockiert.  
+- Keine Kampfgegner, sondern Lehrer oder Wächter bestimmter Orte; Stimme als mehrstimmiges Flüstern mit klarer Artikulation.
 
 ---
 
@@ -95,17 +95,17 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
 | 3 – קול (*qol*) | Felsenschlucht | Resonanz, Erkenntnis | Gerüchte von Balaks Reich | Grau, Kobalt | Basalt, Kristalladern | Schallringe, Staub |
 | 4 – חיים (*xayim*) | Garten der Erneuerung | Wachstum, Leben, Verführung | Balak bittet um „Wunder für sein Reich“ | Smaragd, Gold | Pflanzen, Erde | Pollen, Glühpartikel |
 | 5 – אש (*aw*) | Schmiede der Flammen | Macht, Schöpfung, Prüfung | Balak lobt Bileam für „die Macht seiner Zunge“ | Rot, Schwarz, Weißglut | Metall, Lava | Funken, Rauch |
-| 6 – דבר (*dabar*) | Stadt der Worte | Manipulation, Täuschung | Balak nutzt Sprache zur Kontrolle | Ocker, Messing, Purpur | Stoff, Stein, Gold | Schriftstaub |
-| 7 – אמת (*emet*) | Turm der Spiegel | Wahrheit, Selbstbild | Balak spiegelt sich als göttliche Autorität | Silber, Mondblau | Glas, Stein | Splitterlicht |
-| 8 – מלאך (*malak*) | Wüste der Offenbarung | Einsicht, göttliche Warnung | Balaks Macht verblasst, Engel erscheint | Sandgold, Azur | Salz, Staub | Strahlfäden |
-| 9 – ארור / ברכה (*arur / beraka*) | Königshof | Versuchung, Entscheidung | Balak fordert Fluch auf Israel | Purpur, Smaragd, Gold | Marmor, Teppich | Hofstaub, Glanz |
-| 10 – המלחמה (*hamilchama*) | Hochplateau | Endkampf, Erlösung | Finaler Kampf gegen Balak | Mitternachtsblau, Weißgold | Fels, Licht, Wind | Sternpartikel |
+| 6 – לא (*lo*) | Mauern von Ar & Lager Petor | Grenze, Verweigerung, Gehorsam | Balak beobachtet aus der Ferne, sendet Gesandte | Ocker, Glutbernstein, Mitternachtsblau | Sand, Lehm, Nachtfeuer, Schriftlinien | Staubwirbel, Glyphensplitter, Funken |
+| 7 – שמע (*shama*) | Terrassenweg & Engelschluchten | Hören, Prüfung, Offenbarung | Fürsten und Engel zwingen zur Entscheidung | Morgengrau, Silber, Azur | Basalt, Reben, Klangbahnen, Lichtklingen | Echo-Spuren, Atemnebel, Hörfäden |
+| 8 – ברך (*barak*) | Altäre von Bamot-Baal | Segen, Ritual, Erwartung | Balak drängt und beobachtet jede Geste | Basalt, Gold, Lapislazuli | Steinplatten, Opferfeuer, Glyphmosaik | Segenfunken, Rauchspiralen, Resonanzringe |
+| 9 – דבר / אמת (*dabar / emet*) | Pisga-Kamm & Wahrheitsgarten | Wort wird Wirklichkeit, Wahrheit verankert | Balak ringt mit dem Gesprochenen | Mondgrau, Weißgold, Tiefgrün | Polierter Stein, Spiegel, Wasserläufe | Lichtbahnen, Wahrheitsfragmente, Schwurglanz |
+| 10 – אור (*or*) | Sternenplateau & Schattensteg | Sternenlicht, Entscheidung, Befreiung | Balaks Schatten kämpft um letzte Macht | Mitternachtsblau, Sternweiß, Purpurglut | Basalt, Sternsplitter, Lichtkronen | Sternpartikel, Schattenrisse, Flare-Impulse |
 
 ### 4.2. Farbphilosophie
-- **Erde → Wasser → Stein → Leben → Feuer → Sprache → Wahrheit → Geist → Macht → Erlösung.**  
-- Jede Welt erweitert die Farbpalette organisch, basierend auf Bileams innerem Fortschritt.  
-- Balaks Farbcode: **Purpur + Gold** – blendend, aber kalt.  
-- Göttliches Licht (Engel): **Weißgold + Transparenz** – erhaben, aber demütig.
+- **Licht → Wasser → Klang → Leben → Feuer → Grenze → Hören → Segen → Wort & Wahrheit → Sternlicht.**  
+- Jede Stufe ab Level 6 fügt kühle Nacht- und Silbernuancen hinzu, um das „Nein“ und das Lauschen spürbar zu machen; Segen und Wahrheit bringen Gold- und Weißgoldanteile zurück, bevor Level 10 mit Sternweiß Kulmination und Gefahr vereint.  
+- Balaks Farbcode: **Purpur + Gold** – blendend, aber kalt; seine Schatten schlagen violette Risse in jede Szene, wenn Versuchung oder Zorn eskalieren.  
+- Göttliches Licht (Engel & Sternkrone): **Weißgold + Transparenz** – erhaben, doch stets eingebettet in sanfte Bewegungen, niemals blendendes Hartlicht.
 
 ---
 
@@ -122,16 +122,19 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
 
 ### 5.2. Umwelt-Assets
 - **Interaktive Objekte:**  
-  - *Lichtquellen* (aor) – Lampen, Runen, Sonnenstrahlen  
-  - *Wasserflächen* (mayim) – Flüsse, Brunnen, Spiegel  
-  - *Steine* (qol) – Resonanzportale, Monolithen  
-  - *Pflanzen* (xayim) – wachsende Ranken, Blüten  
-  - *Feuerstellen* (aw) – Schmiedefeuer, Fackeln, Lavapools  
-  - *Marktstände, Schriftrollen* (dabar) – Gesprächsobjekte  
-  - *Spiegelwände* (emet) – reflektierende Flächen mit Verzerrung  
-  - *Engelszeichen / Portale* (malak) – Lichttore, pulsierende Glyphen  
-  - *Thron / Bannkreis* (arur / beraka) – Endkampf-Arena  
-- **Hintergründe:** mehrschichtige Parallax-Ebenen mit Farbverlauf (Tiefe = Emotion).
+  - *Lichtquellen* (`aor`) – Lampen, Runen, Sonnenstrahlen  
+  - *Wasserflächen* (`mayim`) – Flüsse, Brunnen, Spiegel  
+  - *Steine* (`qol`) – Resonanzportale, Monolithen  
+  - *Pflanzen* (`xayim`) – wachsende Ranken, Blüten  
+  - *Feuerstellen* (`aw`) – Schmiedefeuer, Fackeln, Lavapools  
+  - *Grenzmarker* (`lo`) – sandVisionRings, envoyShadow-Szenen, Versuchungsgefäße, Wachfeuer mit Verdunkelungsphase  
+  - *Hörzeichen* (`shama`) – Hufspurketten, Fürstenbanner, Hörkreise, Klangfäden über Altären  
+  - *Segenaltäre* (`barak`) – modulare Altarplatten, Opferbecken, schwebende Segensfragmente  
+  - *Wahrheitsspiegel* (`dabar` / `emet`) – Resonanzsäulen, Sinnbild-Netze, Schwurkreise, Lügenrisse als Gegenpart  
+  - *Sternpfade* (`or`) – Sternterrassen, Lichtkronen, Schattenknoten, Sternsteg-Module  
+  - *Engelszeichen / Portale* (`malak`) – Lichttore, pulsierende Glyphen (aktiv ab Level 8)  
+  - *Throne & Bannkreise* (`arur` / `beraka`) – finale Arenen, Purpur-Gold-Siegel für Schattenkämpfe  
+- **Hintergründe:** mehrschichtige Parallax-Ebenen mit Farbverlauf (Tiefe = Emotion); ab Level 6 mischen sich Nachtbänder und Schriftnebel, während Level 10 Sternbahnen und Schattenvektoren überlagert.
 
 ### 5.3. Interface-Design
 - Eingabefeld für **Wortzauber** rechts unten (zeigt lateinisch → hebräisch in Echtzeit).  
@@ -155,11 +158,11 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
 | 3 – qol | Resonanz | Steinperkussion, Echoeffekte | Rätselhaft, metallisch |
 | 4 – xayim | Wachstum | Panflöte, Streicher, Naturgeräusche | Lebendig, friedlich |
 | 5 – aw | Feuer | Schlagwerk, Bass, metallisches Klingen | Kraftvoll, gefährlich |
-| 6 – dabar | Stadt | Oud, Stimmen, Glockenspiele | Hektisch, manipulativ |
-| 7 – emet | Spiegel | Chor, Glas-Klänge | Reflektiv, kühl |
-| 8 – malak | Wüste | Drones, Gesänge, schwebende Akkorde | Erhaben, warnend |
-| 9 – arur / beraka | Hof | Pauken, Trompeten, Orgel | Episch, dualistisch |
-| 10 – hamilchama | Kampf | orchestraler Hybrid aus allen Motiven | Schicksalhaft, transzendent |
+| 6 – lo | Grenzwache | Rahmentrommeln, Feuerknistern, tiefer Bordun, gedämpfte Hörner | Wachsam, gespannt |
+| 7 – shama | Engelsweg | Herzschlag-Percussion, Glasglocken, vokale Drones | Lauschend, angespannt |
+| 8 – barak | Bamot-Baal | Harfen, Shofar-Samples, tiefe Trommeln, chorale Pads | Ritualisiert, erhaben |
+| 9 – dabar / emet | Pisga | Metallische Resonanzen, Streicher-Ostinati, heller Chor | Gewichtig, klärend |
+| 10 – or | Sternenpfad | Orchestraler Synth-Hybrid, Glöckchen-Arps, pulsierende Subbässe | Kosmisch, entscheidend |
 
 ### 6.2. Soundeffekte (SFX)
 - **Zaubersprüche:**  
@@ -168,9 +171,13 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
   - *qol* – metallische Resonanz, Rückkopplung  
   - *xayim* – Herzschlag-Subbass, Pulsieren  
   - *aw* – tiefer Donner, Funkenknistern  
-  - *dabar* – Stimmschichten, Flüstern  
-  - *emet* – kristallines Splittern, sanftes Nachhallen  
-  - *malak* – sphärischer Chor mit Obertönen  
+  - *lo* – scharfes Luftansaugen, dumpfer Puls, Sandknirschen, das abrupt stoppt  
+  - *shama* – modulierte Obertöne, leiser Chorzug, Fokus auf binaurales Echo  
+  - *barak* – strahlende Harfenakkorde, funkelnde Glissandi, warmer Bassstoß  
+  - *dabar* – resonante Glocken, gestaffelte Stimme, die in Stein übergeht  
+  - *emet* – kristallines Summen mit langem Nachhall, dezente Chorfläche  
+  - *or* – gleißendes Spektrum, Sternrauschen, hoher Schimmertrail  
+  - *malak* – sphärischer Chor mit Obertönen, sanfte Schwertresonanz  
   - *arur* – dissonanter Schlag, abwärtsgehendes Glissando  
   - *beraka* – aufwärtsgerichteter Akkord mit Lichtbrummen  
 
@@ -178,6 +185,7 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
 - Jeder Raum „antwortet“ auf Sprache: Wände, Wasser, Metall reagieren mit Hall oder Frequenzänderung.  
 - Musik und Umgebungsgeräusche werden dynamisch nach Lernerfolg moduliert.  
   (Beispiel: je besser der Spieler ein Wort beherrscht, desto harmonischer klingt die Welt.)
+- **Ambient-Kits Level 6–10:** `steppeDreadDawn`, `petorEmberNight`, `moabDawnProcession`, `angelPresence`, `altarPulse`, `divineResonance`, `pisgaWindChoir`, `truthWeave`, `peorTwilight`, `starCrownPulse`, `shadowTension`, `starBridgeFlow`, `shadowPalaceDrone`. Nutze sie als Layer, niemals als harte Wechsel ohne Fade.
 
 ---
 
@@ -194,6 +202,16 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
 Er verkörpert *Sprache ohne Wahrheit* – Macht ohne Verständnis.  
 Er dient als Gegenpol zum Lernprozess: Manipulation vs. Erkenntnis.  
 
+### 7.1. Wortprogression Level 6–10
+
+| Level | Kernausdruck | Funktion im Spiel | Lernfokus | Zusätzliche Systeme |
+|-------|--------------|-------------------|-----------|---------------------|
+| 6 | `lo` (לא) | Verbietet Fluch/Versuchung, stabilisiert Grenzen | Bewusstes „Nein“ als Schutz | Glyph-Fragmente ל + א, Nachtmeditation, Versuchungsgefäße |
+| 7 | `shama` (שמע) | Hören/Gehorchen, macht Unsichtbares sichtbar | Rhythmus & Timing, Herzschlag-Sequenzen | *transgression*-Zähler, Höraltäre, Engel-Gates |
+| 8 | `barak` (ברך) | Segen freisetzen, Energie umlenken | Mehrstufige Ritual-Sequenzen | Segensfragmente, Altar-Minispiele, Balaks Ungeduld |
+| 9 | `dabar` (דבר) & `emet` (אמת) | Wort wird Handlung, Wahrheit verankert | Kombination & Reihenfolge, Wahrheitsprüfung | Resonanzsäulen, Lügenrisse, Schwurkreis |
+| 10 | `or` (אור) | Ur-Licht, manifestiert Sternpfade | Sequenzketten, Haltephasen | Sternkrone, Schattenknoten, Weltstabilität / Shadow Balak |
+
 ---
 
 ## 🧾 8. Richtlinien für Level-Designer & Artists (erweitert)
@@ -207,3 +225,5 @@ Er dient als Gegenpol zum Lernprozess: Manipulation vs. Erkenntnis.
   - Struktur: *Problem – Wort – Erklärung – Anwendung – Moralischer Satz.*  
 - **Regie-Anweisungen:** niemals in wörtlicher Rede oder Sprechblasen unterbringen; nutze stattdessen großflächige Texte (z. B. Sequenzen, `showLevelTitle`) oder passende Effekte.  
 - **Tests:** Nach jeder Änderung `npm test` ausführen und nur mit grünem Ergebnis weiterarbeiten.  
+- **Systemmetriken pflegen:** `transgression`, `divine_pass`, `worldStability`, `shadow_access` müssen sichtbar gespiegelt werden (Aura, Partikel, UI-Hinweis) und dürfen nicht „stumm“ steigen oder fallen.  
+- **Combo-Telegrafie:** Für jede Pflichtkombination (`lo → shama`, `shama → lo → barak`, `dabar → emet → or` usw.) brauchen Props klare Vorzeichen – Lichtband, Klanghinweis oder Esel-Tip – bevor der Spieler scheitern kann.  
