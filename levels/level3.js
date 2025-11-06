@@ -26,6 +26,7 @@ import {
   updateProp,
   addProp,
   celebrateGlyph,
+  divineSay,
 } from './utils.js';
 
 export async function runLevelThree() {
@@ -168,6 +169,7 @@ async function phaseRevelation(canyonProps) {
       addProp(canyonProps, { id: 'canyonGlyph', type: 'soundGlyph', x: 596, y: 38, parallax: 0.8 });
       await celebrateGlyph(answer);
       await narratorSay('Der Stein singt zurueck – ein klarer Ton rollt durch die Schlucht, Staub und Licht steigen auf.');
+      await divineSay('Vor meiner Stimme erzittern die Voelker.\nבקולי ירעדו גויים');
       return;
     }
 

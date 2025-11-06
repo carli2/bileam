@@ -7,7 +7,7 @@
 
 **Grundidee:**  
 Ein didaktisches Side-Scrolling-Abenteuer in einer Welt, in der **Sprache Realität formt**.  
-Der Spieler erlebt, dass **hebräische Wörter** Macht über Licht, Wasser, Stein und Leben besitzen.  
+Der Spieler erlebt, dass **hebräische Wörter** Macht über Licht, Wasser, Stein und Leben besitzen. Wichtig: Ohne niqqud! 
 Das Spiel verbindet **biblisch-mythische Atmosphäre** mit einer **subtil futuristischen Ästhetik** –  
 eine Welt, die aussieht, als wäre sie uralt und doch von einer höheren Technologie durchzogen.
 Metaphorisch ist Zaubern wie eine Parallele zur KI: allein durch das Wort wird Wirklichkeit geschaffen.

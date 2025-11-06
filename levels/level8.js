@@ -170,7 +170,7 @@ export async function runLevelEight() {
 
 async function phaseBalakGreeting(props) {
   await narratorSay('Staubiger Wind fegt ueber die terrassierten Huegel. Balak wartet auf einer Basaltplattform, Moabs Lager glimmt wie ein Raster aus goldenen Punkten.');
-  await propSay(props, 'balakArrival', 'Hab ich nicht zu dir gesandt und dich rufen lassen? Meinst du, ich koennte dich nicht ehren?');
+  await propSay(props, 'balakArrival', 'Hab ich nicht zu dir gesandt und dich rufen lassen? Meinst du, ich koennte dich nicht ehren?', { anchor: 'center', offsetY: -34 });
   await wizardSay('Siehe, ich bin zu dir gekommen. Aber wie kann ich etwas anderes reden als das, was mir Gott in den Mund gibt? Nur das kann ich reden.');
   await narratorSay('Aktive Worte: lo, shama. Neues Wort zum Erwachen: barak (ברך) – Segen freisetzen. Ziel: Halte Balaks Erwartungen in Grenzen und bereite die sieben Altaere vor.');
 }
@@ -203,7 +203,7 @@ async function phaseTerraceTrials(props) {
 
 async function phaseSevenAltars(props) {
   await wizardSay('Baue mir hier sieben Altare und schaffe mir her sieben junge Stiere und sieben Widder.');
-  await propSay(props, 'altarAttendantOne', 'Ich tue, wie du sagst.');
+  await propSay(props, 'altarAttendantOne', 'Ich tue, wie du sagst.', { anchor: 'center' });
   for (const altar of ALTAR_SEQUENCE) {
     const target = props.find(entry => entry.id === altar.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 18 });
@@ -300,7 +300,7 @@ async function phaseReflection() {
 
 async function phaseBalakUngeduld(props) {
   await narratorSay('Balak versucht, den Segen zu zerreissen; rote Lichtadern schlagen aus seinen Haenden.');
-  await propSay(props, 'balakWaiting', 'Komm mit mir an einen andern Ort. Von hier siehst du zu viel. Vielleicht kannst du mir dort das Ende verfluchen.');
+  await propSay(props, 'balakWaiting', 'Komm mit mir an einen andern Ort. Von hier siehst du zu viel. Vielleicht kannst du mir dort das Ende verfluchen.', { anchor: 'center' });
 }
 
 async function phasePisgaPath(props) {

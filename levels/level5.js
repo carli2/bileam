@@ -26,6 +26,7 @@ import {
   updateProp,
   addProp,
   celebrateGlyph,
+  divineSay,
 } from './utils.js';
 
 export async function runLevelFive() {
@@ -55,7 +56,7 @@ export async function runLevelFive() {
 
 async function phaseIntroduction(props) {
   await narratorSay('Die Schmiede unter dem Berg schläft. Kein Rauch, kein Glühen – nur kaltes Eisen.');
-  await propSay(props, 'forgeBalakEcho', 'Lehrling, entfalte, was du gelernt hast. Entzünde das Feuer der Schöpfung!');
+  await propSay(props, 'forgeBalakEcho', 'Lehrling, entfalte, was du gelernt hast. Entzünde das Feuer der Schöpfung!', { anchor: 'center', offsetY: -42 });
   await wizardSay('Feuer... ich kenne das Wort noch nicht.');
   await donkeySay('Dann wirst du es finden müssen. Höre auf den Stein, nicht auf Balaks Gier.');
   setSceneContext({ phase: 'search' });
@@ -147,6 +148,7 @@ async function phaseAshRevelation(props) {
       updateProp(props, 'forgeIgnitionRing', { type: 'sunStoneAwakened' });
       await celebrateGlyph(answer);
       await narratorSay('Der Ring entzündet sich. Flammen tanzen den Wänden entlang – die Schmiede lebt.');
+      await divineSay('Mit Feuer werde ich richten.\nבָּאֵשׁ אֶשְׁפֹּט');
       return;
     }
 
@@ -187,7 +189,7 @@ async function phaseAnvilChallenge(props) {
 
     attempts += 1;
     if (spellEquals(answer, 'ash', 'אש')) {
-      await propSay(props, 'forgeBalakEcho', 'Mehr Feuer! Stärke es und lass es für mich schmieden!');
+      await propSay(props, 'forgeBalakEcho', 'Mehr Feuer! Stärke es und lass es für mich schmieden!', { anchor: 'center', offsetY: -42 });
     } else if (spellEquals(answer, 'or', 'אור')) {
       await narratorSay('Licht facht die Flammen weiter an. Der Amboss glüht heißer.');
     } else if (spellEquals(answer, 'qol', 'קול')) {
@@ -205,7 +207,7 @@ async function phaseAnvilChallenge(props) {
 
 async function phaseBalakChoice(props) {
   setSceneContext({ phase: 'choice' });
-  await propSay(props, 'forgeBalakEcho', 'Ich sehe, du hast das Feuer gemeistert. Form es für mich – erschaffe ein Schwert aus Glut!');
+  await propSay(props, 'forgeBalakEcho', 'Ich sehe, du hast das Feuer gemeistert. Form es für mich – erschaffe ein Schwert aus Glut!', { anchor: 'center', offsetY: -42 });
   await donkeySay('Balaks Hunger wächst. Entscheide, wem das Feuer gehört.');
 
   while (true) {
@@ -221,14 +223,14 @@ async function phaseBalakChoice(props) {
     if (spellEquals(answer, 'ash', 'אש')) {
       await celebrateGlyph(answer);
       await narratorSay('Die Flammen wachsen zu einer Klinge aus Licht. Balaks Lachen hallt – kalt und gierig.');
-      await propSay(props, 'forgeBalakEcho', 'So sei es! Mit diesem Feuer wird Moab regiert!');
+      await propSay(props, 'forgeBalakEcho', 'So sei es! Mit diesem Feuer wird Moab regiert!', { anchor: 'center', offsetY: -42 });
       return;
     }
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       await celebrateGlyph(answer);
       await narratorSay('Wasser umschließt die Flammen. Nur ein glimmender Kern bleibt zurück.');
-      await propSay(props, 'forgeBalakEcho', 'Narr! Du vernichtest mein Geschenk!');
+      await propSay(props, 'forgeBalakEcho', 'Narr! Du vernichtest mein Geschenk!', { anchor: 'center', offsetY: -42 });
       updateProp(props, 'forgeIgnitionRing', { type: 'sunStoneDormant' });
       updateProp(props, 'forgeEmberGlyph', null);
       return;

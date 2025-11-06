@@ -216,6 +216,21 @@ export function beginSpeech(speechState, textRenderer, wrapLimit, x, y, text, op
     speechState.resolve = resolve;
     speechState.reject = reject;
     speechState.tipDirection = options.tipDirection ?? speechState.tipDirection ?? 'down';
+    if (options.bubbleStyle) {
+      const { bubbleStyle } = options;
+      if (bubbleStyle.fill !== undefined) {
+        speechState.bubbleFillColor = bubbleStyle.fill;
+      }
+      if (bubbleStyle.border !== undefined) {
+        speechState.bubbleBorderColor = bubbleStyle.border;
+      }
+      if (bubbleStyle.borderWidth !== undefined) {
+        speechState.bubbleBorderWidth = bubbleStyle.borderWidth;
+      }
+      if (bubbleStyle.tipBaseHalf !== undefined) {
+        speechState.tipBaseHalf = bubbleStyle.tipBaseHalf;
+      }
+    }
   });
 }
 
@@ -300,6 +315,17 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
   let anchorY = Math.round(anchorYWorld);
   const tipDirection = speechState.tipDirection === 'up' ? 'up' : 'down';
 
+  const resolveColor = (value, fallbackKey) => {
+    if (value == null) return colors[fallbackKey];
+    if (typeof value === 'number') return value;
+    if (typeof value === 'string' && colors[value] != null) return colors[value];
+    return colors[fallbackKey];
+  };
+
+  const fillColor = resolveColor(speechState.bubbleFillColor, 'bubbleFill');
+  const borderColor = resolveColor(speechState.bubbleBorderColor, 'bubbleBorder');
+  const borderWidth = Math.max(1, speechState.bubbleBorderWidth ?? 1);
+
   const width = speechState.width;
   const height = speechState.height;
   const bubbleLeftLimit = 2;
@@ -336,7 +362,7 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
     anchorY -= delta;
   }
 
-  fillRect(buffer.pixels, buffer.width, buffer.height, bubbleX, bubbleTop, width, height, colors.bubbleFill);
+  fillRect(buffer.pixels, buffer.width, buffer.height, bubbleX, bubbleTop, width, height, fillColor);
   drawBubbleTip(
     bubbleX,
     bubbleTop,
@@ -345,14 +371,21 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
     anchorX,
     anchorY,
     speechState.tipBaseHalf,
-    colors.bubbleFill,
-    colors.bubbleBorder,
+    fillColor,
+    borderColor,
     buffer.pixels,
     buffer.width,
     buffer.height,
     tipDirection,
   );
-  strokeRect(buffer.pixels, buffer.width, buffer.height, bubbleX, bubbleTop, width, height, colors.bubbleBorder);
+  for (let i = 0; i < borderWidth; i += 1) {
+    const insetX = bubbleX + i;
+    const insetY = bubbleTop + i;
+    const insetWidth = width - i * 2;
+    const insetHeight = height - i * 2;
+    if (insetWidth <= 0 || insetHeight <= 0) break;
+    strokeRect(buffer.pixels, buffer.width, buffer.height, insetX, insetY, insetWidth, insetHeight, borderColor);
+  }
 
   const textStartX = bubbleX + speechState.paddingX;
   const textStartY = bubbleTop + speechState.paddingY;
@@ -498,6 +531,9 @@ export function createSpeechState() {
     tipHeight: 10,
     tipBaseHalf: 5,
     tipDirection: 'down',
+    bubbleFillColor: null,
+    bubbleBorderColor: null,
+    bubbleBorderWidth: 1,
     charDelay: 60,
     charDelaySlow: 60,
     charDelayFast: 12,

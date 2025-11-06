@@ -25,6 +25,7 @@ import {
   RIVER_SCENE,
   spellEquals,
   celebrateGlyph,
+  divineSay,
 } from './utils.js';
 const HUT_DOOR_ID = 'hutDoor';
 const HUT_DOOR_X = 252;
@@ -87,6 +88,7 @@ async function levelOneLearning(plan) {
       await donkeySay('Oho! Das war hell!');
       await wizardSay('Das Wort fuehlt sich warm an... wie eine Flamme in der Hand.');
       await wizardSay('אור (aor)');
+      await divineSay('Bedenke, Bileam, Sohn des Beor, ich habe dir diese Kraft gegeben. Benutze sie gut.\nזְכֹר בִּלְעָם בֶּן בְּעוֹר אֲנִי נָתַתִּי לְךָ הַכֹּחַ הַזֶּה הִשְׁתַּמֵּשׁ בּוֹ טוֹב');
       setSceneContext({ phase: 'exploration' });
       break;
     }

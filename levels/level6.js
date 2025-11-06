@@ -20,6 +20,7 @@ import {
   updateProp,
   celebrateGlyph,
   propSay,
+  divineSay,
   withCameraFocusOnProp,
   sleep,
 } from './utils.js';
@@ -29,6 +30,12 @@ const MOAB_APPROACH_SCENE = {
   wizardStartX: 74,
   donkeyOffset: -38,
   props: [
+    { id: 'moabBackdrop', type: 'marketBackdrop', x: -120, align: 'ground', parallax: 0.28, layer: -4 },
+    { id: 'moabBannerNorth', type: 'marketBanner', x: 82, align: 'ground', offsetY: -36, parallax: 0.78, layer: -1 },
+    { id: 'moabStallWest', type: 'marketStall', x: 214, align: 'ground', parallax: 0.9, layer: 0 },
+    { id: 'moabStallEast', type: 'marketStall', x: 388, align: 'ground', parallax: 0.96, layer: 0 },
+    { id: 'moabScribeBooth', type: 'scribeBooth', x: 536, align: 'ground', parallax: 1.04, layer: 1 },
+    { id: 'moabGrainBundle', type: 'gardenWheatBundle', x: 268, align: 'ground', parallax: 1.06, layer: 2 },
     { id: 'moabWatcherNorth', type: 'moabWallWatcher', x: 156, align: 'ground', parallax: 0.88 },
     { id: 'moabWatcherSouth', type: 'moabWallWatcher', x: 492, align: 'ground', parallax: 1.06 },
     { id: 'balakWallFigure', type: 'balakFigure', x: 628, align: 'ground', parallax: 1.12 },
@@ -45,6 +52,11 @@ const PETOR_SCENE = {
   wizardStartX: 68,
   donkeyOffset: -40,
   props: [
+    { id: 'petorBackdrop', type: 'marketBackdrop', x: -140, align: 'ground', parallax: 0.26, layer: -4 },
+    { id: 'petorMist', type: 'canyonMist', x: -16, align: 'ground', offsetY: -52, parallax: 0.5, layer: -2 },
+    { id: 'petorSunStone', type: 'sunStoneDormant', x: 284, align: 'ground', parallax: 0.9, layer: 0 },
+    { id: 'petorResonanceRock', type: 'resonanceRockDormant', x: 436, align: 'ground', parallax: 0.94, layer: 0 },
+    { id: 'petorForegroundHerb', type: 'gardenForegroundPlant', x: 92, align: 'ground', parallax: 1.08, layer: 2 },
     { id: 'petorFootprints', type: 'hoofSignTrail', x: 108, align: 'ground', parallax: 0.9 },
     { id: 'petorCampfire', type: 'nightCampfire', x: 236, align: 'ground', parallax: 0.92 },
     { id: 'petorEnvoyNorth', type: 'envoyShadow', x: 156, align: 'ground', parallax: 0.96 },
@@ -59,6 +71,12 @@ const BORDER_SCENE = {
   wizardStartX: 72,
   donkeyOffset: -38,
   props: [
+    { id: 'borderBackdropHaze', type: 'marketBackdrop', x: -168, align: 'ground', parallax: 0.24, layer: -4 },
+    { id: 'borderMist', type: 'canyonMist', x: 12, align: 'ground', offsetY: -48, parallax: 0.52, layer: -3 },
+    { id: 'borderSpireTall', type: 'basaltSpireTall', x: 126, align: 'ground', parallax: 0.68, layer: -1 },
+    { id: 'borderSpireShort', type: 'basaltSpireShort', x: 388, align: 'ground', parallax: 0.82, layer: -1 },
+    { id: 'borderSunStone', type: 'sunStoneDormant', x: 356, align: 'ground', parallax: 0.96, layer: 0 },
+    { id: 'borderForegroundVine', type: 'gardenForegroundPlant', x: 548, align: 'ground', parallax: 1.12, layer: 2 },
     { id: 'borderBackdrop', type: 'borderProcessionPath', x: -36, align: 'ground', parallax: 0.6 },
     { id: 'borderLetterDrift', type: 'resonanceRingDormant', x: 132, align: 'ground', parallax: 0.84 },
     { id: 'borderStone', type: 'borderMilestone', x: 212, align: 'ground', parallax: 0.95 },
@@ -180,11 +198,11 @@ async function phaseMoabPrelude(props) {
     await narratorSay('Danach lagerten sich die Israeliten in den Steppen Moabs, gegenueber Jericho.');
     await narratorSay('Und Balak, der Sohn Zippors, sah alles, was Israel den Amoritern angetan hatte.');
     await narratorSay('Und die Moabiter fuerchteten sich sehr, denn das Volk war gross, und ihnen graute vor den Israeliten.');
-    await propSay(props, 'balakWallFigure', 'Sieh nur, sie bedecken das ganze Land...');
-    await propSay(props, 'balakWallFigure', 'Wenn sie weitergehen, bleibt nur Staub.');
-    await propSay(props, 'balakWallFigure', 'Wie ein Tier, das das Gras des Feldes frisst, so werden sie uns verzehren.');
-    await propSay(props, 'midianElder', 'Es gibt einen Seher jenseits des Flusses. Was er spricht, geschieht – als folge die Welt seiner Stimme.');
-    await propSay(props, 'balakWallFigure', 'Dann ruft ihn. Vielleicht kann er das Muster wenden, bevor alles ausgelöscht ist.');
+    await propSay(props, 'balakWallFigure', 'Sieh nur, sie bedecken das ganze Land...', { anchor: 'center', offsetX: -12 });
+    await propSay(props, 'balakWallFigure', 'Wenn sie weitergehen, bleibt nur Staub.', { anchor: 'center', offsetX: -12 });
+    await propSay(props, 'balakWallFigure', 'Wie ein Tier, das das Gras des Feldes frisst, so werden sie uns verzehren.', { anchor: 'center', offsetX: -12 });
+    await propSay(props, 'midianElder', 'Es gibt einen Seher jenseits des Flusses. Was er spricht, geschieht – als folge die Welt seiner Stimme.', { anchor: 'center' });
+    await propSay(props, 'balakWallFigure', 'Dann ruft ihn. Vielleicht kann er das Muster wenden, bevor alles ausgelöscht ist.', { anchor: 'center', offsetX: -12 });
     await narratorSay('Unter den Mauern flimmert die Welt, als waere sie nur halb aus Klang gewebt.');
 
     const balakProp = props.find(entry => entry.id === 'balakWallFigure');
@@ -225,14 +243,21 @@ async function phaseMoabVisionRings(props) {
     });
   }
 
-  await narratorSay('Die glimmenden Ringe halten dein Nein im Sand. Balaks Gesandte reiten nach Petor.');
+  await narratorSay('Die glimmenden Ringe behalten dein Licht im Sand. Balaks Gesandte reiten nach Petor.');
 }
 
 async function phaseEnvoyDialogue(props) {
   await narratorSay('Petor, am Euphrat. Ein stilles Feuer lodert, Lichtlinien laufen unter dem Sand.');
-  await propSay(props, 'petorEnvoyNorth', 'Siehe, ein Volk ist aus Aegypten gezogen, es bedeckt das ganze Land und lagert uns gegenueber.');
-  await propSay(props, 'petorEnvoyEast', 'So komm nun und verfluche mir dieses Volk, denn es ist mir zu maechtig.');
-  await propSay(props, 'petorEnvoySouth', 'Denn wir wissen: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist verflucht.');
+  const envoy = props.find(entry => entry.id === 'petorEnvoyNorth');
+  if (envoy) {
+    const meetingX = envoy.x - 36;
+    if (meetingX > wizard.x + 12) {
+      await waitForWizardToReach(meetingX, { tolerance: 18 });
+    }
+  }
+  await propSay(props, 'petorEnvoyNorth', 'Siehe, ein Volk ist aus Aegypten gezogen, es bedeckt das ganze Land und lagert uns gegenueber.', { anchor: 'center' });
+  await propSay(props, 'petorEnvoyEast', 'So komm nun und verfluche mir dieses Volk, denn es ist mir zu maechtig.', { anchor: 'center' });
+  await propSay(props, 'petorEnvoySouth', 'Denn wir wissen: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist verflucht.', { anchor: 'center' });
   await wizardSay('Bleibt hier ueber Nacht. Ich will hoeren, was der HERR mir sagt.');
   ensurePropDefinition(props, {
     id: 'petorNightSignal',
@@ -274,9 +299,9 @@ async function phaseEnvoyResponses(props) {
 async function phaseNightVision(props) {
   setSceneContext({ phase: 'night' });
   await narratorSay('Dunkelheit senkt sich. Nur das Flackern des Feuers und ein Rauschen, als atme die Welt selbst.');
-  await narratorSay('Gottes Stimme: „Wer sind die Maenner, die bei dir sind?“');
+  await divineSay('Wer sind die Maenner, die bei dir sind?\nמי האנשים האלה עמך');
   await wizardSay('Balak, Sohn Zippors, hat mich gerufen, zu verfluchen ein Volk, das das Land bedeckt.');
-  await narratorSay('Gott: „Geh nicht mit ihnen. Verfluche das Volk nicht – denn es ist gesegnet.“');
+  await divineSay('Geh nicht mit ihnen. Verfluche das Volk nicht – denn es ist gesegnet.\nלא תלך עמהם לא תאר את העם כי ברוך הוא');
 
   await celebrateGlyph('לא');
   addProp(props, { id: 'petorGlyphComplete', type: 'noGlyphShard', x: wizard.x + 20, y: wizard.y - 48, parallax: 0.9, letter: 'לא' });
@@ -287,7 +312,7 @@ async function phaseNightVision(props) {
 async function phaseNightMeditation() {
   setSceneContext({ phase: 'meditation' });
   await showLevelTitle('Spielphase II – Nacht der Stille', 3600);
-  await narratorSay('Ein Hoerkreis aus Licht erscheint um dich.');
+  await showLevelTitle('Ein Hoerkreis aus Licht erscheint um dich.', 3200);
   await narratorSay('Schatten aus Balaks Palast greifen nach dir, doch das Nein, das du gelernt hast, haelt den Kreis dreimal lang.');
   await narratorSay('Der Kreis schliesst sich. Der Atem der Nacht wird ruhig.');
 }
@@ -305,12 +330,14 @@ async function phaseMorningRefusal(props) {
 }
 
 async function phaseBalakEdict(props) {
-  await narratorSay('Balaks Palast. Goldene Linien fliessen ueber die Waende, doch sie flackern unruhig.');
-  const balakId = 'palaceBalakEcho';
-  addProp(props, { id: balakId, type: 'balakFigure', x: wizard.x + 160, align: 'ground', parallax: 0.96 });
-  await propSay(props, balakId, 'Dann sendet mehr. Staerkere Maenner.');
-  await propSay(props, balakId, 'Vielleicht laesst er sich doch bewegen.');
-  await propSay(props, balakId, 'Gebt ihm Gold, und sagt: Der König wird ihn ehren.');
+  await withCameraFocusOnProp(props, 'palaceBalakEcho', async () => {
+    await showLevelTitle('Balaks Palast. Goldene Linien fliessen ueber die Waende, doch sie flackern unruhig.', 3600);
+    const balakId = 'palaceBalakEcho';
+    addProp(props, { id: balakId, type: 'balakFigure', x: wizard.x + 160, align: 'ground', parallax: 0.96 });
+    await propSay(props, balakId, 'Dann sendet mehr. Staerkere Maenner.', { anchor: 'center', offsetY: -32 });
+    await propSay(props, balakId, 'Vielleicht laesst er sich doch bewegen.', { anchor: 'center', offsetY: -32 });
+    await propSay(props, balakId, 'Gebt ihm Gold, und sagt: Der König wird ihn ehren.', { anchor: 'center', offsetY: -32 });
+  });
   await narratorSay('So sandte Balak noch maechtigere Fuersten, und mit ihnen begann der Weg, der zur Grenze fuehrt.');
 }
 

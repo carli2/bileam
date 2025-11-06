@@ -204,7 +204,7 @@ export async function runLevelTen() {
 
 async function phaseBalakAccusation(props) {
   await narratorSay('Bileam steht auf dem Felsen von Bamot-Peor; unter ihm glimmt das Lager Israels wie ein Meer aus geordneten Sternen.');
-  await propSay(props, 'balakStarFigure', 'Ich habe dich gerufen, dass du meine Feinde verfluchst – und siehe, du hast sie dreimal gesegnet! Geh fort; ich wollte dich ehren, aber dein Gott verweigert es dir.');
+  await propSay(props, 'balakStarFigure', 'Ich habe dich gerufen, dass du meine Feinde verfluchst – und siehe, du hast sie dreimal gesegnet! Geh fort; ich wollte dich ehren, aber dein Gott verweigert es dir.', { anchor: 'center', offsetY: -30 });
   await wizardSay('Hab ich dir nicht gesagt? Gäbe mir Balak sein Haus voll Silber und Gold, ich könnte das Wort des HERRN nicht uebertreten, weder im Kleinen noch im Grossen.');
 }
 
@@ -290,7 +290,7 @@ async function phaseNationVisions(props) {
 
 async function phaseShadowRift(props) {
   await narratorSay('Balak tritt in den Sternkreis. Sein Schatten loest sich und greift dich an.');
-  await propSay(props, 'balakShadowCore', 'Dein Licht blendet, aber es waermt nicht. Wer ist dieser Stern? Ein Gott? Ein Spiegel?');
+  await propSay(props, 'balakShadowCore', 'Dein Licht blendet, aber es waermt nicht. Wer ist dieser Stern? Ein Gott? Ein Spiegel?', { anchor: 'center', offsetY: -34 });
   await wizardSay('Ich sehe ihn nur. Und wer ihn sieht, weiss, dass nichts anderes ist.');
   await donkeySay('Huete dich, Meister. Licht kann auch verletzen.');
   for (const shadow of SHADOW_SEQUENCE) {

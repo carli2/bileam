@@ -25,6 +25,7 @@ import {
   addProp,
   celebrateGlyph,
   propSay,
+  divineSay,
 } from './utils.js';
 
 const PISGA_LINE_SCENE = {
@@ -192,7 +193,7 @@ export async function runLevelNine() {
 
 async function phasePisgaLines(props) {
   await narratorSay('Balak und Bileam erreichen den zerkluefteten Grat des Pisga. Unter ihnen liegen die Lager vergangener Versuche, ueber ihnen kreisen Glyphen aus Klang.');
-  await propSay(props, 'pisgaBalak', 'Komm an einen andern Ort. Von hier wirst du nur das aeusserste Ende sehen – vielleicht kannst du mir dort das Volk verfluchen.');
+  await propSay(props, 'pisgaBalak', 'Komm an einen andern Ort. Von hier wirst du nur das aeusserste Ende sehen – vielleicht kannst du mir dort das Volk verfluchen.', { anchor: 'center' });
   await wizardSay('Baue mir hier sieben Altaere und opfere sieben junge Stiere und sieben Widder.');
   await narratorSay('Aktive Worte: lo, shama, barak. Neue Worte zum Ergruenden: dabar (דבר) – Wort, das geschieht; emet (אמת) – Wahrheit, die traegt. Ziel: Errichte den Wahrheitskreis, bevor Balaks Druck das Gewebe reisst.');
   for (const plate of PISGA_TASKS) {
@@ -222,7 +223,7 @@ async function phasePisgaLines(props) {
 }
 
 async function phaseDabarPillars(props) {
-  await narratorSay('Gottes Stimme: „Ich bin nicht ein Mensch, dass ich luege, noch ein Menschenkind, dass ich bereue. Sollte ich reden und es nicht tun? Sollte ich sprechen und es nicht halten?“');
+  await divineSay('Ich bin nicht ein Mensch, dass ich luege, noch ein Menschenkind, dass ich bereue. Sollte ich reden und es nicht tun? Sollte ich sprechen und es nicht halten?\nלא איש אל ויכזב ובן אדם ויתנחם ההוא אמר ולא יעשה ודבר ולא יקימנה');
   const sequence = ['shama', 'lo', 'dabar'];
   const pillarFragments = ['ב', 'ר'];
   for (let i = 0; i < props.length; i += 1) {
@@ -314,7 +315,7 @@ async function phaseSecondOracle(props) {
   await wizardSay('Wie Taeeler, die sich ausbreiten, wie Gaerten an Wassern, wie Aloebaeume, die der HERR pflanzt, wie Zedern an den Wassern.');
   await wizardSay('Er hat sich hingestreckt wie ein Loewe – wer will ihn aufstoeren?');
   await wizardSay('Gesegnet sei, wer dich segnet, und verflucht, wer dich verflucht!');
-  await propSay(props, 'gardenBalakShadow', 'Wenn du schon nicht fluchst, so segne sie wenigstens nicht!');
+  await propSay(props, 'gardenBalakShadow', 'Wenn du schon nicht fluchst, so segne sie wenigstens nicht!', { anchor: 'center' });
   await wizardSay('Hab ich dir nicht gesagt: Alles, was der HERR redet, das werde ich tun?');
   await narratorSay('Innere Stimme: Vielleicht ist jedes wahre Wort ein Tor.');
   await narratorSay('Innere Stimme: Wenn es gesprochen wird, oeffnet sich fuer einen Augenblick der Plan des Lichts, der uns alle traegt.');

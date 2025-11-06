@@ -55,6 +55,25 @@ export function narratorSay(text) {
   );
 }
 
+const DIVINE_BUBBLE_STYLE = {
+  fill: 'bubbleFill',
+  border: 'wizardBelt',
+  borderWidth: 2,
+  tipBaseHalf: 7,
+};
+
+export function divineSay(text) {
+  return say(
+    () => (actorCenterX(wizard) + actorCenterX(donkey)) / 2,
+    () => Math.min(actorTopY(wizard), actorTopY(donkey)) - 140,
+    text,
+    {
+      tipDirection: 'down',
+      bubbleStyle: DIVINE_BUBBLE_STYLE,
+    },
+  );
+}
+
 export function wizardSay(text) {
   return say(
     anchorX(wizard),
@@ -66,8 +85,9 @@ export function wizardSay(text) {
 export function donkeySay(text) {
   return say(
     anchorX(donkey),
-    () => actorBubbleY(donkey, -40),
+    () => actorBubbleY(donkey, -14),
     text,
+    { tipDirection: 'down' },
   );
 }
 

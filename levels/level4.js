@@ -30,6 +30,7 @@ import {
   updateProp,
   addProp,
   celebrateGlyph,
+  divineSay,
 } from './utils.js';
 
 const BALAK_WALK_SPEED = 26;
@@ -252,6 +253,7 @@ async function phaseXayimReveal(props) {
       });
       await celebrateGlyph(answer);
       await narratorSay('Pflanzen sprießen, Bäume treiben Blüten, Wasser rinnt durch die Kanäle. Über der Statue Balaks wächst Moos.');
+      await divineSay('Ich habe das Leben erschaffen.\nאֲנִי בָּרָאתִי אֶת הַחַיִּים');
       await balakSay(props, 'So sei es – dein Wort weckt den Staub. Vergiss nicht, wessen Auftrag du trägst.');
       return;
     }
