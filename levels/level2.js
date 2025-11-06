@@ -115,13 +115,13 @@ async function phaseTwoLearning(plan) {
 
     attempts++;
     if (attempts === 1) {
-      await donkeySay('Das i sitzt in der Mitte – m-i-m, lass es fliessen!');
+      await donkeySay('Das i sitzt in der Mitte – m-i-m, lass es fließen!');
     } else if (attempts === 2) {
       await narratorSay('Der Fluss bleibt taub. Lass die Buchstaben über dem Wasser schweben: M I M.');
     } else {
       attempts = 0;
       await wizardSay('Vielleicht sollte ich zum Ufer zurück.');
-      await donkeySay('Atme wie der Fluss: maaaa-im. Lass es fliessen.');
+      await donkeySay('Atme wie der Fluss: maaaa-im. Lass es fließen.');
     }
   }
 }
@@ -146,7 +146,7 @@ async function phaseThreeApplication(plan, riverProps) {
       filled = true;
       await celebrateGlyph(answer);
       await narratorSay('Eine transparente Welle hebt dich sanft an und trägt dich ans andere Ufer.');
-      await donkeySay('Gut gemacht, Meister. Worte fliessen – und wer sie kennt, kann Ströme lenken.');
+      await donkeySay('Gut gemacht, Meister. Worte fließen – und wer sie kennt, kann Ströme lenken.');
       await wizardSay('Dann ist Sprache wirklich Kraft?');
       await donkeySay('Vielleicht. Aber vergiss nicht: Zu viel Fluss – und du wirst davongetragen.');
       const glyphId = 'riverGlyph';

@@ -329,7 +329,7 @@ async function phaseMorningRefusal(props) {
 
 async function phaseBalakEdict(props) {
   await withCameraFocusOnProp(props, 'palaceBalakEcho', async () => {
-    await showLevelTitle('Balaks Palast. Goldene Linien fliessen über die Wände, doch sie flackern unruhig.', 3600);
+    await showLevelTitle('Balaks Palast. Goldene Linien fließen über die Wände, doch sie flackern unruhig.', 3600);
     const balakId = 'palaceBalakEcho';
     addProp(props, { id: balakId, type: 'balakFigure', x: wizard.x + 160, align: 'ground', parallax: 0.96 });
     await propSay(props, balakId, 'Dann sendet mehr. Stärkere Männer.', { anchor: 'center', offsetY: -32 });

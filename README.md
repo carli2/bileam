@@ -12,7 +12,7 @@ Willkommen in einer Welt, in der gesprochene Worte Licht, Wasser und Stein beweg
 
 ## Reise durch zehn Welten
 1. *aor* - Licht bricht die Finsternis in der Hütte des Erwachens.
-2. *mayim* - Am Flussufer reinigt fliessendes Wasser alte Zweifel.
+2. *mayim* - Am Flussufer reinigt fließendes Wasser alte Zweifel.
 3. *qol* - In der Felsenschlucht hallt jedes Wort als Resonanz wider.
 4. *xayim* - Ein Garten, in dem neue Lebenserkenntnis knospt.
 5. *aw* - Die Schmiede der Flammen prueft die Kraft deiner Zunge.
