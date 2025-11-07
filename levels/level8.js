@@ -208,6 +208,8 @@ async function phaseSevenAltars(props) {
   for (const altar of ALTAR_SEQUENCE) {
     const target = props.find(entry => entry.id === altar.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 18 });
+    const needsBarakHint = containsBarakSpell(altar.spells);
+    let failures = 0;
     let cleared = false;
     while (!cleared) {
       const answer = await readWord(altar.prompt);
@@ -215,12 +217,18 @@ async function phaseSevenAltars(props) {
         cleared = true;
         updateProp(props, altar.id, { type: 'altarGlyphPlateLit' });
         await celebrateGlyph(answer);
+        await requireAshIgnition();
         await narratorSay('Der Altar nimmt das Wort an. Rauch steigt ruhig empor.');
         if (altar.fragment) {
           addProp(props, { id: `altarFragment${altar.fragment}`, type: 'blessingFragment', x: wizard.x + 16, y: wizard.y - 44, parallax: 0.9, letter: altar.fragment });
         }
       } else {
-        await donkeySay('Der Altar reagiert nur auf das rechte Wort.');
+        failures += 1;
+        if (needsBarakHint && failures % 3 === 0) {
+          await donkeySay('Erinnere dich: ברך wird barak gesprochen – sprich den Segen, dann antwortet der Altar.');
+        } else {
+          await donkeySay('Der Altar reagiert nur auf das rechte Wort.');
+        }
       }
     }
   }
@@ -232,6 +240,8 @@ async function phaseResonance(props) {
   for (const ring of RESONANCE_STEPS) {
     const target = props.find(entry => entry.id === ring.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 16 });
+    const needsBarakHint = containsBarakSpell(ring.spells);
+    let failures = 0;
     let done = false;
     while (!done) {
       const answer = await readWord(ring.prompt);
@@ -241,7 +251,12 @@ async function phaseResonance(props) {
         await celebrateGlyph(answer);
         await narratorSay('Der Ring antwortet auf dein Wort.');
       } else {
-        await donkeySay('Höre, verneine und segne – in dieser Reihenfolge.');
+        failures += 1;
+        if (needsBarakHint && failures % 3 === 0) {
+          await donkeySay('ברך – barak. Vergiss den Segen nicht.');
+        } else {
+          await donkeySay('Höre, verneine und segne – in dieser Reihenfolge.');
+        }
       }
     }
   }
@@ -254,7 +269,8 @@ async function phaseResonance(props) {
       addProp(props, { id: 'barakFragmentKaf', type: 'blessingFragment', x: wizard.x + 18, y: wizard.y - 46, parallax: 0.9, letter: 'ך' });
       await celebrateGlyph(answer);
       await narratorSay('Segen strahlt wie warme Glut.');
-      await narratorSay('Fragmente ב, ר und ך drehen sich umeinander – sie warten auf deine Zustimmung.');
+      addProp(props, { id: 'barakGlyphOrbit', type: 'blessingFragmentOrbit', x: wizard.x + 30, y: wizard.y - 52, parallax: 0.92, letter: 'ברך' });
+      await narratorSay('Fragmente ב, ר und ך kreisen nun als sichtbare Glyphen um dich.');
     } else {
       await donkeySay('Sprich es klar: ba-rak.');
     }
@@ -274,6 +290,7 @@ async function phaseBlessingSequence() {
   await narratorSay('Balak fordert den Fluch. Deine Worte werden Segen.');
   const order = ['shama', 'lo', 'barak'];
   let index = 0;
+  let barakFailures = 0;
   while (index < order.length) {
     const prompts = [
       'Höre zuerst: sprich שמע.',
@@ -287,7 +304,16 @@ async function phaseBlessingSequence() {
       await celebrateGlyph(answer);
       index += 1;
     } else {
-      await donkeySay('Reihenfolge: hören, verneinen, segnen.');
+      if (expected === 'barak') {
+        barakFailures += 1;
+        if (barakFailures % 3 === 0) {
+          await donkeySay('Der letzte Schritt ist ברך – barak. Sprich den Segen.');
+        } else {
+          await donkeySay('Reihenfolge: hören, verneinen, segnen.');
+        }
+      } else {
+        await donkeySay('Reihenfolge: hören, verneinen, segnen.');
+      }
       index = 0;
     }
   }
@@ -300,12 +326,15 @@ async function phaseReflection() {
 }
 
 async function phaseBalakUngeduld(props) {
-  await narratorSay('Balak versucht, den Segen zu zerreissen; rote Lichtadern schlagen aus seinen Händen.');
+  addProp(props, { id: 'balakWrathAura', type: 'balakWrathEffect', x: wizard.x + 60, y: wizard.y - 32, parallax: 0.96 });
+  await narratorSay('Balak versucht, den Segen zu zerreissen; über seinen Händen flackert eine rote Aura.');
+  await ensureWizardBesideBalak(props, 'balakWaiting', { offset: -30, tolerance: 16 });
   await propSay(props, 'balakWaiting', 'Komm mit mir an einen andern Ort. Von hier siehst du zu viel. Vielleicht kannst du mir dort das Ende verfluchen.', { anchor: 'center' });
 }
 
 async function phasePisgaPath(props) {
-  await narratorSay('Der Weg zum Pisga ist mit Schrift übersät.');
+  addProp(props, { id: 'pisgaScriptVeil', type: 'pisgaScriptPath', x: wizard.x - 40, y: wizard.y - 30, parallax: 0.8 });
+  await narratorSay('Der Weg zum Pisga ist mit Schrift übersät.');
   const steps = [
     { id: 'pisgaStone', prompt: 'Der Späherstein verlangt einen Segen: sprich ברך.', spells: ['barak', 'ברך'] },
     { id: 'pisgaCleft', prompt: 'Höre und verneine Balaks Linie (שמע, dann לא).', sequence: ['shama', 'lo'] },
@@ -315,6 +344,8 @@ async function phasePisgaPath(props) {
     const target = props.find(entry => entry.id === step.id)?.x ?? wizard.x + 200;
     await waitForWizardToReach(target, { tolerance: 18 });
     if (!step.sequence) {
+      const needsBarakHint = containsBarakSpell(step.spells);
+      let failures = 0;
       let ok = false;
       while (!ok) {
         const answer = await readWord(step.prompt);
@@ -323,11 +354,17 @@ async function phasePisgaPath(props) {
           updateProp(props, step.id, { type: 'pisgaBridgeSegmentLit' });
           await celebrateGlyph(answer);
         } else {
-          await donkeySay('Der Stein wartet auf den passenden Segen.');
+          failures += 1;
+          if (needsBarakHint && failures % 3 === 0) {
+            await donkeySay('ברך – barak. Der Stein nimmt nur den Segen an.');
+          } else {
+            await donkeySay('Der Stein wartet auf den passenden Segen.');
+          }
         }
       }
     } else {
       let idx = 0;
+      let barakFailures = 0;
       while (idx < step.sequence.length) {
         const expected = step.sequence[idx];
         const labels = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'ברך';
@@ -338,12 +375,37 @@ async function phasePisgaPath(props) {
             updateProp(props, step.id, { type: 'pisgaBridgeSegmentLit' });
           }
         } else {
-          await donkeySay('Halte die Reihenfolge ein.');
+          if (expected === 'barak') {
+            barakFailures += 1;
+            if (barakFailures % 3 === 0) {
+              await donkeySay('Der Abschluss lautet ברך – sprich barak, um den Pfad zu öffnen.');
+            } else {
+              await donkeySay('Halte die Reihenfolge ein.');
+            }
+          } else {
+            await donkeySay('Halte die Reihenfolge ein.');
+          }
           idx = 0;
         }
       }
     }
   }
+}
+
+function containsBarakSpell(spells) {
+  if (!Array.isArray(spells)) return false;
+  return spells.some(spell => {
+    if (typeof spell !== 'string') return false;
+    const trimmed = spell.trim();
+    if (trimmed === 'ברך') return true;
+    const base = typeof trimmed.normalize === 'function'
+      ? trimmed.normalize('NFKD')
+      : trimmed;
+    const normalized = base
+      .replace(/[^A-Za-z]/g, '')
+      .toLowerCase();
+    return normalized === 'barak';
+  });
 }
 
 async function ensureWizardBesideBalak(props, id, { offset = -42, tolerance = 18 } = {}) {
@@ -352,6 +414,23 @@ async function ensureWizardBesideBalak(props, id, { offset = -42, tolerance = 18
   if (!balak) return;
   const targetX = (balak.x ?? wizard.x) + offset;
   await waitForWizardToReach(targetX, { tolerance });
+}
+
+async function requireAshIgnition() {
+  let attempts = 0;
+  while (true) {
+    const answer = await readWord('Entzünde den Altar mit אש (ash).');
+    if (spellEquals(answer, 'ash', 'אש')) {
+      await narratorSay('Feuer krönt den Altar, und die Opferglut wird ruhig.');
+      return;
+    }
+    attempts += 1;
+    if (attempts % 3 === 0) {
+      await donkeySay('Erinner dich an אש – sprich ash, dann flammt das Feuer.');
+    } else {
+      await donkeySay('Der Altar wartet auf Feuer. Sprich אש.');
+    }
+  }
 }
 
 async function transitionToScene(ambienceKey, sceneConfig, props, phase) {

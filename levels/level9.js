@@ -89,69 +89,116 @@ const OATH_SCENE = {
   ],
 };
 
-const PISGA_TASKS = [
+const PISGA_VISIONS = [
   {
     id: 'truthPlateOne',
-    words: ['shama', 'lo', 'barak'],
-    descriptions: [
-      'Höre den ersten Kreis.',
-      'Versiegle ihn mit לא.',
-      'Segne, was du gesehen hast.',
-    ],
     fragment: 'ד',
+    steps: [
+      {
+        prompt: 'Die Zelte Jakobs stehen fern. Lausche: sprich שמע.',
+        spells: ['shama', 'שמע'],
+        hint: 'Nur שמע lässt dich das Lager hören.',
+      },
+      {
+        prompt: 'Sprich דבר, damit das gesehene Wort Bestand hat.',
+        spells: ['dabar', 'דבר'],
+        hint: 'דבר verankert das Wort.',
+      },
+    ],
   },
   {
     id: 'truthPlateTwo',
-    words: ['shama', 'lo', 'barak'],
-    descriptions: [
-      'Höre erneut.',
-      'Sag erneut Nein.',
-      'Segne Balaks Furcht.',
+    steps: [
+      {
+        prompt: 'Balaks Staubflüstern kriecht heran. Sag לא.',
+        spells: ['lo', 'לא'],
+        hint: 'לא bricht seinen Auftrag.',
+      },
+      {
+        prompt: 'Segne ihre Zahl: sprich ברך.',
+        spells: ['barak', 'ברך'],
+        hint: 'ברך bewahrt die Schar.',
+      },
     ],
   },
   {
     id: 'truthPlateThree',
-    words: ['shama', 'lo', 'barak'],
-    descriptions: [
-      'Lausche auf das Echo.',
-      'Verneine den Fluch.',
-      'Segne den Kreis.',
+    steps: [
+      {
+        prompt: 'Du siehst Gärten an Wassern. Sprich מים.',
+        spells: ['mayim', 'מים'],
+        hint: 'מים erinnert die Flüsse.',
+      },
+      {
+        prompt: 'Lass die Bäche antworten mit ברך.',
+        spells: ['barak', 'ברך'],
+        hint: 'ברך lässt das Wasser glänzen.',
+      },
     ],
   },
   {
     id: 'truthPlateFour',
-    words: ['shama', 'lo', 'barak'],
-    descriptions: [
-      'Höre den Herzschlag des Berges.',
-      'Sag Nein zum Zorn.',
-      'Schenke Segen.',
+    steps: [
+      {
+        prompt: 'Ein Löwe richtet sich auf. Höre seinen Atem: sprich שמע.',
+        spells: ['shama', 'שמע'],
+        hint: 'שמע erkennt sogar das Brüllen.',
+      },
+      {
+        prompt: 'Sprich אמת, damit sein Ruf wahr bleibt.',
+        spells: ['emet', 'אמת'],
+        hint: 'אמת hält das Bild zusammen.',
+      },
     ],
   },
   {
     id: 'truthPlateFive',
-    words: ['shama', 'lo', 'barak'],
-    descriptions: [
-      'Höre auf Israel.',
-      'Sag Nein zum Fluch.',
-      'Segne das Volk.',
+    steps: [
+      {
+        prompt: 'Das Horn des Wildstiers dröhnt. Antworte mit קול.',
+        spells: ['qol', 'קול'],
+        hint: 'קול richtet den Klang.',
+      },
+      {
+        prompt: 'Sag לא, damit kein Fluch im Horn liegt.',
+        spells: ['lo', 'לא'],
+        hint: 'לא dämpft den giftigen Ton.',
+      },
+      {
+        prompt: 'Besiegle mit דבר, damit das Wort steht.',
+        spells: ['dabar', 'דבר'],
+        hint: 'דבר vollendet den Ruf.',
+      },
     ],
   },
   {
     id: 'truthPlateSix',
-    words: ['shama', 'lo', 'barak'],
-    descriptions: [
-      'Höre auf den Engel hinter dir.',
-      'Verneine Balaks Stimme.',
-      'Segne Balaks Angst.',
+    steps: [
+      {
+        prompt: 'Ein Stern steigt über Jakob. Sprich אור.',
+        spells: ['or', 'אור'],
+        hint: 'אור erhellt den Stern.',
+      },
+      {
+        prompt: 'Segne sein Licht mit ברך.',
+        spells: ['barak', 'ברך'],
+        hint: 'ברך lenkt das Sternlicht.',
+      },
     ],
   },
   {
     id: 'truthPlateSeven',
-    words: ['shama', 'lo', 'barak'],
-    descriptions: [
-      'Höre ein letztes Mal.',
-      'Sag Nein zu dir selbst.',
-      'Segne den Stern, der kommt.',
+    steps: [
+      {
+        prompt: 'Erinnere dich: Wer dich segnet, ist gesegnet. Sprich אמת.',
+        spells: ['emet', 'אמת'],
+        hint: 'אמת ist das Siegel.',
+      },
+      {
+        prompt: 'Schließe mit ברך für die Segnenden.',
+        spells: ['barak', 'ברך'],
+        hint: 'ברך trägt den letzten Zuspruch.',
+      },
     ],
   },
 ];
@@ -165,6 +212,8 @@ export async function runLevelNine() {
   setSceneContext({ level: 'level9', phase: 'pisga-lines' });
   await showLevelTitle('Level 9 - Die Stimme des Wahren');
   await fadeToBase(600);
+  await narratorSay('lo hält die Grenze, shama offenbart den Klang, barak lenkt den Segen.');
+  await narratorSay('Nun erwarten dich zwei neue Worte: דבר (dabar) – das Wort, das geschieht; אמת (emet) – das Licht, das wahr bleibt.');
 
   await phasePisgaLines(pisgaProps);
 
@@ -195,28 +244,27 @@ async function phasePisgaLines(props) {
   await narratorSay('Balak und Bileam erreichen den zerklüfteten Grat des Pisga. Unter ihnen liegen die Lager vergangener Versuche, über ihnen kreisen Glyphen aus Klang.');
   await propSay(props, 'pisgaBalak', 'Komm an einen andern Ort. Von hier wirst du nur das äußerste Ende sehen – vielleicht kannst du mir dort das Volk verfluchen.', { anchor: 'center' });
   await wizardSay('Baue mir hier sieben Altäre und opfere sieben junge Stiere und sieben Widder.');
-  await narratorSay('Aktive Worte: lo, shama, barak. Neue Worte zum Ergründen: dabar (דבר) – Wort, das geschieht; emet (אמת) – Wahrheit, die trägt. Ziel: Errichte den Wahrheitskreis, bevor Balaks Druck das Gewebe reisst.');
-  for (const plate of PISGA_TASKS) {
-    const target = props.find(entry => entry.id === plate.id)?.x ?? wizard.x + 160;
+  await showLevelTitle('לא, שמע, ברך stehen dir bereits. דבר und אמת warten darauf, das Gewebe zu halten.', 5200);
+  for (const vision of PISGA_VISIONS) {
+    const target = props.find(entry => entry.id === vision.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 18 });
-    for (let i = 0; i < plate.words.length; i += 1) {
-      const expected = plate.words[i];
-      const prompt = plate.descriptions[i];
-      let done = false;
-      while (!done) {
-        const answer = await readWord(prompt);
-        const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'ברך';
-        if (spellEquals(answer, expected, variant)) {
-          done = true;
+    for (const step of vision.steps) {
+      let resolved = false;
+      while (!resolved) {
+        const answer = await readWord(step.prompt);
+        if (step.spells.some(spell => spellEquals(answer, spell))) {
+          resolved = true;
           await celebrateGlyph(answer);
+        } else if (step.hint) {
+          await donkeySay(step.hint);
         } else {
-          await donkeySay('Erinnere dich: höre, verneine, segne.');
+          await donkeySay('Finde das Wort, das zur Vision passt.');
         }
       }
     }
-    updateProp(props, plate.id, { type: 'pisgaAltarPlateLit' });
-    if (plate.fragment) {
-      addProp(props, { id: `truthFragment${plate.fragment}`, type: 'truthFragment', x: wizard.x + 14, y: wizard.y - 44, parallax: 0.9, letter: plate.fragment });
+    updateProp(props, vision.id, { type: 'pisgaAltarPlateLit' });
+    if (vision.fragment) {
+      addProp(props, { id: `truthFragment${vision.fragment}`, type: 'truthFragment', x: wizard.x + 14, y: wizard.y - 44, parallax: 0.9, letter: vision.fragment });
     }
   }
   await narratorSay('Der Wahrheitskreis schliesst sich. Balaks Schleier flackert.');
@@ -224,6 +272,7 @@ async function phasePisgaLines(props) {
 
 async function phaseDabarPillars(props) {
   await divineSay('לא איש אל ויכזב ובן אדם ויתנחם ההוא אמר ולא יעשה ודבר ולא יקימנה\nIch bin nicht ein Mensch, dass ich Lüge, noch ein Menschenkind, dass ich bereue. Sollte ich reden und es nicht tun? Sollte ich sprechen und es nicht halten?');
+  await narratorSay('Dabar – das Wort, das geschieht. Wenn Gott spricht, handelt er. Nun prüft er, ob du dasselbe tust.');
   const sequence = ['shama', 'lo', 'dabar'];
   const pillarFragments = ['ב', 'ר'];
   for (let i = 0; i < props.length; i += 1) {
@@ -258,6 +307,7 @@ async function phaseDabarPillars(props) {
 
 async function phaseTruthMirror(props) {
   await narratorSay('Zwei Spiegel warten: einer für das Wort, einer für die Wahrheit.');
+  await narratorSay('Wenn du דבר sprichst, muss es geschehen. Wenn du אמת sprichst, bleibt es bestehen.');
   let stage = 0;
   while (stage < 2) {
     if (stage === 0) {
@@ -285,6 +335,7 @@ async function phaseTruthMirror(props) {
 
 async function phaseGardenEmet(props) {
   await narratorSay('Ein Garten aus Licht breitet sich aus: Zelte, Gärten, Bäume, Löwen warten auf Wahrheit.');
+  await narratorSay('Emet – אמת – ist ehernes Gewicht: Alef (א) für Gott, Mem (מ) für die Mitte, Taw (ת) für das Ende. Bleibt ein Buchstabe aus, zerfällt das Wort zu Lüge.');
   const symbols = ['symbolTent', 'symbolGarden', 'symbolTree', 'symbolLion'];
   for (const id of symbols) {
     const target = props.find(entry => entry.id === id)?.x ?? wizard.x + 180;
@@ -314,7 +365,7 @@ async function phaseSecondOracle(props) {
   await wizardSay('Gott hat sie aus Ägypten geführt; er ist für sie wie das Horn des Wildstiers.');
   await wizardSay('Wie Täler, die sich ausbreiten, wie Gärten an Wassern, wie Aloebäume, die der HERR pflanzt, wie Zedern an den Wassern.');
   await wizardSay('Er hat sich hingestreckt wie ein Löwe – wer will ihn aufstören?');
-  await wizardSay('Gesegnet sei, wer dich segnet, und verflucht, wer dich verflucht!');
+  await wizardSay('ברוך מברכיך וארור ארריך\nGesegnet sei, wer dich segnet, und verflucht, wer dich verflucht!');
   await propSay(props, 'gardenBalakShadow', 'Wenn du schon nicht fluchst, so segne sie wenigstens nicht!', { anchor: 'center' });
   await wizardSay('Hab ich dir nicht gesagt: Alles, was der HERR redet, das werde ich tun?');
   await wizardSay('Vielleicht ist jedes wahre Wort ein Tor.');
@@ -324,6 +375,7 @@ async function phaseSecondOracle(props) {
 
 async function phaseOathCircle(props) {
   await narratorSay('Ein Wahrheitskreis verlangt deine Treue. Sprich shama → dabar → emet → barak.');
+  await narratorSay('Höre (שמע), sprich das wirksame Wort (דבר), halte es wahr (אמת) und lasse den Segen fließen (ברך).');
   const order = [
     { word: 'shama', prompt: 'Sprich שמע.' },
     { word: 'dabar', prompt: 'Sprich דבר.' },
