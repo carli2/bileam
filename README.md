@@ -1,21 +1,21 @@
 # Bileam - Lehrling des Wortes
 
-![Balak ruft nach Bileam](assets/Geh%20nicht%20mit%20ihnen.png)
+![Titelbild „Bileam – Der Lehrling des Wortes“](assets/title.png)
 
 ## Klappentext
-Balak, Koenig von Moab, haelt noch einmal inne: „Geh nicht mit ihnen…“ – denn er weiss, dass jedes Wort, das Bileam spricht, die Welt umschreibt. In *Bileam – Lehrling des Wortes* begleitest du den widerwilligen Propheten durch Wueste, Schluchten und Sternenplateaus. Deine Eselin erklaert dir jedes neue hebräische Wort, die Engel pruefen dich, und Koenig Balak versucht stetig, deine Sprache fuer seine Fluchplaene zu entstellen. Sprichst du `lo`, bricht ein Bann; fluesterst du `shama`, werden Unsichtbares und Wahrheit sichtbar; sagst du `barak`, durchflutet Segen Stein und Sand.
+Balak, König von Moab, starrt über die Jericho-Ebene und sieht Israels Lager wie ein Meer aus Sternstaub. Er ruft den jungen Zauberlehrling Bileam: „Sprich ein Wort – verfluche sie!“ Doch Bileam weiß, dass jedes hebräische Wort ein Werkzeug der Schöpfung ist. Gibst du `aor`, bricht Licht durch Lehmhütten; sprichst du `mayim`, bewegen sich Flüsse. Deine Eselin mahnt dich mit sanftem Humor, Engel aus gebündeltem Licht prüfen dich, und Balak versucht unablässig, deine Sprache für seine Pläne zu beugen.
 
-![Die Gesandten fragen „Wer sind die Männer, die bei dir sind?“](assets/Wer%20sind%20die%20M%C3%A4nner.png)
+![Gameplay-Szene: Die Eselin stoppt am Weinberg](assets/Screenshot%202025-11-05%20at%2022-56-26%20Donkey%20Dystopia%20320.png)
 
-Jede Szene ist ein kleines Lehrdrama: Dialoge wirken wie biblische Poesie, Waechter erwarten das richtige Wort, Altare muessen mit אש entzuendet werden, und Engel blockieren den Weg, bis du ihren Namen – `malak` – verinnerlicht hast. So verbindet das Spiel Storytelling mit Lernmechanik: du hoerst, tippst, kombinierst und siehst sofort, wie sich Licht, Wasser oder Stein nach deinen Lippen richten.
+Jedes Level ist ein kleines Lehrdrama. Die Szene oben zeigt Level 7: Fürsten, Bannfahnen und Weinbergmauern bilden die Bühne, während die Eselin dreimal `shama` einfordert, bevor sie das Unsichtbare preisgibt. Mal entzündest du Altäre mit `ash`, mal stoppst du Balaks Gesandte mit `lo`, mal lässt du mit `barak` Segen wie Lapislazuli über Basaltfliesen laufen. Dialoge klingen wie biblische Poesie, doch sie erklären klar, welches Wort du begreifen, tippen und behalten musst.
 
-Willkommen in einer Welt, in der gesprochene Worte Licht, Wasser und Stein bewegen. *Bileam - Lehrling des Wortes* ist ein seitwaerts scrollendes Lernabenteuer, in dem du hebraeische Begriffe entdeckst und mit ihnen die Umgebung formst. Die Reise fuehrt dich durch Landschaften aus Lehm und Licht, begleitet von einer Eselin, die jeden Schritt mit didaktischen Hinweisen unterlegt.
+*Bileam – Lehrling des Wortes* verbindet Storytelling mit Lernmechanik: du hörst, sprichst, tippst und siehst sofort, wie Licht, Wasser oder Stein auf deine Lippen reagieren. Das Ancient-Futurism-Artwork, die ruhige Musik und die didaktische Eselin machen jeden Abschnitt zum spirituell-poetischen Sprachtraining.
 
 ## Was dich erwartet
-- **Poetische Atmosphaere:** Archaische Dialoge, ruhige Musik und eine Welt zwischen Wuestensand und schimmernden Glyphen.
-- **Lernen durch Erleben:** Jedes Level stellt ein hebraeisches Wort in den Mittelpunkt. Wenn du es korrekt aussprichst oder eintippst, reagieren Licht, Wasser oder Pflanzen unmittelbar.
-- **Didaktischer Zyklus:** Erinnern, Begreifen, Anwenden - jeder Abschnitt baut logisch auf dem Vorherigen auf und belohnt aufmerksam Lernende.
-- **Dynamische Begleitung:** Die sprechende Eselin bleibt dein humorvoller Mentor, waehrend Koenig Balak immer staerker versucht, Sprache zur Manipulation einzusetzen.
+- **Poetische Atmosphäre:** Archaische Dialoge, ruhige Musik und eine Welt zwischen Wüstensand und schimmernden Glyphen.
+- **Lernen durch Erleben:** Jedes Level stellt ein hebräisches Wort in den Mittelpunkt. Wenn du es korrekt aussprichst oder eintippst, reagieren Licht, Wasser oder Pflanzen unmittelbar.
+- **Didaktischer Zyklus:** Erinnern, Begreifen, Anwenden – jeder Abschnitt baut auf dem Vorherigen auf und belohnt achtsame Spieler:innen.
+- **Dynamische Begleitung:** Die sprechende Eselin bleibt dein humorvoller Mentor, während König Balak immer stärker versucht, Sprache zur Manipulation einzusetzen.
 
 ## Reise durch zehn Welten
 1. *aor* - Licht bricht die Finsternis in der Hütte des Erwachens.

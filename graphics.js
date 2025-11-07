@@ -433,17 +433,16 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
   const lineLengths = speechState.lineLengths || [];
 
   const lineDirections = speechState.lineDirections || [];
-  const lineOffsets = [];
+  const lineAnchors = [];
   const totalLines = speechState.lines ? speechState.lines.length : 0;
   for (let lineIndex = 0; lineIndex < totalLines; lineIndex++) {
     const length = lineLengths[lineIndex] ?? 0;
     const rtl = lineDirections[lineIndex];
-    const lineWidth = length > 0 ? length * charAdvance - charSpacing : 0;
     if (rtl) {
-      const base = bubbleX + speechState.width - speechState.paddingX - lineWidth;
-      lineOffsets[lineIndex] = Math.max(textStartX, base);
+      const base = bubbleX + speechState.width - speechState.paddingX - textRenderer.width;
+      lineAnchors[lineIndex] = { rtl: true, base };
     } else {
-      lineOffsets[lineIndex] = textStartX;
+      lineAnchors[lineIndex] = { rtl: false, base: textStartX };
     }
   }
 
@@ -453,13 +452,11 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
     const glyph = textRenderer.glyphs[node.char];
     if (!glyph) continue;
 
-    const rtl = lineDirections[node.line];
-    const baseX = lineOffsets[node.line] ?? textStartX;
-    const lineLength = lineLengths[node.line] ?? 0;
-    const positionIndex = rtl
-      ? Math.max(0, lineLength - 1 - node.column)
-      : node.column;
-    const gx = Math.round(baseX + positionIndex * charAdvance);
+    const anchor = lineAnchors[node.line] ?? { rtl: false, base: textStartX };
+    const offset = node.column * charAdvance;
+    const gx = anchor.rtl
+      ? Math.round(anchor.base - offset)
+      : Math.round(anchor.base + offset);
     const gy = textStartY + node.line * lineAdvance;
     blitSprite(buffer, glyph, gx, gy, { transparent: colors.transparent });
   }

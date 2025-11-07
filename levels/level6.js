@@ -38,8 +38,8 @@ const MOAB_APPROACH_SCENE = {
     { id: 'moabGrainBundle', type: 'gardenWheatBundle', x: 268, align: 'ground', parallax: 1.06, layer: 2 },
     { id: 'moabWatcherNorth', type: 'moabWallWatcher', x: 146, align: 'ground', parallax: 0.88 },
     { id: 'moabWatcherSouth', type: 'moabWallWatcher', x: 362, align: 'ground', parallax: 1.02 },
-    { id: 'balakWallFigure', type: 'balakFigure', x: 284, align: 'ground', parallax: 1.06 },
-    { id: 'balakAdvisor', type: 'balakAdvisor', x: 240, align: 'ground', parallax: 1.02 },
+    { id: 'balakWallFigure', type: 'balakFigure', x: 184, align: 'ground', parallax: 1.06 },
+    { id: 'balakAdvisor', type: 'balakAdvisor', x: 142, align: 'ground', parallax: 1.02 },
     { id: 'israelCampGlow', type: 'hoofSignTrail', x: 708, align: 'ground', parallax: 1.18 },
     { id: 'moabVisionRingWest', type: 'sandVisionRingDormant', x: 182, align: 'ground', parallax: 1 },
     { id: 'moabVisionRingCenter', type: 'sandVisionRingDormant', x: 326, align: 'ground', parallax: 1 },
@@ -190,7 +190,7 @@ export async function runLevelSix() {
   await phaseEnvoyDialogue(petorProps);
   await phaseEnvoyResponses(petorProps);
   await phaseNightVision(petorProps);
-  await phaseNightMeditation();
+  await phaseNightMeditation(petorProps);
   await phaseMorningRefusal(petorProps);
 
   await phaseBalakEdict(petorProps);
@@ -320,12 +320,20 @@ async function phaseNightVision(props) {
   await narratorSay('לא (lo) heißt Nein. אל (el) heißt Gott. Wenn du אל rückwärts liest, kommt לא heraus – ist das nicht lustig?');
 }
 
-async function phaseNightMeditation() {
+async function phaseNightMeditation(props) {
   setSceneContext({ phase: 'meditation' });
   await showLevelTitle('Die Nacht der Stille', 3600);
-  await showLevelTitle('Ein Hörkreis aus Licht erscheint um dich.', 3200);
+  let ringId = null;
+  if (Array.isArray(props)) {
+    ringId = 'petorHearingRing';
+    addProp(props, { id: ringId, type: 'resonanceRingActive', x: wizard.x - 10, align: 'ground', parallax: 1.04 });
+  }
+  await narratorSay('Ein Hörkreis aus Licht hebt sich aus dem Sand und legt sich um deine Füße.');
   await narratorSay('Schatten aus Balaks Palast greifen nach dir, doch das Nein, das du gelernt hast, hält den Kreis dreimal lang.');
   await narratorSay('Der Kreis schliesst sich. Der Atem der Nacht wird ruhig.');
+  if (ringId) {
+    updateProp(props, ringId, null);
+  }
 }
 
 async function phaseMorningRefusal(props) {

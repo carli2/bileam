@@ -26,12 +26,12 @@ Vowels (`a`, `o`, `u`, `i`, `j`) act as phonetic modifiers and Alef-carriers whe
 | q | ק | Qof | deep k (“quaf”) |
 | r | ר | Resh | — |
 | s | ס | Samekh | — |
-| t | ת | Tav | — |
+| t | ט | Tet | — |
 | u | וּ | Shuruk / Vav | vowel “u” |
 | v | ו | Vav (consonant) | consonant “v/w” |
 | w | שׁ | Shin | — |
 | x | ח | Chet | harsh “ch” sound |
-| y | ט | Tet | — |
+| y | ת | Tav | — |
 | z | ז | Zayin | — |
 
 ---

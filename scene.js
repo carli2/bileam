@@ -115,6 +115,8 @@ export const donkey = {
   x: 0,
   y: 0,
   facing: 1,
+  locked: false,
+  lockX: 0,
 };
 
 let donkeyBaseY = 0;
@@ -317,6 +319,16 @@ export function ensureAmbience(key) {
   if (ambienceState.key !== key) {
     setAmbience(key, { immediate: true });
   }
+}
+
+export function lockDonkeyAt(position = wizard.x - 32) {
+  donkey.locked = true;
+  donkey.lockX = position;
+  donkey.vx = 0;
+}
+
+export function unlockDonkey() {
+  donkey.locked = false;
 }
 
 export function transitionAmbience(key, options = {}) {
@@ -719,6 +731,7 @@ function initSprites() {
   propSprites.watchFireDormant = createWatchFireSprite(colors, 'dormant');
   propSprites.watchFireAwakened = createWatchFireSprite(colors, 'awakened');
   propSprites.watchFireVeiled = createWatchFireSprite(colors, 'veiled');
+  propSprites.vineyardBoundary = createVineyardBoundarySprite(colors);
   propSprites.angelBladeForm = createAngelSpriteFromData();
   propSpriteFactories.noGlyphShard = definition => {
     const letter = definition?.data?.letter ?? definition?.letter ?? '';
@@ -932,6 +945,12 @@ function updateWizard(delta) {
 }
 
 function updateDonkey(delta, time) {
+  if (donkey.locked) {
+    donkey.x = donkey.lockX;
+    donkey.y = donkeyBaseY + Math.sin(time * 0.003 + donkey.x * 0.02) * 1.5;
+    donkey.facing = wizard.x >= donkey.x ? 1 : -1;
+    return;
+  }
   const gap = wizard.x - donkey.x - 32;
   const maxSpeed = 42;
   donkey.x += clamp(gap, -maxSpeed * delta, maxSpeed * delta);
@@ -2061,42 +2080,40 @@ function createBalakFigureSprite(c) {
 
 function createBalakAdvisorSprite(c) {
   const art = [
-    '............hh............',
-    '...........hHHh...........',
-    '..........hHHHHh..........',
-    '.........hHHHHHHh.........',
-    '........hHHHHHHHHh........',
-    '.......hHHHHHHHHHHh.......',
-    '.......hHHbbbbbbHHh.......',
-    '......hHHbbbbbbbbHHh......',
-    '......hHHssssssssHHh......',
-    '......hHHssssssssHHh......',
-    '......hHHssssssssHHh......',
-    '......hHHssssssssHHh......',
-    '.....ooorrrrrrrrrroo......',
-    '....ooorrrrrrrrrrroo......',
-    '....oRRRRrrrrrrrrRRoo.....',
-    '...oRRRRrrrrrrrrRRRoo.....',
-    '...oRRRRrrrrrrrrRRRoo.....',
-    '...oRRggggggggggRRRoo.....',
-    '...oRRggggggggggRRRoo.....',
-    '...oRRRRrrrrrrrrRRRoo.....',
-    '...oRRRRrrrrrrrrRRRoo.....',
-    '...oRRRRrrrrrrrrRRRoo.....',
-    '...oRRRRrrrrrrrrRRRoo.....',
-    '...oRRRRrrrrrrrrRRRoo.....',
-    '...oo............oo.......',
+    '.............hhHh............',
+    '............hHHHHh...........',
+    '...........hHssssHh..........',
+    '..........hHssssssHh.........',
+    '.........hHssssssssHh........',
+    '........hHssssssssssHh.......',
+    '........hHssssssssssHh.......',
+    '.......hRRssssssssRRh........',
+    '......hRRssssssssssRRh.......',
+    '......hRRrrrrrrrrrrRRh.......',
+    '.....hRRRRrrrrrrRRRRh........',
+    '.....hRRRRrrrrrrRRRRh........',
+    '.....hRRRRooooooRRRRh........',
+    '.....hRRRRooooooRRRRh........',
+    '.....hRRRRrrrrrrRRRRh........',
+    '.....hRRRRrrrrrrRRRRh........',
+    '......RRRRrrrrrrRRRR.........',
+    '......RRRRrrrrrrRRRR.........',
+    '.......RRRRrrrrRRRR..........',
+    '........RRRRrrRRRR...........',
+    '........hhbbbbbbhh...........',
+    '.........hbbbbbbh............',
+    '..........bbbbbb.............',
+    '..........bbbbbb.............',
   ];
   const legend = {
     '.': c.transparent,
-    'h': c.wizardHat,
-    'H': c.wizardHatHighlight,
-    'b': c.wizardBeardShadow,
+    'h': c.hutGlow,
+    'H': c.wizardBelt,
     's': c.wizardSkin,
-    'o': c.wizardBoot,
+    'R': c.hutWall,
     'r': c.marketFabric,
-    'R': c.sanctumSky,
-    'g': c.wizardBelt,
+    'o': c.wizardBelt,
+    'b': c.wizardBoot,
   };
   return spriteFromStrings(art, legend);
 }
@@ -3621,3 +3638,22 @@ function groundLineFor(sprite) {
 
 ambiencePresets = createAmbiencePresets(colors);
 setAmbience('exteriorDay', { immediate: true });
+function createVineyardBoundarySprite(c) {
+  const art = [
+    '................',
+    '..aaa...aaa.....',
+    '.aAAAa.aAAAa....',
+    '.AAAAAaAAAAAa...',
+    '.AaaAAAaaAAAa...',
+    '.AAaaAAaaAAa....',
+    '..aAAAAAAAa.....',
+    '..aaaAaAaaa.....',
+    '................',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'a': c.dirt,
+    'A': c.dirtDeep,
+  };
+  return spriteFromStrings(art, legend);
+}

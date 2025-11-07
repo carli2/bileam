@@ -9,6 +9,8 @@ import {
   showLevelTitle,
   setSceneProps,
   waitForWizardToReach,
+  lockDonkeyAt,
+  unlockDonkey,
 } from '../scene.js';
 import {
   narratorSay,
@@ -17,6 +19,7 @@ import {
   anchorX,
   anchorY,
   wizard,
+  donkey,
   normalizeHebrewInput,
   applySceneConfig,
   cloneSceneProps,
@@ -36,9 +39,8 @@ const PROCESSION_SCENE = {
     { id: 'hoofStepOne', type: 'hoofSignTrail', x: 148, align: 'ground', parallax: 0.92 },
     { id: 'hoofStepTwo', type: 'hoofSignTrail', x: 252, align: 'ground', parallax: 0.94 },
     { id: 'hoofStepThree', type: 'hoofSignTrail', x: 356, align: 'ground', parallax: 0.96 },
-    { id: 'bannerOne', type: 'princeProcessionBanner', x: 252, align: 'ground', parallax: 0.94 },
-    { id: 'bannerTwo', type: 'princeProcessionBanner', x: 356, align: 'ground', parallax: 0.96 },
-    { id: 'bannerThree', type: 'princeProcessionBanner', x: 460, align: 'ground', parallax: 0.98 },
+    { id: 'processionAdvisorWest', type: 'balakAdvisor', x: 42, align: 'ground', parallax: 0.95 },
+    { id: 'processionAdvisorEast', type: 'balakAdvisor', x: 66, align: 'ground', parallax: 0.97 },
   ],
 };
 
@@ -47,6 +49,10 @@ const VINEYARD_SCENE = {
   wizardStartX: 84,
   donkeyOffset: -42,
   props: [
+    { id: 'vineyardBoundaryWest', type: 'vineyardBoundary', x: 188, align: 'ground', parallax: 0.94 },
+    { id: 'vineyardBoundaryEast', type: 'vineyardBoundary', x: 332, align: 'ground', parallax: 0.94 },
+    { id: 'processionAdvisorWest', type: 'balakAdvisor', x: 48, align: 'ground', parallax: 0.95 },
+    { id: 'processionAdvisorEast', type: 'balakAdvisor', x: 72, align: 'ground', parallax: 0.97 },
     { id: 'vineyardAngel', type: 'angelBladeForm', x: 360, align: 'ground', parallax: 0.96 },
   ],
 };
@@ -56,6 +62,8 @@ const WALL_SCENE = {
   wizardStartX: 84,
   donkeyOffset: -42,
   props: [
+    { id: 'processionAdvisorWest', type: 'balakAdvisor', x: 48, align: 'ground', parallax: 0.95 },
+    { id: 'processionAdvisorEast', type: 'balakAdvisor', x: 72, align: 'ground', parallax: 0.97 },
     { id: 'wallAngel', type: 'angelBladeForm', x: 352, align: 'ground', parallax: 0.98 },
   ],
 };
@@ -65,6 +73,8 @@ const PINCH_SCENE = {
   wizardStartX: 82,
   donkeyOffset: -42,
   props: [
+    { id: 'processionAdvisorWest', type: 'balakAdvisor', x: 46, align: 'ground', parallax: 0.95 },
+    { id: 'processionAdvisorEast', type: 'balakAdvisor', x: 70, align: 'ground', parallax: 0.97 },
     { id: 'pinchAngel', type: 'angelBladeForm', x: 248, align: 'ground', parallax: 0.98 },
   ],
 };
@@ -74,45 +84,11 @@ const REVELATION_SCENE = {
   wizardStartX: 90,
   donkeyOffset: -42,
   props: [
+    { id: 'processionAdvisorWest', type: 'balakAdvisor', x: 54, align: 'ground', parallax: 0.95 },
+    { id: 'processionAdvisorEast', type: 'balakAdvisor', x: 78, align: 'ground', parallax: 0.97 },
     { id: 'revelationAngel', type: 'angelBladeForm', x: 236, align: 'ground', parallax: 0.96 },
   ],
 };
-
-const ALTAR_SCENE = {
-  ambience: 'mirrorTower',
-  wizardStartX: 96,
-  donkeyOffset: -40,
-  props: [
-    { id: 'listeningAltar', type: 'hearingAltar', x: 332, align: 'ground', parallax: 0.96 },
-  ],
-};
-
-const PROCESSION_BANNERS = [
-  {
-    id: 'bannerOne',
-    introPrompt: 'Die Schrift verlangt nach Licht.',
-    wordPrompt: 'Sprich אור (or).',
-    spells: ['or', 'אור'],
-    sealPrompt: 'Versiegle das Banner mit לא (lo).',
-    response: 'Das Banner klärt sich. Balaks Befehl verliert an Kraft.',
-  },
-  {
-    id: 'bannerTwo',
-    introPrompt: 'Hitze staut sich unter dem Tuch.',
-    wordPrompt: 'Sprich מים (mayim).',
-    spells: ['mayim', 'majim', 'mjm', 'מים'],
-    sealPrompt: 'Sprich לא, um Balaks Auftrag zu verneinen.',
-    response: 'Tau legt sich über die Schrift, das Banner wird still.',
-  },
-  {
-    id: 'bannerThree',
-    introPrompt: 'Flüstern reisst an deinen Ohren.',
-    wordPrompt: 'Sprich קול (qol).',
-    spells: ['qol', 'קול'],
-    sealPrompt: 'Beende das Echo mit לא.',
-    response: 'Balaks Befehlszeilen verstummen. Der Pfad bereitet sich.',
-  },
-];
 
 export async function runLevelSeven() {
   const plan = levelAmbiencePlan.level7;
@@ -125,7 +101,7 @@ export async function runLevelSeven() {
 
   await phaseProcessionIntro();
   await phaseHoofSteps(processionProps);
-  await phaseProcessionBanners(processionProps);
+  await narratorSay('Die Fürsten nicken, als du schweigend zwischen den Bannern hindurch schreitest. Keine Aufgabe, nur der Blick nach vorn – zum Weinberg, wo der Weg schmal wird.');
 
   const vineyardProps = cloneSceneProps(VINEYARD_SCENE.props);
   await transitionToScene(plan?.learn, VINEYARD_SCENE, vineyardProps, 'first-resistance');
@@ -144,117 +120,84 @@ export async function runLevelSeven() {
   const angelGuard = await phaseAngelRevelation(revelationProps);
   await phaseLearnMalak(angelGuard);
 
-  const altarProps = cloneSceneProps(ALTAR_SCENE.props);
-  await transitionToScene(plan?.apply, ALTAR_SCENE, altarProps, 'altar');
-  await phaseListeningAltar(altarProps);
-
   await narratorSay('Die Fürsten reiten weiter nach Moab. Die Eselin folgt, der Engel bleibt auf dem Weg.');
   await donkeySay('Wer hört, erkennt.');
-  await donkeySay('Und wer erkennt, weiss, dass alles nur gesprochen ist. Bewahre shama und lo.');
+  await donkeySay('Und wer erkennt, weiss, dass alles nur gesprochen ist.');
   await fadeToBlack(720);
 }
 
 async function phaseProcessionIntro() {
   await narratorSay('Da stand Bileam am Morgen auf, sattelte seine Eselin und zog mit den Fürsten der Moabiter. Doch der Zorn Gottes entbrannte, dass er hinzog.');
-  await narratorSay('Grauer Morgen über den Hügeln, Nebel hängt wie feine Stoffbahnen, Banner zittern im Wind.');
-  await showLevelTitle('Bewahre לא und lausche nach שמע – der Weg prüft jedes Wort.', 5200);
-  await donkeySay('Bewahre das Nein, Meister. Wir werden hören müssen, nicht nur sehen.');
+  await narratorSay('Grauer Morgen über den Hügeln, Nebel hängt wie feine Stoffbahnen, und die Banner der Fürsten rascheln hinter dir.');
+  await showLevelTitle('Die Fürsten fordern Stille. Lausche sorgfältig.', 5200);
+  await donkeySay('Wir werden hören müssen, nicht nur sehen.');
 }
 
 async function phaseHoofSteps(props) {
-  const steps = ['hoofStepOne', 'hoofStepTwo', 'hoofStepThree'];
-  for (const id of steps) {
-    const target = props.find(entry => entry.id === id)?.x ?? wizard.x + 120;
-    await waitForWizardToReach(target, { tolerance: 14 });
-    let sealed = false;
-    while (!sealed) {
-      const answer = await readWord('Stabilisiere den Pfad mit לא (lo).');
-      if (spellEquals(answer, 'lo', 'לא')) {
-        sealed = true;
-        await celebrateGlyph(answer);
-        await narratorSay('Der Pfad bestaetigt dein Nein. Die Eselin schreitet sicher.');
-      } else {
-        await donkeySay('Sprich das Nein, das du gelernt hast.');
+  const hoofThree = props.find(entry => entry.id === 'hoofStepThree');
+  const forwardTarget = hoofThree ? hoofThree.x + 40 : wizard.x + 200;
+  await narratorSay('Die Fürsten setzen sich in Bewegung. Folge ihnen bis an den Weinberg.');
+  const stopAdvisorFollow = startAdvisorEscort(props);
+  await waitForWizardToReach(forwardTarget, { tolerance: 14 });
+
+  const lockX = donkey.x;
+  lockDonkeyAt(lockX);
+  const boundaryIds = ['processionBoundaryWest', 'processionBoundaryEast'];
+  addProp(props, { id: boundaryIds[0], type: 'vineyardBoundary', x: lockX - 28, align: 'ground', parallax: 1 });
+  addProp(props, { id: boundaryIds[1], type: 'vineyardBoundary', x: lockX + 36, align: 'ground', parallax: 1 });
+  await narratorSay('Doch die Eselin bleibt stehen. Sie scharrt am Weg und weigert sich, weiterzugehen.');
+  await narratorSay('Deine Eselin folgt dir nicht. Kehre zu ihr zurück.');
+  await waitForWizardToReach(lockX - 6, { tolerance: 14 });
+
+  const prompts = [
+    'Die Eselin weigert sich, weiterzulaufen. Was gebietest du ihr?',
+    'Die Eselin lauscht, aber sie gehorcht noch nicht. Versuche es noch einmal.',
+    'Noch einmal, Bileam. Was sagst du ihr?',
+  ];
+  const hints = [
+    'Sie wartet darauf, dass du zuhörst.',
+    'Dein Nein allein reicht nicht – lausche.',
+    'Hören ist der Schlüssel. Vertrau auf das neue Wort.',
+  ];
+  let failures = 0;
+
+  for (let idx = 0; idx < prompts.length; idx += 1) {
+    while (true) {
+      const answer = await readWord(prompts[idx]);
+      if (spellEquals(answer, 'shama', 'שמע')) {
+        await celebrateGlyph('שמע');
+        await donkeySay('לא.');
+        break;
+      } else if (spellEquals(answer, 'qol', 'קול')) {
+        await narratorSay('Stimme (קול) geht in die richtige Richtung – sie meint auch Donnern. Doch das neue Wort, das du lernen sollst, heißt שמע: hören.');
+        continue;
       }
+      const hint = hints[Math.min(failures, hints.length - 1)];
+      await narratorSay(hint);
+      failures += 1;
     }
   }
-}
 
-async function phaseProcessionBanners(props) {
-  await narratorSay('Die Fürsten tragen Schriftbanner. Prüfe sie mit deinen Worten.');
-  for (const banner of PROCESSION_BANNERS) {
-    const anchor = props.find(entry => entry.id === banner.id)?.x ?? wizard.x + 180;
-    await waitForWizardToReach(anchor, { tolerance: 16 });
-    let lit = false;
-    while (!lit) {
-      const answer = await readWord(banner.wordPrompt);
-      if (banner.spells.some(spell => spellEquals(answer, spell))) {
-        lit = true;
-        await celebrateGlyph(answer);
-        await narratorSay(banner.introPrompt);
-      } else {
-        await donkeySay('Nutze das passende Wort.');
-      }
-    }
-
-    let sealed = false;
-    while (!sealed) {
-      const answerSeal = await readWord(banner.sealPrompt);
-      if (spellEquals(answerSeal, 'lo', 'לא')) {
-        sealed = true;
-        updateProp(props, banner.id, { type: 'princeProcessionBannerLit' });
-        await celebrateGlyph(answerSeal);
-        await narratorSay(banner.response);
-      } else {
-        await donkeySay('Versiegle das Banner mit einem klaren Nein.');
-      }
-    }
-  }
-  await narratorSay('Die Banner schweigen. Das Wort שמע wartet noch im Verborgenen.');
+  await narratorSay('Die Eselin atmet aus und tritt zur Seite, als hielte sie etwas Unsichtbares auf.');
+  boundaryIds.forEach(id => updateProp(props, id, { visible: false }));
+  unlockDonkey();
+  stopAdvisorFollow();
 }
 
 async function phaseFirstResistance(props) {
-  await narratorSay('Der Engel des HERRN steht im Weinberg. Sonne bricht durch Nebel, doch du siehst ihn nicht.');
-  await donkeySay('Da steht etwas vor uns... aber du siehst es nicht.');
-  await wizardSay('Es ist nur ein Flimmern, führe mich weiter!');
-  let shamaCount = 0;
-  while (shamaCount < 2) {
-    const answer = await readWord('Wie antwortest du dem Licht im Weg?');
-    if (spellEquals(answer, 'shama', 'שמע')) {
-      shamaCount += 1;
-      await narratorSay('Ein Hörstrahl verbindet dich mit dem Engel.');
-    } else if (spellEquals(answer, 'lo', 'לא')) {
-      await narratorSay('Das Nein hält die Zeit an, doch der Engel bleibt.');
-    } else if (spellEquals(answer, 'ash', 'אש')) {
-      await narratorSay('Hitze flackert, aber der Engel ruht unbewegt.');
-    } else {
-      await donkeySay('Höre zuerst. Sprich שמע.');
-    }
-  }
-  await narratorSay('Die Eselin weicht auf das Feld aus. Der Engel wartet weiter.');
+  await narratorSay('Der Pfad verengt sich in den Weinberg. Nebel liegt schwer, und die Eselin zögert, als hielte sie etwas Unsichtbares auf.');
+  await donkeySay('Etwas steht vor uns. Ich spüre eine Klinge aus Licht.');
+  await wizardSay('Ich sehe nichts, doch du hast mich nie belogen. Was immer dort ist, hör weiter.');
+  await narratorSay('Die Fürsten flüstern. Sie sehen nur Staub, doch sie spüren, wie der Sand ringsum straffer wird.');
+  await narratorSay('Deine Eselin drängt sich in den Weinberg, presst Huf gegen Stein und sucht Raum, den es nicht gibt.');
+  await narratorSay('Sie bleibt stehen – gehorsam dem Hören, nicht deinem Stock.');
 }
 
 async function phaseSecondResistance(props) {
-  await narratorSay('Zwischen Weinmauern steht der Engel erneut mit erhobenem Schwert.');
-  await donkeySay('Schon wieder... da, zwischen den Steinen!');
+  await narratorSay('Zwischen den Mauern des Weinbergs wird der Pfad schmal. Die Eselin drängt sich an den Felsen und klemmt deinen Fuß ein.');
+  await donkeySay('Schon wieder... da ist etwas zwischen den Steinen!');
   await wizardSay('Du treibst Mutwillen!');
-  await narratorSay('Die Eselin draengt sich an den Felsen und klemmt deinen Fuss ein.');
-  let heard = false;
-  let denied = false;
-  while (!heard || !denied) {
-    const answer = await readWord('Der Weg klemmt. Welches Wort sprichst du?');
-    if (!heard && spellEquals(answer, 'shama', 'שמע')) {
-      heard = true;
-      await narratorSay('Die Mauern beginnen zu singen. Glyphen glimmen.');
-    } else if (!denied && spellEquals(answer, 'lo', 'לא')) {
-      denied = true;
-      await narratorSay('Der Boden stabilisiert sich. Die Eselin hält stand.');
-    } else if (spellEquals(answer, 'aor', 'or', 'אור')) {
-      await narratorSay('Licht beleuchtet den Engel, doch ohne Hören bleibt er still.');
-    } else {
-      await donkeySay('Höre – und sag Nein. Sonst kommen wir nicht weiter.');
-    }
-  }
+  await narratorSay('Dieses Mal ist kein Rätsel mehr zu lösen – dein Zorn soll verstummen, bis die Wahrheit sich zeigt.');
   await narratorSay('Die Eselin drängt sich an der Mauer vorbei. Dein Fuß schmerzt, aber der Weg wird frei.');
 }
 
@@ -303,39 +246,11 @@ async function phaseAngelRevelation(props) {
       await celebrateGlyph(answer);
       await divineSay('שמע בילעם בן בעור\nHöre, Bileam, Sohn des Beor.');
       await narratorSay('Das Wort klingt wie eine Saite. Die Welt antwortet mit stillem Klang.');
-      await narratorSay('Grenze bleibt bestehen: lo – bewahre das Nein. Gabe erhalten: Divine Pass – 1.');
+      await narratorSay('Dein Nein liegt nun wie ein unsichtbarer Wall hinter dir. Die Fürsten sehen nur Sand, doch sie stoßen daran.');
     } else {
       await donkeySay('Sprich es ruhig: sh – a – ma.');
     }
   }
-}
-
-async function phaseListeningAltar(props) {
-  await narratorSay('Ein Höraltar wartet. Klangfäden fallen herab.');
-  for (let index = 1; index <= 6; index += 1) {
-    const expectsLo = index % 4 === 0;
-    const expected = expectsLo ? 'lo' : 'shama';
-    const prompt = expectsLo
-      ? 'Der Faden spannt sich. Sprich לא, damit er nicht reisst.'
-      : 'Ein Faden singt. Antworte mit שמע.';
-    let ok = false;
-    while (!ok) {
-      const answer = await readWord(prompt);
-      const variant = expected === 'lo' ? 'לא' : 'שמע';
-      if (spellEquals(answer, expected, variant)) {
-        ok = true;
-        await celebrateGlyph(answer);
-        await narratorSay('Der Faden verwebt sich in deinem Grimoire.');
-      } else if (spellEquals(answer, 'qol', 'קול')) {
-        await narratorSay('Ein Echo schwingt, doch der Faden wartet auf das andere Wort.');
-      } else {
-        await donkeySay('Der Altar reagiert nur auf das rechte Wort.');
-      }
-    }
-  }
-  await narratorSay('Die Schutzform vollendet sich. Du fühlst dich als Wahrheitsbote.');
-  await wizardSay('Vielleicht stand der Engel nicht vor mir, sondern hinter dem Vorhang, wo der Stoff der Welt zu Ende geht.');
-  await wizardSay('Manche nennen es das Licht hinter dem Licht. Und wer lauscht, hört ein fernes Echo – das Summen des ersten Wortes.');
 }
 
 async function phaseLearnMalak(angelGuard) {
@@ -347,11 +262,15 @@ async function phaseLearnMalak(angelGuard) {
       learnt = true;
       await celebrateGlyph('מלאך');
       await narratorSay('Malak bedeutet Bote. Du wirst dieses Wort brauchen, wenn Balaks Schatten deinen Weg versperren.');
+      await divineSay('מלאכי ניצב בדרך לעצור אותך\nMein Engel steht auf dem Weg, um dich aufzuhalten.');
     } else {
       await donkeySay('Sprich ma-lak – מלאך.');
     }
   }
   await releaseAngelBlock(angelGuard);
+  await narratorSay('Die Klangfäden um dich schwingen aus und legen sich wie ein unsichtbarer Mantel. Mehr Prüfungen braucht es heute nicht.');
+  await wizardSay('Vielleicht stand der Engel nicht vor mir, sondern hinter dem Vorhang, wo der Stoff der Welt zu Ende geht.');
+  await wizardSay('Manche nennen es das Licht hinter dem Licht. Und wer lauscht, hört ein fernes Echo – das Summen des ersten Wortes.');
 }
 
 async function ensureAngelBlocksPath(props, id) {
@@ -366,6 +285,65 @@ async function releaseAngelBlock(angel) {
   if (!angel) return;
   const passX = (angel.x ?? wizard.x) + 44;
   await waitForWizardToReach(passX, { tolerance: 12 });
+}
+
+function startAdvisorEscort(props, {
+  westId = 'processionAdvisorWest',
+  eastId = 'processionAdvisorEast',
+  westOffset = -42,
+  eastOffset = -18,
+} = {}) {
+  if (!Array.isArray(props)) {
+    return () => {};
+  }
+  const targets = [
+    westId ? { id: westId, offset: westOffset } : null,
+    eastId ? { id: eastId, offset: eastOffset } : null,
+  ].filter(Boolean);
+  if (targets.length === 0) {
+    return () => {};
+  }
+
+  let active = true;
+  let rafId = null;
+  let timeoutId = null;
+  const hasRaf = typeof requestAnimationFrame === 'function';
+
+  const schedule = () => {
+    if (hasRaf) {
+      rafId = requestAnimationFrame(tick);
+    } else {
+      timeoutId = setTimeout(tick, 50);
+    }
+  };
+
+  const cancel = () => {
+    if (hasRaf && typeof cancelAnimationFrame === 'function' && rafId != null) {
+      cancelAnimationFrame(rafId);
+    }
+    if (!hasRaf && timeoutId != null) {
+      clearTimeout(timeoutId);
+    }
+    rafId = null;
+    timeoutId = null;
+  };
+
+  const tick = () => {
+    if (!active) {
+      cancel();
+      return;
+    }
+    targets.forEach(({ id, offset }) => {
+      updateProp(props, id, { x: wizard.x + (offset ?? 0) });
+    });
+    schedule();
+  };
+
+  tick();
+  return () => {
+    active = false;
+    cancel();
+  };
 }
 
 async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
