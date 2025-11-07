@@ -33,11 +33,20 @@ const BAMOT_TERRACE_SCENE = {
   wizardStartX: 78,
   donkeyOffset: -38,
   props: [
+    { id: 'bamotSkyVeil', type: 'canyonMist', x: -120, align: 'ground', offsetY: -68, parallax: 0.32, layer: -3 },
+    { id: 'bamotProcessionPath', type: 'borderProcessionPath', x: -40, align: 'ground', parallax: 0.48, layer: -2 },
+    { id: 'bamotBasaltNorth', type: 'basaltSpireTall', x: 92, align: 'ground', parallax: 0.78, layer: -1 },
+    { id: 'bamotBasaltSouth', type: 'basaltSpireShort', x: 418, align: 'ground', parallax: 0.82, layer: -1 },
+    { id: 'bamotSunStone', type: 'sunStoneDormant', x: 244, align: 'ground', parallax: 0.9, layer: 0 },
     { id: 'terraceOne', type: 'altarGlyphPlateDormant', x: 168, align: 'ground', parallax: 0.96 },
     { id: 'terraceTwo', type: 'altarGlyphPlateDormant', x: 316, align: 'ground', parallax: 0.98 },
     { id: 'terraceThree', type: 'altarGlyphPlateDormant', x: 464, align: 'ground', parallax: 1.0 },
     { id: 'balakArrival', type: 'balakFigure', x: 552, align: 'ground', parallax: 1.06 },
     { id: 'terraceBanner', type: 'princeProcessionBanner', x: 112, align: 'ground', parallax: 0.94 },
+    { id: 'bamotTorchWest', type: 'watchFireDormant', x: 128, align: 'ground', parallax: 1.02 },
+    { id: 'bamotTorchEast', type: 'watchFireDormant', x: 392, align: 'ground', parallax: 1.04 },
+    { id: 'bamotForegroundHerb', type: 'gardenForegroundPlant', x: 52, align: 'ground', parallax: 1.12, layer: 2 },
+    { id: 'bamotEdgeGlyphs', type: 'resonanceRingDormant', x: 520, align: 'ground', parallax: 1.14 },
   ],
 };
 
@@ -46,6 +55,8 @@ const ALTAR_FIELD_SCENE = {
   wizardStartX: 88,
   donkeyOffset: -40,
   props: [
+    { id: 'altarFieldMist', type: 'canyonMist', x: -96, align: 'ground', offsetY: -60, parallax: 0.36, layer: -3 },
+    { id: 'altarFieldPath', type: 'borderProcessionPath', x: -24, align: 'ground', parallax: 0.52, layer: -2 },
     { id: 'altarNorth', type: 'altarGlyphPlateDormant', x: 140, align: 'ground', parallax: 0.94 },
     { id: 'altarNorthEast', type: 'altarGlyphPlateDormant', x: 212, align: 'ground', parallax: 0.95 },
     { id: 'altarEast', type: 'altarGlyphPlateDormant', x: 284, align: 'ground', parallax: 0.96 },
@@ -55,6 +66,8 @@ const ALTAR_FIELD_SCENE = {
     { id: 'altarWest', type: 'altarGlyphPlateDormant', x: 572, align: 'ground', parallax: 1.0 },
     { id: 'altarAttendantOne', type: 'envoyShadow', x: 96, align: 'ground', parallax: 0.92 },
     { id: 'altarAttendantTwo', type: 'envoyShadow', x: 608, align: 'ground', parallax: 1.04 },
+    { id: 'altarWatchFire', type: 'watchFireDormant', x: 312, align: 'ground', parallax: 0.96 },
+    { id: 'altarForegroundPlant', type: 'gardenForegroundPlant', x: 76, align: 'ground', parallax: 1.12, layer: 2 },
   ],
 };
 
@@ -63,9 +76,11 @@ const RESONANCE_SCENE = {
   wizardStartX: 92,
   donkeyOffset: -40,
   props: [
+    { id: 'resonanceMist', type: 'canyonMist', x: -64, align: 'ground', offsetY: -58, parallax: 0.38, layer: -2 },
     { id: 'resonanceOuter', type: 'resonanceRingDormant', x: 236, align: 'ground', parallax: 0.94 },
     { id: 'resonanceMiddle', type: 'resonanceRingDormant', x: 316, align: 'ground', parallax: 0.96 },
     { id: 'resonanceInner', type: 'resonanceRingDormant', x: 396, align: 'ground', parallax: 0.98 },
+    { id: 'resonanceTorch', type: 'watchFireDormant', x: 460, align: 'ground', parallax: 1.02 },
   ],
 };
 
@@ -76,6 +91,8 @@ const ORACLE_SCENE = {
   props: [
     { id: 'balakWaiting', type: 'balakFigure', x: 268, align: 'ground', parallax: 0.94 },
     { id: 'oracleBanner', type: 'princeProcessionBanner', x: 404, align: 'ground', parallax: 0.98 },
+    { id: 'oracleSpire', type: 'basaltSpireShort', x: 132, align: 'ground', parallax: 0.88 },
+    { id: 'oracleSunStone', type: 'sunStoneDormant', x: 352, align: 'ground', parallax: 0.96 },
   ],
 };
 
@@ -84,10 +101,12 @@ const PISGA_SCENE = {
   wizardStartX: 86,
   donkeyOffset: -38,
   props: [
+    { id: 'pisgaVeil', type: 'canyonMist', x: -88, align: 'ground', offsetY: -62, parallax: 0.34, layer: -3 },
     { id: 'pisgaStone', type: 'borderMilestone', x: 204, align: 'ground', parallax: 0.94 },
     { id: 'pisgaCleft', type: 'pisgaBridgeRunesDormant', x: 316, align: 'ground', parallax: 0.96 },
     { id: 'pisgaPortal', type: 'pisgaBridgeSegmentDormant', x: 432, align: 'ground', parallax: 0.98 },
     { id: 'pisgaWindVeil', type: 'resonanceRingDormant', x: 508, align: 'ground', parallax: 1.08 },
+    { id: 'pisgaForeground', type: 'gardenForegroundPlant', x: 84, align: 'ground', parallax: 1.14, layer: 2 },
   ],
 };
 
@@ -174,7 +193,10 @@ async function phaseBalakGreeting(props) {
   await ensureWizardBesideBalak(props, 'balakArrival');
   await propSay(props, 'balakArrival', 'Hab ich nicht zu dir gesandt und dich rufen lassen? Meinst du, ich könnte dich nicht ehren?', { anchor: 'center', offsetY: -34 });
   await wizardSay('Siehe, ich bin zu dir gekommen. Aber wie kann ich etwas anderes reden als das, was mir Gott in den Mund gibt? Nur das kann ich reden.');
-  await showLevelTitle('לא & שמע tragen dich schon. ברך wartet auf den Altären – halte Balaks Erwartungen im Zaum.', 5200);
+  await narratorSay('Balak tritt beiseite, und drei glühende Terrassen werden sichtbar. Jede verlangt Hören, Nein und den Segen.');
+  addProp(props, { id: 'bamotGuidingTrailWest', type: 'hoofSignTrail', x: wizard.x + 36, align: 'ground', parallax: 1.04 });
+  addProp(props, { id: 'bamotGuidingTrailEast', type: 'hoofSignTrail', x: wizard.x + 88, align: 'ground', parallax: 1.06 });
+  await showLevelTitle('Ziel: Folge den Hufspuren und erhelle alle drei Terrassen mit לא, שמע und ברך.', 5200);
 }
 
 async function phaseTerraceTrials(props) {
