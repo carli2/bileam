@@ -228,6 +228,37 @@ export function canonicalSpell(value) {
   return SPELL_ALIASES[normalized] ?? normalized;
 }
 
+export function splitSpellInput(value) {
+  if (value == null) return [];
+  const trimmed = String(value).normalize('NFC').trim();
+  if (!trimmed) return [];
+  return trimmed
+    .split(/\s+/)
+    .map(token => canonicalSpell(token))
+    .filter(Boolean);
+}
+
+export function canonicalizeSequence(words = []) {
+  return words.map(word => canonicalSpell(word));
+}
+
+export function consumeSequenceTokens(answer, canonicalSequence, startIndex = 0) {
+  if (!Array.isArray(canonicalSequence) || canonicalSequence.length === 0) {
+    return 0;
+  }
+  const tokens = splitSpellInput(answer);
+  if (tokens.length <= 1) return 0;
+  let consumed = 0;
+  while (consumed < tokens.length) {
+    const expectedIndex = startIndex + consumed;
+    if (expectedIndex >= canonicalSequence.length || tokens[consumed] !== canonicalSequence[expectedIndex]) {
+      return 0;
+    }
+    consumed += 1;
+  }
+  return consumed;
+}
+
 export async function celebrateGlyph(spell) {
   const canonical = canonicalSpell(spell);
   if (!canonical) return;

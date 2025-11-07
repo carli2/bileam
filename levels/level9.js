@@ -17,7 +17,6 @@ import {
   anchorX,
   anchorY,
   wizard,
-  normalizeHebrewInput,
   applySceneConfig,
   cloneSceneProps,
   spellEquals,
@@ -26,6 +25,8 @@ import {
   celebrateGlyph,
   propSay,
   divineSay,
+  canonicalizeSequence,
+  consumeSequenceTokens,
 } from './utils.js';
 
 const PISGA_LINE_SCENE = {
@@ -55,6 +56,29 @@ const DABAR_SCENE = {
     { id: 'dabarPillarThree', type: 'resonancePillarDormant', x: 424, align: 'ground', parallax: 0.98 },
   ],
 };
+
+const DABAR_PILLAR_SENTENCES = [
+  {
+    id: 'dabarPillarOne',
+    prompt: 'Säule 1 – Höre das wirksame Wort: tippe שמע דבר (shama dabar).',
+    sequence: ['shama', 'dabar'],
+    fragment: 'ב',
+    hint: 'שמע דבר – hören und handeln – gehört zusammen.',
+  },
+  {
+    id: 'dabarPillarTwo',
+    prompt: 'Säule 2 – Sag Nein zum falschen Wort: tippe לא דבר (lo dabar).',
+    sequence: ['lo', 'dabar'],
+    hint: 'Schreib לא דבר, um leere Rede zu brechen.',
+  },
+  {
+    id: 'dabarPillarThree',
+    prompt: 'Säule 3 – Hör, verneine, sprich: tippe שמע לא דבר.',
+    sequence: ['shama', 'lo', 'dabar'],
+    fragment: 'ר',
+    hint: 'Der ganze Satz lautet שמע לא דבר.',
+  },
+];
 
 const MIRROR_SCENE = {
   ambience: 'courtAudience',
@@ -89,117 +113,56 @@ const OATH_SCENE = {
   ],
 };
 
-const PISGA_VISIONS = [
+const PISGA_SENTENCES = [
   {
     id: 'truthPlateOne',
+    description: 'Vision 1 – Zelte Jakobs: Stoffbahnen rauschen, als wollten sie gehört werden.',
+    prompt: 'Schreib שמע דבר (shama dabar) – „Höre das Wort“.',
+    sequence: ['shama', 'dabar'],
     fragment: 'ד',
-    steps: [
-      {
-        prompt: 'Die Zelte Jakobs stehen fern. Lausche: sprich שמע.',
-        spells: ['shama', 'שמע'],
-        hint: 'Nur שמע lässt dich das Lager hören.',
-      },
-      {
-        prompt: 'Sprich דבר, damit das gesehene Wort Bestand hat.',
-        spells: ['dabar', 'דבר'],
-        hint: 'דבר verankert das Wort.',
-      },
-    ],
+    hint: 'Sprich שמע דבר – gerne mit Leerzeichen in einem Zug.',
   },
   {
     id: 'truthPlateTwo',
-    steps: [
-      {
-        prompt: 'Balaks Staubflüstern kriecht heran. Sag לא.',
-        spells: ['lo', 'לא'],
-        hint: 'לא bricht seinen Auftrag.',
-      },
-      {
-        prompt: 'Segne ihre Zahl: sprich ברך.',
-        spells: ['barak', 'ברך'],
-        hint: 'ברך bewahrt die Schar.',
-      },
-    ],
+    description: 'Vision 2 – Staubflüstern: Balaks Befehl kriecht wie Sand über den Grat.',
+    prompt: 'Schreib לא ברך (lo barak) – „Sag Nein und segne“. ',
+    sequence: ['lo', 'barak'],
+    hint: 'Tippe לא ברך, um seinen Auftrag zu brechen.',
   },
   {
     id: 'truthPlateThree',
-    steps: [
-      {
-        prompt: 'Du siehst Gärten an Wassern. Sprich מים.',
-        spells: ['mayim', 'מים'],
-        hint: 'מים erinnert die Flüsse.',
-      },
-      {
-        prompt: 'Lass die Bäche antworten mit ברך.',
-        spells: ['barak', 'ברך'],
-        hint: 'ברך lässt das Wasser glänzen.',
-      },
-    ],
+    description: 'Vision 3 – Gärten an Wassern: Bäche glänzen wie Spiegel.',
+    prompt: 'Schreib מים ברך (mayim barak).',
+    sequence: ['mayim', 'barak'],
+    hint: 'Der Garten reagiert nur auf מים ברך.',
   },
   {
     id: 'truthPlateFour',
-    steps: [
-      {
-        prompt: 'Ein Löwe richtet sich auf. Höre seinen Atem: sprich שמע.',
-        spells: ['shama', 'שמע'],
-        hint: 'שמע erkennt sogar das Brüllen.',
-      },
-      {
-        prompt: 'Sprich אמת, damit sein Ruf wahr bleibt.',
-        spells: ['emet', 'אמת'],
-        hint: 'אמת hält das Bild zusammen.',
-      },
-    ],
+    description: 'Vision 4 – Löwe: sein Atem rollt wie Donner.',
+    prompt: 'Schreib שמע אמת (shama emet) – „Höre die Wahrheit“. ',
+    sequence: ['shama', 'emet'],
+    hint: 'שמע אמת hält den Löwen wahr.',
   },
   {
     id: 'truthPlateFive',
-    steps: [
-      {
-        prompt: 'Das Horn des Wildstiers dröhnt. Antworte mit קול.',
-        spells: ['qol', 'קול'],
-        hint: 'קול richtet den Klang.',
-      },
-      {
-        prompt: 'Sag לא, damit kein Fluch im Horn liegt.',
-        spells: ['lo', 'לא'],
-        hint: 'לא dämpft den giftigen Ton.',
-      },
-      {
-        prompt: 'Besiegle mit דבר, damit das Wort steht.',
-        spells: ['dabar', 'דבר'],
-        hint: 'דבר vollendet den Ruf.',
-      },
-    ],
+    description: 'Vision 5 – Horn des Wildstiers: Klang, Nein und Wort gehören zusammen.',
+    prompt: 'Schreib קול לא דבר (qol lo dabar).',
+    sequence: ['qol', 'lo', 'dabar'],
+    hint: 'Der Satz lautet genau קול לא דבר.',
   },
   {
     id: 'truthPlateSix',
-    steps: [
-      {
-        prompt: 'Ein Stern steigt über Jakob. Sprich אור.',
-        spells: ['or', 'אור'],
-        hint: 'אור erhellt den Stern.',
-      },
-      {
-        prompt: 'Segne sein Licht mit ברך.',
-        spells: ['barak', 'ברך'],
-        hint: 'ברך lenkt das Sternlicht.',
-      },
-    ],
+    description: 'Vision 6 – Stern über Jakob: Licht verlangt nach Segen.',
+    prompt: 'Schreib אור ברך (or barak).',
+    sequence: ['or', 'barak'],
+    hint: 'Der Stern wartet auf אור ברך.',
   },
   {
     id: 'truthPlateSeven',
-    steps: [
-      {
-        prompt: 'Erinnere dich: Wer dich segnet, ist gesegnet. Sprich אמת.',
-        spells: ['emet', 'אמת'],
-        hint: 'אמת ist das Siegel.',
-      },
-      {
-        prompt: 'Schließe mit ברך für die Segnenden.',
-        spells: ['barak', 'ברך'],
-        hint: 'ברך trägt den letzten Zuspruch.',
-      },
-    ],
+    description: 'Vision 7 – Schlusswort: Segen für die Segnenden.',
+    prompt: 'Schreib אמת ברך (emet barak).',
+    sequence: ['emet', 'barak'],
+    hint: 'Der Abschluss lautet אמת ברך.',
   },
 ];
 
@@ -245,23 +208,17 @@ async function phasePisgaLines(props) {
   await propSay(props, 'pisgaBalak', 'Komm an einen andern Ort. Von hier wirst du nur das äußerste Ende sehen – vielleicht kannst du mir dort das Volk verfluchen.', { anchor: 'center' });
   await wizardSay('Baue mir hier sieben Altäre und opfere sieben junge Stiere und sieben Widder.');
   await showLevelTitle('לא, שמע, ברך stehen dir bereits. דבר und אמת warten darauf, das Gewebe zu halten.', 5200);
-  for (const vision of PISGA_VISIONS) {
+  for (const vision of PISGA_SENTENCES) {
     const target = props.find(entry => entry.id === vision.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 18 });
-    for (const step of vision.steps) {
-      let resolved = false;
-      while (!resolved) {
-        const answer = await readWord(step.prompt);
-        if (step.spells.some(spell => spellEquals(answer, spell))) {
-          resolved = true;
-          await celebrateGlyph(answer);
-        } else if (step.hint) {
-          await donkeySay(step.hint);
-        } else {
-          await donkeySay('Finde das Wort, das zur Vision passt.');
-        }
-      }
+    if (vision.description) {
+      await narratorSay(vision.description);
     }
+    await requireSequenceInput({
+      promptText: vision.prompt,
+      sequence: vision.sequence,
+      hint: vision.hint,
+    });
     updateProp(props, vision.id, { type: 'pisgaAltarPlateLit' });
     if (vision.fragment) {
       addProp(props, { id: `truthFragment${vision.fragment}`, type: 'truthFragment', x: wizard.x + 14, y: wizard.y - 44, parallax: 0.9, letter: vision.fragment });
@@ -273,29 +230,17 @@ async function phasePisgaLines(props) {
 async function phaseDabarPillars(props) {
   await divineSay('לא איש אל ויכזב ובן אדם ויתנחם ההוא אמר ולא יעשה ודבר ולא יקימנה\nIch bin nicht ein Mensch, dass ich Lüge, noch ein Menschenkind, dass ich bereue. Sollte ich reden und es nicht tun? Sollte ich sprechen und es nicht halten?');
   await narratorSay('Dabar – das Wort, das geschieht. Wenn Gott spricht, handelt er. Nun prüft er, ob du dasselbe tust.');
-  const sequence = ['shama', 'lo', 'dabar'];
-  const pillarFragments = ['ב', 'ר'];
-  for (let i = 0; i < props.length; i += 1) {
-    const id = i === 0 ? 'dabarPillarOne' : i === 1 ? 'dabarPillarTwo' : 'dabarPillarThree';
-    const target = props.find(entry => entry.id === id)?.x ?? wizard.x + 180;
+  for (const pillar of DABAR_PILLAR_SENTENCES) {
+    const target = props.find(entry => entry.id === pillar.id)?.x ?? wizard.x + 180;
     await waitForWizardToReach(target, { tolerance: 16 });
-    for (const expected of sequence) {
-      let ok = false;
-      while (!ok) {
-        const answer = await readWord(expected === 'shama' ? 'Höre zuerst.' : expected === 'lo' ? 'Sprich לא.' : 'Sprich דבר (dabar).');
-        const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'דבר';
-        if (spellEquals(answer, expected, variant)) {
-          ok = true;
-          await celebrateGlyph(answer);
-        } else {
-          await donkeySay('Reihenfolge: shama, lo, dabar.');
-        }
-      }
-    }
-    updateProp(props, id, { type: 'resonancePillarLit' });
-    const fragment = pillarFragments[i];
-    if (fragment) {
-      addProp(props, { id: `dabarFragment${fragment}`, type: 'truthFragment', x: wizard.x + 18 + i * 4, y: wizard.y - 44 - i * 3, parallax: 0.9, letter: fragment });
+    await requireSequenceInput({
+      promptText: pillar.prompt,
+      sequence: pillar.sequence,
+      hint: pillar.hint,
+    });
+    updateProp(props, pillar.id, { type: 'resonancePillarLit' });
+    if (pillar.fragment) {
+      addProp(props, { id: `dabarFragment${pillar.fragment}`, type: 'truthFragment', x: wizard.x + 18, y: wizard.y - 44, parallax: 0.9, letter: pillar.fragment });
     }
   }
   await narratorSay('Dabar lebt in deinem Mund.');
@@ -382,16 +327,25 @@ async function phaseOathCircle(props) {
     { word: 'emet', prompt: 'Sprich אמת.' },
     { word: 'barak', prompt: 'Sprich ברך.' },
   ];
+  const canonicalOrder = canonicalizeSequence(order.map(entry => entry.word));
   let index = 0;
   while (index < order.length) {
     const { word, prompt } = order[index];
     const variant = word === 'shama' ? 'שמע' : word === 'dabar' ? 'דבר' : word === 'emet' ? 'אמת' : 'ברך';
     const answer = await readWord(prompt);
+    const multiAdvance = consumeSequenceTokens(answer, canonicalOrder, index);
+    if (multiAdvance > 0) {
+      for (let offset = 0; offset < multiAdvance; offset += 1) {
+        await celebrateGlyph(order[index + offset].word);
+      }
+      index += multiAdvance;
+      continue;
+    }
     if (spellEquals(answer, word, variant)) {
       index += 1;
       await celebrateGlyph(answer);
     } else {
-      await donkeySay('Reihenfolge: shama, dabar, emet, barak.');
+      await donkeySay('Reihenfolge: shama, dabar, emet, barak. Du kannst sie auch gesammelt eingeben, getrennt durch Leerzeichen.');
       index = 0;
     }
   }
@@ -417,5 +371,58 @@ async function readWord(promptText) {
     anchorX(wizard, 0),
     anchorY(wizard, -34),
   );
-  return normalizeHebrewInput(input);
+  if (input == null) return '';
+  return String(input).trim();
+}
+
+function hebrewVariant(word) {
+  switch (word) {
+    case 'shama':
+      return 'שמע';
+    case 'lo':
+      return 'לא';
+    case 'barak':
+      return 'ברך';
+    case 'dabar':
+      return 'דבר';
+    case 'emet':
+      return 'אמת';
+    case 'mayim':
+      return 'מים';
+    case 'or':
+      return 'אור';
+    case 'qol':
+      return 'קול';
+    default:
+      return word;
+  }
+}
+
+async function requireSequenceInput({ promptText, sequence, hint }) {
+  const canonicalSeq = canonicalizeSequence(sequence);
+  let idx = 0;
+  while (idx < sequence.length) {
+    const answer = await readWord(promptText);
+    const multiAdvance = consumeSequenceTokens(answer, canonicalSeq, idx);
+    if (multiAdvance > 0) {
+      for (let offset = 0; offset < multiAdvance; offset += 1) {
+        await celebrateGlyph(sequence[idx + offset]);
+      }
+      idx += multiAdvance;
+      continue;
+    }
+    const expected = sequence[idx];
+    const variant = hebrewVariant(expected);
+    if (spellEquals(answer, expected, variant)) {
+      await celebrateGlyph(expected);
+      idx += 1;
+    } else {
+      if (hint) {
+        await donkeySay(hint);
+      } else {
+        await donkeySay('Sprich den ganzen Satz – du kannst alle Worte hintereinander mit Leerzeichen tippen.');
+      }
+      idx = 0;
+    }
+  }
 }

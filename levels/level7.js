@@ -140,7 +140,8 @@ export async function runLevelSeven() {
 
   const revelationProps = cloneSceneProps(REVELATION_SCENE.props);
   await transitionToScene(plan?.learn, REVELATION_SCENE, revelationProps, 'revelation');
-  await phaseAngelRevelation(revelationProps);
+  const angelGuard = await phaseAngelRevelation(revelationProps);
+  await phaseLearnMalak(angelGuard);
 
   const altarProps = cloneSceneProps(ALTAR_SCENE.props);
   await transitionToScene(plan?.apply, ALTAR_SCENE, altarProps, 'altar');
@@ -281,6 +282,7 @@ async function phaseThirdResistance(props) {
 }
 
 async function phaseAngelRevelation(props) {
+  const angel = await ensureAngelBlocksPath(props, 'revelationAngel');
   await narratorSay('Der HERR öffnet dir die Augen. Du faellst nieder vor dem Engel aus gebuendeltem Licht.');
   await propSay(props, 'revelationAngel', 'Warum hast du deine Eselin dreimal geschlagen? Ich stand dir entgegen, denn dein Weg führt ins Verderben.', { anchor: 'center' });
   await propSay(props, 'revelationAngel', 'Wäre sie mir nicht ausgewichen, ich hätte dich getötet, sie aber leben lassen.', { anchor: 'center' });
@@ -335,6 +337,36 @@ async function phaseListeningAltar(props) {
   await wizardSay('Manche nennen es das Licht hinter dem Licht. Und wer lauscht, hört ein fernes Echo – das Summen des ersten Wortes.');
 }
 
+async function phaseLearnMalak(angelGuard) {
+  await narratorSay('Der Engel senkt sein Schwert. „Mein Name ist מלאך – Malak, Bote des Lichts. Sprich ihn, wenn Schatten dich bedrängen.“');
+  let learnt = false;
+  while (!learnt) {
+    const answer = await readWord('Sprich מלאך (malak).');
+    if (spellEquals(answer, 'malak', 'מלאך')) {
+      learnt = true;
+      await celebrateGlyph('מלאך');
+      await narratorSay('Malak bedeutet Bote. Du wirst dieses Wort brauchen, wenn Balaks Schatten deinen Weg versperren.');
+    } else {
+      await donkeySay('Sprich ma-lak – מלאך.');
+    }
+  }
+  await releaseAngelBlock(angelGuard);
+}
+
+async function ensureAngelBlocksPath(props, id) {
+  const angel = Array.isArray(props) ? props.find(entry => entry.id === id) : null;
+  if (!angel) return null;
+  const stopX = (angel.x ?? wizard.x) - 36;
+  await waitForWizardToReach(stopX, { tolerance: 10 });
+  return angel;
+}
+
+async function releaseAngelBlock(angel) {
+  if (!angel) return;
+  const passX = (angel.x ?? wizard.x) + 44;
+  await waitForWizardToReach(passX, { tolerance: 12 });
+}
+
 async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
   await fadeToBlack(320);
   ensureAmbience(ambienceKey ?? sceneConfig.ambience ?? 'mirrorTower');
@@ -354,4 +386,5 @@ async function readWord(promptText) {
     anchorY(wizard, -34),
   );
   return normalizeHebrewInput(input);
+}
 }

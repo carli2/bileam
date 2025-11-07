@@ -204,6 +204,7 @@ export async function runLevelTen() {
 
 async function phaseBalakAccusation(props) {
   await narratorSay('Bileam steht auf dem Felsen von Bamot-Peor; unter ihm glimmt das Lager Israels wie ein Meer aus geordneten Sternen.');
+  await ensureWizardBesideBalak(props, 'balakStarFigure', { offset: -36, tolerance: 18 });
   await propSay(props, 'balakStarFigure', 'Ich habe dich gerufen, dass du meine Feinde verfluchst – und siehe, du hast sie dreimal gesegnet! Geh fort; ich wollte dich ehren, aber dein Gott verweigert es dir.', { anchor: 'center', offsetY: -30 });
   await wizardSay('Hab ich dir nicht gesagt? Gäbe mir Balak sein Haus voll Silber und Gold, ich könnte das Wort des HERRN nicht übertreten, weder im Kleinen noch im Großen.');
 }
@@ -408,4 +409,22 @@ async function readWord(promptText) {
     anchorY(wizard, -34),
   );
   return normalizeHebrewInput(input);
+}
+
+async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
+  await fadeToBlack(360);
+  ensureAmbience(ambienceKey ?? sceneConfig.ambience ?? 'sanctumFinale');
+  setSceneProps([]);
+  applySceneConfig({ ...sceneConfig, props }, { setAmbience: false });
+  setSceneProps(props);
+  setSceneContext({ level: 'level10', phase });
+  await fadeToBase(420);
+}
+
+async function ensureWizardBesideBalak(props, id, { offset = -42, tolerance = 18 } = {}) {
+  if (!Array.isArray(props)) return;
+  const balak = props.find(entry => entry.id === id);
+  if (!balak) return;
+  const targetX = (balak.x ?? wizard.x) + offset;
+  await waitForWizardToReach(targetX, { tolerance });
 }

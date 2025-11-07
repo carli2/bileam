@@ -17,7 +17,6 @@ import {
   anchorX,
   anchorY,
   wizard,
-  normalizeHebrewInput,
   applySceneConfig,
   cloneSceneProps,
   spellEquals,
@@ -25,6 +24,8 @@ import {
   addProp,
   celebrateGlyph,
   propSay,
+  canonicalizeSequence,
+  consumeSequenceTokens,
 } from './utils.js';
 
 const BAMOT_TERRACE_SCENE = {
@@ -289,6 +290,7 @@ async function phaseFirstOracle(props) {
 async function phaseBlessingSequence() {
   await narratorSay('Balak fordert den Fluch. Deine Worte werden Segen.');
   const order = ['shama', 'lo', 'barak'];
+  const canonicalOrder = canonicalizeSequence(order);
   let index = 0;
   let barakFailures = 0;
   while (index < order.length) {
@@ -300,6 +302,14 @@ async function phaseBlessingSequence() {
     const answer = await readWord(prompts[index]);
     const expected = order[index];
     const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'ברך';
+    const multiAdvance = consumeSequenceTokens(answer, canonicalOrder, index);
+    if (multiAdvance > 0) {
+      for (let offset = 0; offset < multiAdvance; offset += 1) {
+        await celebrateGlyph(order[index + offset]);
+      }
+      index += multiAdvance;
+      continue;
+    }
     if (spellEquals(answer, expected, variant)) {
       await celebrateGlyph(answer);
       index += 1;
@@ -307,12 +317,12 @@ async function phaseBlessingSequence() {
       if (expected === 'barak') {
         barakFailures += 1;
         if (barakFailures % 3 === 0) {
-          await donkeySay('Der letzte Schritt ist ברך – barak. Sprich den Segen.');
+          await donkeySay('Der letzte Schritt ist ברך – barak. Sprich ihn – oder tippe die ganze Folge auf einmal: "shama lo barak".');
         } else {
-          await donkeySay('Reihenfolge: hören, verneinen, segnen.');
+          await donkeySay('Reihenfolge: hören, verneinen, segnen. Du kannst sie auch gesammelt tippen, getrennt durch Leerzeichen.');
         }
       } else {
-        await donkeySay('Reihenfolge: hören, verneinen, segnen.');
+        await donkeySay('Reihenfolge: hören, verneinen, segnen. Du kannst sie auch gesammelt tippen, getrennt durch Leerzeichen.');
       }
       index = 0;
     }
@@ -365,10 +375,22 @@ async function phasePisgaPath(props) {
     } else {
       let idx = 0;
       let barakFailures = 0;
+      const canonicalSeq = canonicalizeSequence(step.sequence);
       while (idx < step.sequence.length) {
         const expected = step.sequence[idx];
         const labels = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : 'ברך';
         const answer = await readWord(step.prompt);
+        const multiAdvance = consumeSequenceTokens(answer, canonicalSeq, idx);
+        if (multiAdvance > 0) {
+          for (let offset = 0; offset < multiAdvance; offset += 1) {
+            await celebrateGlyph(step.sequence[idx + offset]);
+          }
+          idx += multiAdvance;
+          if (idx === step.sequence.length) {
+            updateProp(props, step.id, { type: 'pisgaBridgeSegmentLit' });
+          }
+          continue;
+        }
         if (spellEquals(answer, expected, labels)) {
           idx += 1;
           if (idx === step.sequence.length) {
@@ -378,12 +400,12 @@ async function phasePisgaPath(props) {
           if (expected === 'barak') {
             barakFailures += 1;
             if (barakFailures % 3 === 0) {
-              await donkeySay('Der Abschluss lautet ברך – sprich barak, um den Pfad zu öffnen.');
+              await donkeySay('Der Abschluss lautet ברך – sprich barak, oder tippe alle Worte auf einmal (z. B. "lo barak").');
             } else {
               await donkeySay('Halte die Reihenfolge ein.');
             }
           } else {
-            await donkeySay('Halte die Reihenfolge ein.');
+            await donkeySay('Halte die Reihenfolge ein – oder sprich sie am Stück, getrennt durch Leerzeichen.');
           }
           idx = 0;
         }
@@ -451,5 +473,6 @@ async function readWord(promptText) {
     anchorX(wizard, 0),
     anchorY(wizard, -34),
   );
-  return normalizeHebrewInput(input);
+  if (input == null) return '';
+  return String(input).trim();
 }

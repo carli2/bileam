@@ -234,7 +234,7 @@ async function phaseMoabPrelude(props) {
 
 async function phaseMoabVisionRings(props) {
   await narratorSay('Balaks Wächter blicken nach Osten. Drei sandglühende Aussichtsringe warten auf deine Worte.');
-  await showLevelTitle('Spielhinweis: Besuche die drei Ringe (links, Mitte, rechts).', 3800);
+  await narratorSay('Jeder Ring verlangt ein altes Wort: West will אור, die Mitte will מים, der östliche Ring ruft nach קול. Nur wenn sie leuchten, senden die Moabiter dich weiter.');
   const ringOrder = [
     { id: 'moabVisionRingWest', word: 'aor', glyph: 'אור' },
     { id: 'moabVisionRingCenter', word: 'mayim', glyph: 'מים' },
