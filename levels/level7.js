@@ -119,7 +119,7 @@ export async function runLevelSeven() {
   applySceneConfig({ ...PROCESSION_SCENE, props: processionProps });
   ensureAmbience(plan?.review ?? PROCESSION_SCENE.ambience ?? 'mirrorTower');
   setSceneContext({ level: 'level7', phase: 'procession' });
-  await showLevelTitle('Level 7 - Der Engel und die Eselin');
+  await showLevelTitle('Level 7 – Der Engel und die Eselin');
   await fadeToBase(600);
 
   await phaseProcessionIntro();
@@ -155,7 +155,7 @@ export async function runLevelSeven() {
 async function phaseProcessionIntro() {
   await narratorSay('Da stand Bileam am Morgen auf, sattelte seine Eselin und zog mit den Fürsten der Moabiter. Doch der Zorn Gottes entbrannte, dass er hinzog.');
   await narratorSay('Grauer Morgen über den Hügeln, Nebel hängt wie feine Stoffbahnen, Banner zittern im Wind.');
-  await showLevelTitle('Das Wort לא bleibt aktiv. Neues Lernwort: שמע (shama) – höre und erkenne. Aufgabe: Folge den Fürsten, ohne den inneren Klang zu verlieren.', 5200);
+  await showLevelTitle('Bewahre לא und lausche nach שמע – der Weg prüft jedes Wort.', 5200);
   await donkeySay('Bewahre das Nein, Meister. Wir werden hören müssen, nicht nur sehen.');
 }
 

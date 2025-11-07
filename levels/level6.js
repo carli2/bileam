@@ -267,6 +267,7 @@ async function phaseEnvoyDialogue(props) {
   await propSay(props, 'petorEnvoyEast', 'So komm nun und verfluche mir dieses Volk, denn es ist mir zu mächtig.', { anchor: 'center' });
   await ensureWizardBesideProp(props, 'petorEnvoySouth');
   await propSay(props, 'petorEnvoySouth', 'Denn wir wissen: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist verflucht.', { anchor: 'center' });
+  await propSay(props, 'petorEnvoyNorth', 'Balak sendet Silber, Gold und Ehrengewänder. Alles soll dir gehören, wenn du sprichst, wie er es verlangt.', { anchor: 'center' });
   await wizardSay('Bleibt hier über Nacht. Ich will hören, was der HERR mir sagt.');
   ensurePropDefinition(props, {
     id: 'petorNightSignal',
@@ -331,6 +332,8 @@ async function phaseMorningRefusal(props) {
   setSceneContext({ phase: 'morning' });
   addProp(props, { id: 'petorGift', type: 'temptationVessel', x: wizard.x + 42, align: 'ground', parallax: 1.02 });
   await narratorSay('Der Morgen graut. Geschenke in Lichtgefäßen warten, während Balaks Stimme Ehre und Gold verheisst.');
+  await propSay(props, 'petorEnvoyEast', 'Bileam, der König schwört bei seinem Thron: Er macht dich reich, wenn du nur kommst.', { anchor: 'center' });
+  await propSay(props, 'petorEnvoySouth', 'Goldene Schalen, Purpur und Silber – alles liegt bereit. Verweigere uns nicht länger.', { anchor: 'center' });
   await wizardSay('Geht hin in euer Land. Der HERR wills nicht gestatten, dass ich mit euch ziehe.');
   await celebrateGlyph('לא');
   updateProp(props, 'petorGift', { type: 'temptationVesselAshes' });
@@ -357,8 +360,8 @@ async function phaseBalakEdict(props) {
   await withCameraFocusOnProp(palaceProps, 'palaceBalakEcho', async () => {
     await propSay(palaceProps, 'palaceAdvisorWest', 'Er weigert sich, mein Herr. Sein Nein liegt schwer auf unseren Fürsten.', { anchor: 'center', offsetY: -28 });
     await propSay(palaceProps, 'palaceBalakEcho', 'Dann sendet mehr. Stärkere Männer.', { anchor: 'center', offsetY: -34 });
-    await propSay(palaceProps, 'palaceAdvisorEast', 'Wir bringen reiche Gaben, doch seine Rede bleibt wie Stein.', { anchor: 'center', offsetY: -28 });
-    await propSay(palaceProps, 'palaceBalakEcho', 'Vielleicht lässt er sich doch bewegen. Gebt ihm Gold, und sagt: Der König wird ihn ehren.', { anchor: 'center', offsetY: -34 });
+    await propSay(palaceProps, 'palaceAdvisorEast', 'Wir bringen Truhen voller Gold und Purpur, doch seine Rede bleibt wie Stein.', { anchor: 'center', offsetY: -28 });
+    await propSay(palaceProps, 'palaceBalakEcho', 'Füllt mehr Truhen. Gebt ihm Gold, und sagt: Der König wird ihn ehren.', { anchor: 'center', offsetY: -34 });
   });
 
   await fadeToBlack(260);
