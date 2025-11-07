@@ -25,6 +25,7 @@ import {
   addProp,
   celebrateGlyph,
   propSay,
+  divineSay,
 } from './utils.js';
 
 const PROCESSION_SCENE = {
