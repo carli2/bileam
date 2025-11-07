@@ -15,6 +15,7 @@ import {
   mapGlyphChar,
   wrapText,
 } from './graphics.js';
+import { ENGEL_SPRITE } from './assets/engel.sprite.js';
 
 /*
  * Engine Contract Notes
@@ -718,6 +719,7 @@ function initSprites() {
   propSprites.watchFireDormant = createWatchFireSprite(colors, 'dormant');
   propSprites.watchFireAwakened = createWatchFireSprite(colors, 'awakened');
   propSprites.watchFireVeiled = createWatchFireSprite(colors, 'veiled');
+  propSprites.angelBladeForm = createAngelSpriteFromData();
   propSpriteFactories.noGlyphShard = definition => {
     const letter = definition?.data?.letter ?? definition?.letter ?? '';
     return createGlyphShardSprite(colors, letter);
@@ -2630,6 +2632,17 @@ function createGlyphShardSprite(c, letter) {
   }
 
   return new Sprite(width, height, pixels);
+}
+
+function createAngelSpriteFromData() {
+  if (!ENGEL_SPRITE || !ENGEL_SPRITE.pixels) {
+    return createMoabWallWatcherSprite(colors);
+  }
+  return new Sprite(
+    ENGEL_SPRITE.width,
+    ENGEL_SPRITE.height,
+    new Uint8Array(ENGEL_SPRITE.pixels),
+  );
 }
 
 function isHebrewChar(char) {

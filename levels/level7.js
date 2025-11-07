@@ -64,7 +64,7 @@ const PINCH_SCENE = {
   wizardStartX: 82,
   donkeyOffset: -42,
   props: [
-    { id: 'pinchAngel', type: 'angelBladeForm', x: 360, align: 'ground', parallax: 0.98 },
+    { id: 'pinchAngel', type: 'angelBladeForm', x: 248, align: 'ground', parallax: 0.98 },
   ],
 };
 
@@ -73,7 +73,7 @@ const REVELATION_SCENE = {
   wizardStartX: 90,
   donkeyOffset: -42,
   props: [
-    { id: 'revelationAngel', type: 'angelBladeForm', x: 336, align: 'ground', parallax: 0.96 },
+    { id: 'revelationAngel', type: 'angelBladeForm', x: 236, align: 'ground', parallax: 0.96 },
   ],
 };
 
@@ -298,6 +298,7 @@ async function phaseAngelRevelation(props) {
       learnt = true;
       addProp(props, { id: 'shamaGlyph', type: 'hearingGlyphFragment', x: wizard.x + 18, y: wizard.y - 46, parallax: 0.92 });
       await celebrateGlyph(answer);
+      await divineSay('שמע בילעם בן בעור\nHöre, Bileam, Sohn des Beor.');
       await narratorSay('Das Wort klingt wie eine Saite. Die Welt antwortet mit stillem Klang.');
       await narratorSay('Grenze bleibt bestehen: lo – bewahre das Nein. Gabe erhalten: Divine Pass – 1.');
     } else {
@@ -330,8 +331,8 @@ async function phaseListeningAltar(props) {
     }
   }
   await narratorSay('Die Schutzform vollendet sich. Du fühlst dich als Wahrheitsbote.');
-  await narratorSay('Innere Stimme: Vielleicht stand der Engel nicht vor mir, sondern hinter dem Vorhang, wo der Stoff der Welt zu Ende geht.');
-  await narratorSay('Innere Stimme: Manche nennen es das Licht hinter dem Licht. Und wer lauscht, hört ein fernes Echo – das Summen des ersten Wortes.');
+  await wizardSay('Vielleicht stand der Engel nicht vor mir, sondern hinter dem Vorhang, wo der Stoff der Welt zu Ende geht.');
+  await wizardSay('Manche nennen es das Licht hinter dem Licht. Und wer lauscht, hört ein fernes Echo – das Summen des ersten Wortes.');
 }
 
 async function transitionToScene(ambienceKey, sceneConfig, props, phase) {

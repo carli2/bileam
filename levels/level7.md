@@ -199,6 +199,25 @@ Und wer erkennt, weiß, dass alles nur gesprochen ist.
 - `shama` → `lo` = Echo-Schild: reflektiert fremde Befehle im späteren Bosskampf.  
 - `shama` → `aor` = Hörlicht: macht unsichtbare Gegner sichtbar.
 
+## Lied – שמע בלעם
+
+*Gesungen nach der Offenbarung, wenn der Spieler an der Lauschrast verweilt.*
+
+שמע בלעם נוגה השחר מחול מואב עולה  
+שלש פסיעות לא, שלש פנימות שקטה
+
+שמע בלעם נסיך הקול בכרמי האבן מצפה  
+האור נושף בחרבו, הסוסיתא כורעת מפתה
+
+שמע בלעם המלאך לוחש בין שרפים ושורות  
+השדה נפתח כאוזן, הגפן קושרת גוונים ועוד
+
+שמע בלעם לא יחלוף, מגן התשובה נושא  
+רק את המלה אשר יאמר ה׳ תזמר לשאת
+
+שמע בלעם דרך הרקיע בין צל ושבילים  
+האוזן תטווה חוטי אור, הלב יעמוד בגלים
+
 **System:**  
 - *Übertretung* steigt bei Gewalt oder Ignoranz; ab Wert 3 erscheinen Illusionen Balaks.  
 - Erfolgreiche Nutzung von `shama` senkt die Welt-Störung; Ambient wird klarer.  

@@ -317,8 +317,8 @@ async function phaseSecondOracle(props) {
   await wizardSay('Gesegnet sei, wer dich segnet, und verflucht, wer dich verflucht!');
   await propSay(props, 'gardenBalakShadow', 'Wenn du schon nicht fluchst, so segne sie wenigstens nicht!', { anchor: 'center' });
   await wizardSay('Hab ich dir nicht gesagt: Alles, was der HERR redet, das werde ich tun?');
-  await narratorSay('Innere Stimme: Vielleicht ist jedes wahre Wort ein Tor.');
-  await narratorSay('Innere Stimme: Wenn es gesprochen wird, öffnet sich für einen Augenblick der Plan des Lichts, der uns alle trägt.');
+  await wizardSay('Vielleicht ist jedes wahre Wort ein Tor.');
+  await wizardSay('Wenn es gesprochen wird, öffnet sich für einen Augenblick der Plan des Lichts, der uns alle trägt.');
   await donkeySay('Worte sind Tore. Du hast sie geöffnet.');
 }
 

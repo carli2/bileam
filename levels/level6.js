@@ -316,7 +316,7 @@ async function phaseNightVision(props) {
   await celebrateGlyph('לא');
   addProp(props, { id: 'petorGlyphComplete', type: 'noGlyphShard', x: wizard.x + 20, y: wizard.y - 48, parallax: 0.9, letter: 'לא' });
   await showLevelTitle('Neues Wort gelernt: לא (lo) – das Nein, das die Welt zusammenhält.', 3600);
-  await narratorSay('Innere Stimme: Das Nein hallt nach. In seinem Echo höre ich den Raum zwischen den Dingen – das Unsichtbare, das doch alles trägt.');
+  await wizardSay('Das Nein hallt nach. In seinem Echo höre ich den Raum zwischen den Dingen – das Unsichtbare, das doch alles trägt.');
   await narratorSay('לא (lo) heißt Nein. אל (el) heißt Gott. Wenn du אל rückwärts liest, kommt לא heraus – ist das nicht lustig?');
 }
 

@@ -170,9 +170,10 @@ export async function runLevelEight() {
 
 async function phaseBalakGreeting(props) {
   await narratorSay('Staubiger Wind fegt über die terrassierten Hügel. Balak wartet auf einer Basaltplattform, Moabs Lager glimmt wie ein Raster aus goldenen Punkten.');
+  await ensureWizardBesideBalak(props, 'balakArrival');
   await propSay(props, 'balakArrival', 'Hab ich nicht zu dir gesandt und dich rufen lassen? Meinst du, ich könnte dich nicht ehren?', { anchor: 'center', offsetY: -34 });
   await wizardSay('Siehe, ich bin zu dir gekommen. Aber wie kann ich etwas anderes reden als das, was mir Gott in den Mund gibt? Nur das kann ich reden.');
-  await narratorSay('Aktive Worte: lo, shama. Neues Wort zum Erwachen: barak (ברך) – Segen freisetzen. Ziel: Halte Balaks Erwartungen in Grenzen und bereite die sieben Altäre vor.');
+  await showLevelTitle('לא & שמע tragen dich schon. ברך wartet auf den Altären – halte Balaks Erwartungen im Zaum.', 5200);
 }
 
 async function phaseTerraceTrials(props) {
@@ -294,7 +295,7 @@ async function phaseBlessingSequence() {
 }
 
 async function phaseReflection() {
-  await narratorSay('Innere Stimme: „Ich sprach das Wort, und das Wort sprach zurück.“');
+  await wizardSay('Ich sprach das Wort, und das Wort sprach zurück.');
   await donkeySay('Wer segnet, richtet den Faden neu aus.');
 }
 
@@ -343,6 +344,14 @@ async function phasePisgaPath(props) {
       }
     }
   }
+}
+
+async function ensureWizardBesideBalak(props, id, { offset = -42, tolerance = 18 } = {}) {
+  if (!Array.isArray(props)) return;
+  const balak = props.find(entry => entry.id === id);
+  if (!balak) return;
+  const targetX = (balak.x ?? wizard.x) + offset;
+  await waitForWizardToReach(targetX, { tolerance });
 }
 
 async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
