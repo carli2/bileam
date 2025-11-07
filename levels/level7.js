@@ -388,4 +388,3 @@ async function readWord(promptText) {
   );
   return normalizeHebrewInput(input);
 }
-}
