@@ -148,36 +148,11 @@ async function phaseHoofSteps(props) {
   await narratorSay('Doch die Eselin bleibt stehen. Sie scharrt am Weg und weigert sich, weiterzugehen.');
   await narratorSay('Deine Eselin folgt dir nicht. Kehre zu ihr zurück.');
   await waitForWizardToReach(lockX - 6, { tolerance: 14 });
-
-  const prompts = [
-    'Die Eselin weigert sich, weiterzulaufen. Was gebietest du ihr?',
-    'Die Eselin lauscht, aber sie gehorcht noch nicht. Versuche es noch einmal.',
-    'Noch einmal, Bileam. Was sagst du ihr?',
-  ];
-  const hints = [
-    'Sie wartet darauf, dass du zuhörst.',
-    'Dein Nein allein reicht nicht – lausche.',
-    'Hören ist der Schlüssel. Vertrau auf das neue Wort.',
-  ];
-  let failures = 0;
-
-  for (let idx = 0; idx < prompts.length; idx += 1) {
-    while (true) {
-      const answer = await readWord(prompts[idx]);
-      if (spellEquals(answer, 'shama', 'שמע')) {
-        await celebrateGlyph('שמע');
-        await donkeySay('לא.');
-        break;
-      } else if (spellEquals(answer, 'qol', 'קול')) {
-        await narratorSay('Stimme (קול) geht in die richtige Richtung – sie meint auch Donnern. Doch das neue Wort, das du lernen sollst, heißt שמע: hören.');
-        continue;
-      }
-      const hint = hints[Math.min(failures, hints.length - 1)];
-      await narratorSay(hint);
-      failures += 1;
-    }
-  }
-
+  await narratorSay('Wie einst auf dem Feld biegt sie vom Weg ab, und du hebst den Stock.');
+  await narratorSay('Bevor du zuschlägst, hebt die Eselin den Kopf.');
+  await donkeySay('Ich höre etwas, Meister. שמע – sche-MA – bedeutet hören, gehorchen, wahrnehmen.');
+  await narratorSay('שמע schreibt man Schin-Mem-Ajin. Sprich es langsam: sche–MA. Dieses Wort öffnet Wege, die Augen nicht sehen.');
+  await narratorSay('Das Ajin sieht aus wie ein Auge. Es klingt wie ein tiefes „A“, aber du gebrauchst den Hals – als würdest du durch die Kehle atmen.');
   await narratorSay('Die Eselin atmet aus und tritt zur Seite, als hielte sie etwas Unsichtbares auf.');
   boundaryIds.forEach(id => updateProp(props, id, { visible: false }));
   unlockDonkey();

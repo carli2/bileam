@@ -265,7 +265,10 @@ export function consumeSequenceTokens(answer, canonicalSequence, startIndex = 0)
   return consumed;
 }
 
-export async function celebrateGlyph(spell) {
+export async function celebrateGlyph(spell, options = {}) {
+  const forcedLetter = typeof options.forceLetter === 'string'
+    ? options.forceLetter.trim()
+    : null;
   const canonical = canonicalSpell(spell);
   if (!canonical) return;
   const letters = Array.from(canonical).filter(char => LETTER_DETAILS[char]);
@@ -274,7 +277,13 @@ export async function celebrateGlyph(spell) {
   const unknownLetters = uniqueLetters.filter(letter => !knownGlyphs.has(letter));
 
   let letter;
-  if (unknownLetters.length > 0) {
+  if (forcedLetter && LETTER_DETAILS[forcedLetter]) {
+    letter = forcedLetter;
+    if (!knownGlyphs.has(letter)) {
+      knownGlyphs.add(letter);
+      persistKnownGlyphs();
+    }
+  } else if (unknownLetters.length > 0) {
     letter = unknownLetters[0];
     knownGlyphs.add(letter);
     persistKnownGlyphs();

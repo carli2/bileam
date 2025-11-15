@@ -36,22 +36,23 @@ export async function runLevelOne() {
   const plan = levelAmbiencePlan.level1;
 
   while (true) {
-    setSceneProps([
+    const hutProps = [
       { id: HUT_DOOR_ID, type: 'door', x: HUT_DOOR_X },
-      { id: 'hutBed', type: 'hutBed', x: 48, y: wizard.y - 38, align: 'ground', parallax: 0.96 },
-      { id: 'hutTable', type: 'hutTable', x: 136, y: wizard.y - 22, align: 'ground', parallax: 1 },
-      { id: 'hutShelf', type: 'hutShelf', x: 12, y: wizard.y - 64, align: 'ground', parallax: 0.9 },
-      { id: 'hutTorchDormant', type: 'hutTorchOff', x: 212, y: wizard.y - 68, align: 'ground', parallax: 0.92 },
-      { id: 'hutTorchLit', type: 'hutTorchOn', x: 212, y: wizard.y - 68, align: 'ground', parallax: 0.92, hidden: true },
-      { id: 'hutFloorRug', type: 'hutRug', x: 96, y: wizard.y - 14, align: 'ground', parallax: 1 },
-    ]);
+      { id: 'hutBed', type: 'hutBed', x: 62, align: 'ground', parallax: 0.94 },
+      { id: 'hutTable', type: 'hutTable', x: 142, align: 'ground', parallax: 0.98 },
+      { id: 'hutShelf', type: 'hutShelf', x: 20, align: 'ground', parallax: 0.9 },
+      { id: 'hutTorchDormant', type: 'hutTorchOff', x: 212, align: 'ground', parallax: 0.92, visible: true },
+      { id: 'hutTorchLit', type: 'hutTorchOn', x: 212, align: 'ground', parallax: 0.92, visible: false },
+      { id: 'hutFloorRug', type: 'hutRug', x: 112, align: 'ground', parallax: 1 },
+    ];
+    setSceneProps(hutProps);
     ensureAmbience(plan?.introduction ?? 'hutInteriorDark');
     setSceneContext({ level: 'level1', phase: 'introduction' });
     await showLevelTitle('Level 1 - Das Licht');
 
     await levelOneIntroduction();
 
-    const learnResult = await levelOneLearning(plan);
+    const learnResult = await levelOneLearning(plan, hutProps);
     if (learnResult === 'restart') {
       continue;
     }
@@ -67,7 +68,7 @@ async function levelOneIntroduction() {
   await wizardSay('Gut, ich probiere es.');
 }
 
-async function levelOneLearning(plan) {
+async function levelOneLearning(plan, hutProps = null) {
   setSceneContext({ phase: 'learning' });
 
   let attemptsSinceRecap = 0;
@@ -91,6 +92,10 @@ async function levelOneLearning(plan) {
         });
         illuminated = true;
         switchMusic('secher belam ben beor.mp3');
+        if (hutProps) {
+          updateProp(hutProps, 'hutTorchDormant', { visible: false });
+          updateProp(hutProps, 'hutTorchLit', { visible: true });
+        }
       }
       await celebrateGlyph(answer);
       await narratorSay('Staub faengt an zu glimmen und die Öllampe flammt auf.');

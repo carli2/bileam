@@ -9,11 +9,14 @@ import {
   setSceneProps,
   waitForWizardToReach,
   getCurrentAmbienceKey,
+  promptBubble,
 } from '../scene.js';
 import {
   narratorSay,
   wizardSay,
   donkeySay,
+  anchorX,
+  anchorY,
   wizard,
   donkey,
   applySceneConfig,
@@ -26,6 +29,7 @@ import {
   withCameraFocusOnProp,
   sleep,
   switchMusic,
+  spellEquals,
 } from './utils.js';
 
 const MOAB_APPROACH_SCENE = {
@@ -208,6 +212,10 @@ export async function runLevelSix() {
 }
 
 async function phaseMoabPrelude(props) {
+  const savedWizard = { x: wizard.x, y: wizard.y, facing: wizard.facing };
+  const savedDonkey = { x: donkey.x, y: donkey.y, facing: donkey.facing };
+  wizard.x = -320;
+  donkey.x = wizard.x - 40;
   await withCameraFocusOnProp(props, 'balakWallFigure', async () => {
     await narratorSay('Danach lagerten sich die Israeliten in den Steppen Moabs, gegenüber Jericho.');
     await narratorSay('Und Balak, der Sohn Zippors, sah alles, was Israel den Amoritern angetan hatte.');
@@ -225,6 +233,12 @@ async function phaseMoabPrelude(props) {
     await movePropHorizontally(props, 'balakWallFigure', meetingX, { duration: 1200, steps: 6 });
     await narratorSay('Balak steigt von der Mauer herab und kommt dir entgegen.');
   });
+  wizard.x = savedWizard.x;
+  wizard.y = savedWizard.y;
+  wizard.facing = savedWizard.facing;
+  donkey.x = savedDonkey.x;
+  donkey.y = savedDonkey.y;
+  donkey.facing = savedDonkey.facing;
 
   const balakAfter = props.find(entry => entry.id === 'balakWallFigure');
   const targetX = balakAfter ? (balakAfter.x ?? wizard.x + 220) - 42 : wizard.x + 220;
@@ -233,31 +247,9 @@ async function phaseMoabPrelude(props) {
   }
 }
 
-async function phaseMoabVisionRings(props) {
-  await narratorSay('Balaks Wächter blicken nach Osten. Drei sandglühende Aussichtsringe warten auf deine Worte.');
-  await narratorSay('Jeder Ring verlangt ein altes Wort: West will אור, die Mitte will מים, der östliche Ring ruft nach קול. Nur wenn sie leuchten, senden die Moabiter dich weiter.');
-  const ringOrder = [
-    { id: 'moabVisionRingWest', word: 'aor', glyph: 'אור' },
-    { id: 'moabVisionRingCenter', word: 'mayim', glyph: 'מים' },
-    { id: 'moabVisionRingEast', word: 'qol', glyph: 'קול' },
-  ];
-
-  for (const ring of ringOrder) {
-    const target = props.find(entry => entry.id === ring.id)?.x ?? wizard.x + 120;
-    await waitForWizardToReach(target, { tolerance: 18 });
-    updateProp(props, ring.id, { type: 'sandVisionRingActive' });
-    await celebrateGlyph(ring.glyph);
-    applyMoabRingEffect(props, ring.id);
-    addProp(props, {
-      id: `${ring.id}Trail`,
-      type: 'hoofSignTrail',
-      x: wizard.x + 12,
-      y: wizard.y - 16,
-      parallax: 1.05,
-    });
-  }
-
-  await narratorSay('Die glimmenden Ringe behalten dein Licht im Sand. Balaks Gesandte reiten nach Petor.');
+async function phaseMoabVisionRings() {
+  await narratorSay('Balak ruft die Ältesten von Moab und Midian. Er legt ihnen die Worte auf die Lippen: „Siehe, ein Volk ist aus Ägypten gezogen; komm und verfluche es.“');
+  await narratorSay('Sie hören seinen Auftrag und reiten mit Geschenken nach Petor.');
 }
 
 async function phaseEnvoyDialogue(props) {
@@ -315,7 +307,7 @@ async function phaseNightVision(props) {
   await wizardSay('Balak, Sohn Zippors, hat mich gerufen, zu verfluchen ein Volk, das das Land bedeckt.');
   await divineSay('לא תלך עמהם לא תאר את העם כי ברוך הוא\nGeh nicht mit ihnen. Verfluche das Volk nicht – denn es ist gesegnet.');
 
-  await celebrateGlyph('לא');
+  await celebrateGlyph('לא', { forceLetter: 'א' });
   addProp(props, { id: 'petorGlyphComplete', type: 'noGlyphShard', x: wizard.x + 20, y: wizard.y - 48, parallax: 0.9, letter: 'לא' });
   await showLevelTitle('Neues Wort gelernt: לא (lo) – das Nein, das die Welt zusammenhält.', 3600);
   await wizardSay('Das Nein hallt nach. In seinem Echo höre ich den Raum zwischen den Dingen – das Unsichtbare, das doch alles trägt.');
@@ -344,10 +336,23 @@ async function phaseMorningRefusal(props) {
   await narratorSay('Der Morgen graut. Geschenke in Lichtgefäßen warten, während Balaks Stimme Ehre und Gold verheisst.');
   await propSay(props, 'petorEnvoyEast', 'Bileam, der König schwört bei seinem Thron: Er macht dich reich, wenn du nur kommst.', { anchor: 'center' });
   await propSay(props, 'petorEnvoySouth', 'Goldene Schalen, Purpur und Silber – alles liegt bereit. Verweigere uns nicht länger.', { anchor: 'center' });
-  await wizardSay('Geht hin in euer Land. Der HERR wills nicht gestatten, dass ich mit euch ziehe.');
+  await wizardSay('לא. Geht hin in euer Land. Der HERR wills nicht gestatten, dass ich mit euch ziehe.');
   await celebrateGlyph('לא');
   updateProp(props, 'petorGift', { type: 'temptationVesselAshes' });
   await narratorSay('Die Gabe verglimmt zu Staub.');
+  await narratorSay('Sprich selbst לא, damit sie dein Nein nicht vergessen.');
+  const input = await promptBubble(
+    anchorX(wizard, -12),
+    anchorY(wizard, -64),
+    'Sprich לא (lo)',
+    anchorX(wizard, -8),
+    anchorY(wizard, -36),
+  );
+  if (!spellEquals(input, 'lo', 'לא')) {
+    await donkeySay('Sie gehen nur, wenn du das Nein aussprichst. Versuch es erneut.');
+    return phaseMorningRefusal(props);
+  }
+  await celebrateGlyph('לא');
   await narratorSay('Die Fürsten verbeugen sich, reiten ab. Über der Steppe liegt wieder jenes matte Flackern, als sei der Himmel nur ein duennes Tuch.');
   await narratorSay('So kehrten die Fürsten zu Balak zurück und sprachen: „Bileam weigert sich, mit uns zu ziehen.“');
 }
@@ -455,40 +460,6 @@ async function movePropHorizontally(props, id, targetX, { duration = 900, steps 
     if (index < clampedSteps) {
       await sleep(stepDuration);
     }
-  }
-}
-
-function applyMoabRingEffect(props, taskId) {
-  switch (taskId) {
-    case 'moabVisionRingWest':
-      ensurePropDefinition(props, {
-        id: 'moabVistaLight',
-        type: 'sunStoneAwakened',
-        x: 684,
-        align: 'ground',
-        parallax: 1.14,
-      });
-      break;
-    case 'moabVisionRingCenter':
-      ensurePropDefinition(props, {
-        id: 'moabVistaWater',
-        type: 'waterGlyph',
-        x: 640,
-        align: 'ground',
-        parallax: 1.1,
-      });
-      break;
-    case 'moabVisionRingEast':
-      ensurePropDefinition(props, {
-        id: 'moabVistaSound',
-        type: 'soundGlyph',
-        x: 604,
-        align: 'ground',
-        parallax: 1.06,
-      });
-      break;
-    default:
-      break;
   }
 }
 
