@@ -12,6 +12,7 @@ import {
   donkey,
   say,
   SkipSignal,
+  LevelRetrySignal,
   clearSkipState,
   setLifeBars,
 } from './scene.js';
@@ -124,6 +125,11 @@ async function runLevel(entry, index, progress) {
     clearSkipState();
     return 'completed';
   } catch (error) {
+    if (error instanceof LevelRetrySignal) {
+      clearSkipState();
+      setSceneProps([]);
+      return 'restart';
+    }
     if (error instanceof SkipSignal) {
       const reason = error.reason ?? resolvedReason ?? (canSkip ? 'skip' : 'restart');
       clearSkipState();

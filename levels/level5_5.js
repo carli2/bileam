@@ -9,11 +9,13 @@ import {
   setLifeBars,
   SkipSignal,
   getScenePropBounds,
+  LevelRetrySignal,
 } from '../scene.js';
 import {
   narratorSay,
   wizardSay,
   donkeySay,
+  divineSay,
   anchorX,
   anchorY,
   wizard,
@@ -79,6 +81,7 @@ export async function runLevelFiveFive() {
       parallax: 1.04,
     });
     await donkeySay('Du hast nicht zerstört – du hast verstanden. Weiter nach Moab, Meister.');
+    await divineSay('עתה בלעם בן בעור, הנך מוכן למלאכה שאמסור לך.\nNun Bileam Sohn des Beor, bist du bereit für den Auftrag, den ich dir geben werde.');
     await fadeToBlack(480);
     setLifeBars(null);
     return;
@@ -180,12 +183,12 @@ async function executeFight(canyonProps) {
     return 'win';
   }
   const defeatAdvice = await handleFightDefeat(result.lastFailure);
-  const error = new Error('level5_5_guardian_defeat');
-  error.code = 'LEVEL_RETRY';
-  error.level = 'level5_5';
-  error.hint = defeatAdvice?.suggestion ?? null;
-  error.state = defeatAdvice?.stateKey ?? null;
-  throw error;
+  await playDefeatComfortSequence(canyonProps);
+  throw new LevelRetrySignal('level5_5', {
+    message: 'level5_5_guardian_defeat',
+    hint: defeatAdvice?.suggestion ?? null,
+    state: defeatAdvice?.stateKey ?? null,
+  });
 }
 
 async function promptSpellInput({ prompt, allowSkip = false } = {}) {
@@ -268,6 +271,8 @@ function describeState(stateKey) {
       return 'מים';
     case 'echoing':
       return 'קול';
+    case 'resonantTrap':
+      return 'קול';
     case 'radiant':
       return 'אור';
     case 'overgrown':
@@ -276,4 +281,41 @@ function describeState(stateKey) {
     default:
       return null;
   }
+}
+
+async function playDefeatComfortSequence(canyonProps) {
+  await divineSay('דע, בלעם: לא הנצחון הוא התכלית, אלא הדרך לה.\nWisse, Bileam: Nicht der Sieg ist das Ziel, sondern der Weg dorthin.');
+  await golemSpeak(canyonProps, 'Du wirst mich nicht besiegen können.');
+  await donkeySay('Kopf hoch, Bileam – du kannst es noch einmal versuchen.');
+}
+
+async function golemSpeak(canyonProps, text) {
+  if (!text) return;
+  const golem = findProp(canyonProps, 'golemGuardian');
+  const bounds = getScenePropBounds('golemGuardian');
+  const spriteHeight = bounds?.height ?? golem?.sprite?.height ?? 96;
+  const estimatedWidth = bounds?.width ?? golem?.sprite?.width ?? 120;
+  const offsetY = -Math.max(28, spriteHeight * 0.42);
+  const anchorX = () => {
+    const liveBounds = getScenePropBounds('golemGuardian');
+    if (liveBounds) {
+      return liveBounds.left + liveBounds.width / 2;
+    }
+    const baseLeft = golem?.x ?? wizard.x;
+    return baseLeft + estimatedWidth / 2;
+  };
+  const anchorY = () => {
+    const liveBounds = getScenePropBounds('golemGuardian');
+    if (liveBounds) {
+      return liveBounds.top + Math.max(8, liveBounds.height * 0.08);
+    }
+    const baseY = golem?.y ?? wizard.y;
+    return baseY + Math.max(8, (golem?.sprite?.height ?? 0) * 0.08);
+  };
+  await propSay(canyonProps, 'golemGuardian', text, {
+    offsetY,
+    anchor: 'center',
+    anchorX,
+    anchorY,
+  });
 }

@@ -9,6 +9,7 @@ import {
   setLifeBars,
   SkipSignal,
   getScenePropBounds,
+  LevelRetrySignal,
 } from '../scene.js';
 import {
   narratorSay,
@@ -191,12 +192,11 @@ async function executeBalakFight(sceneProps) {
   }
 
   const defeatAdvice = await handleFightDefeat(result.lastFailure);
-  const err = new Error('level10_5_balak_defeat');
-  err.code = 'LEVEL_RETRY';
-  err.level = 'level10_5';
-  err.hint = defeatAdvice?.suggestion ?? null;
-  err.state = defeatAdvice?.stateKey ?? null;
-  throw err;
+  throw new LevelRetrySignal('level10_5', {
+    message: 'level10_5_balak_defeat',
+    hint: defeatAdvice?.suggestion ?? null,
+    state: defeatAdvice?.stateKey ?? null,
+  });
 }
 
 async function promptSpellInput({ prompt, allowSkip = false } = {}) {

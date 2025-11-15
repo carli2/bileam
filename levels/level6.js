@@ -263,12 +263,12 @@ async function phaseMoabVisionRings(props) {
 async function phaseEnvoyDialogue(props) {
   await narratorSay('Petor, am Euphrat. Ein stilles Feuer lodert, Lichtlinien laufen unter dem Sand.');
   await ensureWizardBesideProp(props, 'petorEnvoyNorth');
-  await propSay(props, 'petorEnvoyNorth', 'Siehe, ein Volk ist aus Ägypten gezogen, es bedeckt das ganze Land und lagert uns gegenüber.', { anchor: 'center' });
+  await propSay(props, 'balakAdvisorNorth', 'Siehe, ein Volk ist aus Ägypten gezogen, es bedeckt das ganze Land und lagert uns gegenüber.', { anchor: 'center' });
   await ensureWizardBesideProp(props, 'petorEnvoyEast');
-  await propSay(props, 'petorEnvoyEast', 'So komm nun und verfluche mir dieses Volk, denn es ist mir zu mächtig.', { anchor: 'center' });
+  await propSay(props, 'balakAdvisorEast', 'So komm nun und verfluche mir dieses Volk, denn es ist mir zu mächtig.', { anchor: 'center' });
   await ensureWizardBesideProp(props, 'petorEnvoySouth');
-  await propSay(props, 'petorEnvoySouth', 'Denn wir wissen: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist verflucht.', { anchor: 'center' });
-  await propSay(props, 'petorEnvoyNorth', 'Balak sendet Silber, Gold und Ehrengewänder. Alles soll dir gehören, wenn du sprichst, wie er es verlangt.', { anchor: 'center' });
+  await propSay(props, 'balakAdvisorSouth', 'Denn wir wissen: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist verflucht.', { anchor: 'center' });
+  await propSay(props, 'balakAdvisorNorth', 'Balak sendet Silber, Gold und Ehrengewänder. Alles soll dir gehören, wenn du sprichst, wie er es verlangt.', { anchor: 'center' });
   await wizardSay('Bleibt hier über Nacht. Ich will hören, was der HERR mir sagt.');
   ensurePropDefinition(props, {
     id: 'petorNightSignal',
@@ -309,8 +309,8 @@ async function phaseEnvoyResponses(props) {
 
 async function phaseNightVision(props) {
   setSceneContext({ phase: 'night' });
-  await narratorSay('Dunkelheit senkt sich. Nur das Flackern des Feuers und ein Rauschen, als atme die Welt selbst.');
   switchMusic('מי האנשים האלה עמך.mp3');
+  await narratorSay('Dunkelheit senkt sich. Nur das Flackern des Feuers und ein Rauschen, als atme die Welt selbst.');
   await divineSay('מי האנשים האלה עמך\nWer sind die Männer, die bei dir sind?');
   await wizardSay('Balak, Sohn Zippors, hat mich gerufen, zu verfluchen ein Volk, das das Land bedeckt.');
   await divineSay('לא תלך עמהם לא תאר את העם כי ברוך הוא\nGeh nicht mit ihnen. Verfluche das Volk nicht – denn es ist gesegnet.');

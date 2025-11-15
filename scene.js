@@ -38,6 +38,16 @@ export class SkipSignal extends Error {
   }
 }
 
+export class LevelRetrySignal extends Error {
+  constructor(level, options = {}) {
+    super(options.message ?? 'level_retry');
+    this.code = 'LEVEL_RETRY';
+    this.level = level ?? null;
+    this.hint = options.hint ?? null;
+    this.state = options.state ?? null;
+  }
+}
+
 const WIDTH = 320;
 const HEIGHT = 200;
 const GROUND_HEIGHT = 8;
@@ -172,6 +182,7 @@ const glyphOverlay = {
   resolve: null,
   reject: null,
   previousInputEnabled: true,
+  waitForRelease: false,
 };
 
 let glyphFadeFrame = null;
@@ -490,6 +501,7 @@ export function showGlyphReveal(letter, label, meaning, duration = 2100) {
   glyphOverlay.meaning = trimmedMeaning;
   glyphOverlay.until = Number.POSITIVE_INFINITY;
   glyphOverlay.previousInputEnabled = previousInput;
+  glyphOverlay.waitForRelease = heldKeys.size > 0;
   glyphFadeAlpha = 0;
   cancelGlyphFade();
   startGlyphFade(1, Math.max(240, Math.min(duration, 720)));
@@ -733,6 +745,12 @@ function initSprites() {
   propSprites.watchFireVeiled = createWatchFireSprite(colors, 'veiled');
   propSprites.vineyardBoundary = createVineyardBoundarySprite(colors);
   propSprites.angelBladeForm = createAngelSpriteFromData();
+  propSprites.hutBed = createHutBedSprite(colors);
+  propSprites.hutTable = createHutTableSprite(colors);
+  propSprites.hutShelf = createHutShelfSprite(colors);
+  propSprites.hutTorchOff = createHutTorchSprite(colors, false);
+  propSprites.hutTorchOn = createHutTorchSprite(colors, true);
+  propSprites.hutRug = createHutRugSprite(colors);
   propSpriteFactories.noGlyphShard = definition => {
     const letter = definition?.data?.letter ?? definition?.letter ?? '';
     return createGlyphShardSprite(colors, letter);
@@ -788,10 +806,19 @@ function handleKeyUp(event) {
   heldKeys.delete(key);
   pressedKeys.delete(key);
   event.preventDefault();
+  if (glyphOverlay.waitForRelease && heldKeys.size === 0) {
+    glyphOverlay.waitForRelease = false;
+  }
 }
 
 function handleSpeechAdvance(event) {
   if (glyphOverlay.active) {
+    if (event?.type === 'keydown' && glyphOverlay.waitForRelease) {
+      if (heldKeys.size > 0) {
+        return;
+      }
+      glyphOverlay.waitForRelease = false;
+    }
     deactivateGlyphOverlay('done');
     if (event) {
       if (typeof event.preventDefault === 'function') event.preventDefault();
@@ -2034,6 +2061,93 @@ function createDonkeySprites(c) {
   };
   const right = spriteFromStrings(art, legend);
   return { right, left: mirrorSprite(right) };
+}
+
+function createHutBedSprite(c) {
+  const art = [
+    '......................',
+    '....bbbbbbbbbbbbbb....',
+    '....bbbbbbbbbbbbbb....',
+    '....bbbbbbbbbbbbbb....',
+    '....rrrrrrrrrrrrrr....',
+    '..rrrrrrrrrrrrrrrrrr..',
+    '..rrrrrrrrrrrrrrrrrr..',
+    '..rrrrrrrrrrrrrrrrrr..',
+    '..rrrrrrrrrrrrrrrrrr..',
+    '..rrrrrrrrrrrrrrrrrr..',
+    '....rrrrrrrrrrrrrr....',
+    '....rrrrrrrrrrrrrr....',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'b': c.hutWood,
+    'r': c.hutCover,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createHutTableSprite(c) {
+  const art = [
+    '............',
+    '..bbbbbbbb..',
+    '..bbbbbbbb..',
+    '..bbbbbbbb..',
+    '..bbbbbbbb..',
+    '..bbbbbbbb..',
+    '....bb..bb..',
+    '....bb..bb..',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'b': c.hutWood,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createHutShelfSprite(c) {
+  const art = [
+    'bbbbbbbb',
+    'bbbbbbbb',
+    'bbbbbbbb',
+  ];
+  const legend = {
+    'b': c.hutWood,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createHutTorchSprite(c, lit) {
+  const flame = lit
+    ? ['..yy..', '..yy..', '..rr..']
+    : ['......', '......', '......'];
+  const art = [
+    ...flame,
+    '..bb..',
+    '..bb..',
+    '..bb..',
+    '..bb..',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'y': c.hutFlame,
+    'r': c.hutFlameDark,
+    'b': c.hutWood,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createHutRugSprite(c) {
+  const art = [
+    'cccccccccccc',
+    'cdddddccdddc',
+    'cdddddccdddc',
+    'cccccccccccc',
+  ];
+  const legend = {
+    'c': c.hutRug,
+    'd': c.hutRugShadow,
+  };
+  return spriteFromStrings(art, legend);
 }
 
 function createBalakFigureSprite(c) {

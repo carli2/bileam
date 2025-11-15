@@ -27,6 +27,7 @@ import {
   celebrateGlyph,
   divineSay,
   switchMusic,
+  updateProp,
 } from './utils.js';
 const HUT_DOOR_ID = 'hutDoor';
 const HUT_DOOR_X = 252;
@@ -37,6 +38,12 @@ export async function runLevelOne() {
   while (true) {
     setSceneProps([
       { id: HUT_DOOR_ID, type: 'door', x: HUT_DOOR_X },
+      { id: 'hutBed', type: 'hutBed', x: 48, y: wizard.y - 38, align: 'ground', parallax: 0.96 },
+      { id: 'hutTable', type: 'hutTable', x: 136, y: wizard.y - 22, align: 'ground', parallax: 1 },
+      { id: 'hutShelf', type: 'hutShelf', x: 12, y: wizard.y - 64, align: 'ground', parallax: 0.9 },
+      { id: 'hutTorchDormant', type: 'hutTorchOff', x: 212, y: wizard.y - 68, align: 'ground', parallax: 0.92 },
+      { id: 'hutTorchLit', type: 'hutTorchOn', x: 212, y: wizard.y - 68, align: 'ground', parallax: 0.92, hidden: true },
+      { id: 'hutFloorRug', type: 'hutRug', x: 96, y: wizard.y - 14, align: 'ground', parallax: 1 },
     ]);
     ensureAmbience(plan?.introduction ?? 'hutInteriorDark');
     setSceneContext({ level: 'level1', phase: 'introduction' });

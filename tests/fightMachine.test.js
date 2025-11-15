@@ -5,7 +5,7 @@ import { SPELL_DUEL_MACHINE } from '../stateMachines/spellDuelMachine.js';
 import { cropStateMachine } from '../fight.js';
 const FIRST_FIVE_WORDS = ['אור', 'מים', 'קול', 'חיים', 'אש'];
 const ALLOWED = new Set(FIRST_FIVE_WORDS);
-const EXPECTED_STATES = new Set(['start', 'burning', 'flooded', 'echoing', 'radiant', 'overgrown']);
+const EXPECTED_STATES = new Set(['start', 'burning', 'flooded', 'echoing', 'radiant', 'overgrown', 'resonantTrap']);
 
 const resolveNextState = config => {
   if (typeof config === 'string') {
