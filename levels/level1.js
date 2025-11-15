@@ -26,6 +26,7 @@ import {
   spellEquals,
   celebrateGlyph,
   divineSay,
+  switchMusic,
 } from './utils.js';
 const HUT_DOOR_ID = 'hutDoor';
 const HUT_DOOR_X = 252;
@@ -82,6 +83,7 @@ async function levelOneLearning(plan) {
           fade: { toBlack: 180, toBase: 680 },
         });
         illuminated = true;
+        switchMusic('secher belam ben beor.mp3');
       }
       await celebrateGlyph(answer);
       await narratorSay('Staub faengt an zu glimmen und die Öllampe flammt auf.');

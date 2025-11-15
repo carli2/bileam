@@ -95,7 +95,6 @@ async function simulateFight(machine, options = {}) {
     const result = await runFightLoop({
       machine,
       initialState: 'start',
-      initialActor: 'enemy',
       playerName: 'Bileam',
       enemyName: 'Gegner',
       promptPlayerSpell: ({ state }) => Promise.resolve(selectPlayerWord(machine, state)),

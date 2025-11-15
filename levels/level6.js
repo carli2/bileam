@@ -25,6 +25,7 @@ import {
   divineSay,
   withCameraFocusOnProp,
   sleep,
+  switchMusic,
 } from './utils.js';
 
 const MOAB_APPROACH_SCENE = {
@@ -309,6 +310,7 @@ async function phaseEnvoyResponses(props) {
 async function phaseNightVision(props) {
   setSceneContext({ phase: 'night' });
   await narratorSay('Dunkelheit senkt sich. Nur das Flackern des Feuers und ein Rauschen, als atme die Welt selbst.');
+  switchMusic('מי האנשים האלה עמך.mp3');
   await divineSay('מי האנשים האלה עמך\nWer sind die Männer, die bei dir sind?');
   await wizardSay('Balak, Sohn Zippors, hat mich gerufen, zu verfluchen ein Volk, das das Land bedeckt.');
   await divineSay('לא תלך עמהם לא תאר את העם כי ברוך הוא\nGeh nicht mit ihnen. Verfluche das Volk nicht – denn es ist gesegnet.');

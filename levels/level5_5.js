@@ -161,7 +161,6 @@ async function executeFight(canyonProps) {
     result = await runFightLoop({
       machine: GOLEM_MACHINE,
       initialState: 'start',
-      initialActor: 'enemy',
       playerName: 'Bileam',
       enemyName: 'Golem',
       promptPlayerSpell: options => promptSpellInput(options),

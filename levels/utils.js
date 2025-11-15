@@ -9,6 +9,7 @@ import {
   pushCameraFocus,
   popCameraFocus,
 } from '../scene.js';
+import { switchMusicTrack } from '../musicPlayer.js';
 
 /*
  * Level Coding Rules
@@ -61,6 +62,11 @@ const DIVINE_BUBBLE_STYLE = {
   borderWidth: 2,
   tipBaseHalf: 7,
 };
+
+export function switchMusic(trackName, options = {}) {
+  if (!trackName) return;
+  switchMusicTrack(trackName, options);
+}
 
 export function divineSay(text) {
   return say(

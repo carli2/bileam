@@ -183,6 +183,27 @@ export function setMusicVolume(volume) {
   applyVolume();
 }
 
+export async function switchMusicTrack(trackName, options = {}) {
+  if (!trackName) return;
+  ensureAudioElement();
+  const fadeOutDuration = Math.max(0, options.fadeOut ?? FADE_OUT_DURATION);
+  const fadeInDuration = Math.max(0, options.fadeIn ?? FADE_IN_DURATION);
+  try {
+    if (audioElement && playbackUnlocked) {
+      fadeTo(0, fadeOutDuration);
+      if (fadeOutDuration > 0) {
+        await delay(fadeOutDuration);
+      }
+    }
+    await playTrack(trackName);
+    playbackUnlocked = true;
+    startRequested = false;
+    fadeTo(1, fadeInDuration);
+  } catch (error) {
+    console.warn('Failed to switch music track', error);
+  }
+}
+
 // initialise playlist fetch immediately but allow consumers to re-attempt start
 playlistPromise.then(list => {
   if (!list.length) {
@@ -200,6 +221,10 @@ function applyVolume() {
   if (!audioElement) return;
   const level = Math.min(1, Math.max(0, baseVolume * fadeLevel));
   audioElement.volume = level;
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 function fadeTo(level, duration) {

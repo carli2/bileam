@@ -168,7 +168,6 @@ async function executeBalakFight(sceneProps) {
     result = await runFightLoop({
       machine: BALAK_MACHINE,
       initialState: 'start',
-      initialActor: 'enemy',
       playerName: 'Bileam',
       enemyName: 'Balak',
       playerHP: 110,

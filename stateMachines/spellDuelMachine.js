@@ -567,7 +567,6 @@ export const SPELL_DUEL_MACHINE = {
       },
       'חיים': {
         next: 'overgrown',
-        keepActor: true,
         text_player: 'חיים! Wachse im Licht und halte ihn fest.',
         text_enemy: 'חיים! Ich lasse leuchtendes Wachstum nach dir greifen.',
         damage: 10,
@@ -678,7 +677,6 @@ export const SPELL_DUEL_MACHINE = {
       },
       'חיים': {
         next: 'overgrown',
-        keepActor: true,
         text_player: 'חיים! Bleib in deinem Mass.',
         text_enemy: 'חיים! Ich ueberwuchere dich vollstaendig.',
       },

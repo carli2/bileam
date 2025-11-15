@@ -27,6 +27,7 @@ import {
   addProp,
   celebrateGlyph,
   divineSay,
+  switchMusic,
 } from './utils.js';
 
 export async function runLevelFive() {
@@ -148,6 +149,7 @@ async function phaseAshRevelation(props) {
       updateProp(props, 'forgeIgnitionRing', { type: 'sunStoneAwakened' });
       await celebrateGlyph(answer);
       await narratorSay('Der Ring entzündet sich. Flammen tanzen den Wänden entlang – die Schmiede lebt.');
+      switchMusic('באש אשפט.mp3');
       await divineSay('באש אשפט\nMit Feuer werde ich richten.');
       return;
     }
