@@ -127,7 +127,7 @@ export async function runLevelSeven() {
 }
 
 async function phaseProcessionIntro() {
-  await narratorSay('Da stand Bileam am Morgen auf, sattelte seine Eselin und zog mit den Fürsten der Moabiter. Doch der Zorn Gottes entbrannte, dass er hinzog.');
+  await narratorSay('Da stand Bileam am Morgen auf, sattelte seine Eselin und zog mit den Fürsten der Moabiter. Doch der Zorn אלוהים entbrannte, dass er hinzog.');
   await narratorSay('Grauer Morgen über den Hügeln, Nebel hängt wie feine Stoffbahnen, und die Banner der Fürsten rascheln hinter dir.');
   await showLevelTitle('Die Fürsten fordern Stille. Lausche sorgfältig.', 5200);
   await donkeySay('Wir werden hören müssen, nicht nur sehen.');
@@ -161,19 +161,15 @@ async function phaseHoofSteps(props) {
 
 async function phaseFirstResistance(props) {
   await narratorSay('Der Pfad verengt sich in den Weinberg. Nebel liegt schwer, und die Eselin zögert, als hielte sie etwas Unsichtbares auf.');
-  await donkeySay('Etwas steht vor uns. Ich spüre eine Klinge aus Licht.');
-  await wizardSay('Ich sehe nichts, doch du hast mich nie belogen. Was immer dort ist, hör weiter.');
+  await narratorSay('Sie biegt in die Weinberge, presst Huf gegen Stein und sucht Raum, den es nicht gibt.');
+  await narratorSay('Du schlägst sie, um sie zum Weg zurückzutreiben, doch sie hält an – gehorsam dem Hören, nicht deinem Stock.');
   await narratorSay('Die Fürsten flüstern. Sie sehen nur Staub, doch sie spüren, wie der Sand ringsum straffer wird.');
-  await narratorSay('Deine Eselin drängt sich in den Weinberg, presst Huf gegen Stein und sucht Raum, den es nicht gibt.');
-  await narratorSay('Sie bleibt stehen – gehorsam dem Hören, nicht deinem Stock.');
 }
 
 async function phaseSecondResistance(props) {
   await narratorSay('Zwischen den Mauern des Weinbergs wird der Pfad schmal. Die Eselin drängt sich an den Felsen und klemmt deinen Fuß ein.');
-  await donkeySay('Schon wieder... da ist etwas zwischen den Steinen!');
-  await wizardSay('Du treibst Mutwillen!');
-  await narratorSay('Dieses Mal ist kein Rätsel mehr zu lösen – dein Zorn soll verstummen, bis die Wahrheit sich zeigt.');
-  await narratorSay('Die Eselin drängt sich an der Mauer vorbei. Dein Fuß schmerzt, aber der Weg wird frei.');
+  await narratorSay('Du schreist sie an, schlägst sie zum zweiten Mal, doch sie bleibt an der Mauer. Dein Fuß schmerzt.');
+  await narratorSay('Noch immer siehst du nichts – nur ihre Ohren, die lauschen.');
 }
 
 async function phaseThirdResistance(props) {
@@ -182,27 +178,27 @@ async function phaseThirdResistance(props) {
   await narratorSay('Die Eselin faellt auf die Knie. Stille, nur tiefer Bordun.');
   await wizardSay('Wäre doch ein Schwert in meiner Hand, ich wollte dich töten!');
   await donkeySay('War ich je anders? Bin ich nicht deine Eselin, auf der du geritten bist von jeher bis heute?');
-  let loCount = 0;
-  let shamaHeard = false;
-  while (loCount < 2 || !shamaHeard) {
-    const answer = await readWord('Wie antwortest du deiner Eselin?');
-    if (spellEquals(answer, 'lo', 'לא')) {
-      loCount += 1;
-      await narratorSay('Dein Zorn verstummt.');
-    } else if (spellEquals(answer, 'shama', 'שמע')) {
-      shamaHeard = true;
-      await narratorSay('Du hörst den Herzschlag der Eselin – und den Engel deutlicher.');
-    } else {
-      await donkeySay('Nie schlagen. Sag Nein – und höre.');
+  const shamaNeeded = 3;
+  for (let attempt = 0; attempt < shamaNeeded; attempt += 1) {
+    await donkeySay('לא!');
+    let heard = false;
+    while (!heard) {
+      const answer = await readWord('Wie antwortest du deiner Eselin?');
+      if (spellEquals(answer, 'shama', 'שמע')) {
+        heard = true;
+        await narratorSay('Du hörst – tiefer als zuvor. Etwas aus Licht bewegt sich im Staub.');
+      } else {
+        await donkeySay('Sprich שמע – sche-MA. Höre, nicht schlagen.');
+      }
     }
   }
-  await wizardSay('Nein... lo.');
+  await wizardSay('לא... ich habe geirrt.');
   await narratorSay('Der Himmel öffnet sich. Du siehst den Engel klar vor dir.');
 }
 
 async function phaseAngelRevelation(props) {
   const angel = await ensureAngelBlocksPath(props, 'revelationAngel');
-  await narratorSay('Der HERR öffnet dir die Augen. Du faellst nieder vor dem Engel aus gebuendeltem Licht.');
+  await narratorSay('יהוה öffnet dir die Augen. Du faellst nieder vor dem Engel aus gebuendeltem Licht.');
   await propSay(props, 'revelationAngel', 'Warum hast du deine Eselin dreimal geschlagen? Ich stand dir entgegen, denn dein Weg führt ins Verderben.', { anchor: 'center' });
   await propSay(props, 'revelationAngel', 'Wäre sie mir nicht ausgewichen, ich hätte dich getötet, sie aber leben lassen.', { anchor: 'center' });
   await wizardSay('Ich habe gesündigt. Ich wusste nicht, dass du mir entgegenstandest. Wenn es dir nicht gefällt, will ich umkehren.');

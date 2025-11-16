@@ -224,7 +224,7 @@ async function handleFightDefeat(lastFailure) {
   setLifeBars(null);
   const word = lastFailure?.attackerWord;
   if (word) {
-    await narratorSay(`${word} zerreisst deine Verteidigung. Der Stern verfinstert sich.`);
+    await narratorSay(`${word} zerreißt deine Verteidigung. Der Stern verfinstert sich.`);
   } else {
     await narratorSay('Balaks Schatten trifft dich. Die Sterne erloeschen.');
   }

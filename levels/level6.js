@@ -261,7 +261,7 @@ async function phaseEnvoyDialogue(props) {
   await ensureWizardBesideProp(props, 'petorEnvoySouth');
   await propSay(props, 'balakAdvisorSouth', 'Denn wir wissen: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist verflucht.', { anchor: 'center' });
   await propSay(props, 'balakAdvisorNorth', 'Balak sendet Silber, Gold und Ehrengewänder. Alles soll dir gehören, wenn du sprichst, wie er es verlangt.', { anchor: 'center' });
-  await wizardSay('Bleibt hier über Nacht. Ich will hören, was der HERR mir sagt.');
+  await wizardSay('Bleibt hier über Nacht. Ich will hören, was יהוה (JHWH – Gott) mir sagt.');
   ensurePropDefinition(props, {
     id: 'petorNightSignal',
     type: 'resonanceRingDormant',
@@ -336,7 +336,7 @@ async function phaseMorningRefusal(props) {
   await narratorSay('Der Morgen graut. Geschenke in Lichtgefäßen warten, während Balaks Stimme Ehre und Gold verheisst.');
   await propSay(props, 'petorEnvoyEast', 'Bileam, der König schwört bei seinem Thron: Er macht dich reich, wenn du nur kommst.', { anchor: 'center' });
   await propSay(props, 'petorEnvoySouth', 'Goldene Schalen, Purpur und Silber – alles liegt bereit. Verweigere uns nicht länger.', { anchor: 'center' });
-  await wizardSay('לא. Geht hin in euer Land. Der HERR wills nicht gestatten, dass ich mit euch ziehe.');
+  await wizardSay('לא. Geht hin in euer Land. יהוה (JHWH – Gott) wills nicht gestatten, dass ich mit euch ziehe.');
   await celebrateGlyph('לא');
   updateProp(props, 'petorGift', { type: 'temptationVesselAshes' });
   await narratorSay('Die Gabe verglimmt zu Staub.');

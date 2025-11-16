@@ -26,6 +26,8 @@ import {
   propSay,
   canonicalizeSequence,
   consumeSequenceTokens,
+  divineSay,
+  switchMusic,
 } from './utils.js';
 
 const BAMOT_TERRACE_SCENE = {
@@ -192,7 +194,7 @@ async function phaseBalakGreeting(props) {
   await narratorSay('Staubiger Wind fegt über die terrassierten Hügel. Balak wartet auf einer Basaltplattform, Moabs Lager glimmt wie ein Raster aus goldenen Punkten.');
   await ensureWizardBesideBalak(props, 'balakArrival');
   await propSay(props, 'balakArrival', 'Hab ich nicht zu dir gesandt und dich rufen lassen? Meinst du, ich könnte dich nicht ehren?', { anchor: 'center', offsetY: -34 });
-  await wizardSay('Siehe, ich bin zu dir gekommen. Aber wie kann ich etwas anderes reden als das, was mir Gott in den Mund gibt? Nur das kann ich reden.');
+  await wizardSay('Siehe, ich bin zu dir gekommen. Aber wie kann ich etwas anderes reden als das, was mir אלוהים in den Mund gibt? Nur das kann ich reden.');
   await narratorSay('Balak tritt beiseite, und drei glühende Terrassen werden sichtbar. Jede verlangt Hören, Nein und den Segen.');
   addProp(props, { id: 'bamotGuidingTrailWest', type: 'hoofSignTrail', x: wizard.x + 36, align: 'ground', parallax: 1.04 });
   addProp(props, { id: 'bamotGuidingTrailEast', type: 'hoofSignTrail', x: wizard.x + 88, align: 'ground', parallax: 1.06 });
@@ -248,7 +250,7 @@ async function phaseSevenAltars(props) {
       } else {
         failures += 1;
         if (needsBarakHint && failures % 3 === 0) {
-          await donkeySay('Erinnere dich: ברך wird barak gesprochen – sprich den Segen, dann antwortet der Altar.');
+      await donkeySay('Erinnere dich: ברך wird baruch gesprochen – sprich den Segen, dann antwortet der Altar.');
         } else {
           await donkeySay('Der Altar reagiert nur auf das rechte Wort.');
         }
@@ -256,10 +258,13 @@ async function phaseSevenAltars(props) {
     }
   }
   await narratorSay('Sieben Altare stehen im Licht. Balak wartet auf dein Orakel.');
+  await narratorSay('Die Nacht senkt sich, und Balak steht schweigend – ein Schatten neben dem Altar.');
+  await divineSay('בלילה הזה יפגשך אלוהי. לא תקלל את אשר ברך יהוה.\nDiese Nacht begegne ich dir: Du wirst nicht verfluchen, was יהוה gesegnet hat.');
+  await narratorSay('Du schließt die Augen. Das Feuer glimmt auf, als ob jemand antwortete.');
 }
 
 async function phaseResonance(props) {
-  await narratorSay('In der Nacht begegnet dir Gott: „Sieben Altare hast du errichtet. Du kannst nicht fluchen, was ich gesegnet habe.“');
+  await narratorSay('In der Nacht begegnet dir אלוהים: „Sieben Altare hast du errichtet. Du kannst nicht fluchen, was ich gesegnet habe.“');
   for (const ring of RESONANCE_STEPS) {
     const target = props.find(entry => entry.id === ring.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 16 });
@@ -276,7 +281,7 @@ async function phaseResonance(props) {
       } else {
         failures += 1;
         if (needsBarakHint && failures % 3 === 0) {
-          await donkeySay('ברך – barak. Vergiss den Segen nicht.');
+          await donkeySay('ברך – baruch. Vergiss den Segen nicht.');
         } else {
           await donkeySay('Höre, verneine und segne – in dieser Reihenfolge.');
         }
@@ -286,7 +291,7 @@ async function phaseResonance(props) {
   await narratorSay('Das Wort ברך formt sich über deinen Händen.');
   let learned = false;
   while (!learned) {
-    const answer = await readWord('Sprich ברך (barak).');
+    const answer = await readWord('Sprich ברך (baruch).');
     if (spellEquals(answer, 'barak', 'ברך')) {
       learned = true;
       addProp(props, { id: 'barakFragmentKaf', type: 'blessingFragment', x: wizard.x + 18, y: wizard.y - 46, parallax: 0.9, letter: 'ך' });
@@ -303,10 +308,10 @@ async function phaseResonance(props) {
 async function phaseFirstOracle(props) {
   await narratorSay('Bileam hebt an mit seinem Spruch und spricht:');
   await wizardSay('Aus Aram hat mich Balak holen lassen, vom Gebirge des Ostens: Komm, verfluche mir Jakob, komm, verwünsche Israel!');
-  await wizardSay('Wie soll ich fluchen, dem Gott nicht flucht? Wie soll ich verwünschen, den der HERR nicht verwünscht?');
+  await wizardSay('Wie soll ich fluchen, dem אלוהים nicht flucht? Wie soll ich verwünschen, den יהוה nicht verwünscht?');
   await wizardSay('Denn von der Höhe der Felsen sehe ich ihn, und von den Hügeln schaue ich ihn. Siehe, das Volk wohnt abgesondert und wird sich nicht zu den Völkern rechnen.');
   await propSay(props, 'balakWaiting', 'Was tust du mir an? Ich habe dich holen lassen, um meine Feinde zu verfluchen – und siehe, du segnest sie!', { anchor: 'center' });
-  await wizardSay('Muss ich nicht reden, was der HERR in meinen Mund gibt?');
+  await wizardSay('Muss ich nicht reden, was יהוה in meinen Mund gibt?');
 }
 
 async function phaseBlessingSequence() {
@@ -339,7 +344,7 @@ async function phaseBlessingSequence() {
       if (expected === 'barak') {
         barakFailures += 1;
         if (barakFailures % 3 === 0) {
-          await donkeySay('Der letzte Schritt ist ברך – barak. Sprich ihn – oder tippe die ganze Folge auf einmal: "shama lo barak".');
+        await donkeySay('Der letzte Schritt ist ברך – baruch. Sprich ihn – oder tippe die ganze Folge auf einmal: "shama lo baruch".');
         } else {
           await donkeySay('Reihenfolge: hören, verneinen, segnen. Du kannst sie auch gesammelt tippen, getrennt durch Leerzeichen.');
         }
@@ -349,7 +354,7 @@ async function phaseBlessingSequence() {
       index = 0;
     }
   }
-  await narratorSay('Eine Segenwelle rollt über das Lager. Balak beisst die Zähne zusammen.');
+  await narratorSay('Eine Segenwelle rollt über das Lager. Balak beisst die Zähne zusammen.');
 }
 
 async function phaseReflection() {
@@ -359,7 +364,7 @@ async function phaseReflection() {
 
 async function phaseBalakUngeduld(props) {
   addProp(props, { id: 'balakWrathAura', type: 'balakWrathEffect', x: wizard.x + 60, y: wizard.y - 32, parallax: 0.96 });
-  await narratorSay('Balak versucht, den Segen zu zerreissen; über seinen Händen flackert eine rote Aura.');
+  await narratorSay('Balak versucht, den Segen zu zerreißen; über seinen Händen flackert eine rote Aura.');
   await ensureWizardBesideBalak(props, 'balakWaiting', { offset: -30, tolerance: 16 });
   await propSay(props, 'balakWaiting', 'Komm mit mir an einen andern Ort. Von hier siehst du zu viel. Vielleicht kannst du mir dort das Ende verfluchen.', { anchor: 'center' });
 }
@@ -388,7 +393,7 @@ async function phasePisgaPath(props) {
         } else {
           failures += 1;
           if (needsBarakHint && failures % 3 === 0) {
-            await donkeySay('ברך – barak. Der Stein nimmt nur den Segen an.');
+            await donkeySay('ברך – baruch. Der Stein nimmt nur den Segen an.');
           } else {
             await donkeySay('Der Stein wartet auf den passenden Segen.');
           }
@@ -422,7 +427,7 @@ async function phasePisgaPath(props) {
           if (expected === 'barak') {
             barakFailures += 1;
             if (barakFailures % 3 === 0) {
-              await donkeySay('Der Abschluss lautet ברך – sprich barak, oder tippe alle Worte auf einmal (z. B. "lo barak").');
+              await donkeySay('Der Abschluss lautet ברך – sprich baruch, oder tippe alle Worte auf einmal (z. B. "lo baruch").');
             } else {
               await donkeySay('Halte die Reihenfolge ein.');
             }
@@ -448,7 +453,7 @@ function containsBarakSpell(spells) {
     const normalized = base
       .replace(/[^A-Za-z]/g, '')
       .toLowerCase();
-    return normalized === 'barak';
+  return normalized === 'barak';
   });
 }
 

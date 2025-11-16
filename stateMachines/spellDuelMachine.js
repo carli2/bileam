@@ -43,7 +43,7 @@ export const SPELL_DUEL_MACHINE = {
       },
       'קול': {
         next: 'echoing',
-        text_player: 'קול! Stimme, zerreiss die Schlucht.',
+        text_player: 'קול! Stimme, zerreiß die Schlucht.',
         text_enemy: 'קול! Ich lasse den Fels gegen dich hallen.',
       },
       'אור': {
@@ -654,7 +654,7 @@ export const SPELL_DUEL_MACHINE = {
     prompt_player: 'Wie beantwortest du das Wachsen?',
     damage: 40,
     failure_player: '%s - die Ranken ziehen dich zu Boden.',
-    failure_computer: '%s - das Leben in mir wird wild, ich zerreisse mich fast.',
+    failure_computer: '%s - das Leben in mir wird wild, ich zerreiße mich fast.',
     failure_player_damageText: 'Bileam erhaelt 40 Schaden zwischen Ranken.',
     failure_computer_damageText: 'Der Gegner erhaelt 40 Schaden, Holzplatten splittern.',
     transitions: {

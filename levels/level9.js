@@ -229,7 +229,7 @@ async function phasePisgaLines(props) {
 
 async function phaseDabarPillars(props) {
   await divineSay('לא איש אל ויכזב ובן אדם ויתנחם ההוא אמר ולא יעשה ודבר ולא יקימנה\nIch bin nicht ein Mensch, dass ich Lüge, noch ein Menschenkind, dass ich bereue. Sollte ich reden und es nicht tun? Sollte ich sprechen und es nicht halten?');
-  await narratorSay('Dabar – das Wort, das geschieht. Wenn Gott spricht, handelt er. Nun prüft er, ob du dasselbe tust.');
+  await narratorSay('Dabar – das Wort, das geschieht. Wenn אלוהים spricht, handelt er. Nun prüft er, ob du dasselbe tust.');
   for (const pillar of DABAR_PILLAR_SENTENCES) {
     const target = props.find(entry => entry.id === pillar.id)?.x ?? wizard.x + 180;
     await waitForWizardToReach(target, { tolerance: 16 });
@@ -280,7 +280,7 @@ async function phaseTruthMirror(props) {
 
 async function phaseGardenEmet(props) {
   await narratorSay('Ein Garten aus Licht breitet sich aus: Zelte, Gärten, Bäume, Löwen warten auf Wahrheit.');
-  await narratorSay('Emet – אמת – ist ehernes Gewicht: Alef (א) für Gott, Mem (מ) für die Mitte, Taw (ת) für das Ende. Bleibt ein Buchstabe aus, zerfällt das Wort zu Lüge.');
+  await narratorSay('Emet – אמת – ist ehernes Gewicht: Alef (א) für אלוהים, Mem (מ) für die Mitte, Taw (ת) für das Ende. Bleibt ein Buchstabe aus, zerfällt das Wort zu Lüge.');
   const symbols = ['symbolTent', 'symbolGarden', 'symbolTree', 'symbolLion'];
   for (const id of symbols) {
     const target = props.find(entry => entry.id === id)?.x ?? wizard.x + 180;
@@ -305,14 +305,14 @@ async function phaseGardenEmet(props) {
 
 async function phaseSecondOracle(props) {
   await narratorSay('Bileam spricht:');
-  await wizardSay('Man sieht kein Unheil in Jakob, keine Mühsal in Israel. Der HERR, sein Gott, ist bei ihm, und es jauchzt dem König zu.');
-  await wizardSay('Daher hilft kein Zaubern gegen Jakob und kein Wahrsagen gegen Israel. Zu rechter Zeit wird gesagt, was Gott gewirkt hat.');
-  await wizardSay('Gott hat sie aus Ägypten geführt; er ist für sie wie das Horn des Wildstiers.');
-  await wizardSay('Wie Täler, die sich ausbreiten, wie Gärten an Wassern, wie Aloebäume, die der HERR pflanzt, wie Zedern an den Wassern.');
+  await wizardSay('Man sieht kein Unheil in Jakob, keine Mühsal in Israel. יהוה, sein אלוהים, ist bei ihm, und es jauchzt dem König zu.');
+  await wizardSay('Daher hilft kein Zaubern gegen Jakob und kein Wahrsagen gegen Israel. Zu rechter Zeit wird gesagt, was אלוהים gewirkt hat.');
+  await wizardSay('אלוהים hat sie aus Ägypten geführt; er ist für sie wie das Horn des Wildstiers.');
+  await wizardSay('Wie Täler, die sich ausbreiten, wie Gärten an Wassern, wie Aloebäume, die יהוה pflanzt, wie Zedern an den Wassern.');
   await wizardSay('Er hat sich hingestreckt wie ein Löwe – wer will ihn aufstören?');
   await wizardSay('ברוך מברכיך וארור ארריך\nGesegnet sei, wer dich segnet, und verflucht, wer dich verflucht!');
   await propSay(props, 'gardenBalakShadow', 'Wenn du schon nicht fluchst, so segne sie wenigstens nicht!', { anchor: 'center' });
-  await wizardSay('Hab ich dir nicht gesagt: Alles, was der HERR redet, das werde ich tun?');
+  await wizardSay('Hab ich dir nicht gesagt: Alles, was יהוה redet, das werde ich tun?');
   await wizardSay('Vielleicht ist jedes wahre Wort ein Tor.');
   await wizardSay('Wenn es gesprochen wird, öffnet sich für einen Augenblick der Plan des Lichts, der uns alle trägt.');
   await donkeySay('Worte sind Tore. Du hast sie geöffnet.');
