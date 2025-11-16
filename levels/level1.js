@@ -41,8 +41,8 @@ export async function runLevelOne() {
       { id: 'hutBed', type: 'hutBed', x: 62, align: 'ground', parallax: 0.94 },
       { id: 'hutTable', type: 'hutTable', x: 142, align: 'ground', parallax: 0.98 },
       { id: 'hutShelf', type: 'hutShelf', x: 20, align: 'ground', parallax: 0.9 },
-      { id: 'hutTorchDormant', type: 'hutTorchOff', x: 212, align: 'ground', parallax: 0.92, visible: true },
-      { id: 'hutTorchLit', type: 'hutTorchOn', x: 212, align: 'ground', parallax: 0.92, visible: false },
+      { id: 'hutTorchDormant', type: 'hutTorchOff', x: 212, align: 'top', offsetY: 22, parallax: 0.92, visible: true },
+      { id: 'hutTorchLit', type: 'hutTorchOn', x: 212, align: 'top', offsetY: 22, parallax: 0.92, visible: false },
       { id: 'hutFloorRug', type: 'hutRug', x: 112, align: 'ground', parallax: 1 },
     ];
     setSceneProps(hutProps);

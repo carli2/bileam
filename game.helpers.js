@@ -87,17 +87,16 @@ export function transliterateToHebrew(input) {
     }
   }
 
-  let i = result.length - 1;
-  while (i >= 0) {
+  for (let i = 0; i < result.length; i += 1) {
     const char = result[i];
-    if (char === ' ') {
-      i--;
-      continue;
+    if (!FINAL_FORMS[char]) continue;
+    let j = i + 1;
+    while (j < result.length && result[j] === ' ') {
+      j += 1;
     }
-    if (FINAL_FORMS[char]) {
+    if (j >= result.length || result[j] === ' ') {
       result[i] = FINAL_FORMS[char];
     }
-    break;
   }
 
   return result.join('');
