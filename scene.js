@@ -1598,6 +1598,11 @@ function createLevelSceneMap() {
       learn: 'sanctumFinale',
       apply: 'sanctumFinale',
     },
+    level11: {
+      review: 'voidFinale',
+      learn: 'voidFinale',
+      apply: 'voidFinale',
+    },
   };
 }
 

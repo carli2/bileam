@@ -25,6 +25,8 @@ import {
   propSay,
   addProp,
   findProp,
+  divineSay,
+  switchMusic,
 } from './utils.js';
 import { runFightLoop, cropStateMachine } from '../fight.js';
 import { SPELL_DUEL_MACHINE } from '../stateMachines/spellDuelMachine.js';
@@ -74,21 +76,27 @@ export async function runLevelTenFive() {
   ensureAmbience(plan?.apply ?? BALAK_SCENE.ambience ?? 'sanctumFinale');
   setSceneContext({ level: 'level10_5', phase: 'arrival' });
   setLifeBars(null);
+  switchMusic('secher belam ben beor-full.mp3');
 
   await showLevelTitle('Finaler Kampf -\nBalak, Schatten des Wortes');
   await fadeToBase(600);
 
   addProp(throneProps, { id: 'balakBoss', type: 'balakProcessCoreActive', align: 'ground', x: 332 });
+  const balakSpeechIntro = buildBalakSpeechOptions(throneProps);
 
-  await narratorSay('Balaks Schatten löst sich von seinem Leib. Schriftbahnen wüten wie Sturm.');
-  await donkeySay('Alle Worte stehen dir zu Diensten. Erwarte keine Gnade.');
-  await wizardSay('Ich spreche nur, was ich gelernt habe – und nichts anderes.');
-  await donkeySay('Dann sprich – und halte stand.');
+  await wizardSay('Balak, ich habe dich durchschaut. Dein Herz ist böse und mit Geld und Macht willst du mich auf deine Seite bringen.');
+  await donkeySay('Endlich hat er es kapiert.');
+  await wizardSay('Doch meine Kraft kommt von יהוה – ihm bin ich zur Treue verpflichtet.');
+  await propSay(throneProps, 'balakBoss', 'Ich bin der König von Moab, was denkst du, wer du bist?', balakSpeechIntro);
+  await donkeySay('Los sag es!');
+  await wizardSay('Ich bin Bileam, Sohn des Beor. Mit Worten kann ich Dinge bewegen. Die Welt gehorcht mir, wenn ich mich an die richtigen Worte benutze und dem Code des Schöpfers folge.');
+  await propSay(throneProps, 'balakBoss', 'Dann sind wir jetzt Feinde.', balakSpeechIntro);
 
   const outcome = await executeBalakFight(throneProps);
   if (outcome === 'win') {
-    await narratorSay('Balaks Schatten reisst. Sein Körper sinkt in den Riss aus Licht.');
-    await donkeySay('Der Stern bleibt – aber sein Griff ist gebrochen.');
+    await narratorSay('Balaks Schatten zerbricht. Purpurne Funken taumeln in das Sternenlicht und verglühen.');
+    await donkeySay('Siehst du, Meister? Sein Gold und seine Drohungen liegen wie Staub zu deinen Füßen.');
+    await divineSay('שמעת בקולי, בן בעור.\nDu hast auf meine Stimme gehört, Sohn des Beor.');
     await fadeToBlack(640);
     setLifeBars(null);
   }
@@ -126,33 +134,8 @@ async function executeBalakFight(sceneProps) {
         await wizardSay(event.text);
         break;
       case 'enemy': {
-        const balak = findProp(propsRef.current, 'balakBoss');
-        const bounds = getScenePropBounds('balakBoss');
-        const spriteHeight = bounds?.height ?? balak?.sprite?.height ?? 110;
-        const estimatedWidth = bounds?.width ?? balak?.sprite?.width ?? 138;
-        const offsetY = -Math.max(32, spriteHeight * 0.46);
-        const anchorXBalak = () => {
-          const liveBounds = getScenePropBounds('balakBoss');
-          if (liveBounds) {
-            return liveBounds.left + liveBounds.width / 2;
-          }
-          const baseLeft = balak?.x ?? wizard.x + 160;
-          return baseLeft + estimatedWidth / 2;
-        };
-        const anchorYBalak = () => {
-          const liveBounds = getScenePropBounds('balakBoss');
-          if (liveBounds) {
-            return liveBounds.top + Math.max(12, liveBounds.height * 0.12);
-          }
-          const baseY = balak?.y ?? wizard.y;
-          return baseY + Math.max(12, (balak?.sprite?.height ?? 0) * 0.12);
-        };
-        await propSay(propsRef.current, 'balakBoss', event.text, {
-          offsetY,
-          anchor: 'center',
-          anchorX: anchorXBalak,
-          anchorY: anchorYBalak,
-        });
+        const balakSpeech = buildBalakSpeechOptions(propsRef.current);
+        await propSay(propsRef.current, 'balakBoss', event.text, balakSpeech);
         break;
       }
       case 'ally':
@@ -187,11 +170,12 @@ async function executeBalakFight(sceneProps) {
   }
 
   if (result.winner === 'player') {
-    await donkeySay('Balak verstummt. Dein Wort bleibt, seiner vergeht.');
+    await donkeySay('Balak fällt stumm. Deine Worte bleiben unter יהוה.');
     return 'win';
   }
 
   const defeatAdvice = await handleFightDefeat(result.lastFailure);
+  await playBalakDefeatSequence(sceneProps);
   throw new LevelRetrySignal('level10_5', {
     message: 'level10_5_balak_defeat',
     hint: defeatAdvice?.suggestion ?? null,
@@ -224,26 +208,36 @@ async function handleFightDefeat(lastFailure) {
   setLifeBars(null);
   const word = lastFailure?.attackerWord;
   if (word) {
-    await narratorSay(`${word} zerreißt deine Verteidigung. Der Stern verfinstert sich.`);
+    await narratorSay(`${word} spaltet deine Treue. Sternenlicht sickert als Purpur aus dem Boden.`);
   } else {
-    await narratorSay('Balaks Schatten trifft dich. Die Sterne erloeschen.');
+    await narratorSay('Balaks Schatten umschlingt dich. Sternlicht kippt in schwarzen Rauch.');
   }
 
   const { stateKey, suggestion } = buildSuggestion(lastFailure);
   const stateLabel = stateKey ? describeState(stateKey) : null;
 
   if (stateLabel && suggestion) {
-    await donkeySay(`Merke dir das Muster: In ${stateLabel} antwortest du am besten mit ${suggestion}.`);
+    await donkeySay(`Merke dir das Muster, Meister: In ${stateLabel} antwortest du am besten mit ${suggestion}.`);
   } else if (suggestion) {
-    await donkeySay(`Versuche es beim nächsten Mal mit ${suggestion}.`);
+    await donkeySay(`Versuche es beim nächsten Mal mit ${suggestion}, Meister.`);
   } else {
-    await donkeySay('Beobachte seine Worte. Jeder Schatten folgt einem Muster.');
+    await donkeySay('Beobachte seine Worte, Meister. Jeder Schatten folgt einem Muster.');
   }
 
   return {
     suggestion: suggestion ?? null,
     stateKey: stateKey ?? null,
   };
+}
+
+async function playBalakDefeatSequence(sceneProps) {
+  setSceneContext({ level: 'level10_5', phase: 'defeat' });
+  const balakSpeech = buildBalakSpeechOptions(sceneProps);
+  await propSay(sceneProps, 'balakBoss', 'Siehst du, Sohn des Beor? Meine Gier frisst deine Treue.', balakSpeech);
+  await narratorSay('Purpurne Ketten umwinden den Altar. Sternenlicht sickert in schwarzes Glas.');
+  await donkeySay('Wir kehren zum Anfang zurück. Atme, erinnere dich, forme die Worte neu.');
+  await donkeySay('Nur wer hoert und wiederholt, zerreißt seinen Schatten. Wir beginnen von vorn.');
+  await divineSay('חזור לדברי ואקים אותך.\nKehre zu meinem Wort zurück, und ich richte dich auf.');
 }
 
 function buildSuggestion(lastFailure) {
@@ -302,4 +296,34 @@ function describeState(stateKey) {
     default:
       return null;
   }
+}
+
+function buildBalakSpeechOptions(sceneProps) {
+  const balak = findProp(sceneProps ?? [], 'balakBoss');
+  const bounds = getScenePropBounds('balakBoss');
+  const spriteHeight = bounds?.height ?? balak?.sprite?.height ?? 110;
+  const estimatedWidth = bounds?.width ?? balak?.sprite?.width ?? 138;
+  const offsetY = -Math.max(32, spriteHeight * 0.46);
+  const anchorXBalak = () => {
+    const liveBounds = getScenePropBounds('balakBoss');
+    if (liveBounds) {
+      return liveBounds.left + liveBounds.width / 2;
+    }
+    const baseLeft = balak?.x ?? wizard.x + 160;
+    return baseLeft + estimatedWidth / 2;
+  };
+  const anchorYBalak = () => {
+    const liveBounds = getScenePropBounds('balakBoss');
+    if (liveBounds) {
+      return liveBounds.top + Math.max(12, liveBounds.height * 0.12);
+    }
+    const baseY = balak?.y ?? wizard.y;
+    return baseY + Math.max(12, (balak?.sprite?.height ?? 0) * 0.12);
+  };
+  return {
+    offsetY,
+    anchor: 'center',
+    anchorX: anchorXBalak,
+    anchorY: anchorYBalak,
+  };
 }
