@@ -25,13 +25,27 @@ import {
   addProp,
   celebrateGlyph,
   propSay,
+  showLocationSign,
 } from './utils.js';
 
 const STAR_TERRACE_SCENE = {
   ambience: 'sanctumFinale',
   wizardStartX: 80,
   donkeyOffset: -36,
+  groundProfile: {
+    height: 24,
+    cutouts: [{ start: 540, end: 760 }],
+  },
   props: [
+    { id: 'starTerraceBackdrop', type: 'canyonMist', x: -120, align: 'ground', offsetY: -58, parallax: 0.42, layer: -3 },
+    { id: 'starTerraceFloor', type: 'borderProcessionPath', x: -60, align: 'ground', parallax: 0.5, layer: -2 },
+    { id: 'starTerraceGlyphRing', type: 'resonanceRingDormant', x: 40, align: 'ground', parallax: 0.7 },
+    { id: 'starTerraceTorchWest', type: 'watchFireDormant', x: 118, align: 'ground', parallax: 0.88 },
+    { id: 'starTerraceTorchEast', type: 'watchFireDormant', x: 548, align: 'ground', parallax: 1.12 },
+    { id: 'starTerraceSpireWest', type: 'basaltSpireTall', x: -30, align: 'ground', parallax: 0.74 },
+    { id: 'starTerraceSpireEast', type: 'basaltSpireShort', x: 70, align: 'ground', parallax: 0.78 },
+    { id: 'starTerraceCliff', type: 'vineyardBoundary', x: 592, align: 'ground', parallax: 1.14 },
+    { id: 'starTerraceChasm', type: 'canyonMist', x: 624, align: 'ground', offsetY: 16, parallax: 1.22, layer: 1 },
     { id: 'starTerraceOne', type: 'starShardDormant', x: 168, align: 'ground', parallax: 0.96 },
     { id: 'starTerraceTwo', type: 'starShardDormant', x: 316, align: 'ground', parallax: 0.98 },
     { id: 'starTerraceThree', type: 'starShardDormant', x: 464, align: 'ground', parallax: 1.0 },
@@ -44,7 +58,16 @@ const CROWN_SCENE = {
   ambience: 'sanctumFinale',
   wizardStartX: 92,
   donkeyOffset: -38,
+  groundProfile: {
+    height: 24,
+    cutouts: [{ start: 540, end: 760 }],
+  },
   props: [
+    { id: 'crownBackdrop', type: 'canyonMist', x: -80, align: 'ground', offsetY: -60, parallax: 0.38, layer: -3 },
+    { id: 'crownFloor', type: 'borderProcessionPath', x: -12, align: 'ground', parallax: 0.54, layer: -2 },
+    { id: 'crownAura', type: 'starShardDormant', x: 60, align: 'ground', parallax: 0.84 },
+    { id: 'crownTorchNorth', type: 'watchFireDormant', x: 132, align: 'ground', parallax: 0.82 },
+    { id: 'crownTorchSouth', type: 'watchFireDormant', x: 470, align: 'ground', parallax: 1.08 },
     { id: 'crownArcOne', type: 'lightCrownArcDormant', x: 216, align: 'ground', parallax: 0.94 },
     { id: 'crownArcTwo', type: 'lightCrownArcDormant', x: 272, align: 'ground', parallax: 0.95 },
     { id: 'crownArcThree', type: 'lightCrownArcDormant', x: 328, align: 'ground', parallax: 0.96 },
@@ -57,7 +80,15 @@ const VISION_SCENE = {
   ambience: 'sanctumFinale',
   wizardStartX: 90,
   donkeyOffset: -38,
+  groundProfile: {
+    height: 24,
+    cutouts: [{ start: 540, end: 760 }],
+  },
   props: [
+    { id: 'visionBackdrop', type: 'canyonMist', x: -140, align: 'ground', offsetY: -60, parallax: 0.4, layer: -3 },
+    { id: 'visionPath', type: 'borderProcessionPath', x: -20, align: 'ground', parallax: 0.58, layer: -2 },
+    { id: 'visionGlyphNorth', type: 'resonanceRingDormant', x: 80, align: 'ground', parallax: 0.8 },
+    { id: 'visionTorch', type: 'watchFireDormant', x: 518, align: 'ground', parallax: 1.1 },
     { id: 'visionAmalek', type: 'nationEchoDormant', x: 216, align: 'ground', parallax: 0.94 },
     { id: 'visionKenite', type: 'nationEchoDormant', x: 312, align: 'ground', parallax: 0.96 },
     { id: 'visionAsshur', type: 'nationEchoDormant', x: 408, align: 'ground', parallax: 0.98 },
@@ -69,7 +100,15 @@ const SHADOW_SCENE = {
   ambience: 'sanctumFinale',
   wizardStartX: 94,
   donkeyOffset: -36,
+  groundProfile: {
+    height: 24,
+    cutouts: [{ start: 520, end: 740 }],
+  },
   props: [
+    { id: 'shadowBackdrop', type: 'canyonMist', x: -100, align: 'ground', offsetY: -64, parallax: 0.36, layer: -3 },
+    { id: 'shadowFloor', type: 'borderProcessionPath', x: -32, align: 'ground', parallax: 0.48, layer: -2 },
+    { id: 'shadowSpill', type: 'resonanceRingDormant', x: 60, align: 'ground', parallax: 0.76 },
+    { id: 'shadowTorch', type: 'watchFireDormant', x: 520, align: 'ground', parallax: 1.1 },
     { id: 'shadowEchoNorth', type: 'shadowEchoDormant', x: 232, align: 'ground', parallax: 0.94 },
     { id: 'shadowEchoEast', type: 'shadowEchoDormant', x: 332, align: 'ground', parallax: 0.96 },
     { id: 'shadowEchoSouth', type: 'shadowEchoDormant', x: 432, align: 'ground', parallax: 0.98 },
@@ -81,7 +120,15 @@ const BRIDGE_SCENE = {
   ambience: 'sanctumFinale',
   wizardStartX: 92,
   donkeyOffset: -36,
+  groundProfile: {
+    height: 24,
+    cutouts: [{ start: 480, end: 760 }],
+  },
   props: [
+    { id: 'bridgeBackdrop', type: 'canyonMist', x: -120, align: 'ground', offsetY: -66, parallax: 0.34, layer: -3 },
+    { id: 'bridgeFloor', type: 'borderProcessionPath', x: -28, align: 'ground', parallax: 0.46, layer: -2 },
+    { id: 'bridgeStarTrail', type: 'resonanceRingDormant', x: 80, align: 'ground', parallax: 0.74 },
+    { id: 'bridgeTorchEast', type: 'watchFireDormant', x: 536, align: 'ground', parallax: 1.08 },
     { id: 'bridgeSegOne', type: 'starBridgeSegmentDormant', x: 148, align: 'ground', parallax: 0.92 },
     { id: 'bridgeSegTwo', type: 'starBridgeSegmentDormant', x: 214, align: 'ground', parallax: 0.94 },
     { id: 'bridgeSegThree', type: 'starBridgeSegmentDormant', x: 280, align: 'ground', parallax: 0.96 },
@@ -176,26 +223,31 @@ export async function runLevelTen() {
   setSceneContext({ level: 'level10', phase: 'terraces' });
   await showLevelTitle('Level 10 - Der Stern aus Jakob');
   await fadeToBase(600);
+  await showLocationSign(terraceProps, { id: 'signStarTerraces', x: 172, text: 'Bamot-Peor – Sternterrassen | במות פעור' });
 
   await phaseBalakAccusation(terraceProps);
   await phaseStarTerraces(terraceProps);
 
   const crownProps = cloneSceneProps(CROWN_SCENE.props);
   await transitionToScene(plan?.learn, CROWN_SCENE, crownProps, 'crown');
+  await showLocationSign(crownProps, { id: 'signStarCrown', x: 236, text: 'Krone des Sterns | כתר הכוכב' });
   await phaseStarCrown(crownProps);
 
   const visionProps = cloneSceneProps(VISION_SCENE.props);
   await transitionToScene(plan?.learn, VISION_SCENE, visionProps, 'visions');
+  await showLocationSign(visionProps, { id: 'signVisionField', x: 228, text: 'Visionen der Nationen | חזון הגויים' });
   await phaseNationVisions(visionProps);
 
   const shadowProps = cloneSceneProps(SHADOW_SCENE.props);
   await transitionToScene(plan?.learn, SHADOW_SCENE, shadowProps, 'shadows');
+  await showLocationSign(shadowProps, { id: 'signShadowRift', x: 240, text: 'Balaks Schattenriss | סדק הצל של בלק' });
   await phaseShadowRift(shadowProps);
 
   await phaseFirmamentWarning();
 
   const bridgeProps = cloneSceneProps(BRIDGE_SCENE.props);
   await transitionToScene(plan?.apply, BRIDGE_SCENE, bridgeProps, 'bridge');
+  await showLocationSign(bridgeProps, { id: 'signStarBridge', x: 220, text: 'Sternenbrücke | גשר הכוכבים' });
   await phaseStarBridge(bridgeProps);
 
   await narratorSay('Balaks Schatten flieht in den Palast der Worte. Der Stern bleibt als Schild hinter dir.');
@@ -207,6 +259,11 @@ async function phaseBalakAccusation(props) {
   await ensureWizardBesideBalak(props, 'balakStarFigure', { offset: -36, tolerance: 18 });
   await propSay(props, 'balakStarFigure', 'Ich habe dich gerufen, dass du meine Feinde verfluchst – und siehe, du hast sie dreimal gesegnet! Geh fort; ich wollte dich ehren, aber dein אלוהים verweigert es dir.', { anchor: 'center', offsetY: -30 });
   await wizardSay('Hab ich dir nicht gesagt? Gäbe mir Balak sein Haus voll Silber und Gold, ich könnte das Wort יהוה nicht übertreten, weder im Kleinen noch im Großen.');
+
+  addProp(props, { id: 'starTrailWestA', type: 'hoofSignTrail', x: wizard.x - 24, align: 'ground', parallax: 0.96 });
+  addProp(props, { id: 'starTrailWestB', type: 'hoofSignTrail', x: wizard.x - 56, align: 'ground', parallax: 0.94 });
+  addProp(props, { id: 'starTrailWestC', type: 'starShardDormant', x: wizard.x - 92, align: 'ground', parallax: 0.92 });
+  await donkeySay('Schau nach Westen. Die Sternsplitter warten dort auf dich – folge den Spuren zurück über den Pfad.');
 }
 
 async function phaseStarTerraces(props) {

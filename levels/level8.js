@@ -28,6 +28,7 @@ import {
   consumeSequenceTokens,
   divineSay,
   switchMusic,
+  showLocationSign,
 } from './utils.js';
 
 const BAMOT_TERRACE_SCENE = {
@@ -158,6 +159,7 @@ export async function runLevelEight() {
 
   const terraceProps = cloneSceneProps(BAMOT_TERRACE_SCENE.props);
   applySceneConfig({ ...BAMOT_TERRACE_SCENE, props: terraceProps });
+  await showLocationSign(terraceProps, { id: 'signBamot', x: 208, text: 'Bamot-Baal | במות בעל' });
   ensureAmbience(plan?.review ?? BAMOT_TERRACE_SCENE.ambience ?? 'desertTravel');
   setSceneContext({ level: 'level8', phase: 'terraces' });
   await showLevelTitle('Level 8 - Der erste Blick vom Bamot-Baal');

@@ -29,6 +29,7 @@ import {
   celebrateGlyph,
   propSay,
   divineSay,
+  playHeavenCurtainEffect,
 } from './utils.js';
 
 const PROCESSION_SCENE = {
@@ -193,6 +194,7 @@ async function phaseThirdResistance(props) {
     }
   }
   await wizardSay('לא... ich habe geirrt.');
+  await playHeavenCurtainEffect(props, { centerX: wizard.x + 20 });
   await narratorSay('Der Himmel öffnet sich. Du siehst den Engel klar vor dir.');
 }
 

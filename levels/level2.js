@@ -8,7 +8,6 @@ import {
   fadeToBase,
   showLevelTitle,
   setSceneProps,
-  getScenePropBounds,
   waitForWizardToReach,
 } from '../scene.js';
 import {
@@ -27,8 +26,9 @@ import {
   celebrateGlyph,
   divineSay,
 } from './utils.js';
-const RIVER_PROP_ID = RIVER_SCENE.props?.[0]?.id ?? 'riverPool';
-const RIVER_X = RIVER_SCENE.props?.[0]?.x ?? 620;
+const RIVER_EDGE_X = Number.isFinite(RIVER_SCENE.walkBounds?.max)
+  ? RIVER_SCENE.walkBounds.max
+  : 520;
 
 export async function runLevelTwo() {
   const plan = levelAmbiencePlan.level2;
@@ -65,7 +65,7 @@ async function phaseOneRecall(plan) {
 
     if (spellEquals(answer, 'or', 'אור')) {
       await celebrateGlyph(answer);
-      await narratorSay('Das Licht legt eine Spur nach draussen.');
+      await narratorSay('Das Licht legt eine Spur nach draußen.');
       break;
     }
 
@@ -84,9 +84,7 @@ async function phaseTravelToWater(plan, riverProps) {
   await transitionAmbience(plan?.learn ?? 'riverDawn', { fade: { toBlack: 120, toBase: 420 } });
   applySceneConfig({ ...RIVER_SCENE, props: riverProps }, { setAmbience: false, position: false });
   await donkeySay('Komm, Meister – geh weiter bis das Wasser direkt vor dir liegt.');
-  const bounds = getScenePropBounds(RIVER_PROP_ID);
-  const target = bounds ? bounds.left + bounds.width * 0.3 : RIVER_X;
-  await waitForWizardToReach(target, { tolerance: 14 });
+  await waitForWizardToReach(RIVER_EDGE_X, { tolerance: 14 });
   await narratorSay('Jetzt rauscht der Fluss zu deinen Füßen.');
 }
 

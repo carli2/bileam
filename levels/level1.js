@@ -98,7 +98,7 @@ async function levelOneLearning(plan, hutProps = null) {
         }
       }
       await celebrateGlyph(answer);
-      await narratorSay('Staub faengt an zu glimmen und die Öllampe flammt auf.');
+      await narratorSay('Staub fängt an zu glimmen und die Öllampe flammt auf.');
       await donkeySay('Oho! Das war hell!');
       await wizardSay('Das Wort fühlt sich warm an... wie eine Flamme in der Hand.');
       await wizardSay('אור (aor)');
@@ -143,7 +143,7 @@ async function levelOneDoorSequence(plan) {
   await showLevelTitle('אור', 2600);
   await narratorSay('Das Wort אור steht wie ein Feuer über dem Eingang, ohne dass du es noch einmal sprichst.');
   await narratorSay('Du spürst, wie der Morgen hereinsickert.');
-  await donkeySay('Da draussen wartet der Tag.');
+  await donkeySay('Da draußen wartet der Tag.');
   await narratorSay('Ein warmer Morgen wartet vor der Tür.');
   await fadeToBlack(600);
 }

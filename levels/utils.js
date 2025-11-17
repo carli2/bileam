@@ -8,7 +8,12 @@ import {
   showGlyphReveal,
   pushCameraFocus,
   popCameraFocus,
+  setGroundProfile,
+  setWalkBounds,
+  sceneColors,
 } from '../scene.js';
+import { Sprite } from '../retroBlitter.js';
+import { layoutText, createTextRenderer } from '../graphics.js';
 import { switchMusicTrack } from '../musicPlayer.js';
 
 /*
@@ -375,6 +380,63 @@ export function propSay(props, id, text, options = {}) {
   return say(anchorX, anchorY, text);
 }
 
+export async function showLocationSign(props, { id, x, text, align = 'ground', parallax = 0.9, offsetY = 0 } = {}) {
+  if (!props || !id || !text || typeof x !== 'number') return;
+  const sprite = createLocationSignSprite(text);
+  const leftX = Math.round(x - sprite.width / 2);
+  addProp(props, { id, sprite, x: leftX, align, parallax, offsetY });
+}
+
+export async function playHeavenCurtainEffect(props, { centerX = actorCenterX(wizard), offsetY = -72, duration = 900 } = {}) {
+  if (!props) return;
+  const leftId = `fxCurtainLeft_${Date.now()}`;
+  const rightId = `fxCurtainRight_${Date.now()}`;
+  const lightId = `fxCurtainLight_${Date.now()}`;
+  addProp(props, { id: leftId, type: 'canyonMist', x: centerX - 24, align: 'ground', offsetY, parallax: 0.6, layer: -1 });
+  addProp(props, { id: rightId, type: 'canyonMist', x: centerX + 24, align: 'ground', offsetY, parallax: 0.62, layer: -1 });
+  addProp(props, { id: lightId, type: 'starShardAwakened', x: centerX - 8, align: 'ground', offsetY: offsetY + 48, parallax: 0.9 });
+  const steps = 6;
+  for (let i = 0; i <= steps; i += 1) {
+    const progress = i / steps;
+    updateProp(props, leftId, { x: centerX - 24 - progress * 120 });
+    updateProp(props, rightId, { x: centerX + 24 + progress * 120 });
+    await sleep(duration / steps);
+  }
+  updateProp(props, leftId, null);
+  updateProp(props, rightId, null);
+  await sleep(260);
+  updateProp(props, lightId, null);
+}
+
+export async function showFloatingRunes(props, { x = actorCenterX(wizard), y = wizard.y - 48, letters = ['ש', 'מ', 'ע'], duration = 1200 } = {}) {
+  if (!props || !Array.isArray(letters) || letters.length === 0) return;
+  const ids = [];
+  const totalWidth = letters.length * 14;
+  letters.forEach((letter, index) => {
+    const id = `fxRune${Date.now()}_${index}`;
+    ids.push(id);
+    addProp(props, {
+      id,
+      type: 'truthFragment',
+      x: x - totalWidth / 2 + index * 14,
+      y: y - index * 4,
+      parallax: 0.96,
+      letter,
+    });
+  });
+  const steps = 6;
+  for (let step = 0; step <= steps; step += 1) {
+    const progress = step / steps;
+    ids.forEach((id, index) => {
+      updateProp(props, id, {
+        y: y - index * 4 - progress * 26,
+      });
+    });
+    await sleep(duration / steps);
+  }
+  ids.forEach(id => updateProp(props, id, null));
+}
+
 export function updateProp(list, id, changes) {
   if (!Array.isArray(list)) return;
   const index = list.findIndex(entry => entry.id === id);
@@ -442,11 +504,20 @@ export function addProp(list, definition) {
 
 export const RIVER_SCENE = {
   ambience: 'riverDawn',
-  wizardStartX: 96,
-  donkeyOffset: -36,
-  props: [
-    { id: 'riverPool', type: 'water', x: 620 },
-  ],
+  wizardStartX: 82,
+  donkeyOffset: -32,
+  walkBounds: { max: 520 },
+  groundProfile: {
+    height: 22,
+    segments: [
+      { end: 440, height: 22, type: 'grass' },
+      { start: 440, end: 480, height: 21, type: 'sand' },
+      { start: 480, end: 700, height: 22, type: 'water' },
+      { start: 700, end: 740, height: 21, type: 'sand' },
+      { start: 740, height: 22, type: 'grass' },
+    ],
+  },
+  props: [],
 };
 
 export const CANYON_SCENE = {
@@ -518,7 +589,21 @@ export function applySceneConfig(config, options = {}) {
     setAmbience: useAmbience = true,
     position = true,
     props = true,
+    preserveGroundProfile = false,
+    preserveWalkBounds = false,
   } = options;
+
+  if (config.groundProfile) {
+    setGroundProfile(config.groundProfile);
+  } else if (!preserveGroundProfile) {
+    setGroundProfile(null);
+  }
+
+  if (config.walkBounds) {
+    setWalkBounds(config.walkBounds);
+  } else if (!preserveWalkBounds) {
+    setWalkBounds(null);
+  }
 
   if (props !== false && Array.isArray(config.props)) {
     setSceneProps(config.props);
@@ -550,3 +635,166 @@ export function cloneSceneProps(definitions = []) {
 }
 
 export { wizard, donkey } from '../scene.js';
+const SIGN_CACHE = new Map();
+const SIGN_TEXT_RENDERER = createTextRenderer(sceneColors);
+const SIGN_TEXT_ADVANCE = SIGN_TEXT_RENDERER.width + SIGN_TEXT_RENDERER.spacing;
+const SIGN_LINE_HEIGHT = SIGN_TEXT_RENDERER.height + SIGN_TEXT_RENDERER.lineSpacing;
+
+function createLocationSignSprite(rawText) {
+  const label = String(rawText ?? '').trim();
+  if (SIGN_CACHE.has(label)) {
+    return SIGN_CACHE.get(label);
+  }
+
+  const [latinRaw, hebrewRaw] = label.split('|').map(part => part.trim());
+  const latinText = (latinRaw ?? '').toUpperCase();
+  const hebrewText = hebrewRaw ?? '';
+
+  const charWidth = 5;
+  const charHeight = 7;
+  const spacing = 1;
+  const latinSanitized = latinText;
+  const hebrewSanitized = hebrewText.replace(/[^\u0590-\u05FF ]/g, ' ');
+  const latinLength = latinSanitized.length;
+  const hebrewLength = hebrewSanitized.length;
+  const latinWidth = Math.max(0, latinLength * (charWidth + spacing) - spacing);
+  const hebrewWidth = Math.max(0, hebrewLength * (charWidth + spacing) - spacing);
+  const textWidth = Math.max(latinWidth, hebrewWidth);
+  const boardWidth = Math.max(48, textWidth + 16);
+  const boardHeight = hebrewLength > 0 ? 24 : 18;
+  const arrowWidth = 10;
+  const poleHeight = 10;
+  const border = 2;
+  const width = boardWidth + arrowWidth + border * 2;
+  const height = boardHeight + poleHeight + border * 2;
+  const pixels = new Uint8Array(width * height).fill(sceneColors.transparent);
+
+  const boardFill = sceneColors.hutCover;
+  const boardBorder = sceneColors.hutWood;
+  const poleColor = sceneColors.hutWood;
+  const textColor = sceneColors.textPrimary;
+  const arrowColor = sceneColors.wizardBelt;
+
+  const boardTop = border;
+  const boardLeft = border;
+  const boardRight = boardLeft + boardWidth;
+  const boardBottom = boardTop + boardHeight;
+  const poleWidth = 3;
+  const poleX = Math.round(boardLeft + boardWidth / 2 - poleWidth / 2);
+
+  const setPixel = (px, py, color) => {
+    if (px < 0 || py < 0 || px >= width || py >= height) return;
+    pixels[py * width + px] = color;
+  };
+
+  for (let y = boardBottom; y < height; y += 1) {
+    for (let x = poleX; x < poleX + poleWidth; x += 1) {
+      setPixel(x, y, poleColor);
+    }
+  }
+
+  for (let y = boardTop; y < boardBottom; y += 1) {
+    for (let x = boardLeft; x < boardRight; x += 1) {
+      const color = (y === boardTop || y === boardBottom - 1 || x === boardLeft || x === boardRight - 1)
+        ? boardBorder
+        : boardFill;
+      setPixel(x, y, color);
+    }
+  }
+
+  const centerRow = boardTop + Math.floor((boardBottom - boardTop) / 2);
+  for (let y = boardTop; y < boardBottom; y += 1) {
+    const delta = Math.abs(y - centerRow);
+    const span = Math.max(0, arrowWidth - delta * 2);
+    for (let x = boardRight; x < boardRight + span; x += 1) {
+      setPixel(x, y, arrowColor);
+    }
+  }
+
+  const latinBaseline = boardTop + 3;
+  if (latinSanitized) {
+    drawTextWithLayout({
+      text: latinSanitized,
+      baseline: latinBaseline,
+      boardLeft,
+      boardWidth,
+      pixels,
+      canvasWidth: width,
+      canvasHeight: height,
+      rtl: false,
+    });
+  }
+  if (hebrewSanitized) {
+    const hebrewBaseline = boardTop + charHeight + 5;
+    drawTextWithLayout({
+      text: hebrewSanitized,
+      baseline: hebrewBaseline,
+      boardLeft,
+      boardWidth,
+      pixels,
+      canvasWidth: width,
+      canvasHeight: height,
+      rtl: true,
+    });
+  }
+
+  const sprite = new Sprite(width, height, pixels);
+  SIGN_CACHE.set(label, sprite);
+  return sprite;
+}
+
+function drawTextWithLayout({
+  text,
+  baseline,
+  boardLeft,
+  boardWidth,
+  pixels,
+  canvasWidth,
+  canvasHeight,
+  rtl = false,
+}) {
+  if (!text) return;
+  const glyphWidth = SIGN_TEXT_RENDERER.width ?? 5;
+  const glyphSpacing = SIGN_TEXT_RENDERER.spacing ?? 1;
+  const charAdvance = glyphWidth + glyphSpacing;
+  const wrapLimit = Math.max(1, Math.floor((boardWidth - 6) / Math.max(1, charAdvance)));
+  const {
+    sequence = [],
+    lineLengths = [],
+    lineDirections = [],
+  } = layoutText(text, SIGN_TEXT_RENDERER, wrapLimit, {
+    forceDirection: rtl ? 'rtl' : 'ltr',
+    reverseHebrewInMixedLines: false,
+  });
+  if (sequence.length === 0) return;
+  for (const entry of sequence) {
+    const glyph = SIGN_TEXT_RENDERER.glyphs[entry.char];
+    if (!glyph) continue;
+    const lineLength = lineLengths[entry.line] ?? 0;
+    const totalWidth = lineLength > 0 ? lineLength * charAdvance - glyphSpacing : 0;
+    const centered = boardLeft + Math.max(0, Math.round((boardWidth - totalWidth) / 2));
+    const isLineRtl = lineDirections[entry.line] ?? false;
+    const destX = isLineRtl
+      ? centered + totalWidth - glyphWidth - entry.column * charAdvance
+      : centered + entry.column * charAdvance;
+    const destY = baseline + entry.line * SIGN_LINE_HEIGHT;
+    blitGlyphOntoPixels(glyph, pixels, canvasWidth, canvasHeight, destX, destY);
+  }
+}
+
+function blitGlyphOntoPixels(sprite, pixels, targetWidth, targetHeight, destX, destY) {
+  if (!sprite) return;
+  const transparent = sceneColors.transparent;
+  for (let sy = 0; sy < sprite.height; sy += 1) {
+    const targetY = destY + sy;
+    if (targetY < 0 || targetY >= targetHeight) continue;
+    const rowOffset = targetY * targetWidth;
+    for (let sx = 0; sx < sprite.width; sx += 1) {
+      const targetX = destX + sx;
+      if (targetX < 0 || targetX >= targetWidth) continue;
+      const color = sprite.pixels[sy * sprite.width + sx];
+      if (color === transparent) continue;
+      pixels[rowOffset + targetX] = color;
+    }
+  }
+}

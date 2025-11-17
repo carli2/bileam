@@ -10,6 +10,8 @@ const BLACKLIST = [
   'a\u0308',
   'o\u0308',
   'u\u0308',
+  'faengt',
+  'draussen',
 ];
 
 function collectFiles(dir, filter) {

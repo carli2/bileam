@@ -63,6 +63,7 @@ const canvas = document.getElementById('screen');
 const ctx = canvas.getContext('2d');
 
 const { palette, colors } = createPalette();
+export const sceneColors = colors;
 const retroPalette = new RetroPalette(palette);
 const buffer = new RetroBuffer(WIDTH, HEIGHT, retroPalette);
 const paletteFader = createPaletteFader(retroPalette, colors.transparent);
@@ -78,7 +79,56 @@ const sceneState = {
   skipRequested: false,
   skipReason: null,
   pendingSkipReason: null,
+  groundProfile: { height: GROUND_HEIGHT, cutouts: [] },
+  walkBounds: { min: -Infinity, max: Infinity },
 };
+
+function getGroundHeight() {
+  const height = sceneState.groundProfile?.height;
+  if (!Number.isFinite(height)) {
+    return GROUND_HEIGHT;
+  }
+  return Math.max(2, Math.min(HEIGHT, Math.round(height)));
+}
+
+export function setGroundProfile(profile) {
+  if (!profile) {
+    sceneState.groundProfile = { height: GROUND_HEIGHT, segments: [] };
+    return;
+  }
+  const height = Number.isFinite(profile.height) ? Math.max(2, Math.min(HEIGHT, Math.round(profile.height))) : GROUND_HEIGHT;
+  const segments = Array.isArray(profile.segments)
+    ? profile.segments
+        .map(segment => {
+          const start = Number.isFinite(segment?.start) ? segment.start : -Infinity;
+          const end = Number.isFinite(segment?.end) ? segment.end : Infinity;
+          if (!(end > start)) return null;
+          const normalized = { start, end };
+          if (Number.isFinite(segment?.height)) {
+            normalized.height = Math.max(2, Math.min(HEIGHT, Math.round(segment.height)));
+          }
+          if (typeof segment?.type === 'string') {
+            normalized.type = segment.type;
+          }
+          if (segment?.palette && typeof segment.palette === 'object') {
+            normalized.palette = { ...segment.palette };
+          }
+          return normalized;
+        })
+        .filter(Boolean)
+    : [];
+  sceneState.groundProfile = { height, segments };
+}
+
+export function setWalkBounds(bounds) {
+  if (!bounds) {
+    sceneState.walkBounds = { min: -Infinity, max: Infinity };
+    return;
+  }
+  const min = Number.isFinite(bounds.min) ? bounds.min : -Infinity;
+  const max = Number.isFinite(bounds.max) ? bounds.max : Infinity;
+  sceneState.walkBounds = { min, max };
+}
 
 const hudState = {
   player: null,
@@ -721,6 +771,7 @@ function initSprites() {
   propSprites.gardenBreadLight = createGardenBreadLightSprite(colors);
   propSprites.golemGuardian = createGolemGuardianSprite(colors);
   propSprites.marketBackdrop = createMarketBackdropSprite(colors);
+  propSprites.campTent = createCampTentSprite(colors);
   propSprites.marketStall = createMarketStallSprite(colors);
   propSprites.marketBanner = createMarketBannerSprite(colors);
   propSprites.scribeBooth = createScribeBoothSprite(colors);
@@ -962,6 +1013,7 @@ function updateWizard(delta) {
 
   wizard.x += wizard.vx * delta;
   wizard.y += wizard.vy * delta;
+  clampWizardToBounds();
 
   const ground = HEIGHT - GROUND_HEIGHT - wizard.sprites.right.height;
   if (wizard.y >= ground) {
@@ -1007,6 +1059,24 @@ function updateClouds(delta, time) {
       cloud.x -= span;
     }
     cloud.y = cloud.baseY + Math.sin(time * 0.0006 + cloud.phase) * 4;
+  }
+}
+
+function clampWizardToBounds() {
+  const bounds = sceneState.walkBounds;
+  if (!bounds) return;
+  const min = Number.isFinite(bounds.min) ? bounds.min : -Infinity;
+  const max = Number.isFinite(bounds.max) ? bounds.max : Infinity;
+  if (wizard.x < min) {
+    wizard.x = min;
+    if (wizard.vx < 0) {
+      wizard.vx = 0;
+    }
+  } else if (wizard.x > max) {
+    wizard.x = max;
+    if (wizard.vx > 0) {
+      wizard.vx = 0;
+    }
   }
 }
 
@@ -1126,7 +1196,7 @@ function drawHills() {
   if (!ambience.features?.hills) return;
   const hillColors = ambience.hills ?? { light: colors.hillLight, shadow: colors.hillShadow };
   const pixels = buffer.pixels;
-  const horizon = HEIGHT - GROUND_HEIGHT - 1;
+  const horizon = HEIGHT - getGroundHeight() - 1;
   const parallax = cameraX * 0.6;
   for (let x = 0; x < WIDTH; x++) {
     const worldX = parallax + x;
@@ -1144,89 +1214,126 @@ function drawTerrain() {
   const ambience = getCurrentAmbience();
   const ground = ambience.ground ?? { type: 'grass' };
   const pixels = buffer.pixels;
-  const grassStart = HEIGHT - GROUND_HEIGHT;
+  const defaultHeight = Math.max(2, Math.min(HEIGHT, sceneState.groundProfile?.height ?? GROUND_HEIGHT));
   const worldOffset = Math.floor(cameraX);
+  const segments = Array.isArray(sceneState.groundProfile?.segments) ? sceneState.groundProfile.segments : [];
+  const findSegment = worldX => segments.find(segment => worldX >= segment.start && worldX < segment.end) ?? null;
+  const clampHeight = value => Math.max(2, Math.min(HEIGHT, Math.round(value)));
+  const defaultType = ground.type ?? 'grass';
 
-  switch (ground.type) {
-    case 'grass': {
-      const palette = ground.colors ?? {
-        bright: colors.grassBright,
-        dark: colors.grassDark,
-        shadow: colors.grassShadow,
-        soil: colors.dirt,
-        soilDeep: colors.dirtDeep,
-      };
-      for (let y = grassStart; y < HEIGHT; y++) {
-        const rowStart = y * WIDTH;
+  const paletteResolvers = {
+    grass: () => ({
+      bright: ground.colors?.bright ?? colors.grassBright,
+      dark: ground.colors?.dark ?? colors.grassDark,
+      shadow: ground.colors?.shadow ?? colors.grassShadow,
+      soil: ground.colors?.soil ?? colors.dirt,
+      soilDeep: ground.colors?.soilDeep ?? ground.colors?.soil ?? colors.dirtDeep,
+    }),
+    floor: () => ({
+      base: ground.color ?? colors.dirt,
+      accent: ground.highlight ?? ground.color ?? colors.dirt,
+    }),
+    sand: () => ({
+      base: ground.color ?? colors.desertSand ?? colors.dirt,
+      accent: ground.highlight ?? colors.dirt,
+    }),
+    stone: () => ({
+      base: ground.color ?? colors.caveStone ?? colors.hillShadow,
+      accent: ground.highlight ?? colors.hillLight,
+    }),
+    water: () => ({
+      surface: colors.riverWater ?? colors.dawnSkyMid,
+      deep: colors.dawnSkyBottom ?? colors.skyBottom,
+    }),
+    default: () => ({
+      base: ground.color ?? colors.dirt,
+      accent: ground.highlight ?? colors.dirtDeep,
+    }),
+  };
+
+  const getPalette = (type, override) => {
+    const resolver = paletteResolvers[type] ?? paletteResolvers.default;
+    const base = resolver();
+    if (override && typeof override === 'object') {
+      return { ...base, ...override };
+    }
+    return base;
+  };
+
+  const renderers = {
+    grass: (x, worldX, startY, palette) => {
+      const noiseA = Math.sin(worldX * 0.035);
+      for (let y = startY; y < HEIGHT; y++) {
+        const idx = y * WIDTH + x;
         const layer = HEIGHT - y;
-        for (let x = 0; x < WIDTH; x++) {
-          const idx = rowStart + x;
-          const worldX = worldOffset + x;
-          if (layer >= 6) {
-            const wave = Math.sin(worldX * 0.045);
-            if (wave > 0.3) {
-              pixels[idx] = palette.bright;
-            } else if (wave < -0.3) {
-              pixels[idx] = palette.dark;
-            } else {
-              pixels[idx] = palette.shadow;
-            }
-          } else if (layer >= 4) {
-            pixels[idx] = palette.shadow;
+        if (layer >= 6) {
+          const noiseB = Math.sin((worldX + y * 1.7) * 0.06);
+          const blend = (noiseA + noiseB) * 0.5;
+          if (blend > 0.25) {
+            pixels[idx] = palette.bright;
+          } else if (blend < -0.25) {
+            pixels[idx] = palette.dark;
           } else {
-            const pattern = ((worldX + y) & 1) === 0;
-            pixels[idx] = pattern ? (palette.soil ?? colors.dirt) : (palette.soilDeep ?? palette.soil ?? colors.dirtDeep);
+            pixels[idx] = palette.shadow;
           }
+        } else if (layer >= 4) {
+          const ripple = Math.sin((worldX - y * 2.1) * 0.08);
+          pixels[idx] = ripple > 0 ? palette.shadow : palette.dark;
+        } else {
+          const pattern = ((worldX ^ y) & 3) === 0;
+          pixels[idx] = pattern ? (palette.soil ?? colors.dirt) : (palette.soilDeep ?? palette.soil ?? colors.dirtDeep);
         }
       }
-      break;
-    }
-    case 'floor': {
-      const base = ground.color ?? colors.dirt;
-      const accent = ground.highlight ?? base;
-      for (let y = grassStart; y < HEIGHT; y++) {
-        const rowStart = y * WIDTH;
-        for (let x = 0; x < WIDTH; x++) {
-          const idx = rowStart + x;
-          const pattern = ((x >> 2) + y) & 1;
-          pixels[idx] = pattern ? base : accent;
-        }
+    },
+    floor: (x, worldX, startY, palette) => {
+      for (let y = startY; y < HEIGHT; y++) {
+        const idx = y * WIDTH + x;
+        const pattern = ((worldX ^ y) & 1) === 0;
+        pixels[idx] = pattern ? palette.base : (palette.accent ?? palette.base);
       }
-      break;
-    }
-    case 'sand': {
-      const base = ground.color ?? colors.desertSand ?? colors.dirt;
-      const accent = ground.highlight ?? colors.dirt;
-      for (let y = grassStart; y < HEIGHT; y++) {
-        const rowStart = y * WIDTH;
-        for (let x = 0; x < WIDTH; x++) {
-          const idx = rowStart + x;
-          const pattern = ((x + (y << 1)) & 3) === 0;
-          pixels[idx] = pattern ? accent : base;
-        }
+    },
+    sand: (x, worldX, startY, palette) => {
+      for (let y = startY; y < HEIGHT; y++) {
+        const idx = y * WIDTH + x;
+        const pattern = ((worldX + y) & 3) === 0;
+        pixels[idx] = pattern ? palette.accent : palette.base;
       }
-      break;
-    }
-    case 'stone': {
-      const base = ground.color ?? colors.caveStone ?? colors.hillShadow;
-      const accent = ground.highlight ?? colors.hillLight;
-      for (let y = grassStart; y < HEIGHT; y++) {
-        const rowStart = y * WIDTH;
-        for (let x = 0; x < WIDTH; x++) {
-          const idx = rowStart + x;
-          const pattern = ((x ^ y) & 3) === 0;
-          pixels[idx] = pattern ? accent : base;
-        }
+    },
+    stone: (x, worldX, startY, palette) => {
+      for (let y = startY; y < HEIGHT; y++) {
+        const idx = y * WIDTH + x;
+        const pattern = ((worldX ^ y) & 3) === 0;
+        pixels[idx] = pattern ? palette.accent : palette.base;
       }
-      break;
-    }
-    default: {
-      const base = ground.color ?? colors.dirt;
-      for (let y = grassStart; y < HEIGHT; y++) {
-        const rowStart = y * WIDTH;
-        pixels.fill(base, rowStart, rowStart + WIDTH);
+    },
+    water: (x, worldX, startY, palette) => {
+      const depth = HEIGHT - startY;
+      for (let y = startY; y < HEIGHT; y++) {
+        const idx = y * WIDTH + x;
+        const factor = depth > 0 ? (y - startY) / depth : 0;
+        pixels[idx] = factor > 0.5 ? (palette.deep ?? colors.dawnSkyBottom) : (palette.surface ?? colors.riverWater ?? colors.dawnSkyMid);
       }
-    }
+    },
+    default: (x, worldX, startY, palette) => {
+      for (let y = startY; y < HEIGHT; y++) {
+        const idx = y * WIDTH + x;
+        const pattern = ((worldX ^ y) & 2) === 0;
+        pixels[idx] = pattern ? palette.base : (palette.accent ?? palette.base);
+      }
+    },
+  };
+
+  const defaultRenderer = renderers[defaultType] ?? renderers.default;
+  for (let x = 0; x < WIDTH; x++) {
+    const worldX = worldOffset + x;
+    const segment = findSegment(worldX);
+    const type = segment?.type ?? defaultType;
+    const renderer = renderers[type] ?? defaultRenderer;
+    const height = clampHeight(segment?.height ?? defaultHeight);
+    const startY = HEIGHT - height;
+    const paletteOverride = segment?.palette ?? null;
+    const palette = getPalette(type, paletteOverride);
+    renderer(x, worldX, startY, palette);
   }
 }
 
@@ -3269,13 +3376,21 @@ function createCanyonMistSprite(c) {
   const pixels = new Uint8Array(width * height);
   const base = c.dawnSkyMid ?? c.hillLight;
   const shadow = c.caveStone ?? c.hillShadow;
+  const transparent = c.transparent ?? 0;
 
   for (let y = 0; y < height; y++) {
     const alpha = 1 - y / height;
     for (let x = 0; x < width; x++) {
       const idx = y * width + x;
       const noise = Math.sin((x + y * 3) * 0.08) * 0.5 + Math.sin((x - y * 2) * 0.04) * 0.3;
-      pixels[idx] = noise * alpha > 0.2 ? base : shadow;
+      const density = alpha * 0.7 + noise * 0.2;
+      if (density < 0.25) {
+        pixels[idx] = transparent;
+      } else if (density > 0.65) {
+        pixels[idx] = base;
+      } else {
+        pixels[idx] = shadow;
+      }
     }
   }
 
@@ -3765,7 +3880,7 @@ function handleVirtualKeyPress(key, displayLabel) {
 }
 
 function groundLineFor(sprite) {
-  return HEIGHT - GROUND_HEIGHT - sprite.height;
+  return HEIGHT - getGroundHeight() - sprite.height;
 }
 
 ambiencePresets = createAmbiencePresets(colors);
@@ -3786,6 +3901,25 @@ function createVineyardBoundarySprite(c) {
     '.': c.transparent,
     'a': c.dirt,
     'A': c.dirtDeep,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createCampTentSprite(c) {
+  const art = [
+    '.....AAA.....',
+    '....AaaA.....',
+    '...AAAAAAA...',
+    '..Aaaaaaaa...',
+    '..AAAAAAAA...',
+    '.....||......',
+  ];
+  const legend = {
+    '.': c.transparent,
+    ' ': c.transparent,
+    'A': c.hutCover,
+    'a': c.hutRug,
+    '|': c.dirt,
   };
   return spriteFromStrings(art, legend);
 }
