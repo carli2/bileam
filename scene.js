@@ -1538,6 +1538,14 @@ function createAmbiencePresets(c) {
       features: { clouds: false, hills: false },
       ground: { type: 'floor', color: c.towerGlass, highlight: c.sanctumSky },
     },
+    voidFinale: {
+      key: 'voidFinale',
+      label: 'Weißes Sanctum',
+      location: 'sanctum',
+      sky: solid(c.textPrimary),
+      features: { clouds: false, hills: false },
+      ground: { type: 'floor', color: c.textPrimary, highlight: c.textPrimary },
+    },
   };
 }
 
@@ -1599,6 +1607,11 @@ function createLevelSceneMap() {
       apply: 'sanctumFinale',
     },
     level11: {
+      review: 'voidFinale',
+      learn: 'voidFinale',
+      apply: 'voidFinale',
+    },
+    level12: {
       review: 'voidFinale',
       learn: 'voidFinale',
       apply: 'voidFinale',

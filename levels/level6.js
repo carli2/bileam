@@ -337,6 +337,7 @@ async function phaseMorningRefusal(props) {
   await propSay(props, 'petorEnvoyEast', 'Bileam, der König schwört bei seinem Thron: Er macht dich reich, wenn du nur kommst.', { anchor: 'center' });
   await propSay(props, 'petorEnvoySouth', 'Goldene Schalen, Purpur und Silber – alles liegt bereit. Verweigere uns nicht länger.', { anchor: 'center' });
   await wizardSay('לא. Geht hin in euer Land. יהוה (JHWH – Gott) wills nicht gestatten, dass ich mit euch ziehe.');
+  await wizardSay('Selbst wenn Balak mir sein Haus voll Silber und Gold gäbe, würde ich kein Wort יהוהs brechen.');
   await celebrateGlyph('לא');
   updateProp(props, 'petorGift', { type: 'temptationVesselAshes' });
   await narratorSay('Die Gabe verglimmt zu Staub.');

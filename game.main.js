@@ -28,6 +28,8 @@ import { runLevelEight } from './levels/level8.js';
 import { runLevelNine } from './levels/level9.js';
 import { runLevelTen } from './levels/level10.js';
 import { runLevelTenFive } from './levels/level10_5.js';
+import { runLevelEleven } from './levels/level11.js';
+import { runLevelTwelve } from './levels/level12.js';
 
 const LEVELS = [
   { id: 'level1', run: runLevelOne },
@@ -42,6 +44,8 @@ const LEVELS = [
   { id: 'level9', run: runLevelNine },
   { id: 'level10', run: runLevelTen },
   { id: 'level10_5', run: runLevelTenFive },
+  { id: 'level11', run: runLevelEleven },
+  { id: 'level12', run: runLevelTwelve },
 ];
 
 const STORAGE_KEY = 'bileamProgress';
@@ -76,38 +80,47 @@ async function mainFlow() {
   setLifeBars(null);
   await fadeToBase(1500);
   const progress = loadProgress();
-  let endingState = 'completed';
 
-  for (let index = 0; index < LEVELS.length; index++) {
-    const entry = LEVELS[index];
-    let levelStatus;
-    do {
-      levelStatus = await runLevel(entry, index, progress);
-      if (levelStatus === 'restart') {
-        continue;
-      }
+  while (true) {
+    let endingState = 'completed';
+    let cycleAborted = false;
+
+    for (let index = 0; index < LEVELS.length; index++) {
+      const entry = LEVELS[index];
+      let levelStatus;
+      do {
+        levelStatus = await runLevel(entry, index, progress);
+        if (levelStatus === 'restart') {
+          continue;
+        }
+        if (levelStatus === 'completed') {
+          endingState = entry.id === 'level12' ? 'credits' : 'completed';
+          if (progress.highestLevel < index) {
+            progress.highestLevel = index;
+            progress.known = true;
+            saveProgress(progress);
+          }
+        }
+        break;
+      } while (levelStatus === 'restart');
+
       if (levelStatus === 'skipNext') {
         if (index === LEVELS.length - 1) {
           endingState = 'skip';
+          cycleAborted = true;
+          break;
         }
-        break;
+        continue;
       }
-      if (levelStatus === 'completed') {
-        endingState = 'completed';
-        if (progress.highestLevel < index) {
-          progress.highestLevel = index;
-          progress.known = true;
-          saveProgress(progress);
-        }
-      }
-    } while (levelStatus === 'restart');
-
-    if (levelStatus === 'skipNext' && endingState === 'skip') {
-      break;
     }
-  }
 
-  await showEndingScreen(endingState);
+    if (endingState === 'credits' && !cycleAborted) {
+      continue;
+    }
+
+    await showEndingScreen(endingState);
+    break;
+  }
 }
 
 async function runLevel(entry, index, progress) {
