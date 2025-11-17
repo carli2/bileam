@@ -57,9 +57,10 @@ const MOAB_APPROACH_SCENE = {
     { id: 'balakWallFigure', type: 'balakFigure', x: 184, align: 'ground', parallax: 1.06 },
     { id: 'balakAdvisor', type: 'balakAdvisor', x: 142, align: 'ground', parallax: 1.02 },
     { id: 'israelCampGlow', type: 'hoofSignTrail', x: 708, align: 'ground', offsetY: 36, parallax: 1.18, layer: -1 },
+    { id: 'israelCentralCanopy', type: 'campTentCanopy', x: 648, align: 'ground', offsetY: 28, parallax: 1, layer: -1 },
+    { id: 'israelCentralCluster', type: 'campTentCluster', x: 708, align: 'ground', offsetY: 32, parallax: 1.04, layer: -1 },
     { id: 'israelTentOne', type: 'campTent', x: 600, align: 'ground', offsetY: 34, parallax: 1.08, layer: -1 },
-    { id: 'israelTentTwo', type: 'campTent', x: 660, align: 'ground', offsetY: 36, parallax: 1.12, layer: -1 },
-    { id: 'israelTentThree', type: 'campTent', x: 720, align: 'ground', offsetY: 38, parallax: 1.16, layer: -1 },
+    { id: 'israelTentThree', type: 'campTent', x: 760, align: 'ground', offsetY: 40, parallax: 1.16, layer: -1 },
     { id: 'israelTentOuterWest', type: 'campTent', x: 640, align: 'ground', offsetY: 40, parallax: 1.14, layer: -2 },
     { id: 'israelTentOuterEast', type: 'campTent', x: 700, align: 'ground', offsetY: 42, parallax: 1.18, layer: -2 },
     { id: 'israelTentFarWest', type: 'campTent', x: 760, align: 'ground', offsetY: 44, parallax: 1.22, layer: -2 },
@@ -217,7 +218,7 @@ export async function runLevelSix() {
   const moabProps = cloneSceneProps(MOAB_APPROACH_SCENE.props);
   applySceneConfig({ ...MOAB_APPROACH_SCENE, props: moabProps });
   await showLocationSign(moabProps, { id: 'signMoabRampart', x: 148, text: 'Steppen von Moab | ערבות מואב' });
-  await showLocationSign(moabProps, { id: 'signIsraelCamp', x: 620, text: 'Lager Israel | מחנה ישראל', offsetY: 36, parallax: 1.16 });
+  await showLocationSign(moabProps, { id: 'signIsraelCamp', x: 704, text: 'Lager Israel | מחנה ישראל', offsetY: 36, parallax: 1.16 });
   ensureAmbience(plan?.review ?? MOAB_APPROACH_SCENE.ambience ?? 'marketBazaar');
   setSceneContext({ level: 'level6', phase: 'approach' });
   await showLevelTitle('Level 6 - Der Ruf des Königs');
@@ -257,7 +258,7 @@ async function phaseMoabPrelude(props) {
     await narratorSay('Danach lagerten sich die Israeliten in den Steppen Moabs, gegenüber Jericho.');
   });
 
-  await withCameraFocusOnProp(props, 'israelTentTwo', async () => {});
+  await withCameraFocusOnProp(props, 'israelCentralCanopy', async () => {});
 
   await withCameraFocusOnProp(props, 'israelCampGlow', async () => {});
 

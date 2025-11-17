@@ -772,6 +772,8 @@ function initSprites() {
   propSprites.golemGuardian = createGolemGuardianSprite(colors);
   propSprites.marketBackdrop = createMarketBackdropSprite(colors);
   propSprites.campTent = createCampTentSprite(colors);
+  propSprites.campTentCanopy = createCampTentCanopySprite(colors);
+  propSprites.campTentCluster = createCampTentClusterSprite(colors);
   propSprites.marketStall = createMarketStallSprite(colors);
   propSprites.marketBanner = createMarketBannerSprite(colors);
   propSprites.scribeBooth = createScribeBoothSprite(colors);
@@ -3907,19 +3909,74 @@ function createVineyardBoundarySprite(c) {
 
 function createCampTentSprite(c) {
   const art = [
-    '.....AAA.....',
-    '....AaaA.....',
-    '...AAAAAAA...',
-    '..Aaaaaaaa...',
-    '..AAAAAAAA...',
-    '.....||......',
+    '.........A.........',
+    '........AAA........',
+    '.......AAAAA.......',
+    '......AAAaAAA......',
+    '.....AAAaaaAAA.....',
+    '....AAAaaaaaAAA....',
+    '...AAAaaaaaaaAAA...',
+    '..AAAaaaaaaaaaAAA..',
+    '.AAAaaaaaaaaaaaAAA.',
+    '.AAAAAAAAAAAAAAAAA.',
+    'AAAAAAAAAAAAAAAAAAA',
   ];
   const legend = {
     '.': c.transparent,
     ' ': c.transparent,
     'A': c.hutCover,
     'a': c.hutRug,
-    '|': c.dirt,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createCampTentCanopySprite(c) {
+  const art = [
+    '............A............',
+    '...........AAA...........',
+    '..........AAAAA..........',
+    '.........AAaAAAa.........',
+    '........AAAaaaAAA........',
+    '.......AAAaaaaaAAA.......',
+    '......AAAaaaaaaaAAA......',
+    '.....AAAaaaaaaaaaAAA.....',
+    '....AAAaaaaaaaaaaaAAA....',
+    '...AAAaaaaaaaaaaaaaAAA...',
+    '..AAAaaaaaaaaaaaaaaaAAA..',
+    '.AAAaaaaaaaaaaaaaaaaaAAA.',
+    '.AAAAAAAAAAAAAAAAAAAAAAA.',
+    'AAAAAAAAAAAAAAAAAAAAAAAAA',
+  ];
+  const legend = {
+    '.': c.transparent,
+    ' ': c.transparent,
+    'A': c.hutCover,
+    'a': c.hutRug,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createCampTentClusterSprite(c) {
+  const art = [
+    '...........AAA...........',
+    '..........AAAAA..........',
+    '.........AAAAAAA.........',
+    '........AAAaAaAAA........',
+    '.......AAAaaAaaAAA.......',
+    '......AAAaaaAaaaAAA......',
+    '.....AAAaaaaAaaaaAAA.....',
+    '....AAAaaaaaAaaaaaAAA....',
+    '...AAAaaaaaaAaaaaaaAAA...',
+    '..AAAaaaaaaaAaaaaaaaAAA..',
+    '.AAAaaaaaaaaAaaaaaaaaAAA.',
+    '.AAAAAAAAAAAAAAAAAAAAAAA.',
+    'AAAAAAAAAAAAAAAAAAAAAAAAA',
+  ];
+  const legend = {
+    '.': c.transparent,
+    ' ': c.transparent,
+    'A': c.hutCover,
+    'a': c.hutRug,
   };
   return spriteFromStrings(art, legend);
 }

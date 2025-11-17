@@ -29,6 +29,12 @@ import {
 const RIVER_EDGE_X = Number.isFinite(RIVER_SCENE.walkBounds?.max)
   ? RIVER_SCENE.walkBounds.max
   : 520;
+const RIVER_WATER_SEGMENT = Array.isArray(RIVER_SCENE.groundProfile?.segments)
+  ? RIVER_SCENE.groundProfile.segments.find(segment => segment?.type === 'water')
+  : null;
+const RIVER_SHORELINE_X = typeof RIVER_WATER_SEGMENT?.start === 'number'
+  ? Math.max(0, Math.min(RIVER_WATER_SEGMENT.start - 12, RIVER_EDGE_X))
+  : RIVER_EDGE_X;
 
 export async function runLevelTwo() {
   const plan = levelAmbiencePlan.level2;
@@ -84,7 +90,7 @@ async function phaseTravelToWater(plan, riverProps) {
   await transitionAmbience(plan?.learn ?? 'riverDawn', { fade: { toBlack: 120, toBase: 420 } });
   applySceneConfig({ ...RIVER_SCENE, props: riverProps }, { setAmbience: false, position: false });
   await donkeySay('Komm, Meister – geh weiter bis das Wasser direkt vor dir liegt.');
-  await waitForWizardToReach(RIVER_EDGE_X, { tolerance: 14 });
+  await waitForWizardToReach(RIVER_SHORELINE_X, { tolerance: 6 });
   await narratorSay('Jetzt rauscht der Fluss zu deinen Füßen.');
 }
 
