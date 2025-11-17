@@ -126,7 +126,7 @@ const SPELL_ALIASES = {
   // חיים
   chayim: 'חיים',
   chaim: 'חיים',
-  xayim: 'חיים',
+  chaim: 'חיים',
   chajim: 'חיים',
   חיים: 'חיים',
   // אש

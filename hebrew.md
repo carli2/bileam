@@ -64,7 +64,7 @@ Vowels (`a`, `o`, `u`, `i`, `j`) act as phonetic modifiers and Alef-carriers whe
 | aor | אוֹר | Light |
 | mayim | מַיִם | Water |
 | qol | קוֹל | Voice |
-| xayim | חַיִּים | Life |
+| chaim | חַיִּים | Life |
 | aw | אֵשׁ | Fire |
 | dabar | דָּבָר | Word |
 | emet | אֱמֶת | Truth |
@@ -154,23 +154,23 @@ Fallback system:
 
 ---
 
-# LEVEL 4 – חַיִּים (*xayim* – Life)
+# LEVEL 4 – חַיִּים (*chaim* – Life)
 
 ### Review
 - Combine `aor`, `mayim`, `qol` to reawaken garden.
 
 ### Learn
-- Teach Bileam to revive plants with `xayim`.
+- Teach Bileam to revive plants with `chaim`.
 
 ### Apply
-- Heal bridge vines using `xayim` while dodging obstacles.
+- Heal bridge vines using `chaim` while dodging obstacles.
 
 ---
 
 # LEVEL 5 – אֵשׁ (*aw* – Fire)
 
 ### Review
-- Player uses `aor`, `mayim`, `xayim` to balance elements.
+- Player uses `aor`, `mayim`, `chaim` to balance elements.
 
 ### Learn
 - Volcano trial introduces `aw` for controlled flame.

@@ -1,4 +1,4 @@
-# Level 4 – חַיִּים (*xayim*) – Der Garten der Erneuerung
+# Level 4 – חַיִּים (*chaim*) – Der Garten der Erneuerung
 
 ---
 
@@ -13,7 +13,7 @@
   Sein Gesicht blickt stolz, doch seine Augen sind leer.  
 
 **Musik:** ruhige Flöte mit sanften Pulsrhythmen, die wie Herzschläge klingen.  
-**Ziel:** Der Spieler muss durch Kombination der bekannten Worte *aor* (Licht), *mayim* (Wasser) und *qol* (Stimme) den Garten zum Leben erwecken – und das neue Wort *xayim* erlernen, das *Leben* und *Brot* zugleich bedeutet.
+**Ziel:** Der Spieler muss durch Kombination der bekannten Worte *aor* (Licht), *mayim* (Wasser) und *qol* (Stimme) den Garten zum Leben erwecken – und das neue Wort *chaim* erlernen, das *Leben* und *Brot* zugleich bedeutet.
 
 ---
 
@@ -92,18 +92,18 @@ Ein runder, leerer Brunnen liegt im Zentrum. Seine Wände sind trocken, die Rune
 **Szene:**  
 Nachdem alle drei Rätsel gelöst wurden, vereinen sich die Elemente:
 - Das Licht spiegelt sich im Wasser, das auf den singenden Stein fällt.  
-- Eine neue Glyphenform entsteht auf dem Boden: חַיִּים (*xayim*).  
+- Eine neue Glyphenform entsteht auf dem Boden: חַיִּים (*chaim*).  
 - Das Wasser färbt sich golden, der Garten beginnt zu erblühen.  
 - Brotähren wachsen zwischen den Steinen, und ein sanfter Duft von Erde erfüllt die Luft.  
 
 **Dialog:**
 - **Bileam:** „Was geschieht hier?“  
-- **Esel:** „Das ist das Wort *חַיִּים* – *xayim*. Es bedeutet *Leben*... und auch *Brot*.“  
+- **Esel:** „Das ist das Wort *חַיִּים* – *chaim*. Es bedeutet *Leben*... und auch *Brot*.“  
 - **Bileam:** „Leben und Brot zugleich?“  
 - **Esel:** „Ja. Denn was wächst, nährt. Und was nährt, lebt weiter. Sprich es, um den Garten zu vollenden.“  
 
 **Eingabeaufforderung:**  
-> *Type:* `xayim` → **חַיִּים**
+> *Type:* `chaim` → **חַיִּים**
 
 **Ergebnisse:**
 - ✅ Erfolg:  
@@ -131,7 +131,7 @@ Nachdem alle drei Rätsel gelöst wurden, vereinen sich die Elemente:
 - **Esel:** „Oder Brot hat dich gemacht. Wer weiß das schon?“  
 
 **Symbolik:**  
-- Das Wort *xayim* steht für Nahrung, Wachstum und Schöpfung.  
+- Das Wort *chaim* steht für Nahrung, Wachstum und Schöpfung.  
 - Der Spieler erfährt, dass Sprache nicht nur verändert, sondern *erhält*.
 
 ---
@@ -142,7 +142,7 @@ Nachdem alle drei Rätsel gelöst wurden, vereinen sich die Elemente:
 |--------|-----------|----------|-----------|
 | I – Einführung | Anwendung bisheriger Wörter | Wiederholung & Transfer | Dialogisch |
 | II–IV – Rätsel | Experimentieren mit bekannten Wörtern | Entdeckendes Lernen | Welt-Feedback (Licht, Wasser, Klang) |
-| V – Erkenntnis | Neues Wort *xayim* lernen (Leben/Brot) | Semantische Erweiterung | Visuelle & olfaktorische Belohnung |
+| V – Erkenntnis | Neues Wort *chaim* lernen (Leben/Brot) | Semantische Erweiterung | Visuelle & olfaktorische Belohnung |
 | VI – Anwendung | Neues Wort in Aktion | Synthese der Elemente | Wachstumsreaktion + Symbolische Nahrung |
 
 **Merksatz des Esels:**  
@@ -152,22 +152,22 @@ Nachdem alle drei Rätsel gelöst wurden, vereinen sich die Elemente:
 
 ## 🔠 Technische Hinweise (für Engine)
 
-- **Eingaben erkannt:** `aor`, `mayim`, `qol`, `xayim`  
+- **Eingaben erkannt:** `aor`, `mayim`, `qol`, `chaim`  
 - **Rätselstatus:**  
   - `puzzle_aor` = Licht aktiviert  
   - `puzzle_mayim` = Wasser aktiviert  
   - `puzzle_qol` = Klang aktiviert  
-  - Wenn alle = true → `unlock_xayim = true`
+  - Wenn alle = true → `unlock_chaim = true`
 - **Partikel:**  
   - aor → Lichtstaub  
   - mayim → Tropfen / Glanz auf Oberflächen  
   - qol → Schallwellen / Staubbewegung  
-  - xayim → goldene Pollen / wachsender Boden  
+  - chaim → goldene Pollen / wachsender Boden  
 - **Audio:**  
-  - *xayim* → tiefer Herzschlag + Chor aus Kinderstimmen  
+  - *chaim* → tiefer Herzschlag + Chor aus Kinderstimmen  
 - **Speicherpunkt:** nach der Brotszene (`progress.level = 4 complete`)
 
 ---
 
-**Ende Level 4 – חַיִּים (*xayim*) – Der Garten der Erneuerung**
+**Ende Level 4 – חַיִּים (*chaim*) – Der Garten der Erneuerung**
 

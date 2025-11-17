@@ -10,10 +10,10 @@ Der Spieler entdeckt diese Kombinationen schrittweise; sie bilden die Grundlage 
 
 | Wort / Element | Bedeutung | Reaktion mit anderen | Wirkung / Ergebnis |
 |-----------------|------------|----------------------|--------------------|
-| **אוֹר – aor (Licht)** | Erkenntnis, Offenbarung | <ul><li>+ **מַיִם – mayim (Wasser)** → Nebel / Regenbogen → Heilung, Beruhigung</li><li>+ **קוֹל – qol (Stimme)** → Klangblitz → Betäubung / Schock</li><li>+ **חַיִּים – xayim (Leben)** → Photosynthese → Verstärkung aller Lebewesen</li><li>+ **אֵשׁ – ash (Feuer)** → Blendfeuer → Unkontrollierte Explosion</li></ul> | Erhellt, aktiviert, kann aber überfordern |
+| **אוֹר – aor (Licht)** | Erkenntnis, Offenbarung | <ul><li>+ **מַיִם – mayim (Wasser)** → Nebel / Regenbogen → Heilung, Beruhigung</li><li>+ **קוֹל – qol (Stimme)** → Klangblitz → Betäubung / Schock</li><li>+ **חַיִּים – chaim (Leben)** → Photosynthese → Verstärkung aller Lebewesen</li><li>+ **אֵשׁ – ash (Feuer)** → Blendfeuer → Unkontrollierte Explosion</li></ul> | Erhellt, aktiviert, kann aber überfordern |
 | **מַיִם – mayim (Wasser)** | Reinigung, Wandel | <ul><li>+ **אוֹר** → Regenbogen / Reinigung</li><li>+ **אֵשׁ** → Dampf / Neutralisierung</li><li>+ **חַיִּים** → Wachstum / Heilung</li><li>+ **קוֹל** → Wellen / Schallverstärkung</li></ul> | Löscht Feuer, nährt Leben, schwächt Metallwesen |
 | **קוֹל – qol (Stimme)** | Klang, Kommunikation | <ul><li>+ **אוֹר** → Klangblitz</li><li>+ **אֵשׁ** → Donner / Schockwelle</li><li>+ **מַיִם** → Schallwellen im Wasser (Echoangriff)</li></ul> | Wirkt auf Distanz, stört Gegner, kann Emotion beeinflussen |
-| **חַיִּים – xayim (Leben/Brot)** | Wachstum, Nahrung | <ul><li>+ **מַיִם** → Heilende Welle</li><li>+ **אֵשׁ** → Feuerdämon (Zerstörung beider Seiten)</li><li>+ **אוֹר** → Photosynthese (Buff)</li></ul> | Heilt oder erschafft, kann aber ausufern |
+| **חַיִּים – chaim (Leben/Brot)** | Wachstum, Nahrung | <ul><li>+ **מַיִם** → Heilende Welle</li><li>+ **אֵשׁ** → Feuerdämon (Zerstörung beider Seiten)</li><li>+ **אוֹר** → Photosynthese (Buff)</li></ul> | Heilt oder erschafft, kann aber ausufern |
 | **אֵשׁ – ash (Feuer)** | Energie, Zerstörung | <ul><li>+ **מַיִם** → Dampf / Auflösung</li><li>+ **אוֹר** → Explosion</li><li>+ **חַיִּים** → Feuerwesen (chaotisch)</li><li>+ **קוֹל** → Donnerstoß</li></ul> | Reinigt oder verbrennt – gefährlich doppeldeutig |
 
 > **Didaktische Note:** Der Spieler soll verstehen, dass kein Element „gut“ oder „böse“ ist – die Bedeutung entsteht durch Kombination und Zeitpunkt der Anwendung.

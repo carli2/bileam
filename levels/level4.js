@@ -67,7 +67,7 @@ export async function runLevelFour() {
 
   await phaseResonanceRock(plan, gardenProps);
 
-  await phaseXayimReveal(gardenProps);
+  await phaseChaimReveal(gardenProps);
 
   await phaseBreadOfLife(plan, gardenProps);
 
@@ -205,7 +205,7 @@ async function phaseResonanceRock(plan, props) {
   }
 }
 
-async function phaseXayimReveal(props) {
+async function phaseChaimReveal(props) {
   await walkBalak(props, wizard.x + 92);
   setSceneContext({ phase: 'revelation' });
   addProp(props, {
@@ -218,19 +218,19 @@ async function phaseXayimReveal(props) {
   });
   await narratorSay('Licht, Wasser und Klang verweben sich und erfüllen den Garten.');
   await balakSay(props, 'Höre zu: Das ist חיים – Leben. Es ernährt mein Reich... oder lässt es verhungern.');
-  await donkeySay('Das ist חיים – xayim. Es bedeutet Leben... und Brot.');
+  await donkeySay('Das ist חיים – chaim. Es bedeutet Leben... und Brot.');
 
   let attempts = 0;
   while (true) {
     const answerInput = await promptBubble(
       anchorX(wizard, -6),
       anchorY(wizard, -60),
-      'Sprich חיים (xayim)',
+      'Sprich חיים (chaim)',
       anchorX(wizard, 0),
       anchorY(wizard, -34),
     );
     const answer = normalizeHebrewInput(answerInput);
-    if (spellEquals(answer, 'xayim', 'חיים')) {
+    if (spellEquals(answer, 'chaim', 'חיים')) {
       updateProp(props, 'gardenGlyph', { type: 'soundGlyph' });
       updateProp(props, 'gardenBalakStatue', { type: 'balakStatueOvergrown' });
       updateProp(props, 'gardenSunStone', { type: 'sunStoneAwakened' });

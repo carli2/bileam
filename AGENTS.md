@@ -105,7 +105,7 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
 | 1 – אור (*aor*) | Hütte des Erwachens | Geborgenheit → Erkenntnis | Unsichtbar | Ocker, Bernstein | Lehm, Holz, Stoff | Staub, Lichtfunken |
 | 2 – מים (*mayim*) | Flussufer | Bewegung, Reinigung | Abwesend | Jade, Blau, Weiß | Wasser, Stein | Tropfen, Nebel |
 | 3 – קול (*qol*) | Felsenschlucht | Resonanz, Erkenntnis | Gerüchte von Balaks Reich | Grau, Kobalt | Basalt, Kristalladern | Schallringe, Staub |
-| 4 – חיים (*xayim*) | Garten der Erneuerung | Wachstum, Leben, Verführung | Balak bittet um „Wunder für sein Reich“ | Smaragd, Gold | Pflanzen, Erde | Pollen, Glühpartikel |
+| 4 – חיים (*chaim*) | Garten der Erneuerung | Wachstum, Leben, Verführung | Balak bittet um „Wunder für sein Reich“ | Smaragd, Gold | Pflanzen, Erde | Pollen, Glühpartikel |
 | 5 – אש (*aw*) | Schmiede der Flammen | Macht, Schöpfung, Prüfung | Balak lobt Bileam für „die Macht seiner Zunge“ | Rot, Schwarz, Weißglut | Metall, Lava | Funken, Rauch |
 | 6 – לא (*lo*) | Mauern von Ar & Lager Petor | Grenze, Verweigerung, Gehorsam | Balak beobachtet aus der Ferne, sendet Gesandte | Ocker, Glutbernstein, Mitternachtsblau | Sand, Lehm, Nachtfeuer, Schriftlinien | Staubwirbel, Glyphensplitter, Funken |
 | 7 – שמע (*shama*) | Terrassenweg & Engelschluchten | Hören, Prüfung, Offenbarung | Fürsten und Engel zwingen zur Entscheidung | Morgengrau, Silber, Azur | Basalt, Reben, Klangbahnen, Lichtklingen | Echo-Spuren, Atemnebel, Hörfäden |
@@ -137,7 +137,7 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
   - *Lichtquellen* (`aor`) – Lampen, Runen, Sonnenstrahlen  
   - *Wasserflächen* (`mayim`) – Flüsse, Brunnen, Spiegel  
   - *Steine* (`qol`) – Resonanzportale, Monolithen  
-  - *Pflanzen* (`xayim`) – wachsende Ranken, Blüten  
+  - *Pflanzen* (`chaim`) – wachsende Ranken, Blüten  
   - *Feuerstellen* (`aw`) – Schmiedefeuer, Fackeln, Lavapools  
   - *Grenzmarker* (`lo`) – sandVisionRings, envoyShadow-Szenen, Versuchungsgefäße, Wachfeuer mit Verdunkelungsphase  
   - *Hörzeichen* (`shama`) – Hufspurketten, Fürstenbanner, Hörkreise, Klangfäden über Altären  
@@ -168,7 +168,7 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
 | 1 – aor | Erwachen | Harfe, Flöte, tiefer Bordun | Sanft, lehrend |
 | 2 – mayim | Fließen | Wasserharfe, Windglocken | Beruhigend, klar |
 | 3 – qol | Resonanz | Steinperkussion, Echoeffekte | Rätselhaft, metallisch |
-| 4 – xayim | Wachstum | Panflöte, Streicher, Naturgeräusche | Lebendig, friedlich |
+| 4 – chaim | Wachstum | Panflöte, Streicher, Naturgeräusche | Lebendig, friedlich |
 | 5 – aw | Feuer | Schlagwerk, Bass, metallisches Klingen | Kraftvoll, gefährlich |
 | 6 – lo | Grenzwache | Rahmentrommeln, Feuerknistern, tiefer Bordun, gedämpfte Hörner | Wachsam, gespannt |
 | 7 – shama | Engelsweg | Herzschlag-Percussion, Glasglocken, vokale Drones | Lauschend, angespannt |
@@ -181,7 +181,7 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
   - *aor* – aufsteigendes Glissando aus Lichtton  
   - *mayim* – flüssiges Arpeggio, Wasserplätschern  
   - *qol* – metallische Resonanz, Rückkopplung  
-  - *xayim* – Herzschlag-Subbass, Pulsieren  
+  - *chaim* – Herzschlag-Subbass, Pulsieren  
   - *aw* – tiefer Donner, Funkenknistern  
   - *lo* – scharfes Luftansaugen, dumpfer Puls, Sandknirschen, das abrupt stoppt  
   - *shama* – modulierte Obertöne, leiser Chorzug, Fokus auf binaurales Echo  

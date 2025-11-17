@@ -21,7 +21,7 @@ Jedes Level ist ein kleines Lehrdrama. Die Szene oben zeigt Level 7: Fürsten, B
 1. *aor* - Licht bricht die Finsternis in der Hütte des Erwachens.
 2. *mayim* - Am Flussufer reinigt fließendes Wasser alte Zweifel.
 3. *qol* - In der Felsenschlucht hallt jedes Wort als Resonanz wider.
-4. *xayim* - Ein Garten, in dem neue Lebenserkenntnis knospt.
+4. *chaim* - Ein Garten, in dem neue Lebenserkenntnis knospt.
 5. *aw* - Die Schmiede der Flammen prueft die Kraft deiner Zunge.
 6. *dabar* - Eine goldene Stadt, in der Sprache verlockt und taeuscht.
 7. *emet* - Spiegel enthuellen dein wahres Gesicht.

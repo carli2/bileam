@@ -32,7 +32,10 @@ import {
   switchMusic,
   spellEquals,
   showLocationSign,
+  findProp,
 } from './utils.js';
+
+const BALAK_WALK_SPEED = 26;
 
 const MOAB_APPROACH_SCENE = {
   ambience: 'marketBazaar',
@@ -276,7 +279,7 @@ async function phaseMoabPrelude(props) {
     const balakProp = props.find(entry => entry.id === 'balakWallFigure');
     const startX = balakProp?.x ?? wizard.x + 220;
     const meetingX = startX - 120;
-    await movePropHorizontally(props, 'balakWallFigure', meetingX, { duration: 1200, steps: 6 });
+    await walkBalakProcession(props, meetingX);
   });
 
   wizard.x = savedWizard.x;
@@ -482,26 +485,44 @@ async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
   await fadeToBase(480);
 }
 
-async function movePropHorizontally(props, id, targetX, { duration = 900, steps = 6 } = {}) {
-  if (!Array.isArray(props)) return;
-  const prop = props.find(entry => entry.id === id);
-  if (!prop) return;
-  const startX = prop.x ?? 0;
-  const distance = targetX - startX;
-  if (Math.abs(distance) < 1) {
-    updateProp(props, id, { x: targetX });
-    return;
+function walkBalakProcession(props, targetX, options = {}) {
+  if (!Array.isArray(props)) return Promise.resolve();
+  const balak = findProp(props, 'balakWallFigure');
+  if (!balak) return Promise.resolve();
+  const { minSpacing = 0, speed = BALAK_WALK_SPEED, duration } = options;
+  let finalX = Number.isFinite(targetX) ? targetX : balak.x ?? 0;
+  if (Number.isFinite(minSpacing)) {
+    finalX = Math.max(finalX, wizard.x + minSpacing);
   }
-  const clampedSteps = Math.max(1, steps);
-  const stepDuration = duration > 0 ? duration / clampedSteps : 0;
-  for (let index = 1; index <= clampedSteps; index += 1) {
-    const progress = index / clampedSteps;
-    const nextX = startX + distance * progress;
-    updateProp(props, id, { x: nextX });
-    if (index < clampedSteps) {
-      await sleep(stepDuration);
-    }
+  finalX = Math.round(finalX);
+  const startX = balak.x ?? 0;
+  if (!Number.isFinite(finalX)) {
+    return Promise.resolve();
   }
+  if (Math.abs(finalX - startX) < 2) {
+    updateProp(props, 'balakWallFigure', { x: finalX });
+    return Promise.resolve();
+  }
+  const distance = finalX - startX;
+  let travelDuration = duration;
+  if (!Number.isFinite(travelDuration) || travelDuration <= 0) {
+    const computed = Math.abs(distance) / Math.max(1, speed) * 1000;
+    travelDuration = Math.max(420, Math.round(computed));
+  }
+  return new Promise(resolve => {
+    const begin = performance.now();
+    const step = now => {
+      const t = Math.min(1, (now - begin) / Math.max(1, travelDuration));
+      const current = Math.round(startX + distance * t);
+      updateProp(props, 'balakWallFigure', { x: current });
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        resolve();
+      }
+    };
+    requestAnimationFrame(step);
+  });
 }
 
 function ensurePropDefinition(list, definition) {
