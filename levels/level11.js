@@ -47,9 +47,9 @@ export async function runLevelEleven() {
 
   await showLevelTitle('Ende', 6000);
   await showLevelTitle('Story: Buch Numeri, Kapitel 22 bis 24', 6000);
+  await showLevelTitle('Umsetzung: GPT5-high', 6000);
   await showLevelTitle('Idee zum Spiel: Carl-Philip Hänsch', 6000);
   await showLevelTitle('Musik: Suno AI', 6000);
-  await showLevelTitle('Umsetzung: GPT5-high', 6000);
 }
 
 function buildAngelSpeechOptions(sceneProps) {

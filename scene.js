@@ -763,6 +763,7 @@ function initSprites() {
   propSprites.balakStatue = createBalakStatueSprite(colors, false);
   propSprites.balakStatueOvergrown = createBalakStatueSprite(colors, true);
   propSprites.balakFigure = createBalakFigureSprite(colors);
+  propSprites.balakBossFigure = createBalakBossSprite(colors);
   propSprites.irrigationChannels = createIrrigationSprite(colors);
   propSprites.sunStoneDormant = createSunStoneSprite(colors, false);
   propSprites.sunStoneAwakened = createSunStoneSprite(colors, true);
@@ -784,6 +785,9 @@ function initSprites() {
   propSprites.wordSpirit = createWordSpiritSprite(colors);
   propSprites.balakEmissary = createBalakEmissarySprite(colors);
   propSprites.balakAdvisor = createBalakAdvisorSprite(colors);
+  propSprites.shadowFracture = createShadowFractureSprite(colors);
+  propSprites.balakProcessCore = createBalakProcessCoreSprite(colors, false);
+  propSprites.balakProcessCoreActive = createBalakProcessCoreSprite(colors, true);
   propSprites.moabWallWatcher = createMoabWallWatcherSprite(colors);
   propSprites.hoofSignTrail = createHoofSignTrailSprite(colors);
   propSprites.sandVisionRingDormant = createSandVisionRingDormantSprite(colors);
@@ -2108,6 +2112,159 @@ function createGolemGuardianSprite(c) {
   return new Sprite(width, height, pixels);
 }
 
+function createShadowFractureSprite(c) {
+  const width = 56;
+  const height = 96;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const crackEdge = c.wizardRobe;
+  const crackCore = c.wizardRobeHighlight;
+  const ember = c.lavaGlow;
+  const haze = c.sanctumSky;
+  const centerX = Math.floor(width / 2);
+
+  for (let y = 0; y < height; y++) {
+    const sway = Math.round(Math.sin(y / 9) * 5);
+    const baseX = clamp(centerX + sway, 2, width - 3);
+    const idx = y * width + baseX;
+    pixels[idx] = crackCore;
+    pixels[idx - 1] = crackEdge;
+    pixels[idx + 1] = crackEdge;
+    if (y % 3 === 0) {
+      const hazeLeft = baseX - 2;
+      const hazeRight = baseX + 2;
+      if (hazeLeft >= 0) {
+        pixels[y * width + hazeLeft] = haze;
+      }
+      if (hazeRight < width) {
+        pixels[y * width + hazeRight] = haze;
+      }
+    }
+    if (y % 11 === 0) {
+      const direction = ((y / 11) | 0) % 2 === 0 ? -1 : 1;
+      const branchLength = 3 + (y % 4);
+      for (let step = 1; step <= branchLength; step++) {
+        const branchX = baseX + direction * (step + 1);
+        const branchY = Math.min(height - 1, y + step);
+        if (branchX <= 0 || branchX >= width - 1) continue;
+        const branchIdx = branchY * width + branchX;
+        pixels[branchIdx] = step % 2 === 0 ? ember : crackEdge;
+      }
+    }
+  }
+
+  for (let x = centerX - 10; x <= centerX + 10; x++) {
+    if (x < 0 || x >= width) continue;
+    for (let y = height - 6; y < height; y++) {
+      const idx = y * width + x;
+      if (pixels[idx] === c.transparent) {
+        pixels[idx] = crackEdge;
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createBalakProcessCoreSprite(c, active = false) {
+  const aura = active ? c.cloudHighlight : c.towerGlass;
+  const auraAccent = active ? c.wizardHatHighlight : c.sanctumSky;
+  const bodyShadow = c.nightSkyMid;
+  const body = active ? c.marketFabric : c.wizardRobe;
+  const bodyHighlight = active ? c.wizardHatHighlight : c.wizardRobeHighlight;
+  const brightHighlight = active ? c.cloudHighlight : c.marketFabric;
+  const crown = c.wizardBelt;
+
+  const baseArt = [
+    '.............aaaoaa.............',
+    '............aaaoooaa............',
+    '...........aaaggoggaa...........',
+    '..........aaagpppggaa...........',
+    '.........aagppppppgaa...........',
+    '.........agppppppppga...........',
+    '........aagppmmmmppgaa..........',
+    '........agppmmhhmmppga..........',
+    '.......aagppmhhBBhhmppga........',
+    '.......agppmBBBBBBmppga.........',
+    '......aagppmBBBBBBmppgaa........',
+    '......agppmBBBBBBBmppga.........',
+    '......agppmBBBBBBBmppga.........',
+    '......agppmBBBBBBBmppga.........',
+    '......agppmBBBBBBBmppga.........',
+    '......agppmmBBmmmmppga..........',
+    '.......agppmmhhmmmmppga.........',
+    '.......agppmmmmmmmmppga.........',
+    '.......agppppppppppppga.........',
+    '.......agppppppppppppga.........',
+    '.......agppppppppppppga.........',
+    '.......agppppppppppppga.........',
+    '.......agppppppppppppga.........',
+    '.......agppppppppppppga.........',
+    '.......aagppppppppppgaa.........',
+    '........agppppppppppga..........',
+    '........aagppppppppgaa..........',
+    '.........agppppppppga...........',
+    '.........aagppppppgaa...........',
+    '..........aagppppgaa............',
+    '...........aggppgga.............',
+    '............aggpgga.............',
+    '.............agggaa.............',
+    '..............aaoaa.............',
+    '...............aaa..............',
+  ];
+  const baseWidth = baseArt.reduce((max, row) => Math.max(max, row.length), 0);
+  const normalized = baseArt.map(row => row.padEnd(baseWidth, '.'));
+  const scale = 4;
+  const width = baseWidth * scale;
+  const height = normalized.length * scale;
+  const pixels = new Uint8Array(width * height);
+
+  const colorMap = {
+    '.': c.transparent,
+    'a': aura,
+    'o': auraAccent,
+    'g': bodyShadow,
+    'p': body,
+    'm': bodyHighlight,
+    'h': brightHighlight,
+    'B': crown,
+  };
+
+  for (let by = 0; by < normalized.length; by++) {
+    const row = normalized[by];
+    for (let bx = 0; bx < baseWidth; bx++) {
+      const key = row[bx];
+      const color = colorMap[key];
+      if (color == null || color === c.transparent) continue;
+      for (let sy = 0; sy < scale; sy++) {
+        const y = by * scale + sy;
+        for (let sx = 0; sx < scale; sx++) {
+          const x = bx * scale + sx;
+          pixels[y * width + x] = color;
+        }
+      }
+    }
+  }
+
+  if (active) {
+    const center = Math.floor(width / 2);
+    for (let y = Math.floor(height * 0.18); y < height - Math.floor(height * 0.14); y += 3) {
+      const offset = Math.round(Math.sin(y / 18) * (scale + 2));
+      const column = clamp(center + offset, 0, width - 1);
+      const idx = y * width + column;
+      pixels[idx] = auraAccent;
+      if (column + 1 < width) {
+        pixels[idx + 1] = aura;
+      }
+      if (column > 0) {
+        pixels[idx - 1] = aura;
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
 function createDoorSprite(c) {
   const width = 24;
   const height = 44;
@@ -2286,35 +2443,44 @@ function createHutRugSprite(c) {
   return spriteFromStrings(art, legend);
 }
 
+const BALAK_FIGURE_ART = [
+  '............okko.............',
+  '...........okkkko............',
+  '..........ookkkkoo...........',
+  '.........oosssssoo...........',
+  '........oossssssoo...........',
+  '.......oosssssssso...........',
+  '.......oosssssssso...........',
+  '......oossnnnsssoo...........',
+  '......oossnnnsssoo...........',
+  '......oossnnnsssoo...........',
+  '......oossnnnsssoo...........',
+  '......oossnnnsssoo...........',
+  '.....oorrRRRRRroo............',
+  '....oorrRRRRRRroo............',
+  '....oorrRRRRRRroo............',
+  '...oorrRRRRRRRRoo............',
+  '...oorrRRRRRRRRoo............',
+  '...oorrRRRRRRRRoo............',
+  '...oorrBBBBBBRRoo............',
+  '...oorrBBBBBBRRoo............',
+  '...oorrRRRRRRRRoo............',
+  '...oorrRRRRRRRRoo............',
+  '...oorrRRRRRRRRoo............',
+  '...oorrRRRRRRRRoo............',
+  '...oorrRRRRRRRRoo............',
+  '...oo............oo..........',
+];
+
 function createBalakFigureSprite(c) {
-  const art = [
-    '............okko.............',
-    '...........okkkko............',
-    '..........ookkkkoo...........',
-    '.........oosssssoo...........',
-    '........oossssssoo...........',
-    '.......oosssssssso...........',
-    '.......oosssssssso...........',
-    '......oossnnnsssoo...........',
-    '......oossnnnsssoo...........',
-    '......oossnnnsssoo...........',
-    '......oossnnnsssoo...........',
-    '......oossnnnsssoo...........',
-    '.....oorrRRRRRroo............',
-    '....oorrRRRRRRroo............',
-    '....oorrRRRRRRroo............',
-    '...oorrRRRRRRRRoo............',
-    '...oorrRRRRRRRRoo............',
-    '...oorrRRRRRRRRoo............',
-    '...oorrBBBBBBRRoo............',
-    '...oorrBBBBBBRRoo............',
-    '...oorrRRRRRRRRoo............',
-    '...oorrRRRRRRRRoo............',
-    '...oorrRRRRRRRRoo............',
-    '...oorrRRRRRRRRoo............',
-    '...oorrRRRRRRRRoo............',
-    '...oo............oo..........',
-  ];
+  return createBalakFigureScaledSprite(c, 1);
+}
+
+function createBalakBossSprite(c) {
+  return createBalakFigureScaledSprite(c, 4);
+}
+
+function createBalakFigureScaledSprite(c, scale = 1) {
   const legend = {
     '.': c.transparent,
     'o': c.wizardBoot,
@@ -2325,7 +2491,30 @@ function createBalakFigureSprite(c) {
     'R': c.wizardHatHighlight,
     'B': c.marketFabric,
   };
-  return spriteFromStrings(art, legend);
+  const rows = BALAK_FIGURE_ART;
+  const baseHeight = rows.length;
+  const baseWidth = rows[0].length;
+  const width = baseWidth * Math.max(1, scale);
+  const height = baseHeight * Math.max(1, scale);
+  const pixels = new Uint8Array(width * height);
+
+  for (let by = 0; by < baseHeight; by++) {
+    const row = rows[by];
+    for (let bx = 0; bx < baseWidth; bx++) {
+      const key = row[bx];
+      const color = legend[key];
+      if (color == null || color === c.transparent) continue;
+      for (let sy = 0; sy < scale; sy++) {
+        const y = by * scale + sy;
+        for (let sx = 0; sx < scale; sx++) {
+          const x = bx * scale + sx;
+          pixels[y * width + x] = color;
+        }
+      }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
 }
 
 function createBalakAdvisorSprite(c) {
@@ -3389,15 +3578,19 @@ function createWaterGlyphSprite(c) {
       const idx = y * width + x;
       const wave = Math.sin((x / width) * Math.PI * 4 + y * 0.45);
       const falloff = Math.exp(-Math.pow((y - centerY) / (height * 0.9), 2));
+      let color = c.transparent;
       if (y >= centerY - 3 && y <= centerY + 3) {
-        pixels[idx] = wave > 0 ? highlight : surface;
+        color = wave > 0.25 ? highlight : (wave > 0 ? surface : c.transparent);
       } else if (y > centerY + 3) {
-        pixels[idx] = shadow;
+        if (((x + y) & 1) === 0) {
+          color = shadow;
+        }
       } else if (Math.abs(wave) > 0.75 * falloff) {
-        pixels[idx] = highlight;
-      } else if (Math.abs(wave) > 0.45 * falloff) {
-        pixels[idx] = surface;
+        color = highlight;
+      } else if (Math.abs(wave) > 0.5 * falloff) {
+        color = surface;
       }
+      pixels[idx] = color;
     }
   }
 

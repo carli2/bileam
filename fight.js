@@ -592,9 +592,11 @@ export function cropStateMachine(machine, wordList = [], initialState = 'start')
     const sanitizedTransitions = {};
     Object.entries(transitions).forEach(([word, config]) => {
       const nextState = resolveNextState(config);
-      if (visited.has(nextState)) {
-        sanitizedTransitions[word] = typeof config === 'string' ? config : { ...config };
-      }
+      const resolvedState = visited.has(nextState) ? nextState : initialState;
+      if (!resolvedState) return;
+      sanitizedTransitions[word] = typeof config === 'string'
+        ? resolvedState
+        : { ...config, next: resolvedState };
     });
 
     if (Object.keys(sanitizedTransitions).length === 0) {

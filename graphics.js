@@ -456,7 +456,10 @@ export function renderSpeechBubble(speechState, { buffer, colors, cameraX, textR
     const node = speechState.sequence[i];
     if (!node) continue;
     const glyph = textRenderer.glyphs[node.char];
-    if (!glyph) continue;
+    if (!glyph) {
+      console.log(`Unknown glyph rendered: \"${node.char}\"`);
+      continue;
+    }
 
     const anchor = lineAnchors[node.line] ?? { rtl: false, base: textStartX };
     const offset = node.column * charAdvance;

@@ -54,7 +54,7 @@ const VINEYARD_SCENE = {
     { id: 'vineyardBoundaryEast', type: 'vineyardBoundary', x: 332, align: 'ground', parallax: 0.94 },
     { id: 'processionAdvisorWest', type: 'balakAdvisor', x: 48, align: 'ground', parallax: 0.95 },
     { id: 'processionAdvisorEast', type: 'balakAdvisor', x: 72, align: 'ground', parallax: 0.97 },
-    { id: 'vineyardAngel', type: 'angelBladeForm', x: 360, align: 'ground', parallax: 0.96 },
+    { id: 'vineyardAngel', type: 'angelBladeForm', x: 360, align: 'ground', parallax: 0.96, visible: false },
   ],
 };
 
@@ -65,7 +65,7 @@ const WALL_SCENE = {
   props: [
     { id: 'processionAdvisorWest', type: 'balakAdvisor', x: 48, align: 'ground', parallax: 0.95 },
     { id: 'processionAdvisorEast', type: 'balakAdvisor', x: 72, align: 'ground', parallax: 0.97 },
-    { id: 'wallAngel', type: 'angelBladeForm', x: 352, align: 'ground', parallax: 0.98 },
+    { id: 'wallAngel', type: 'angelBladeForm', x: 352, align: 'ground', parallax: 0.98, visible: false },
   ],
 };
 
@@ -76,7 +76,7 @@ const PINCH_SCENE = {
   props: [
     { id: 'processionAdvisorWest', type: 'balakAdvisor', x: 46, align: 'ground', parallax: 0.95 },
     { id: 'processionAdvisorEast', type: 'balakAdvisor', x: 70, align: 'ground', parallax: 0.97 },
-    { id: 'pinchAngel', type: 'angelBladeForm', x: 248, align: 'ground', parallax: 0.98 },
+    { id: 'pinchAngel', type: 'angelBladeForm', x: 248, align: 'ground', parallax: 0.98, visible: false },
   ],
 };
 
@@ -87,7 +87,7 @@ const REVELATION_SCENE = {
   props: [
     { id: 'processionAdvisorWest', type: 'balakAdvisor', x: 54, align: 'ground', parallax: 0.95 },
     { id: 'processionAdvisorEast', type: 'balakAdvisor', x: 78, align: 'ground', parallax: 0.97 },
-    { id: 'revelationAngel', type: 'angelBladeForm', x: 236, align: 'ground', parallax: 0.96 },
+    { id: 'revelationAngel', type: 'angelBladeForm', x: 236, align: 'ground', parallax: 0.96, visible: false },
   ],
 };
 
@@ -105,15 +105,15 @@ export async function runLevelSeven() {
   await narratorSay('Die Fürsten nicken, als du schweigend zwischen den Bannern hindurch schreitest. Keine Aufgabe, nur der Blick nach vorn – zum Weinberg, wo der Weg schmal wird.');
 
   const vineyardProps = cloneSceneProps(VINEYARD_SCENE.props);
-  await transitionToScene(plan?.learn, VINEYARD_SCENE, vineyardProps, 'first-resistance');
+  await transitionToScene(plan?.learn, VINEYARD_SCENE, vineyardProps, 'first-resistance', { fade: false });
   await phaseFirstResistance(vineyardProps);
 
   const wallProps = cloneSceneProps(WALL_SCENE.props);
-  await transitionToScene(plan?.learn, WALL_SCENE, wallProps, 'second-resistance');
+  await transitionToScene(plan?.learn, WALL_SCENE, wallProps, 'second-resistance', { fade: false });
   await phaseSecondResistance(wallProps);
 
   const pinchProps = cloneSceneProps(PINCH_SCENE.props);
-  await transitionToScene(plan?.learn, PINCH_SCENE, pinchProps, 'third-resistance');
+  await transitionToScene(plan?.learn, PINCH_SCENE, pinchProps, 'third-resistance', { fade: false });
   await phaseThirdResistance(pinchProps);
 
   const revelationProps = cloneSceneProps(REVELATION_SCENE.props);
@@ -195,7 +195,6 @@ async function phaseThirdResistance(props) {
   }
   await wizardSay('לא... ich habe geirrt.');
   await playHeavenCurtainEffect(props, { centerX: wizard.x + 20 });
-  await narratorSay('Der Himmel öffnet sich. Du siehst den Engel klar vor dir.');
 }
 
 async function phaseAngelRevelation(props) {
@@ -249,6 +248,7 @@ async function phaseLearnMalak(angelGuard) {
 async function ensureAngelBlocksPath(props, id) {
   const angel = Array.isArray(props) ? props.find(entry => entry.id === id) : null;
   if (!angel) return null;
+  updateProp(props, id, { visible: true });
   const stopX = (angel.x ?? wizard.x) - 36;
   await waitForWizardToReach(stopX, { tolerance: 10 });
   return angel;
@@ -319,14 +319,19 @@ function startAdvisorEscort(props, {
   };
 }
 
-async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
-  await fadeToBlack(320);
+async function transitionToScene(ambienceKey, sceneConfig, props, phase, options = {}) {
+  const useFade = options.fade !== false;
+  if (useFade) {
+    await fadeToBlack(320);
+  }
   ensureAmbience(ambienceKey ?? sceneConfig.ambience ?? 'mirrorTower');
   setSceneProps([]);
   applySceneConfig({ ...sceneConfig, props }, { setAmbience: false });
   setSceneProps(props);
   setSceneContext({ level: 'level7', phase });
-  await fadeToBase(360);
+  if (useFade) {
+    await fadeToBase(360);
+  }
 }
 
 async function readWord(promptText) {

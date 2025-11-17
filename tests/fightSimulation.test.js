@@ -12,12 +12,10 @@ const BALAK_WORDS = [
   'אש',
   'לא',
   'שמע',
-  'ברכה',
+  'ברך',
   'דבר',
   'אמת',
   'מלאך',
-  'ארור',
-  'המלחמה',
 ];
 
 const GOLEM_MACHINE = cropStateMachine(SPELL_DUEL_MACHINE, GOLEM_WORDS);

@@ -29,7 +29,11 @@ import {
   divineSay,
   switchMusic,
   showLocationSign,
+  findProp,
+  getPropCenterX,
 } from './utils.js';
+
+const flameFlickers = new Map();
 
 const BAMOT_TERRACE_SCENE = {
   ambience: 'desertTravel',
@@ -222,11 +226,14 @@ async function phaseTerraceTrials(props) {
       }
     }
     updateProp(props, step.id, { type: 'altarGlyphPlateLit' });
+    igniteAltarFlame(props, step.id);
     if (step.fragment) {
       addProp(props, { id: `terraceFragment${step.fragment}`, type: 'blessingFragment', x: wizard.x + 14, y: wizard.y - 44, parallax: 0.9, letter: step.fragment });
     }
   }
   await narratorSay('Die Stufen leuchten. Balak zeigt auf den Kamm, wo die Altare warten.');
+  igniteAltarFlame(props, 'bamotTorchWest', { offsetY: -52 });
+  igniteAltarFlame(props, 'bamotTorchEast', { offsetY: -52 });
 }
 
 async function phaseSevenAltars(props) {
@@ -244,7 +251,7 @@ async function phaseSevenAltars(props) {
         cleared = true;
         updateProp(props, altar.id, { type: 'altarGlyphPlateLit' });
         await celebrateGlyph(answer);
-        await requireAshIgnition();
+        await requireAshIgnition(props, altar.id);
         await narratorSay('Der Altar nimmt das Wort an. Rauch steigt ruhig empor.');
         if (altar.fragment) {
           addProp(props, { id: `altarFragment${altar.fragment}`, type: 'blessingFragment', x: wizard.x + 16, y: wizard.y - 44, parallax: 0.9, letter: altar.fragment });
@@ -263,6 +270,7 @@ async function phaseSevenAltars(props) {
   await narratorSay('Die Nacht senkt sich, und Balak steht schweigend – ein Schatten neben dem Altar.');
   await divineSay('בלילה הזה יפגשך אלוהי. לא תקלל את אשר ברך יהוה.\nDiese Nacht begegne ich dir: Du wirst nicht verfluchen, was יהוה gesegnet hat.');
   await narratorSay('Du schließt die Augen. Das Feuer glimmt auf, als ob jemand antwortete.');
+  igniteAltarFlame(props, 'altarWatchFire', { offsetY: -50 });
 }
 
 async function phaseResonance(props) {
@@ -301,6 +309,7 @@ async function phaseResonance(props) {
       await narratorSay('Segen strahlt wie warme Glut.');
       addProp(props, { id: 'baruchGlyphOrbit', type: 'blessingFragmentOrbit', x: wizard.x + 30, y: wizard.y - 52, parallax: 0.92, letter: 'ברך' });
       await narratorSay('Fragmente ב, ר und ך kreisen nun als sichtbare Glyphen um dich.');
+      igniteAltarFlame(props, 'resonanceTorch', { offsetY: -48 });
     } else {
       await donkeySay('Sprich es klar: ba-rak.');
     }
@@ -467,12 +476,13 @@ async function ensureWizardBesideBalak(props, id, { offset = -42, tolerance = 18
   await waitForWizardToReach(targetX, { tolerance });
 }
 
-async function requireAshIgnition() {
+async function requireAshIgnition(props, altarId) {
   let attempts = 0;
   while (true) {
     const answer = await readWord('Entzünde den Altar mit אש (ash).');
     if (spellEquals(answer, 'ash', 'אש')) {
       await narratorSay('Feuer krönt den Altar, und die Opferglut wird ruhig.');
+      igniteAltarFlame(props, altarId);
       return;
     }
     attempts += 1;
@@ -487,6 +497,7 @@ async function requireAshIgnition() {
 async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
   await fadeToBlack(360);
   ensureAmbience(ambienceKey ?? sceneConfig.ambience ?? 'desertTravel');
+  stopAllFlameFlickers();
   setSceneProps([]);
   applySceneConfig({ ...sceneConfig, props }, { setAmbience: false });
   setSceneProps(props);
@@ -504,4 +515,57 @@ async function readWord(promptText) {
   );
   if (input == null) return '';
   return String(input).trim();
+}
+
+function igniteAltarFlame(props, baseId, { offsetY = -34 } = {}) {
+  if (!Array.isArray(props) || !baseId) return;
+  const base = findProp(props, baseId);
+  if (!base) return;
+  const flameId = `${baseId}Flame`;
+  const centerX = getPropCenterX(props, baseId);
+  if (!Number.isFinite(centerX)) return;
+  const flameX = Math.round(centerX - 8);
+  const flameProps = {
+    id: flameId,
+    type: 'anvilFlame',
+    x: flameX,
+    align: 'ground',
+    offsetY,
+    parallax: base.parallax ?? 1,
+    layer: (base.layer ?? 0) + 1,
+    visible: true,
+  };
+  if (findProp(props, flameId)) {
+    updateProp(props, flameId, flameProps);
+  } else {
+    addProp(props, flameProps);
+  }
+  startFlameFlicker(props, flameId);
+}
+
+function startFlameFlicker(props, flameId) {
+  if (!flameId || flameFlickers.has(flameId)) return;
+  let visible = true;
+  const interval = setInterval(() => {
+    const flame = findProp(props, flameId);
+    if (!flame) {
+      clearInterval(interval);
+      flameFlickers.delete(flameId);
+      return;
+    }
+    visible = !visible;
+    updateProp(props, flameId, { visible });
+  }, 180 + Math.random() * 140);
+  flameFlickers.set(flameId, () => clearInterval(interval));
+}
+
+function stopAllFlameFlickers() {
+  flameFlickers.forEach(stop => {
+    try {
+      stop();
+    } catch (error) {
+      // ignore cleanup errors
+    }
+  });
+  flameFlickers.clear();
 }

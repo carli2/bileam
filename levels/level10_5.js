@@ -31,15 +31,14 @@ import {
 import { runFightLoop, cropStateMachine } from '../fight.js';
 import { SPELL_DUEL_MACHINE } from '../stateMachines/spellDuelMachine.js';
 
+const BALAK_WIZARD_START_X = 96;
+const BALAK_BOSS_X = BALAK_WIZARD_START_X + 96;
+
 const BALAK_SCENE = {
   ambience: 'sanctumFinale',
-  wizardStartX: 96,
+  wizardStartX: BALAK_WIZARD_START_X,
   donkeyOffset: -40,
-  props: [
-    { id: 'balakFractureWest', type: 'shadowFracture', x: 168, align: 'ground', parallax: 0.92 },
-    { id: 'balakProcessCore', type: 'balakProcessCore', x: 332, align: 'ground', parallax: 0.98 },
-    { id: 'balakFractureEast', type: 'shadowFracture', x: 484, align: 'ground', parallax: 1.02 },
-  ],
+  props: [],
 };
 
 const ALL_BOSS_WORDS = [
@@ -50,12 +49,10 @@ const ALL_BOSS_WORDS = [
   'אש',
   'לא',
   'שמע',
-  'ברכה',
+  'ברך',
   'דבר',
   'אמת',
   'מלאך',
-  'ארור',
-  'המלחמה',
 ];
 
 const BALAK_KNOWN_WORDS = ALL_BOSS_WORDS
@@ -81,7 +78,7 @@ export async function runLevelTenFive() {
   await showLevelTitle('Finaler Kampf -\nBalak, Schatten des Wortes');
   await fadeToBase(600);
 
-  addProp(throneProps, { id: 'balakBoss', type: 'balakProcessCoreActive', align: 'ground', x: 332 });
+  addProp(throneProps, { id: 'balakBoss', type: 'balakBossFigure', align: 'ground', x: BALAK_BOSS_X, parallax: 0.98 });
   const balakSpeechIntro = buildBalakSpeechOptions(throneProps);
 
   await wizardSay('Balak, ich habe dich durchschaut. Dein Herz ist böse und mit Geld und Macht willst du mich auf deine Seite bringen.');
@@ -99,7 +96,9 @@ export async function runLevelTenFive() {
     await divineSay('שמעת בקולי, בן בעור.\nDu hast auf meine Stimme gehört, Sohn des Beor.');
     await fadeToBlack(640);
     setLifeBars(null);
+    return 'win';
   }
+  return 'restart';
 }
 
 async function executeBalakFight(sceneProps) {
@@ -278,17 +277,23 @@ function describeState(stateKey) {
     case 'overgrown':
       return 'חיים';
     case 'blessing':
-      return 'ברכה';
-    case 'curse':
-      return 'ארור';
+      return 'ברך';
     case 'angelic':
       return 'מלאך';
     case 'truth':
       return 'אמת';
     case 'spoken':
       return 'דבר';
-    case 'battle':
-      return 'המלחמה';
+    case 'resonantTrap':
+      return 'קול';
+    case 'truthPrism':
+      return 'אמת';
+    case 'blessingOrbit':
+      return 'ברך';
+    case 'angelicChorus':
+      return 'מלאך';
+    case 'radiantPrism':
+      return 'אור';
     case 'negation':
       return 'לא';
     case 'listening':
@@ -303,7 +308,7 @@ function buildBalakSpeechOptions(sceneProps) {
   const bounds = getScenePropBounds('balakBoss');
   const spriteHeight = bounds?.height ?? balak?.sprite?.height ?? 110;
   const estimatedWidth = bounds?.width ?? balak?.sprite?.width ?? 138;
-  const offsetY = -Math.max(32, spriteHeight * 0.46);
+  const offsetY = -Math.max(36, spriteHeight * 0.32);
   const anchorXBalak = () => {
     const liveBounds = getScenePropBounds('balakBoss');
     if (liveBounds) {
@@ -315,10 +320,11 @@ function buildBalakSpeechOptions(sceneProps) {
   const anchorYBalak = () => {
     const liveBounds = getScenePropBounds('balakBoss');
     if (liveBounds) {
-      return liveBounds.top + Math.max(12, liveBounds.height * 0.12);
+      return liveBounds.top + Math.max(18, liveBounds.height * 0.18);
     }
     const baseY = balak?.y ?? wizard.y;
-    return baseY + Math.max(12, (balak?.sprite?.height ?? 0) * 0.12);
+    const height = balak?.sprite?.height ?? 0;
+    return baseY + Math.max(18, height * 0.18);
   };
   return {
     offsetY,
