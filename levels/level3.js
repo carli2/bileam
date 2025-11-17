@@ -8,6 +8,7 @@ import {
   fadeToBase,
   showLevelTitle,
   waitForWizardToReach,
+  getScenePropBounds,
 } from '../scene.js';
 import {
   narratorSay,
@@ -27,6 +28,8 @@ import {
   addProp,
   celebrateGlyph,
   divineSay,
+  sleep,
+  getPropCenterX,
 } from './utils.js';
 
 export async function runLevelThree() {
@@ -146,12 +149,7 @@ async function phaseRevelation(canyonProps) {
   await wizardSay('Er... spricht wirklich?');
   await donkeySay('Nicht mit Worten wie wir. Er spricht mit Klang. Du wirst es hören, wenn du das neue Wort lernst.');
 
-  await Promise.all([
-    showLevelTitle('קול (qol)', 3200),
-    narratorSay('Eine Schriftlinie erscheint auf dem Stein: קול – Stimme.'),
-  ]);
-
-  await donkeySay('ק – das tiefe Grollen in der Erde, ו – das Rollen des Atems, ל – das sanfte Nachklingen. Sprich es, und die Steine antworten.');
+  await showLevelTitle('קול (qol)', 3200);
 
   let attempts = 0;
   while (true) {
@@ -167,7 +165,9 @@ async function phaseRevelation(canyonProps) {
     if (spellEquals(answer, 'qol', 'קול')) {
       updateProp(canyonProps, 'canyonMonolith', { type: 'monolithAwakened' });
       addProp(canyonProps, { id: 'canyonGlyph', type: 'soundGlyph', x: 596, y: 38, parallax: 0.8 });
+      await animateStalactiteFall(canyonProps, 'canyonStalactiteRight');
       await celebrateGlyph(answer);
+      await donkeySay('ק – das tiefe Grollen in der Erde, ו – das Rollen des Atems, ל – das sanfte Nachklingen. Sprich es, und die Steine antworten.');
       await narratorSay('Der Stein singt zurück – ein klarer Ton rollt durch die Schlucht, Staub und Licht steigen auf.');
       await divineSay('בקולי ירעדו גוים\nVor meiner Stimme erzittern die Völker.');
       return;
@@ -192,48 +192,93 @@ async function phaseResonanceWalk(plan, canyonProps) {
   await showLevelTitle('Folge dem Echo\nund sprich קול');
   await donkeySay('Hör auf das Echo, Meister.');
   await waitForWizardToReach(echoMarker, { tolerance: 14 });
-  const echoSequences = [
-    {
-      prompt: 'Ein Echo rollt von den Wänden. Sprich קול, um den Pfad zu stärken.',
-      success: 'Der Klang stabilisiert den Weg unter deinen Füßen.',
-    },
-    {
-      prompt: 'Ein zweites Echo antwortet tiefer aus dem Stein. Sprich קול erneut.',
-      success: 'Die Schlucht trägt deine Stimme weiter. Der Pfad bleibt offen.',
-    },
-  ];
+  const firstStalactite = 'canyonStalactiteEchoOne';
+  await guideWizardUnderProp(canyonProps, firstStalactite, 'Siehst du die Spitze über dir? Stell dich genau darunter, damit der Stein zuhört.');
+  await resolveResonanceEcho(canyonProps, {
+    prompt: 'Ein Echo rollt von den Wänden. Sprich קול, um den Pfad zu stärken.',
+    success: 'Der Klang stabilisiert den Weg unter deinen Füßen.',
+    stalactiteId: firstStalactite,
+  });
 
-  for (const sequence of echoSequences) {
-    await narratorSay(sequence.prompt);
-
-    let correct = false;
-    let attempts = 0;
-    while (!correct) {
-      const answerInput = await promptBubble(
-        anchorX(wizard, 2),
-        anchorY(wizard, -60),
-        'Antwort auf das Echo',
-        anchorX(wizard, 6),
-        anchorY(wizard, -32),
-      );
-      const answer = normalizeHebrewInput(answerInput);
-      if (spellEquals(answer, 'qol', 'קול')) {
-        correct = true;
-        await celebrateGlyph(answer);
-        await narratorSay(sequence.success);
-      } else {
-        attempts++;
-        if (attempts === 1) {
-          await donkeySay('Lass das Wort weiter klingen: QO-L.');
-        } else {
-          await narratorSay('Das Echo wartet noch einmal.');
-        }
-      }
-    }
-  }
+  const secondStalactite = 'canyonStalactiteEchoTwo';
+  await guideWizardUnderProp(canyonProps, secondStalactite, 'Geh weiter bis zur entfernten Spitze hinter der Kurve – erst dort hörst du das Echo erneut.');
+  await resolveResonanceEcho(canyonProps, {
+    prompt: 'Ein zweites Echo antwortet tiefer aus dem Stein. Sprich קול erneut.',
+    success: 'Die Schlucht trägt deine Stimme weiter, doch du musst tiefer hinein.',
+    stalactiteId: secondStalactite,
+  });
 
   await donkeySay('Gut, Meister. Nun kannst du mit den Steinen sprechen.');
   await wizardSay('Oder sie mit mir.');
   await narratorSay('So verliess der Lehrling die Schlucht – mit einer Stimme, die Berge bewegen konnte.');
   await transitionAmbience(plan?.apply ?? plan?.learn ?? 'echoChamber', { fade: { toBlack: 180, toBase: 420 } });
+}
+
+async function animateStalactiteFall(props, id, { duration = 1200, steps = 16 } = {}) {
+  if (!Array.isArray(props) || !id) return;
+  const prop = findProp(props, id);
+  const bounds = getScenePropBounds(id);
+  if (!prop || !bounds) return;
+  const startY = prop.y ?? bounds.top;
+  const spriteHeight = bounds.height ?? prop.sprite?.height ?? 0;
+  const wizardSprite = wizard.sprites?.right ?? wizard.sprites?.left;
+  const wizardHeight = wizardSprite?.height ?? 48;
+  const groundLine = wizard.y + wizardHeight;
+  const targetBottom = groundLine + 80;
+  const targetY = targetBottom - spriteHeight;
+  for (let index = 1; index <= steps; index += 1) {
+    const t = index / steps;
+    const eased = t * t;
+    const nextY = startY + (targetY - startY) * eased;
+    updateProp(props, id, { y: nextY });
+    if (index < steps) {
+      await sleep(duration / steps);
+    }
+  }
+  await sleep(180);
+  updateProp(props, id, null);
+}
+
+async function guideWizardUnderProp(props, id, instruction) {
+  if (!id) return;
+  const propExists = findProp(props, id);
+  if (!propExists) return;
+  if (instruction) {
+    await donkeySay(instruction);
+  }
+  const centerX = getPropCenterX(props, id);
+  if (Number.isFinite(centerX)) {
+    await waitForWizardToReach(centerX, { tolerance: 10 });
+  }
+}
+
+async function resolveResonanceEcho(props, { prompt, success, stalactiteId }) {
+  await narratorSay(prompt);
+  let resolved = false;
+  let attempts = 0;
+  while (!resolved) {
+    const answerInput = await promptBubble(
+      anchorX(wizard, 2),
+      anchorY(wizard, -60),
+      'Antwort auf das Echo',
+      anchorX(wizard, 6),
+      anchorY(wizard, -32),
+    );
+    const answer = normalizeHebrewInput(answerInput);
+    if (spellEquals(answer, 'qol', 'קול')) {
+      resolved = true;
+      if (stalactiteId) {
+        await animateStalactiteFall(props, stalactiteId);
+      }
+      await celebrateGlyph(answer);
+      await narratorSay(success);
+    } else {
+      attempts += 1;
+      if (attempts === 1) {
+        await donkeySay('Lass das Wort weiter klingen: QO-L.');
+      } else {
+        await narratorSay('Das Echo wartet noch einmal.');
+      }
+    }
+  }
 }

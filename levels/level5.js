@@ -8,6 +8,7 @@ import {
   showLevelTitle,
   setSceneProps,
   waitForWizardToReach,
+  getScenePropBounds,
 } from '../scene.js';
 import {
   narratorSay,
@@ -28,6 +29,7 @@ import {
   celebrateGlyph,
   divineSay,
   switchMusic,
+  sleep,
 } from './utils.js';
 
 export async function runLevelFive() {
@@ -80,6 +82,7 @@ async function phaseDormantForge(props) {
     const answer = normalizeHebrewInput(attempt);
 
     if (spellEquals(answer, 'ash', 'אש')) {
+      await showAnvilElement(props, 'fire');
       await donkeySay('Das neue Wort ist noch verborgen. Suche zuerst nach seinen Zeichen.');
       continue;
     }
@@ -95,6 +98,7 @@ async function phaseDormantForge(props) {
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       observed.add('mayim');
+      await showAnvilElement(props, 'water');
       updateProp(props, 'forgeWaterCistern', { type: 'fountainFilled' });
       await celebrateGlyph(answer);
       await narratorSay('Dampf steigt auf, der Boden zischt – doch kein Feuer bleibt.');
@@ -148,6 +152,7 @@ async function phaseAshRevelation(props) {
     if (spellEquals(answer, 'ash', 'אש')) {
       updateProp(props, 'forgeIgnitionRing', { type: 'sunStoneAwakened' });
       await celebrateGlyph(answer);
+      await showAnvilElement(props, 'fire');
       await narratorSay('Der Ring entzündet sich. Flammen tanzen den Wänden entlang – die Schmiede lebt.');
       switchMusic('באש אשפט.mp3');
       await divineSay('באש אשפט\nMit Feuer werde ich richten.');
@@ -184,6 +189,7 @@ async function phaseAnvilChallenge(props) {
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       updateProp(props, 'forgeWaterCistern', { type: 'fountainFilled' });
       await celebrateGlyph(answer);
+      await showAnvilElement(props, 'water');
       await narratorSay('Zischendes Wasser löscht das Feuer. Dampf zeichnet Aleph und Shein in die Luft.');
       updateProp(props, 'forgeWaterCistern', { type: 'fountainDry' });
       return;
@@ -192,6 +198,7 @@ async function phaseAnvilChallenge(props) {
     attempts += 1;
     if (spellEquals(answer, 'ash', 'אש')) {
       await propSay(props, 'forgeBalakEcho', 'Mehr Feuer! Stärke es und lass es für mich schmieden!', { anchor: 'center', offsetY: -42 });
+      await showAnvilElement(props, 'fire');
     } else if (spellEquals(answer, 'or', 'אור')) {
       await narratorSay('Licht facht die Flammen weiter an. Der Amboss glüht heißer.');
     } else if (spellEquals(answer, 'qol', 'קול')) {
@@ -224,6 +231,7 @@ async function phaseBalakChoice(props) {
 
     if (spellEquals(answer, 'ash', 'אש')) {
       await celebrateGlyph(answer);
+      await showAnvilElement(props, 'fire');
       await narratorSay('Die Flammen wachsen zu einer Klinge aus Licht. Balaks Lachen hallt – kalt und gierig.');
       await propSay(props, 'forgeBalakEcho', 'So sei es! Mit diesem Feuer wird Moab regiert!', { anchor: 'center', offsetY: -42 });
       return;
@@ -231,6 +239,7 @@ async function phaseBalakChoice(props) {
 
     if (spellEquals(answer, 'mayim', 'majim', 'mjm', 'מים')) {
       await celebrateGlyph(answer);
+      await showAnvilElement(props, 'water');
       await narratorSay('Wasser umschließt die Flammen. Nur ein glimmender Kern bleibt zurück.');
       await propSay(props, 'forgeBalakEcho', 'Narr! Du vernichtest mein Geschenk!', { anchor: 'center', offsetY: -42 });
       updateProp(props, 'forgeIgnitionRing', { type: 'sunStoneDormant' });
@@ -252,4 +261,29 @@ async function phaseReflection() {
 function findForgeRing(props) {
   const ring = findProp(props, 'forgeIgnitionRing');
   return ring ?? { x: wizard.x + 80, y: wizard.y - 16 };
+}
+
+const ANVIL_EFFECT_ID = 'forgeAnvilElement';
+
+async function showAnvilElement(props, element = 'fire', { linger = 720 } = {}) {
+  if (!Array.isArray(props)) return;
+  const bounds = getScenePropBounds('forgeAnvil');
+  const anvil = findProp(props, 'forgeAnvil');
+  if (!bounds || !anvil) return;
+  updateProp(props, ANVIL_EFFECT_ID, null);
+  const centerX = (bounds.left + bounds.right) / 2;
+  const offset = element === 'water' ? 10 : 8;
+  const x = Math.round(centerX - offset);
+  const y = Math.round(bounds.top - 16);
+  const type = element === 'water' ? 'anvilWater' : 'anvilFlame';
+  addProp(props, {
+    id: ANVIL_EFFECT_ID,
+    type,
+    x,
+    y,
+    parallax: anvil.parallax ?? 1,
+    layer: (anvil.layer ?? 0) + 1,
+  });
+  await sleep(linger);
+  updateProp(props, ANVIL_EFFECT_ID, null);
 }

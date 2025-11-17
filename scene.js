@@ -168,6 +168,7 @@ export const wizard = {
   vy: 0,
   facing: 1,
   onGround: true,
+  locked: false,
 };
 
 export const donkey = {
@@ -743,6 +744,9 @@ function initSprites() {
   const cloudSprites = createCloudSprites(colors);
   propSprites.door = createDoorSprite(colors);
   propSprites.water = createWaterSprite(colors);
+  propSprites.anvilFlame = createAnvilFlameSprite(colors);
+  propSprites.anvilWater = createAnvilWaterSprite(colors);
+  propSprites.riverWave = createRiverWaveSprite(colors);
   propSprites.stoneArch = createStoneArchSprite(colors);
   propSprites.fountainDry = createFountainSprite(colors, false);
   propSprites.fountainFilled = createFountainSprite(colors, true);
@@ -981,6 +985,11 @@ function loop(time) {
 }
 
 function updateWizard(delta) {
+  if (wizard.locked) {
+    wizard.vx = 0;
+    wizard.vy = 0;
+    return;
+  }
   const leftHeld = heldKeys.has('a') || heldKeys.has('arrowleft');
   const rightHeld = heldKeys.has('d') || heldKeys.has('arrowright');
   const downHeld = heldKeys.has('s') || heldKeys.has('arrowdown');
@@ -3157,6 +3166,80 @@ function createWaterSprite(c) {
       }
 
       pixels[idx] = color;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createAnvilFlameSprite(c) {
+  const art = [
+    '.........R.........',
+    '........RRR........',
+    '.......RRrRR.......',
+    '......RRrrrRR......',
+    '.....RrrRRrrR......',
+    '......rrRRrr.......',
+    '.......RRR.........',
+    '........R..........',
+    '.......rrr.........',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'R': c.hutGlow ?? c.wizardHatHighlight,
+    'r': c.wizardBelt ?? c.volcanoBrim ?? c.dirt,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createAnvilWaterSprite(c) {
+  const art = [
+    '....................',
+    '.......bbb..........',
+    '......bbbbb.........',
+    '.....bb229bb........',
+    '....bb22229bb.......',
+    '.....bb222bb........',
+    '......bb22bb........',
+    '.......bbbb.........',
+    '........bb..........',
+  ];
+  const legend = {
+    '.': c.transparent,
+    'b': c.riverWater ?? c.dawnSkyMid,
+    '2': c.dawnSkyMid ?? c.cloudHighlight,
+    '9': c.dawnSkyBottom ?? c.nightSkyMid,
+  };
+  return spriteFromStrings(art, legend);
+}
+
+function createRiverWaveSprite(c) {
+  const width = 112;
+  const height = 32;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const crest = c.cloudHighlight ?? c.dawnSkyMid;
+  const foam = c.dawnSkyMid ?? c.skyMid;
+  const body = c.riverWater ?? c.dawnSkyMid;
+  const deep = c.nightSkyMid ?? c.riverWater ?? c.skyBottom;
+
+  for (let x = 0; x < width; x++) {
+    const t = x / (width - 1);
+    const crestTop = Math.max(2, Math.floor(9 - Math.sin(t * Math.PI) * 6));
+    for (let y = crestTop; y < height; y++) {
+      const idx = y * width + x;
+      if (y <= crestTop + 1) {
+        pixels[idx] = crest;
+      } else if (y <= crestTop + 4) {
+        const ripple = Math.sin((x + y * 1.2) * 0.2);
+        pixels[idx] = ripple > 0 ? foam : crest;
+      } else if (y <= crestTop + 16) {
+        const swell = Math.sin((x * 0.18) + (y * 0.12));
+        pixels[idx] = swell > -0.2 ? body : foam;
+      } else {
+        const undertow = Math.sin(x * 0.08 + y * 0.3);
+        pixels[idx] = undertow > 0 ? deep : body;
+      }
     }
   }
 
