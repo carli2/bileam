@@ -148,6 +148,7 @@ const SPELL_ALIASES = {
   ארור: 'ארור',
   // ברך / ברכה
   barak: 'ברך',
+  baruch: 'ברך',
   ברך: 'ברך',
   beraka: 'ברכה',
   beracha: 'ברכה',

@@ -90,11 +90,16 @@ export function transliterateToHebrew(input) {
   for (let i = 0; i < result.length; i += 1) {
     const char = result[i];
     if (!FINAL_FORMS[char]) continue;
-    let j = i + 1;
-    while (j < result.length && result[j] === ' ') {
-      j += 1;
+    let hasLetterAhead = false;
+    for (let j = i + 1; j < result.length; j += 1) {
+      const nextChar = result[j];
+      if (nextChar === ' ') {
+        break;
+      }
+      hasLetterAhead = true;
+      break;
     }
-    if (j >= result.length || result[j] === ' ') {
+    if (!hasLetterAhead) {
       result[i] = FINAL_FORMS[char];
     }
   }

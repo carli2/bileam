@@ -7,7 +7,7 @@ Balak, König von Moab, starrt über die Jericho-Ebene und sieht Israels Lager w
 
 ![Gameplay-Szene: Die Eselin stoppt am Weinberg](assets/Screenshot%202025-11-05%20at%2022-56-26%20Donkey%20Dystopia%20320.png)
 
-Jedes Level ist ein kleines Lehrdrama. Die Szene oben zeigt Level 7: Fürsten, Bannfahnen und Weinbergmauern bilden die Bühne, während die Eselin dreimal `shama` einfordert, bevor sie das Unsichtbare preisgibt. Mal entzündest du Altäre mit `ash`, mal stoppst du Balaks Gesandte mit `lo`, mal lässt du mit `barak` Segen wie Lapislazuli über Basaltfliesen laufen. Dialoge klingen wie biblische Poesie, doch sie erklären klar, welches Wort du begreifen, tippen und behalten musst.
+Jedes Level ist ein kleines Lehrdrama. Die Szene oben zeigt Level 7: Fürsten, Bannfahnen und Weinbergmauern bilden die Bühne, während die Eselin dreimal `shama` einfordert, bevor sie das Unsichtbare preisgibt. Mal entzündest du Altäre mit `ash`, mal stoppst du Balaks Gesandte mit `lo`, mal lässt du mit `baruch` Segen wie Lapislazuli über Basaltfliesen laufen. Dialoge klingen wie biblische Poesie, doch sie erklären klar, welches Wort du begreifen, tippen und behalten musst.
 
 *Bileam – Lehrling des Wortes* verbindet Storytelling mit Lernmechanik: du hörst, sprichst, tippst und siehst sofort, wie Licht, Wasser oder Stein auf deine Lippen reagieren. Das Ancient-Futurism-Artwork, die ruhige Musik und die didaktische Eselin machen jeden Abschnitt zum spirituell-poetischen Sprachtraining.
 

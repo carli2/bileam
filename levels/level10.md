@@ -18,7 +18,7 @@ Gäbe mir Balak sein Haus voll Silber und Gold,
 ich könnte das Wort des HERRN nicht übertreten, weder im Kleinen noch im Großen."
 
 **Schriftanzeige:**  
-> Aktive Worte: `lo`, `shama`, `barak`, `dabar`, `emet`.  
+> Aktive Worte: `lo`, `shama`, `baruch`, `dabar`, `emet`.  
 > **Neues Wort zum Entfalten:** `or` (אור) - Ur-Licht, das Wort sichtbar macht.  
 > Ziel: Stabilisiere die Sternplattform, bevor Balaks Schatten den Code zerreißt.
 
@@ -30,7 +30,7 @@ ich könnte das Wort des HERRN nicht übertreten, weder im Kleinen noch im Groß
 - Auf jeder Terrasse muss der Spieler zwei Sternsplitter berühren und mit Wortkombinationen reinigen:  
   - `shama` deckt verborgene Risse auf.  
   - `lo` bannt Balaks Gegenbefehl.  
-  - `barak` schließt die Sternspur.  
+  - `baruch` schließt die Sternspur.  
 - Nach Abschluss einer Terrasse manifestiert sich Fragment א (Aleph) als Lichtlinie - erster Hinweis auf `or`.  
 - Versäumt der Spieler eine Reinigung, entsteht ein Schattenfeld; nur `shama` -> `lo` löst es auf.
 
@@ -57,7 +57,7 @@ ich könnte das Wort des HERRN nicht übertreten, weder im Kleinen noch im Groß
 - Jede Bahn erwartet eine bestimmte Wortsequenz:  
   1. `shama` -> `dabar`  
   2. `dabar` -> `emet`  
-  3. `barak` -> `emet` -> `or` (erstes Mal nur "or" als Resonanzfragment)  
+  3. `baruch` -> `emet` -> `or` (erstes Mal nur "or" als Resonanzfragment)  
   4. `shama` -> `lo` -> `or`  
   5. `or` solo, gehalten für drei Herzschläge.  
 - Richtige Eingaben füllen die Krone mit Licht; nach Bahn 5 entsteht ein Sternfragment ר (Resch).  
@@ -85,7 +85,7 @@ ich könnte das Wort des HERRN nicht übertreten, weder im Kleinen noch im Groß
 - Der Spieler muss jede Projektion mit Licht stabilisieren:  
   - `dabar` -> `or` bricht die falschen Muster.  
   - `shama` -> `lo` verhindert, dass Balaks Schatten die Vision verzerrt.  
-  - Optional: `barak` legt Schutz über Verbündete und erhöht Weltstabilität.  
+  - Optional: `baruch` legt Schutz über Verbündete und erhöht Weltstabilität.  
 - Jeder Erfolg bringt ein Sternfragment ו (Vav).  
 - Bleibt eine Projektion instabil, entstehen "Shadow Echoes"; nur `or` in Kombination mit `emet` löst sie, sonst verbleibt ein Debuff in Level 10_5.
 
@@ -110,7 +110,7 @@ Wer ist dieser Stern? Ein Gott? Ein Spiegel?"
 ### 🜄 Spielphase IV - Schattenriss
 
 - Balaks Schatten teilt sich in drei Echos, die sich entlang eines Dreiecks bewegen.  
-- Der Spieler muss jeden Echo-Knoten mit `shama` -> `lo` -> `barak` -> `or` bannen.  
+- Der Spieler muss jeden Echo-Knoten mit `shama` -> `lo` -> `baruch` -> `or` bannen.  
 - Nach jedem Bann verlangsamt sich der Schattenstrom; alle drei ergeben das Sternfragment ך (Kaf).  
 - Lässt der Spieler einen Knoten passieren, schlägt der Schatten auf die Sternkrone ein und reduziert Weltstabilität um 10.
 
@@ -123,7 +123,7 @@ Wer ist dieser Stern? Ein Gott? Ein Spiegel?"
 **Systemwarnung:**  
 > *Weltstabilität kritisch.*  
 > *Neuer Prozess entdeckt: SHADOW_BALAK.exe.*  
-> Verwende `or` -> `emet` -> `barak`, um den Riss kurzfristig zu schließen.
+> Verwende `or` -> `emet` -> `baruch`, um den Riss kurzfristig zu schließen.
 
 **Erzähler:**  
 Bileam spricht die Formel, der Riss verengt sich, doch Balaks Schatten entkommt in eine tiefe Senke.
@@ -136,10 +136,10 @@ Bileam spricht die Formel, der Riss verengt sich, doch Balaks Schatten entkommt 
 - Jedes Segment erwartet eine Variante der Lichtformel:  
   1. `or`  
   2. `or` -> `emet`  
-  3. `or` -> `emet` -> `barak`  
+  3. `or` -> `emet` -> `baruch`  
   4. `shama` -> `or`  
   5. `dabar` -> `or`  
-  6. `barak` -> `or`  
+  6. `baruch` -> `or`  
   7. `or` (gehalten).  
 - Abschluss vergibt den Zustand "Sternträger" und speichert `shadow_access = unlocked`.  
 - Misslingt ein Segment, stürzt der Steg teilweise ein; der Spieler muss Segment 1 erneut beginnen.
@@ -151,7 +151,7 @@ Bileam spricht die Formel, der Riss verengt sich, doch Balaks Schatten entkommt 
 **Aktive Worte:**  
 - `lo` (לא) - blockiert falsche Befehle.  
 - `shama` (שמע) - macht verborgene Signale hörbar.  
-- `barak` (ברך) - verwandelt Fluch in Segen.  
+- `baruch` (ברך) - verwandelt Fluch in Segen.  
 - `dabar` (דבר) - setzt gesprochene Worte als Handlung um.  
 - `emet` (אמת) - verankert Wahrheit.  
 - `or` (אור) - manifestiert Licht und stabilisiert das Gewebe.
@@ -159,8 +159,8 @@ Bileam spricht die Formel, der Riss verengt sich, doch Balaks Schatten entkommt 
 **Kombinationen:**  
 - `shama` -> `dabar` -> `or` - hörendes Lichtwort, öffnet Sternbahnen.  
 - `dabar` -> `emet` -> `or` - wahres Lichtwort, stärkt Schutzschilde.  
-- `barak` -> `emet` -> `or` - Segen im Licht, heilt Verbündete und schwächt Balaks Schatten.  
-- `shama` -> `lo` -> `barak` -> `or` - Bannformel gegen Schattenprozesse.
+- `baruch` -> `emet` -> `or` - Segen im Licht, heilt Verbündete und schwächt Balaks Schatten.  
+- `shama` -> `lo` -> `baruch` -> `or` - Bannformel gegen Schattenprozesse.
 
 **Systemeffekte:**  
 - Fehlende Nutzung von `or` lässt "Shadow Echoes" wachsen und führt zu Dunkelpartikeln in Level 10_5.  

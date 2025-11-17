@@ -132,7 +132,7 @@ const TERRACE_STEPS = [
     id: 'terraceThree',
     actions: [
       { prompt: 'Lausche: sprich שמע.', spells: ['shama', 'שמע'] },
-      { prompt: 'Segne den Pfad mit ברך.', spells: ['barak', 'ברך'] },
+      { prompt: 'Segne den Pfad mit ברך.', spells: ['baruch', 'ברך'] },
     ],
   },
 ];
@@ -144,13 +144,13 @@ const ALTAR_SEQUENCE = [
   { id: 'altarSouthEast', prompt: 'Höre erneut.', spells: ['shama', 'שמע'] },
   { id: 'altarSouth', prompt: 'Verneine Balaks Fluch.', spells: ['lo', 'לא'] },
   { id: 'altarSouthWest', prompt: 'Laß Wasser beruhigen.', spells: ['mayim', 'majim', 'mjm', 'מים'] },
-  { id: 'altarWest', prompt: 'Segne, was du erweckt hast.', spells: ['barak', 'ברך'], fragment: 'ר' },
+  { id: 'altarWest', prompt: 'Segne, was du erweckt hast.', spells: ['baruch', 'ברך'], fragment: 'ר' },
 ];
 
 const RESONANCE_STEPS = [
   { id: 'resonanceOuter', prompt: 'Höre den äußeren Ring: sprich שמע.', spells: ['shama', 'שמע'] },
   { id: 'resonanceMiddle', prompt: 'Banne den Fluch mit לא.', spells: ['lo', 'לא'] },
-  { id: 'resonanceInner', prompt: 'Sprich ברך, um den Segen freizusetzen.', spells: ['barak', 'ברך'] },
+  { id: 'resonanceInner', prompt: 'Sprich ברך, um den Segen freizusetzen.', spells: ['baruch', 'ברך'] },
 ];
 
 export async function runLevelEight() {
@@ -233,7 +233,7 @@ async function phaseSevenAltars(props) {
   for (const altar of ALTAR_SEQUENCE) {
     const target = props.find(entry => entry.id === altar.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 18 });
-    const needsBarakHint = containsBarakSpell(altar.spells);
+    const needsBaruchHint = containsBaruchSpell(altar.spells);
     let failures = 0;
     let cleared = false;
     while (!cleared) {
@@ -249,7 +249,7 @@ async function phaseSevenAltars(props) {
         }
       } else {
         failures += 1;
-        if (needsBarakHint && failures % 3 === 0) {
+        if (needsBaruchHint && failures % 3 === 0) {
       await donkeySay('Erinnere dich: ברך wird baruch gesprochen – sprich den Segen, dann antwortet der Altar.');
         } else {
           await donkeySay('Der Altar reagiert nur auf das rechte Wort.');
@@ -268,7 +268,7 @@ async function phaseResonance(props) {
   for (const ring of RESONANCE_STEPS) {
     const target = props.find(entry => entry.id === ring.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 16 });
-    const needsBarakHint = containsBarakSpell(ring.spells);
+    const needsBaruchHint = containsBaruchSpell(ring.spells);
     let failures = 0;
     let done = false;
     while (!done) {
@@ -280,7 +280,7 @@ async function phaseResonance(props) {
         await narratorSay('Der Ring antwortet auf dein Wort.');
       } else {
         failures += 1;
-        if (needsBarakHint && failures % 3 === 0) {
+        if (needsBaruchHint && failures % 3 === 0) {
           await donkeySay('ברך – baruch. Vergiss den Segen nicht.');
         } else {
           await donkeySay('Höre, verneine und segne – in dieser Reihenfolge.');
@@ -292,12 +292,12 @@ async function phaseResonance(props) {
   let learned = false;
   while (!learned) {
     const answer = await readWord('Sprich ברך (baruch).');
-    if (spellEquals(answer, 'barak', 'ברך')) {
+    if (spellEquals(answer, 'baruch', 'ברך')) {
       learned = true;
-      addProp(props, { id: 'barakFragmentKaf', type: 'blessingFragment', x: wizard.x + 18, y: wizard.y - 46, parallax: 0.9, letter: 'ך' });
+      addProp(props, { id: 'baruchFragmentKaf', type: 'blessingFragment', x: wizard.x + 18, y: wizard.y - 46, parallax: 0.9, letter: 'ך' });
       await celebrateGlyph(answer);
       await narratorSay('Segen strahlt wie warme Glut.');
-      addProp(props, { id: 'barakGlyphOrbit', type: 'blessingFragmentOrbit', x: wizard.x + 30, y: wizard.y - 52, parallax: 0.92, letter: 'ברך' });
+      addProp(props, { id: 'baruchGlyphOrbit', type: 'blessingFragmentOrbit', x: wizard.x + 30, y: wizard.y - 52, parallax: 0.92, letter: 'ברך' });
       await narratorSay('Fragmente ב, ר und ך kreisen nun als sichtbare Glyphen um dich.');
     } else {
       await donkeySay('Sprich es klar: ba-rak.');
@@ -316,10 +316,10 @@ async function phaseFirstOracle(props) {
 
 async function phaseBlessingSequence() {
   await narratorSay('Balak fordert den Fluch. Deine Worte werden Segen.');
-  const order = ['shama', 'lo', 'barak'];
+  const order = ['shama', 'lo', 'baruch'];
   const canonicalOrder = canonicalizeSequence(order);
   let index = 0;
-  let barakFailures = 0;
+  let baruchFailures = 0;
   while (index < order.length) {
     const prompts = [
       'Höre zuerst: sprich שמע.',
@@ -341,9 +341,9 @@ async function phaseBlessingSequence() {
       await celebrateGlyph(answer);
       index += 1;
     } else {
-      if (expected === 'barak') {
-        barakFailures += 1;
-        if (barakFailures % 3 === 0) {
+      if (expected === 'baruch') {
+        baruchFailures += 1;
+        if (baruchFailures % 3 === 0) {
         await donkeySay('Der letzte Schritt ist ברך – baruch. Sprich ihn – oder tippe die ganze Folge auf einmal: "shama lo baruch".');
         } else {
           await donkeySay('Reihenfolge: hören, verneinen, segnen. Du kannst sie auch gesammelt tippen, getrennt durch Leerzeichen.');
@@ -373,15 +373,15 @@ async function phasePisgaPath(props) {
   addProp(props, { id: 'pisgaScriptVeil', type: 'pisgaScriptPath', x: wizard.x - 40, y: wizard.y - 30, parallax: 0.8 });
   await narratorSay('Der Weg zum Pisga ist mit Schrift übersät.');
   const steps = [
-    { id: 'pisgaStone', prompt: 'Der Späherstein verlangt einen Segen: sprich ברך.', spells: ['barak', 'ברך'] },
+    { id: 'pisgaStone', prompt: 'Der Späherstein verlangt einen Segen: sprich ברך.', spells: ['baruch', 'ברך'] },
     { id: 'pisgaCleft', prompt: 'Höre und verneine Balaks Linie (שמע, dann לא).', sequence: ['shama', 'lo'] },
-    { id: 'pisgaPortal', prompt: 'Öffne das Portal mit לא und schliesse mit ברך.', sequence: ['lo', 'barak'] },
+    { id: 'pisgaPortal', prompt: 'Öffne das Portal mit לא und schliesse mit ברך.', sequence: ['lo', 'baruch'] },
   ];
   for (const step of steps) {
     const target = props.find(entry => entry.id === step.id)?.x ?? wizard.x + 200;
     await waitForWizardToReach(target, { tolerance: 18 });
     if (!step.sequence) {
-      const needsBarakHint = containsBarakSpell(step.spells);
+      const needsBaruchHint = containsBaruchSpell(step.spells);
       let failures = 0;
       let ok = false;
       while (!ok) {
@@ -392,7 +392,7 @@ async function phasePisgaPath(props) {
           await celebrateGlyph(answer);
         } else {
           failures += 1;
-          if (needsBarakHint && failures % 3 === 0) {
+          if (needsBaruchHint && failures % 3 === 0) {
             await donkeySay('ברך – baruch. Der Stein nimmt nur den Segen an.');
           } else {
             await donkeySay('Der Stein wartet auf den passenden Segen.');
@@ -401,7 +401,7 @@ async function phasePisgaPath(props) {
       }
     } else {
       let idx = 0;
-      let barakFailures = 0;
+      let baruchFailures = 0;
       const canonicalSeq = canonicalizeSequence(step.sequence);
       while (idx < step.sequence.length) {
         const expected = step.sequence[idx];
@@ -424,9 +424,9 @@ async function phasePisgaPath(props) {
             updateProp(props, step.id, { type: 'pisgaBridgeSegmentLit' });
           }
         } else {
-          if (expected === 'barak') {
-            barakFailures += 1;
-            if (barakFailures % 3 === 0) {
+          if (expected === 'baruch') {
+            baruchFailures += 1;
+            if (baruchFailures % 3 === 0) {
               await donkeySay('Der Abschluss lautet ברך – sprich baruch, oder tippe alle Worte auf einmal (z. B. "lo baruch").');
             } else {
               await donkeySay('Halte die Reihenfolge ein.');
@@ -441,7 +441,7 @@ async function phasePisgaPath(props) {
   }
 }
 
-function containsBarakSpell(spells) {
+function containsBaruchSpell(spells) {
   if (!Array.isArray(spells)) return false;
   return spells.some(spell => {
     if (typeof spell !== 'string') return false;
@@ -453,7 +453,7 @@ function containsBarakSpell(spells) {
     const normalized = base
       .replace(/[^A-Za-z]/g, '')
       .toLowerCase();
-  return normalized === 'barak';
+    return normalized === 'baruch';
   });
 }
 

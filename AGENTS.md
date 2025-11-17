@@ -109,7 +109,7 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
 | 5 – אש (*aw*) | Schmiede der Flammen | Macht, Schöpfung, Prüfung | Balak lobt Bileam für „die Macht seiner Zunge“ | Rot, Schwarz, Weißglut | Metall, Lava | Funken, Rauch |
 | 6 – לא (*lo*) | Mauern von Ar & Lager Petor | Grenze, Verweigerung, Gehorsam | Balak beobachtet aus der Ferne, sendet Gesandte | Ocker, Glutbernstein, Mitternachtsblau | Sand, Lehm, Nachtfeuer, Schriftlinien | Staubwirbel, Glyphensplitter, Funken |
 | 7 – שמע (*shama*) | Terrassenweg & Engelschluchten | Hören, Prüfung, Offenbarung | Fürsten und Engel zwingen zur Entscheidung | Morgengrau, Silber, Azur | Basalt, Reben, Klangbahnen, Lichtklingen | Echo-Spuren, Atemnebel, Hörfäden |
-| 8 – ברך (*barak*) | Altäre von Bamot-Baal | Segen, Ritual, Erwartung | Balak drängt und beobachtet jede Geste | Basalt, Gold, Lapislazuli | Steinplatten, Opferfeuer, Glyphmosaik | Segenfunken, Rauchspiralen, Resonanzringe |
+| 8 – ברך (*baruch*) | Altäre von Bamot-Baal | Segen, Ritual, Erwartung | Balak drängt und beobachtet jede Geste | Basalt, Gold, Lapislazuli | Steinplatten, Opferfeuer, Glyphmosaik | Segenfunken, Rauchspiralen, Resonanzringe |
 | 9 – דבר / אמת (*dabar / emet*) | Pisga-Kamm & Wahrheitsgarten | Wort wird Wirklichkeit, Wahrheit verankert | Balak ringt mit dem Gesprochenen | Mondgrau, Weißgold, Tiefgrün | Polierter Stein, Spiegel, Wasserläufe | Lichtbahnen, Wahrheitsfragmente, Schwurglanz |
 | 10 – אור (*or*) | Sternenplateau & Schattensteg | Sternenlicht, Entscheidung, Befreiung | Balaks Schatten kämpft um letzte Macht | Mitternachtsblau, Sternweiß, Purpurglut | Basalt, Sternsplitter, Lichtkronen | Sternpartikel, Schattenrisse, Flare-Impulse |
 
@@ -141,7 +141,7 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
   - *Feuerstellen* (`aw`) – Schmiedefeuer, Fackeln, Lavapools  
   - *Grenzmarker* (`lo`) – sandVisionRings, envoyShadow-Szenen, Versuchungsgefäße, Wachfeuer mit Verdunkelungsphase  
   - *Hörzeichen* (`shama`) – Hufspurketten, Fürstenbanner, Hörkreise, Klangfäden über Altären  
-  - *Segenaltäre* (`barak`) – modulare Altarplatten, Opferbecken, schwebende Segensfragmente  
+  - *Segenaltäre* (`baruch`) – modulare Altarplatten, Opferbecken, schwebende Segensfragmente  
   - *Wahrheitsspiegel* (`dabar` / `emet`) – Resonanzsäulen, Sinnbild-Netze, Schwurkreise, Lügenrisse als Gegenpart  
   - *Sternpfade* (`or`) – Sternterrassen, Lichtkronen, Schattenknoten, Sternsteg-Module  
   - *Engelszeichen / Portale* (`malak`) – Lichttore, pulsierende Glyphen (aktiv ab Level 8)  
@@ -172,7 +172,7 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
 | 5 – aw | Feuer | Schlagwerk, Bass, metallisches Klingen | Kraftvoll, gefährlich |
 | 6 – lo | Grenzwache | Rahmentrommeln, Feuerknistern, tiefer Bordun, gedämpfte Hörner | Wachsam, gespannt |
 | 7 – shama | Engelsweg | Herzschlag-Percussion, Glasglocken, vokale Drones | Lauschend, angespannt |
-| 8 – barak | Bamot-Baal | Harfen, Shofar-Samples, tiefe Trommeln, chorale Pads | Ritualisiert, erhaben |
+| 8 – baruch | Bamot-Baal | Harfen, Shofar-Samples, tiefe Trommeln, chorale Pads | Ritualisiert, erhaben |
 | 9 – dabar / emet | Pisga | Metallische Resonanzen, Streicher-Ostinati, heller Chor | Gewichtig, klärend |
 | 10 – or | Sternenpfad | Orchestraler Synth-Hybrid, Glöckchen-Arps, pulsierende Subbässe | Kosmisch, entscheidend |
 
@@ -185,7 +185,7 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
   - *aw* – tiefer Donner, Funkenknistern  
   - *lo* – scharfes Luftansaugen, dumpfer Puls, Sandknirschen, das abrupt stoppt  
   - *shama* – modulierte Obertöne, leiser Chorzug, Fokus auf binaurales Echo  
-  - *barak* – strahlende Harfenakkorde, funkelnde Glissandi, warmer Bassstoß  
+  - *baruch* – strahlende Harfenakkorde, funkelnde Glissandi, warmer Bassstoß  
   - *dabar* – resonante Glocken, gestaffelte Stimme, die in Stein übergeht  
   - *emet* – kristallines Summen mit langem Nachhall, dezente Chorfläche  
   - *or* – gleißendes Spektrum, Sternrauschen, hoher Schimmertrail  
@@ -220,7 +220,7 @@ Er dient als Gegenpol zum Lernprozess: Manipulation vs. Erkenntnis.
 |-------|--------------|-------------------|-----------|---------------------|
 | 6 | `lo` (לא) | Verbietet Fluch/Versuchung, stabilisiert Grenzen | Bewusstes „Nein“ als Schutz | Glyph-Fragmente ל + א, Nachtmeditation, Versuchungsgefäße |
 | 7 | `shama` (שמע) | Hören/Gehorchen, macht Unsichtbares sichtbar | Rhythmus & Timing, Herzschlag-Sequenzen | *transgression*-Zähler, Höraltäre, Engel-Gates |
-| 8 | `barak` (ברך) | Segen freisetzen, Energie umlenken | Mehrstufige Ritual-Sequenzen | Segensfragmente, Altar-Minispiele, Balaks Ungeduld |
+| 8 | `baruch` (ברך) | Segen freisetzen, Energie umlenken | Mehrstufige Ritual-Sequenzen | Segensfragmente, Altar-Minispiele, Balaks Ungeduld |
 | 9 | `dabar` (דבר) & `emet` (אמת) | Wort wird Handlung, Wahrheit verankert | Kombination & Reihenfolge, Wahrheitsprüfung | Resonanzsäulen, Lügenrisse, Schwurkreis |
 | 10 | `or` (אור) | Ur-Licht, manifestiert Sternpfade | Sequenzketten, Haltephasen | Sternkrone, Schattenknoten, Weltstabilität / Shadow Balak |
 
@@ -237,7 +237,7 @@ Er dient als Gegenpol zum Lernprozess: Manipulation vs. Erkenntnis.
 - **Regie-Anweisungen:** niemals in wörtlicher Rede oder Sprechblasen unterbringen; nutze stattdessen großflächige Texte (z. B. Sequenzen, `showLevelTitle`) oder passende Effekte.  
 - **Tests:** Nach jeder Änderung `npm test` ausführen und nur mit grünem Ergebnis weiterarbeiten.  
 - **Systemmetriken pflegen:** `transgression`, `divine_pass`, `worldStability`, `shadow_access` müssen sichtbar gespiegelt werden (Aura, Partikel, UI-Hinweis) und dürfen nicht „stumm“ steigen oder fallen.  
-- **Combo-Telegrafie:** Für jede Pflichtkombination (`lo → shama`, `shama → lo → barak`, `dabar → emet → or` usw.) brauchen Props klare Vorzeichen – Lichtband, Klanghinweis oder Esel-Tip – bevor der Spieler scheitern kann.  
+- **Combo-Telegrafie:** Für jede Pflichtkombination (`lo → shama`, `shama → lo → baruch`, `dabar → emet → or` usw.) brauchen Props klare Vorzeichen – Lichtband, Klanghinweis oder Esel-Tip – bevor der Spieler scheitern kann.  
 - *Kursiver Szenentext* aus den Level-Markdowns beschreibt Bühne, Kamera, Licht und Effekte – niemals als Dialog ausgeben. Setze entsprechende Props, Partikel, Ambience-Layer oder Animationszustände, damit die Szene ohne zusätzliche Sprechblasen erkennbar wird.  
 - Regiehinweise wie `Ziel:` oder `Gameplay-Hinweis:` erscheinen als Overlays (`showLevelTitle`, UI-Widgets) oder durch geänderte Szene-Kontexte, nicht als Erzähler- oder Figurentext.  
 - Neue Lernwörter, Systemmeldungen oder Missionsziele sollen über bestehende UI (Titelband, Grimoire-Update, Glyph-Reveal) vermittelt werden; keine improvisierten Dialogblasen dafür einsetzen.  

@@ -125,15 +125,15 @@ const PISGA_SENTENCES = [
   {
     id: 'truthPlateTwo',
     description: 'Vision 2 – Staubflüstern: Balaks Befehl kriecht wie Sand über den Grat.',
-    prompt: 'Schreib לא ברך (lo barak) – „Sag Nein und segne“. ',
-    sequence: ['lo', 'barak'],
+    prompt: 'Schreib לא ברך (lo baruch) – „Sag Nein und segne“. ',
+    sequence: ['lo', 'baruch'],
     hint: 'Tippe לא ברך, um seinen Auftrag zu brechen.',
   },
   {
     id: 'truthPlateThree',
     description: 'Vision 3 – Gärten an Wassern: Bäche glänzen wie Spiegel.',
-    prompt: 'Schreib מים ברך (mayim barak).',
-    sequence: ['mayim', 'barak'],
+    prompt: 'Schreib מים ברך (mayim baruch).',
+    sequence: ['mayim', 'baruch'],
     hint: 'Der Garten reagiert nur auf מים ברך.',
   },
   {
@@ -153,15 +153,15 @@ const PISGA_SENTENCES = [
   {
     id: 'truthPlateSix',
     description: 'Vision 6 – Stern über Jakob: Licht verlangt nach Segen.',
-    prompt: 'Schreib אור ברך (or barak).',
-    sequence: ['or', 'barak'],
+    prompt: 'Schreib אור ברך (or baruch).',
+    sequence: ['or', 'baruch'],
     hint: 'Der Stern wartet auf אור ברך.',
   },
   {
     id: 'truthPlateSeven',
     description: 'Vision 7 – Schlusswort: Segen für die Segnenden.',
-    prompt: 'Schreib אמת ברך (emet barak).',
-    sequence: ['emet', 'barak'],
+    prompt: 'Schreib אמת ברך (emet baruch).',
+    sequence: ['emet', 'baruch'],
     hint: 'Der Abschluss lautet אמת ברך.',
   },
 ];
@@ -175,7 +175,7 @@ export async function runLevelNine() {
   setSceneContext({ level: 'level9', phase: 'pisga-lines' });
   await showLevelTitle('Level 9 - Die Stimme des Wahren');
   await fadeToBase(600);
-  await narratorSay('lo hält die Grenze, shama offenbart den Klang, barak lenkt den Segen.');
+  await narratorSay('lo hält die Grenze, shama offenbart den Klang, baruch lenkt den Segen.');
   await narratorSay('Nun erwarten dich zwei neue Worte: דבר (dabar) – das Wort, das geschieht; אמת (emet) – das Licht, das wahr bleibt.');
 
   await phasePisgaLines(pisgaProps);
@@ -319,13 +319,13 @@ async function phaseSecondOracle(props) {
 }
 
 async function phaseOathCircle(props) {
-  await narratorSay('Ein Wahrheitskreis verlangt deine Treue. Sprich shama → dabar → emet → barak.');
+  await narratorSay('Ein Wahrheitskreis verlangt deine Treue. Sprich shama → dabar → emet → baruch.');
   await narratorSay('Höre (שמע), sprich das wirksame Wort (דבר), halte es wahr (אמת) und lasse den Segen fließen (ברך).');
   const order = [
     { word: 'shama', prompt: 'Sprich שמע.' },
     { word: 'dabar', prompt: 'Sprich דבר.' },
     { word: 'emet', prompt: 'Sprich אמת.' },
-    { word: 'barak', prompt: 'Sprich ברך.' },
+    { word: 'baruch', prompt: 'Sprich ברך.' },
   ];
   const canonicalOrder = canonicalizeSequence(order.map(entry => entry.word));
   let index = 0;
@@ -345,7 +345,7 @@ async function phaseOathCircle(props) {
       index += 1;
       await celebrateGlyph(answer);
     } else {
-      await donkeySay('Reihenfolge: shama, dabar, emet, barak. Du kannst sie auch gesammelt eingeben, getrennt durch Leerzeichen.');
+      await donkeySay('Reihenfolge: shama, dabar, emet, baruch. Du kannst sie auch gesammelt eingeben, getrennt durch Leerzeichen.');
       index = 0;
     }
   }
@@ -381,7 +381,7 @@ function hebrewVariant(word) {
       return 'שמע';
     case 'lo':
       return 'לא';
-    case 'barak':
+    case 'baruch':
       return 'ברך';
     case 'dabar':
       return 'דבר';

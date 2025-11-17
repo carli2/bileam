@@ -472,8 +472,16 @@ function segmentLine(line) {
   const segments = [];
   if (!line) return segments;
   let current = null;
-  for (const char of line) {
-    const hebrew = isHebrewChar(char);
+  for (let index = 0; index < line.length; index += 1) {
+    const char = line[index];
+    let hebrew;
+    if (/\s/.test(char)) {
+      const prevHebrew = index > 0 ? isHebrewChar(line[index - 1]) : false;
+      const nextHebrew = index < line.length - 1 ? isHebrewChar(line[index + 1]) : false;
+      hebrew = prevHebrew && nextHebrew;
+    } else {
+      hebrew = isHebrewChar(char);
+    }
     if (!current || current.hebrew !== hebrew) {
       current = { hebrew, chars: [] };
       segments.push(current);

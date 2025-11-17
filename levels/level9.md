@@ -16,7 +16,7 @@ vielleicht kannst du mir dort das Volk verfluchen."
 "Baue mir hier sieben Altäre und opfere sieben junge Stiere und sieben Widder."
 
 **Schriftanzeige:**  
-> Aktive Worte: `lo`, `shama`, `barak`.  
+> Aktive Worte: `lo`, `shama`, `baruch`.  
 > **Neue Worte zum Ergründen:** `dabar` (דבר) - Wort, das geschieht; `emet` (אמת) - Wahrheit, die trägt.  
 > Ziel: Errichte den Wahrheitskreis, bevor Balaks Druck das Gewebe reißt.
 
@@ -28,7 +28,7 @@ vielleicht kannst du mir dort das Volk verfluchen."
 - Aufgabe: Führe Bileam über die Plattformen, aktiviere Spuren mit Wortkombinationen.  
   - `shama` enthüllt verborgene Linien.  
   - `lo` blockiert Balaks Fluchkette.  
-  - `barak` stabilisiert den Kreis.  
+  - `baruch` stabilisiert den Kreis.  
 - Nach einer vollständigen Runde erscheint Fragment ד (Dalet) als schwebender Klangwürfel - erstes Zeichen für `dabar`.  
 - Verfehlst du eine Spur, wächst Balaks Projektion `balakAngerVeil`; drei Fehlversuche lösen eine Zornsequenz aus, die mit `lo` beruhigt werden muss.
 
@@ -137,7 +137,7 @@ Und der Geist Gottes kam auf ihn.
 - Vier Sinnbilder (Zelt, Garten, Baum, Löwe) erscheinen; unter jedem liegt eine Glyphenspur.  
 - Spieler muss `emet` sprechen, sobald das jeweilige Sinnbild aufleuchtet.  
 - Richtige Eingabe speist das Netz mit Licht; nach allen vier Symbolen schließt sich Fragment מ (Mem) und ט (Taw) an - `emet` wird vollständig.  
-- Währenddessen kann der Spieler optional `barak` weben, um zusätzliche Schutzringe über Israel zu legen.
+- Währenddessen kann der Spieler optional `baruch` weben, um zusätzliche Schutzringe über Israel zu legen.
 
 ---
 
@@ -164,7 +164,7 @@ der uns alle trägt."
 ### 🜅 Spielphase V - Der Schwurkreis
 
 - Abschließendes Ritual: Bileam tritt in einen Kreis aus sich überschneidenden Glyphen.  
-- Sequenz `shama` -> `dabar` -> `emet` -> `barak` muss in ruhigem Takt gesprochen werden.  
+- Sequenz `shama` -> `dabar` -> `emet` -> `baruch` muss in ruhigem Takt gesprochen werden.  
 - Erfolg senkt den *Übertretung*-Zähler auf Null, vergibt den Zustand "Wahrheitsbote".  
 - Scheitert die Sequenz dreimal, bleibt Balaks Schatten über Level 10 als zusätzlicher Schwierigkeitsgrad aktiv.
 
@@ -175,14 +175,14 @@ der uns alle trägt."
 **Aktive Worte:**  
 - `lo` (לא) - blockiert falsche Befehle.  
 - `shama` (שמע) - macht verborgene Signale hörbar.  
-- `barak` (ברך) - verwandelt Fluch in Segen.  
+- `baruch` (ברך) - verwandelt Fluch in Segen.  
 - `dabar` (דבר) - lässt gesprochenes Wort Wirklichkeit werden.  
 - `emet` (אמת) - verankert Wahrheit, stabilisiert Weltmuster.
 
 **Kombinationen:**  
 - `shama` -> `dabar` - hörendes Wort, öffnet Resonanz-Säulen.  
 - `dabar` -> `emet` - wahres Wort, regeneriert Weltstabilität und schützt Verbündete.  
-- `barak` -> `emet` - Segen in Wahrheit, verstärkt Heilflächen.  
+- `baruch` -> `emet` - Segen in Wahrheit, verstärkt Heilflächen.  
 - `shama` -> `lo` -> `dabar` - schnürt Balaks Befehlslinien ab.
 
 **Systemeffekte:**  

@@ -20,7 +20,7 @@ Nur das kann ich reden.“
 
 **Schriftanzeige:**  
 > Aktive Worte: `lo`, `shama`.  
-> **Neues Wort zum Erwachen:** `barak` (ברך) – segnen, Segen freisetzen.  
+> **Neues Wort zum Erwachen:** `baruch` (ברך) – segnen, Segen freisetzen.  
 > Ziel: Halte Balaks Erwartungen in Grenzen und bereite die sieben Altäre vor.
 
 **Gameplay-Hinweis:** Der Spieler erreicht mit Bileam einen dreistufigen Vorplatz. Jede Stufe ist von Schriftwächtern bewacht. Erst wenn `lo` gesprochen wurde, um Balaks Befehlslinien zu blockieren, und `shama` das Flüstern der Wachen offenlegt, öffnet sich der Pfad zur nächsten Stufe.
@@ -34,7 +34,7 @@ Nur das kann ich reden.“
   - `lo` löst die Purpurkette, die Balaks Befehl überträgt.  
   - `shama` deckt versteckte Glyphen auf und zeigt den sicheren Weg.  
   - Optional: `aor` erleuchtet die Schriftzüge, `mayim` beruhigt die glühenden Steine.  
-- Nach erfolgreichem Durchgang erscheint das Fragment ב (Bet) als schwebender Lichtwürfel – erster Hinweis auf `barak`.
+- Nach erfolgreichem Durchgang erscheint das Fragment ב (Bet) als schwebender Lichtwürfel – erster Hinweis auf `baruch`.
 
 ---
 
@@ -76,7 +76,7 @@ Bileam stieg allein auf den Fels, um zu hören, ob der HERR ihm begegnete.
 Doch du kannst nicht fluchen, was ich gesegnet habe.“
 
 **Systemmeldung:**  
-> Das Wort `barak` formt sich über deinen Händen.  
+> Das Wort `baruch` formt sich über deinen Händen.  
 > Drei Fragmente vereinen sich – ב, ר, ך – sie warten auf deine Zustimmung.
 
 ---
@@ -87,9 +87,9 @@ Doch du kannst nicht fluchen, was ich gesegnet habe.“
 - Ablauf:  
   1. Der äußere Ring verlangt `shama` zur Öffnung.  
   2. Der mittlere Ring nimmt `lo` auf, um Fluchimpulse zu bannen.  
-  3. Der innere Ring reagiert erst, wenn der Spieler `barak` korrekt spricht oder tippt.  
+  3. Der innere Ring reagiert erst, wenn der Spieler `baruch` korrekt spricht oder tippt.  
 - Jede richtige Sequenz erhöht die Segenresonanz und setzt das Fragment ך (Kaf) frei.  
-- Misslingt `barak`, zerstreuen sich die Fragmente und die Sequenz beginnt erneut.
+- Misslingt `baruch`, zerstreuen sich die Fragmente und die Sequenz beginnt erneut.
 
 ---
 
@@ -124,7 +124,7 @@ Da hob Bileam an mit seinem Spruch und sprach:
 ### 🜄 Spielphase IV – Segenformel
 
 - Während Bileam spricht, erscheinen drei Wortfenster.  
-- Der Spieler muss die Reihenfolge `shama` → `lo` → `barak` bestätigen.  
+- Der Spieler muss die Reihenfolge `shama` → `lo` → `baruch` bestätigen.  
 - Erfolgreiche Eingabe erzeugt eine Segenwelle, die über das Volk rollt; Weltstabilität +25.  
 - Falsche Reihenfolge führt zu Flimmern, Übertretung +1 und erzwingt Wiederholung der Strophe.  
 - Optional: `aor` verstärkt die Sichtbarkeit Israels, `mayim` streut Taupartikel, `qol` fügt Echoeffekte hinzu.
@@ -167,9 +167,9 @@ Und er baute dort abermals sieben Altäre.
 
 - Spieler navigiert Bileam entlang eines Brückenpfades aus Schrift.  
 - Drei Kontrollpunkte:
-  1. **Späherstein:** `barak` beruhigt den wachsamen Geist.  
+  1. **Späherstein:** `baruch` beruhigt den wachsamen Geist.  
   2. **Kluft aus Licht:** `shama` hört den sicheren Schritt, `lo` schließt Balaks Befehlslinie.  
-  3. **Pisga-Portal:** Sequenz `lo` → `barak` lässt den Durchgang erscheinen.  
+  3. **Pisga-Portal:** Sequenz `lo` → `baruch` lässt den Durchgang erscheinen.  
 - Abschlussszene setzt Speicherstand `progress.level8 = complete`.
 
 ---
@@ -179,16 +179,16 @@ Und er baute dort abermals sieben Altäre.
 **Aktive Worte:**  
 - `lo` (לא) – blockiert Fluch- und Befehlsimpulse.  
 - `shama` (שמע) – öffnet göttliche Resonanz und deckt verborgene Muster auf.  
-- `barak` (ברך) – wandelt destruktive Energie in Schutz und Heilung.
+- `baruch` (ברך) – wandelt destruktive Energie in Schutz und Heilung.
 
 **Kombinationen:**  
 - `shama` → `lo` = Stabilisierung, senkt Balaks Einfluss.  
-- `shama` → `lo` → `barak` = Segenstoß; erhöht Weltstabilität, löst Segenpartikel aus.  
-- `barak` → `aor` = Lichtsegen; beleuchtet Verbündete in späteren Levels.
+- `shama` → `lo` → `baruch` = Segenstoß; erhöht Weltstabilität, löst Segenpartikel aus.  
+- `baruch` → `aor` = Lichtsegen; beleuchtet Verbündete in späteren Levels.
 
 **Systemeffekte:**  
 - Fehlversuche in Segenritualen erhöhen *Übertretung* und erzeugen Glitches.  
-- Erfolgreiche `barak`-Sequenzen reduzieren `transgressionAura`-Stacks und verstärken Ambient-Harmonie.  
+- Erfolgreiche `baruch`-Sequenzen reduzieren `transgressionAura`-Stacks und verstärken Ambient-Harmonie.  
 - Abschluss vergibt `divine_pass` Bonus +1, falls Sequenz ohne Fehlversuch absolviert wurde.
 
 ---

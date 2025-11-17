@@ -98,7 +98,7 @@ const TERRACE_ACTIONS = [
     steps: [
       { prompt: 'Höre den ersten Stern: sprich שמע.', spells: ['shama', 'שמע'] },
       { prompt: 'Blockiere Balaks Gegenspruch mit לא.', spells: ['lo', 'לא'] },
-      { prompt: 'Segne den Pfad mit ברך.', spells: ['barak', 'ברך'] },
+      { prompt: 'Segne den Pfad mit ברך.', spells: ['baruch', 'ברך'] },
     ],
     fragment: 'א',
   },
@@ -107,14 +107,14 @@ const TERRACE_ACTIONS = [
     steps: [
       { prompt: 'Höre erneut.', spells: ['shama', 'שמע'] },
       { prompt: 'Sag Nein.', spells: ['lo', 'לא'] },
-      { prompt: 'Segne erneut.', spells: ['barak', 'ברך'] },
+      { prompt: 'Segne erneut.', spells: ['baruch', 'ברך'] },
     ],
   },
   {
     id: 'starTerraceThree',
     steps: [
       { prompt: 'Höre ein drittes Mal.', spells: ['shama', 'שמע'] },
-      { prompt: 'Segne Balaks Furcht.', spells: ['barak', 'ברך'] },
+      { prompt: 'Segne Balaks Furcht.', spells: ['baruch', 'ברך'] },
       { prompt: 'Sag Nein zum Schatten.', spells: ['lo', 'לא'] },
     ],
   },
@@ -123,7 +123,7 @@ const TERRACE_ACTIONS = [
 const CROWN_SEQUENCE = [
   ['shama', 'dabar'],
   ['dabar', 'emet'],
-  ['barak', 'emet', 'or'],
+  ['baruch', 'emet', 'or'],
   ['shama', 'lo', 'or'],
   ['or'],
 ];
@@ -146,24 +146,24 @@ const NATION_SEQUENCE = [
   },
   {
     id: 'visionWoe',
-    combo: ['shama', 'lo', 'barak'],
+    combo: ['shama', 'lo', 'baruch'],
     quote: '„Wehe, wer wird leben, wenn אלוהים dies tut?“',
   },
 ];
 
 const SHADOW_SEQUENCE = [
-  { id: 'shadowEchoNorth', combo: ['shama', 'lo', 'barak', 'or'] },
-  { id: 'shadowEchoEast', combo: ['shama', 'lo', 'barak', 'or'] },
-  { id: 'shadowEchoSouth', combo: ['shama', 'lo', 'barak', 'or'] },
+  { id: 'shadowEchoNorth', combo: ['shama', 'lo', 'baruch', 'or'] },
+  { id: 'shadowEchoEast', combo: ['shama', 'lo', 'baruch', 'or'] },
+  { id: 'shadowEchoSouth', combo: ['shama', 'lo', 'baruch', 'or'] },
 ];
 
 const BRIDGE_SEQUENCE = [
   { id: 'bridgeSegOne', combo: ['or'] },
   { id: 'bridgeSegTwo', combo: ['or', 'emet'] },
-  { id: 'bridgeSegThree', combo: ['or', 'emet', 'barak'] },
+  { id: 'bridgeSegThree', combo: ['or', 'emet', 'baruch'] },
   { id: 'bridgeSegFour', combo: ['shama', 'or'] },
   { id: 'bridgeSegFive', combo: ['dabar', 'or'] },
-  { id: 'bridgeSegSix', combo: ['barak', 'or'] },
+  { id: 'bridgeSegSix', combo: ['baruch', 'or'] },
   { id: 'bridgeSegSeven', combo: ['or'] },
 ];
 
@@ -248,7 +248,7 @@ async function phaseStarCrown(props) {
       const expected = combo[stepIndex];
       const prompt = makePromptForCrown(index, stepIndex);
       const answer = await readWord(prompt);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברך' : expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
+      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'baruch' ? 'ברך' : expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
       if (spellEquals(answer, expected, variant)) {
         stepIndex += 1;
         await celebrateGlyph(answer);
@@ -275,7 +275,7 @@ async function phaseNationVisions(props) {
       const expected = vision.combo[idx];
       const prompt = makePromptForVision(expected);
       const answer = await readWord(prompt);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברך' : expected === 'dabar' ? 'דבר' : 'אור';
+      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'baruch' ? 'ברך' : expected === 'dabar' ? 'דבר' : 'אור';
       if (spellEquals(answer, expected, variant)) {
         idx += 1;
         await celebrateGlyph(answer);
@@ -302,7 +302,7 @@ async function phaseShadowRift(props) {
       const expected = shadow.combo[idx];
       const prompt = 'Bann den Schatten mit שמע → לא → ברך → אור.';
       const answer = await readWord(prompt);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברך' : 'אור';
+      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'baruch' ? 'ברך' : 'אור';
       if (spellEquals(answer, expected, variant)) {
         idx += 1;
         await celebrateGlyph(answer);
@@ -321,7 +321,7 @@ async function phaseFirmamentWarning() {
   await narratorSay('Systemwarnung: Weltstabilität kritisch. Neuer Prozess entdeckt: SHADOW_BALAK.exe.');
   await narratorSay('Eine Stimme warnt: „Verwende אור → אמת → ברך, um den Riss zu schliessen.“');
   let idx = 0;
-  const combo = ['or', 'emet', 'barak'];
+  const combo = ['or', 'emet', 'baruch'];
   while (idx < combo.length) {
     const expected = combo[idx];
     const prompt = 'Sprich אור → אמת → ברך, um den Riss zu zügeln.';
@@ -347,7 +347,7 @@ async function phaseStarBridge(props) {
     while (idx < seg.combo.length) {
       const expected = seg.combo[idx];
       const prompt = makePromptForBridge(expected, idx, seg.combo.length);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'barak' ? 'ברך' : expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
+      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'baruch' ? 'ברך' : expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
       const answer = await readWord(prompt);
       if (spellEquals(answer, expected, variant)) {
         idx += 1;
@@ -383,7 +383,7 @@ function makePromptForVision(expected) {
       return 'Höre zuerst: שמע.';
     case 'lo':
       return 'Verneine den Fluch mit לא.';
-    case 'barak':
+    case 'baruch':
       return 'Beende mit ברך.';
     default:
       return 'Sprich das geforderte Wort.';
@@ -394,7 +394,7 @@ function makePromptForBridge(expected, index, total) {
   if (total === 1 && expected === 'or') return 'Folge dem Stern: sprich אור.';
   if (expected === 'or') return 'Schliesse den Schritt mit אור.';
   if (expected === 'emet') return 'Fülle den Schritt mit אמת.';
-  if (expected === 'barak') return 'Segne diesen Abschnitt mit ברך.';
+  if (expected === 'baruch') return 'Segne diesen Abschnitt mit ברך.';
   if (expected === 'shama') return 'Höre vor jedem Schritt: שמע.';
   if (expected === 'dabar') return 'Setze das Wort als Träger: דבר.';
   return 'Sprich das geforderte Wort.';
