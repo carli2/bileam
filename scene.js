@@ -81,6 +81,7 @@ const sceneState = {
   pendingSkipReason: null,
   groundProfile: { height: GROUND_HEIGHT, cutouts: [] },
   walkBounds: { min: -Infinity, max: Infinity },
+  paletteAtBlack: false,
 };
 
 function getGroundHeight() {
@@ -638,13 +639,19 @@ function deactivateGlyphOverlay(reason = null, { immediate = false } = {}) {
 export async function fadeToBase(duration) {
   throwIfSkipRequested();
   await paletteFader.fadeToBase(duration);
+  sceneState.paletteAtBlack = false;
   throwIfSkipRequested();
 }
 
 export async function fadeToBlack(duration) {
   throwIfSkipRequested();
   await paletteFader.fadeToBlack(duration);
+  sceneState.paletteAtBlack = true;
   throwIfSkipRequested();
+}
+
+export function isSceneAtBlack() {
+  return Boolean(sceneState.paletteAtBlack);
 }
 
 export function setSceneSuspended(suspended) {
@@ -1110,13 +1117,15 @@ function renderHud() {
   if (hudState.player?.text) {
     const lines = String(hudState.player.text).split('\n');
     const totalHeight = lines.length * lineAdvance - textRenderer.lineSpacing;
-    const baseY = buffer.height - totalHeight - 4;
+    const playerOffset = Number(hudState.player?.offsetY) || 0;
+    const baseY = buffer.height - totalHeight - 4 - playerOffset;
     drawHudBlock(lines, 4, baseY, 'left');
   }
   if (hudState.enemy?.text) {
     const lines = String(hudState.enemy.text).split('\n');
     const totalHeight = lines.length * lineAdvance - textRenderer.lineSpacing;
-    const baseY = 4;
+    const enemyOffset = Number(hudState.enemy?.offsetY) || 0;
+    const baseY = 4 + enemyOffset;
     drawHudBlock(lines, buffer.width - 4, baseY, 'right');
   }
 }
@@ -2477,7 +2486,7 @@ function createBalakFigureSprite(c) {
 }
 
 function createBalakBossSprite(c) {
-  return createBalakFigureScaledSprite(c, 4);
+  return createBalakFigureScaledSprite(c, 5);
 }
 
 function createBalakFigureScaledSprite(c, scale = 1) {

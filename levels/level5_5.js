@@ -30,6 +30,7 @@ import {
 } from './utils.js';
 import { runFightLoop, cropStateMachine } from '../fight.js';
 import { SPELL_DUEL_MACHINE } from '../stateMachines/spellDuelMachine.js';
+import { createStateAnimationHandler, createTargetResolver } from './fightAnimations.js';
 
 const GUARDIAN_KNOWN_WORDS = ['אור', 'מים', 'קול', 'חיים', 'אש']
   .map(canonicalSpell)
@@ -108,6 +109,11 @@ async function executeFight(canyonProps) {
 
 
   const propsRef = { current: canyonProps };
+  const targetResolver = createTargetResolver({ enemyId: 'golemGuardian', propsRef });
+  const animateState = createStateAnimationHandler({
+    propsRef,
+    getTargetPosition: targetResolver,
+  });
 
   const relayFightEvent = async event => {
     if (!event) return;
@@ -170,6 +176,7 @@ async function executeFight(canyonProps) {
       onEvent: relayFightEvent,
       onUpdate: hudUpdate,
       enemyAccuracy: GOLEM_MACHINE.meta?.enemyAccuracy,
+      onStateChange: animateState,
     });
   } catch (err) {
     if (err instanceof SkipSignal) {
@@ -184,6 +191,7 @@ async function executeFight(canyonProps) {
   }
   const defeatAdvice = await handleFightDefeat(result.lastFailure);
   await playDefeatComfortSequence(canyonProps);
+  await fadeToBlack(420);
   throw new LevelRetrySignal('level5_5', {
     message: 'level5_5_guardian_defeat',
     hint: defeatAdvice?.suggestion ?? null,
@@ -271,6 +279,8 @@ function describeState(stateKey) {
       return 'מים';
     case 'echoing':
       return 'קול';
+    case 'steamChamber':
+      return 'מים';
     case 'resonantTrap':
       return 'קול';
     case 'radiant':

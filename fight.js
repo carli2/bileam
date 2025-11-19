@@ -89,6 +89,7 @@ export async function runFightLoop({
   enemyMistakeChance,
   enemyAccuracy,
   enemyVocabulary,
+  onStateChange,
 }) {
   if (!machine) {
     throw new Error('Fight state machine not provided');
@@ -129,6 +130,20 @@ export async function runFightLoop({
       await onEvent({ speaker: 'narrator', text: message });
     }
     renderStatus();
+  };
+
+  const resolveDamageTarget = (label, actorSide) => {
+    const normalized = typeof label === 'string' ? label.toLowerCase() : 'enemy';
+    switch (normalized) {
+      case 'player':
+        return actorSide === 'player' ? 'player' : 'enemy';
+      case 'self':
+      case 'actor':
+        return actorSide === 'player' ? 'player' : 'enemy';
+      case 'enemy':
+      default:
+        return actorSide === 'player' ? 'enemy' : 'player';
+    }
   };
 
   const replacePlaceholders = (text, replacements) => {
@@ -278,6 +293,29 @@ export async function runFightLoop({
   let enemyAccurateStreak = 0;
   let enemyAccurateChoice = false;
   let enemyTurnsTaken = 0;
+
+  const changeState = async (nextState, meta = {}) => {
+    const targetState = nextState ?? 'start';
+    const previousState = stateKey;
+    stateKey = targetState;
+    if (typeof onStateChange === 'function') {
+      await onStateChange({
+        state: stateKey,
+        previousState,
+        ...meta,
+      });
+    }
+  };
+
+  if (typeof onStateChange === 'function') {
+    await onStateChange({
+      state: stateKey,
+      previousState: null,
+      reason: 'init',
+      actor: null,
+      word: null,
+    });
+  }
   renderStatus();
 
   const announceRound = async () => {
@@ -391,7 +429,14 @@ export async function runFightLoop({
         const failureNextPreference = actor === 'player'
           ? state.failure_player_next
           : state.failure_computer_next;
-        stateKey = failureNextPreference ?? state.failure_next ?? 'start';
+        await changeState(
+          failureNextPreference ?? state.failure_next ?? 'start',
+          {
+            reason: 'failure',
+            actor,
+            word,
+          },
+        );
 
         if (actor === 'enemy') {
           enemyAccurateStreak = 0;
@@ -499,13 +544,28 @@ export async function runFightLoop({
         await emitSpeech(speech);
       }
 
-      stateKey = transition.next ?? 'start';
-    if (actor === 'enemy') {
-      enemyAccurateStreak = enemyAccurateChoice ? enemyAccurateStreak + 1 : 0;
-      enemyTurnsTaken += 1;
+      const inflictedDamage = Number.isFinite(transition.damage)
+        ? transition.damage
+        : Number(transition.damage) || 0;
+      if (inflictedDamage > 0) {
+        const target = resolveDamageTarget(transition.damageTarget ?? 'enemy', actor);
+        const defaultText = `%actor% trifft %opponent% mit %s und fügt ${Math.round(inflictedDamage)} Schaden zu.`;
+        const template = transition.damageText ?? defaultText;
+        const message = replacePlaceholders(template, speakReplacements);
+        await applyDamage(target, inflictedDamage, message);
+      }
+
+      await changeState(transition.next ?? 'start', {
+        reason: 'transition',
+        actor,
+        word: chosenWord,
+      });
+      if (actor === 'enemy') {
+        enemyAccurateStreak = enemyAccurateChoice ? enemyAccurateStreak + 1 : 0;
+        enemyTurnsTaken += 1;
+      }
+      advanceActor();
     }
-    advanceActor();
-  }
   }
 
   return {

@@ -93,6 +93,7 @@ const VISION_SCENE = {
     { id: 'visionKenite', type: 'nationEchoDormant', x: 312, align: 'ground', parallax: 0.96 },
     { id: 'visionAsshur', type: 'nationEchoDormant', x: 408, align: 'ground', parallax: 0.98 },
     { id: 'visionWoe', type: 'nationEchoDormant', x: 504, align: 'ground', parallax: 1.0 },
+    { id: 'visionKittim', type: 'nationEchoDormant', x: 592, align: 'ground', parallax: 1.04 },
   ],
 };
 
@@ -196,6 +197,11 @@ const NATION_SEQUENCE = [
     combo: ['shama', 'lo', 'baruch'],
     quote: '„Wehe, wer wird leben, wenn אלוהים dies tut?“',
   },
+  {
+    id: 'visionKittim',
+    combo: ['dabar', 'emet', 'or'],
+    quote: '„Schiffe aus כתים kommen; sie demütigen אשור und עבר – doch auch sie vergehen.“',
+  },
 ];
 
 const SHADOW_SEQUENCE = [
@@ -294,9 +300,14 @@ async function phaseStarTerraces(props) {
 
 async function phaseStarCrown(props) {
   await narratorSay('Eine Krone aus Licht senkt sich. Hänge jede Bahn mit den richtigen Worten.');
-  await wizardSay('Es sagt Bileam, der Sohn Beors, der Mann, dem die Augen geöffnet sind.');
-  await wizardSay('Ich sehe ihn, aber nicht jetzt; ich schaue ihn, aber nicht von Nahem.');
-  await wizardSay('Ein Stern geht auf aus Jakob, ein Zepter erhebt sich aus Israel.');
+  await wizardSay('Es sagt Bileam, der Sohn בעור, der Mann, dem die Augen geöffnet sind.');
+  await wizardSay('Es sagt der Hörer göttlicher Rede, der Offenbarung des Mächtigen sieht, dem die Augen geöffnet wird, wenn er niederkniet.');
+  await wizardSay('Wie fein sind deine Zelte, Jakob, deine Wohnungen, Israel.');
+  await wizardSay('Wie Täler, die sich ausbreiten, wie Gärten an Wassern, wie Aloebäume, die יהוה pflanzt, wie Zedern an Bächen.');
+  await wizardSay('Sein Eimer strömt über, seine Saat trinkt aus Fülle; sein König wird höher als Agag und sein Reich erhebt sich.');
+  await wizardSay('אלוהים führte sie aus מצרים; er ist ihnen wie das Horn des Wildstiers.');
+  await wizardSay('Er frisst die Nationen, ihre Gegner, zermalmt ihre Knochen und zerbricht sie mit Pfeilen.');
+  await wizardSay('Er liegt wie ein Löwe und wie ein Junglöwe – wer will ihn aufwecken? Gesegnet ist, wer dich segnet; verflucht, wer dich verflucht.');
   for (let index = 0; index < CROWN_SEQUENCE.length; index++) {
     const arcId = ['crownArcOne', 'crownArcTwo', 'crownArcThree', 'crownArcFour', 'crownArcFive'][index];
     const combo = CROWN_SEQUENCE[index];
@@ -316,11 +327,16 @@ async function phaseStarCrown(props) {
     }
     updateProp(props, arcId, { type: 'lightCrownArcLit' });
   }
-  await narratorSay('Die Krone erglueht. Ein Stern geht auf aus Jakob, ein Zepter erhebt sich aus Israel.');
+  await narratorSay('Die Krone erglueht und antwortet auf deine Worte.');
+  await wizardSay('Ich sehe ihn, aber nicht jetzt; ich schaue ihn, aber nicht von Nahem.');
+  await wizardSay('Ein Stern geht auf aus Jakob, ein Zepter erhebt sich aus ישראל.');
+  await wizardSay('Er zerbricht die Schläfen מואב und die Häupter aller Söhne שת.');
+  await wizardSay('Edom fällt, Seir wird Besitz; ישראל handelt mächtig.');
+  await wizardSay('Aus Jakob kommt der Herrscher hervor und tilgt, was von den Städten bleibt.');
 }
 
 async function phaseNationVisions(props) {
-  await narratorSay('Vier Visionen erscheinen: Amalek, der Keniter, Assur und das Wehe.');
+  await narratorSay('Fünf Visionen erscheinen: Amalek, der Keniter, Assur, das Wehe und כתים.');
   for (const vision of NATION_SEQUENCE) {
     const target = props.find(entry => entry.id === vision.id)?.x ?? wizard.x + 200;
     await waitForWizardToReach(target, { tolerance: 18 });

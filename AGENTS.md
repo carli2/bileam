@@ -241,3 +241,15 @@ Er dient als Gegenpol zum Lernprozess: Manipulation vs. Erkenntnis.
 - *Kursiver Szenentext* aus den Level-Markdowns beschreibt Bühne, Kamera, Licht und Effekte – niemals als Dialog ausgeben. Setze entsprechende Props, Partikel, Ambience-Layer oder Animationszustände, damit die Szene ohne zusätzliche Sprechblasen erkennbar wird.  
 - Regiehinweise wie `Ziel:` oder `Gameplay-Hinweis:` erscheinen als Overlays (`showLevelTitle`, UI-Widgets) oder durch geänderte Szene-Kontexte, nicht als Erzähler- oder Figurentext.  
 - Neue Lernwörter, Systemmeldungen oder Missionsziele sollen über bestehende UI (Titelband, Grimoire-Update, Glyph-Reveal) vermittelt werden; keine improvisierten Dialogblasen dafür einsetzen.  
+
+---
+
+## 🧪 Tests & Validierung
+- `tests/noNiqqud.test.js` – stellt sicher, dass nirgendwo Niqqud/Diakritika eingeschlichen sind.  
+- `tests/noMissingUmlauts.test.js` – prüft, dass die vereinbarten deutschen Umlaute korrekt geschrieben werden.  
+- `tests/fightMachine.test.js` – garantiert, dass die beschnittene Wächter-Maschine (Level 5_5) weiterhin nur erlaubte Wörter nutzt und alle Zustände erreichbar bleiben.  
+- `tests/fightSimulation.test.js` – simuliert beide Kämpfe (Golem & Balak) mit deterministischem Input, damit das Balancing echte Siege zulässt.  
+- `tests/stateMachineBalance.test.js` – validiert die Metaregeln der Spell-State-Machine (≤3 Einsätze pro Level-6-10-Wort, keine Zyklen <3, alle Zustände besitzen Übergänge, auch nach dem Cropping).  
+- `tests/stateMachineTransitions.test.js` – hütet die Story-kritischen Element- und Blacklist-Regeln (Feuer darf nur mit Wasser/Nein gebrochen werden usw.).  
+
+> Wenn zusätzliche Regeln oder Prüfungen nötig sind, bitte zuerst prüfen, welcher dieser Tests fachlich passt, und dort erweitern statt ein neues Testfile anzulegen.

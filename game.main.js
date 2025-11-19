@@ -2,6 +2,7 @@ import {
   startScene,
   fadeToBase,
   fadeToBlack,
+  isSceneAtBlack,
   setSkipHandler,
   clearSkipHandler,
   ensureAmbience,
@@ -134,6 +135,9 @@ async function runLevel(entry, index, progress) {
   });
 
   try {
+    if (isSceneAtBlack()) {
+      await fadeToBase(420);
+    }
     await entry.run();
     clearSkipState();
     return 'completed';

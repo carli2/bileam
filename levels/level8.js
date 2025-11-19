@@ -31,7 +31,9 @@ import {
   showLocationSign,
   findProp,
   getPropCenterX,
+  canonicalSpell,
 } from './utils.js';
+import { SPELL_DUEL_MACHINE } from '../stateMachines/spellDuelMachine.js';
 
 const flameFlickers = new Map();
 
@@ -39,8 +41,20 @@ const BAMOT_TERRACE_SCENE = {
   ambience: 'desertTravel',
   wizardStartX: 78,
   donkeyOffset: -38,
+  groundProfile: {
+    height: 58,
+    segments: [
+      { end: 140, height: 52, type: 'sand' },
+      { start: 140, end: 240, height: 72, type: 'stone' },
+      { start: 240, end: 320, height: 56, type: 'sand' },
+      { start: 320, end: 420, height: 74, type: 'stone' },
+      { start: 420, end: 500, height: 58, type: 'sand' },
+      { start: 500, end: 620, height: 76, type: 'stone' },
+      { start: 620, height: 52, type: 'sand' },
+    ],
+  },
   props: [
-    { id: 'bamotSkyVeil', type: 'canyonMist', x: -120, align: 'ground', offsetY: -68, parallax: 0.32, layer: -3 },
+    { id: 'bamotSkyVeil', type: 'canyonMist', x: -120, align: 'ground', offsetY: -38, parallax: 0.32, layer: -3 },
     { id: 'bamotProcessionPath', type: 'borderProcessionPath', x: -40, align: 'ground', parallax: 0.48, layer: -2 },
     { id: 'bamotBasaltNorth', type: 'basaltSpireTall', x: 92, align: 'ground', parallax: 0.78, layer: -1 },
     { id: 'bamotBasaltSouth', type: 'basaltSpireShort', x: 418, align: 'ground', parallax: 0.82, layer: -1 },
@@ -117,7 +131,7 @@ const PISGA_SCENE = {
   ],
 };
 
-const TERRACE_STEPS = [
+const HEIGHT_STEPS = [
   {
     id: 'terraceOne',
     actions: [
@@ -165,12 +179,11 @@ export async function runLevelEight() {
   applySceneConfig({ ...BAMOT_TERRACE_SCENE, props: terraceProps });
   await showLocationSign(terraceProps, { id: 'signBamot', x: 208, text: 'Bamot-Baal | במות בעל' });
   ensureAmbience(plan?.review ?? BAMOT_TERRACE_SCENE.ambience ?? 'desertTravel');
-  setSceneContext({ level: 'level8', phase: 'terraces' });
-  await showLevelTitle('Level 8 - Der erste Blick vom Bamot-Baal');
+  setSceneContext({ level: 'level8', phase: 'heights' });
   await fadeToBase(600);
 
   await phaseBalakGreeting(terraceProps);
-  await phaseTerraceTrials(terraceProps);
+  await phaseHeightTrials(terraceProps);
 
   const altarProps = cloneSceneProps(ALTAR_FIELD_SCENE.props);
   await transitionToScene(plan?.learn, ALTAR_FIELD_SCENE, altarProps, 'altars');
@@ -201,15 +214,14 @@ async function phaseBalakGreeting(props) {
   await ensureWizardBesideBalak(props, 'balakArrival');
   await propSay(props, 'balakArrival', 'Hab ich nicht zu dir gesandt und dich rufen lassen? Meinst du, ich könnte dich nicht ehren?', { anchor: 'center', offsetY: -34 });
   await wizardSay('Siehe, ich bin zu dir gekommen. Aber wie kann ich etwas anderes reden als das, was mir אלוהים in den Mund gibt? Nur das kann ich reden.');
-  await narratorSay('Balak tritt beiseite, und drei glühende Terrassen werden sichtbar. Jede verlangt Hören, Nein und den Segen.');
+  await narratorSay('Balak tritt beiseite, und drei glühende Höhen werden sichtbar. Jede verlangt Hören, Nein und den Segen.');
   addProp(props, { id: 'bamotGuidingTrailWest', type: 'hoofSignTrail', x: wizard.x + 36, align: 'ground', parallax: 1.04 });
   addProp(props, { id: 'bamotGuidingTrailEast', type: 'hoofSignTrail', x: wizard.x + 88, align: 'ground', parallax: 1.06 });
-  await showLevelTitle('Ziel: Folge den Hufspuren und erhelle alle drei Terrassen mit לא, שמע und ברך.', 5200);
 }
 
-async function phaseTerraceTrials(props) {
-  await narratorSay('Drei Terrassen prüfen deine Worte. Jede Stufe verlangt Hören und Nein.');
-  for (const step of TERRACE_STEPS) {
+async function phaseHeightTrials(props) {
+  await narratorSay('Drei Höhen prüfen deine Worte. Jede Kuppe verlangt Hören und Nein.');
+  for (const step of HEIGHT_STEPS) {
     const target = props.find(entry => entry.id === step.id)?.x ?? wizard.x + 140;
     await waitForWizardToReach(target, { tolerance: 18 });
     for (const action of step.actions) {
@@ -240,37 +252,37 @@ async function phaseSevenAltars(props) {
   await wizardSay('Baue mir hier sieben Altare und schaffe mir her sieben junge Stiere und sieben Widder.');
   await propSay(props, 'altarAttendantOne', 'Ich tue, wie du sagst.', { anchor: 'center' });
   for (const altar of ALTAR_SEQUENCE) {
-    const target = props.find(entry => entry.id === altar.id)?.x ?? wizard.x + 160;
-    await waitForWizardToReach(target, { tolerance: 18 });
-    const needsBaruchHint = containsBaruchSpell(altar.spells);
-    let failures = 0;
-    let cleared = false;
-    while (!cleared) {
-      const answer = await readWord(altar.prompt);
-      if (altar.spells.some(spell => spellEquals(answer, spell))) {
-        cleared = true;
-        updateProp(props, altar.id, { type: 'altarGlyphPlateLit' });
-        await celebrateGlyph(answer);
-        await requireAshIgnition(props, altar.id);
-        await narratorSay('Der Altar nimmt das Wort an. Rauch steigt ruhig empor.');
-        if (altar.fragment) {
-          addProp(props, { id: `altarFragment${altar.fragment}`, type: 'blessingFragment', x: wizard.x + 16, y: wizard.y - 44, parallax: 0.9, letter: altar.fragment });
-        }
-      } else {
-        failures += 1;
-        if (needsBaruchHint && failures % 3 === 0) {
-      await donkeySay('Erinnere dich: ברך wird baruch gesprochen – sprich den Segen, dann antwortet der Altar.');
-        } else {
-          await donkeySay('Der Altar reagiert nur auf das rechte Wort.');
-        }
-      }
-    }
+    await runAltarRitual(props, altar);
   }
   await narratorSay('Sieben Altare stehen im Licht. Balak wartet auf dein Orakel.');
   await narratorSay('Die Nacht senkt sich, und Balak steht schweigend – ein Schatten neben dem Altar.');
   await divineSay('בלילה הזה יפגשך אלוהי. לא תקלל את אשר ברך יהוה.\nDiese Nacht begegne ich dir: Du wirst nicht verfluchen, was יהוה gesegnet hat.');
   await narratorSay('Du schließt die Augen. Das Feuer glimmt auf, als ob jemand antwortete.');
   igniteAltarFlame(props, 'altarWatchFire', { offsetY: -50 });
+}
+
+async function runAltarRitual(props, altar) {
+  const target = props.find(entry => entry.id === altar.id)?.x ?? wizard.x + 160;
+  await waitForWizardToReach(target, { tolerance: 18 });
+  await requireAshIgnition(props, altar.id);
+  for (const action of altar.actions ?? []) {
+    if (action.prompt) {
+      await narratorSay(action.prompt);
+    }
+    const curseWord = await promptForCurseWord(action.spells);
+    await runSpellDrill(curseWord);
+  }
+  updateProp(props, altar.id, { type: 'altarGlyphPlateLit' });
+  if (altar.fragment) {
+    addProp(props, {
+      id: `altarFragment${altar.fragment}`,
+      type: 'blessingFragment',
+      x: wizard.x + 16,
+      y: wizard.y - 44,
+      parallax: 0.9,
+      letter: altar.fragment,
+    });
+  }
 }
 
 async function phaseResonance(props) {
@@ -452,6 +464,122 @@ async function phasePisgaPath(props) {
   }
 }
 
+async function promptForCurseWord(validSpells = []) {
+  await donkeySay('Nenne mir ein Fluchwort und ich werde verteidigen.');
+  while (true) {
+    const response = await readWord('Welches Wort schleudert Balak?');
+    const canonical = canonicalSpell(response);
+    if (!canonical) {
+      await narratorSay('Leere Worte entzünden nichts. Versuche es erneut.');
+      continue;
+    }
+    if (Array.isArray(validSpells) && validSpells.length > 0) {
+      const matches = validSpells.some(option => canonical === canonicalSpell(option));
+      if (!matches) {
+        await narratorSay('Dieses Wort gehört nicht zu diesem Altar.');
+        continue;
+      }
+    }
+    return canonical;
+  }
+}
+
+async function runSpellDrill(curseWord) {
+  const stateKey = resolveDrillState(curseWord);
+  if (!stateKey) {
+    await wizardSay('Dieses Wort erreicht keinen Widerhall in meinem Ritual.');
+    return;
+  }
+  const state = SPELL_DUEL_MACHINE[stateKey];
+  if (!state) {
+    await wizardSay('Diese Form wurde uns noch nicht gezeigt.');
+    return;
+  }
+  const lines = collectStateLines(state);
+  if (lines.length > 0) {
+    for (const line of lines) {
+      await wizardSay(line);
+    }
+  } else {
+    await wizardSay('Ich halte das Wort still und warte auf die Reaktion.');
+  }
+  const transition = pickRandomTransitionFromState(state);
+  if (transition) {
+    const line = transition.line ? ` ${transition.line}` : '';
+    await donkeySay(`${transition.word}!${line}`);
+  } else {
+    await donkeySay('Kein weiterer Schlag antwortet – halte den Kreis geschlossen.');
+  }
+  await donkeySay('Gut gemacht. Dieser Altar kennt nun deine Verteidigung.');
+}
+
+function resolveDrillState(word) {
+  const canonical = canonicalSpell(word);
+  if (!canonical) return null;
+  const baseState = SPELL_DUEL_MACHINE?.start;
+  if (!baseState || !baseState.transitions) return null;
+  const entry = baseState.transitions[canonical];
+  if (!entry) return null;
+  if (typeof entry === 'string') return entry;
+  return entry.next ?? null;
+}
+
+function collectStateLines(state) {
+  const lines = [];
+  appendSpeechSegment(state?.intro_player, lines);
+  appendSpeechSegment(state?.sequence_player, lines);
+  if (lines.length === 0) {
+    appendSpeechSegment(state?.intro_enemy, lines);
+    appendSpeechSegment(state?.sequence_enemy, lines);
+  }
+  if (lines.length === 0 && typeof state?.prompt_player === 'string') {
+    lines.push(state.prompt_player);
+  }
+  return lines
+    .map(text => (typeof text === 'string' ? text.trim() : ''))
+    .filter(text => text.length > 0);
+}
+
+function appendSpeechSegment(segment, bucket) {
+  if (!segment) return;
+  if (Array.isArray(segment)) {
+    segment.forEach(entry => appendSpeechSegment(entry, bucket));
+    return;
+  }
+  if (typeof segment === 'string') {
+    bucket.push(segment);
+    return;
+  }
+  if (typeof segment === 'object') {
+    if (typeof segment.text === 'string') {
+      bucket.push(segment.text);
+    }
+    if (typeof segment.text2 === 'string') {
+      bucket.push(segment.text2);
+    }
+  }
+}
+
+function pickRandomTransitionFromState(state) {
+  if (!state || !state.transitions) return null;
+  const options = Object.entries(state.transitions)
+    .map(([word, descriptor]) => {
+      if (!descriptor) return null;
+      if (typeof descriptor === 'string') {
+        return { word, line: '' };
+      }
+      const text = descriptor.text_enemy
+        ?? descriptor.text
+        ?? descriptor.text_player
+        ?? '';
+      return { word, line: text?.trim?.() ?? '' };
+    })
+    .filter(Boolean);
+  if (options.length === 0) return null;
+  const index = Math.floor(Math.random() * options.length);
+  return options[index];
+}
+
 function containsBaruchSpell(spells) {
   if (!Array.isArray(spells)) return false;
   return spells.some(spell => {
@@ -477,20 +605,15 @@ async function ensureWizardBesideBalak(props, id, { offset = -42, tolerance = 18
 }
 
 async function requireAshIgnition(props, altarId) {
-  let attempts = 0;
+  await donkeySay('Entzünde den Altar mit אש.');
   while (true) {
-    const answer = await readWord('Entzünde den Altar mit אש (ash).');
+    const answer = await readWord('Sprich אש, um den Altar zu entzünden.');
     if (spellEquals(answer, 'ash', 'אש')) {
       await narratorSay('Feuer krönt den Altar, und die Opferglut wird ruhig.');
       igniteAltarFlame(props, altarId);
       return;
     }
-    attempts += 1;
-    if (attempts % 3 === 0) {
-      await donkeySay('Erinner dich an אש – sprich ash, dann flammt das Feuer.');
-    } else {
-      await donkeySay('Der Altar wartet auf Feuer. Sprich אש.');
-    }
+    await narratorSay('Kein Funke rührt sich. Versuche es erneut.');
   }
 }
 

@@ -30,9 +30,10 @@ import {
 } from './utils.js';
 import { runFightLoop, cropStateMachine } from '../fight.js';
 import { SPELL_DUEL_MACHINE } from '../stateMachines/spellDuelMachine.js';
+import { createStateAnimationHandler, createTargetResolver } from './fightAnimations.js';
 
 const BALAK_WIZARD_START_X = 96;
-const BALAK_BOSS_X = BALAK_WIZARD_START_X + 96;
+const BALAK_BOSS_X = BALAK_WIZARD_START_X + 152;
 
 const BALAK_SCENE = {
   ambience: 'sanctumFinale',
@@ -68,7 +69,8 @@ BALAK_MACHINE.meta = {
 
 export async function runLevelTenFive() {
   const plan = levelAmbiencePlan.level10;
-  const throneProps = cloneSceneProps(BALAK_SCENE.props);
+  const throneProps = cloneSceneProps(BALAK_SCENE.props)
+    .filter(prop => prop.type !== 'gardenForegroundPlant');
   applySceneConfig({ ...BALAK_SCENE, props: throneProps });
   ensureAmbience(plan?.apply ?? BALAK_SCENE.ambience ?? 'sanctumFinale');
   setSceneContext({ level: 'level10_5', phase: 'arrival' });
@@ -115,11 +117,16 @@ async function executeBalakFight(sceneProps) {
     const enemyText = `Balak ${state.barEnemy ?? ''} ${enemyHP}/${enemyMax}`.trim();
     setLifeBars({
       player: { text: playerText },
-      enemy: { text: enemyText },
+      enemy: { text: enemyText, offsetY: 24 },
     });
   };
 
   const propsRef = { current: sceneProps };
+  const targetResolver = createTargetResolver({ enemyId: 'balakBoss', propsRef });
+  const animateState = createStateAnimationHandler({
+    propsRef,
+    getTargetPosition: targetResolver,
+  });
 
   const relayFightEvent = async event => {
     if (!event) return;
@@ -160,6 +167,7 @@ async function executeBalakFight(sceneProps) {
       onUpdate: hudUpdate,
       enemyAccuracy: BALAK_MACHINE.meta?.enemyAccuracy ?? 0.88,
       enemyMistakeChance: 0.08,
+      onStateChange: animateState,
     });
   } catch (error) {
     if (error instanceof SkipSignal) {
@@ -175,6 +183,7 @@ async function executeBalakFight(sceneProps) {
 
   const defeatAdvice = await handleFightDefeat(result.lastFailure);
   await playBalakDefeatSequence(sceneProps);
+  await fadeToBlack(600);
   throw new LevelRetrySignal('level10_5', {
     message: 'level10_5_balak_defeat',
     hint: defeatAdvice?.suggestion ?? null,
@@ -276,8 +285,14 @@ function describeState(stateKey) {
       return 'אור';
     case 'overgrown':
       return 'חיים';
+    case 'steamChamber':
+      return 'מים';
     case 'blessing':
       return 'ברך';
+    case 'obedienceEcho':
+      return 'שמע';
+    case 'obedienceBind':
+      return 'שמע';
     case 'angelic':
       return 'מלאך';
     case 'truth':
@@ -308,7 +323,7 @@ function buildBalakSpeechOptions(sceneProps) {
   const bounds = getScenePropBounds('balakBoss');
   const spriteHeight = bounds?.height ?? balak?.sprite?.height ?? 110;
   const estimatedWidth = bounds?.width ?? balak?.sprite?.width ?? 138;
-  const offsetY = -Math.max(36, spriteHeight * 0.32);
+  const offsetY = -Math.max(54, spriteHeight * 0.55);
   const anchorXBalak = () => {
     const liveBounds = getScenePropBounds('balakBoss');
     if (liveBounds) {
@@ -320,11 +335,11 @@ function buildBalakSpeechOptions(sceneProps) {
   const anchorYBalak = () => {
     const liveBounds = getScenePropBounds('balakBoss');
     if (liveBounds) {
-      return liveBounds.top + Math.max(18, liveBounds.height * 0.18);
+      return liveBounds.top + Math.max(6, liveBounds.height * 0.06);
     }
     const baseY = balak?.y ?? wizard.y;
     const height = balak?.sprite?.height ?? 0;
-    return baseY + Math.max(18, height * 0.18);
+    return baseY + Math.max(6, height * 0.06);
   };
   return {
     offsetY,
