@@ -10,7 +10,7 @@
 
 **Erzähler:**  
 Da stand Bileam am Morgen auf, sattelte seine Eselin und zog mit den Fürsten der Moabiter.  
-Aber der Zorn Gottes entbrannte, dass er hinzog.
+Aber der Zorn יהוה (JHWH) entbrannte, dass er hinzog.
 
 *(Die Welt flackert kurz – Gräser und Pfad pulsieren, als müsse das Muster neu verwoben werden.)*
 
@@ -40,7 +40,7 @@ Aber der Zorn Gottes entbrannte, dass er hinzog.
 *Pfad durch Weinberge. Sonne bricht durch Nebel. In der Ferne ein stehendes Licht, humanoid, doch noch ohne Konturen.*
 
 **Erzähler:**  
-Der Engel des HERRN trat in den Weg, um ihm zu widerstehen.  
+Der Engel יהוה (JHWH) trat in den Weg, um ihm zu widerstehen.  
 Er hatte ein blankes Schwert in der Hand.
 
 **Eselin (flüsternd):**  
@@ -92,7 +92,7 @@ Du treibst Mutwillen!
 - Fehlversuche erhöhen *Übertretung*; nach drei Stapeln erscheint Balaks Projektion als Spott.
 
 **Erzähler:**  
-Da ging der Engel des HERRN weiter.
+Da ging der Engel יהוה (JHWH) weiter.
 
 ---
 
@@ -137,8 +137,8 @@ Nein… `lo`.
 *Licht bricht durch das Bild. Alles steht still. Die Kamera zieht hinter Bileam, der Engel steht da – gebündeltes Licht mit Schriftbahnen im Inneren.*
 
 **Erzähler:**  
-Da öffnete der HERR dem Bileam die Augen.  
-Und er sah den Engel des HERRN auf dem Weg stehen mit dem Schwert in seiner Hand.  
+Da öffnete יהוה dem Bileam die Augen.  
+Und er sah den Engel יהוה auf dem Weg stehen mit dem Schwert in seiner Hand.  
 Und Bileam neigte sich und fiel nieder auf sein Angesicht.
 
 **Engel:**  

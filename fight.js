@@ -293,6 +293,7 @@ export async function runFightLoop({
   let enemyAccurateStreak = 0;
   let enemyAccurateChoice = false;
   let enemyTurnsTaken = 0;
+  let pendingEnemyDamage = null;
 
   const changeState = async (nextState, meta = {}) => {
     const targetState = nextState ?? 'start';
@@ -426,6 +427,11 @@ export async function runFightLoop({
           return;
         }
 
+        if (actor === 'enemy' && pendingEnemyDamage) {
+          await applyDamage(pendingEnemyDamage.target, pendingEnemyDamage.amount, pendingEnemyDamage.message);
+          pendingEnemyDamage = null;
+        }
+
         const failureNextPreference = actor === 'player'
           ? state.failure_player_next
           : state.failure_computer_next;
@@ -552,7 +558,11 @@ export async function runFightLoop({
         const defaultText = `%actor% trifft %opponent% mit %s und fügt ${Math.round(inflictedDamage)} Schaden zu.`;
         const template = transition.damageText ?? defaultText;
         const message = replacePlaceholders(template, speakReplacements);
-        await applyDamage(target, inflictedDamage, message);
+        if (actor === 'player') {
+          pendingEnemyDamage = { target, amount: inflictedDamage, message };
+        } else {
+          await applyDamage(target, inflictedDamage, message);
+        }
       }
 
       await changeState(transition.next ?? 'start', {
@@ -563,6 +573,7 @@ export async function runFightLoop({
       if (actor === 'enemy') {
         enemyAccurateStreak = enemyAccurateChoice ? enemyAccurateStreak + 1 : 0;
         enemyTurnsTaken += 1;
+        pendingEnemyDamage = null;
       }
       advanceActor();
     }

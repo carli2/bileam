@@ -35,6 +35,7 @@ test('forbidden elemental replies are blocked', () => {
   assertForbids('angelic', 'אש', 'מלאך darf nicht mit אש beantwortet werden');
   assertForbids('angelicChorus', 'אש', 'מלאך-Chor darf keine אש-Lösung haben');
   assertForbids('truthPrism', 'לא', 'Das Wahrheitsprisma akzeptiert kein לא');
+  assertForbids('overgrown', 'קול', 'חיים darf nicht mit קול beantwortet werden');
   assertForbids('overgrown', 'ברך', 'חיים darf nicht mit ברך verwechselt werden');
   assertForbids('steamChamber', 'ברך', 'Der Dampf-Knoten darf keine ברך-Abkürzung besitzen');
   assertForbids('radiant', 'לא', 'אור lässt sich nicht mit לא bändigen');

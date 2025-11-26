@@ -5,6 +5,16 @@ import { cropStateMachine } from '../fight.js';
 
 const GOLEM_WORDS = ['אור', 'מים', 'קול', 'חיים', 'אש'];
 const ADVANCED_WORDS = new Set(['לא', 'שמע', 'ברך', 'דבר', 'אמת', 'מלאך']);
+const CORE_WORDS = new Set(GOLEM_WORDS);
+const resolveNextState = config => {
+  if (typeof config === 'string') {
+    return config;
+  }
+  if (config && typeof config === 'object' && typeof config.next === 'string') {
+    return config.next;
+  }
+  return 'start';
+};
 
 function collectStateTransitions(machine) {
   const entries = Object.entries(machine)
@@ -32,6 +42,30 @@ test('spell coverage stays balanced', () => {
       count <= 3,
       `Word ${word} appears ${count} times, but each counter word should occur in at most three states`,
     );
+  });
+});
+
+test('core words have at least one core and one advanced reply', () => {
+  Object.entries(SPELL_DUEL_MACHINE).forEach(([stateKey, state]) => {
+    if (stateKey === 'meta' || stateKey === 'start') return;
+    const transitions = state?.transitions ?? {};
+    Object.entries(transitions).forEach(([word, cfg]) => {
+      if (!CORE_WORDS.has(word)) return;
+      const next = resolveNextState(cfg);
+      const nextTransitions = SPELL_DUEL_MACHINE[next]?.transitions ?? {};
+      const replyWords = Object.keys(nextTransitions);
+      const hasCoreReply = replyWords.some(entry => CORE_WORDS.has(entry));
+      const hasAdvancedReplyDirect = replyWords.some(entry => ADVANCED_WORDS.has(entry)) || next === 'negation';
+      // allow a two-hop bridge into advanced replies
+      const hasAdvancedReplyTwoHop = replyWords.some(entry => {
+        const second = resolveNextState(nextTransitions[entry]);
+        const secondTransitions = SPELL_DUEL_MACHINE[second]?.transitions ?? {};
+        return Object.keys(secondTransitions).some(inner => ADVANCED_WORDS.has(inner));
+      });
+      const hasAdvancedReply = hasAdvancedReplyDirect || hasAdvancedReplyTwoHop;
+      assert.ok(hasCoreReply, `Core word ${word} in state ${stateKey} should lead to a state that offers at least one core reply`);
+      assert.ok(hasAdvancedReply, `Core word ${word} in state ${stateKey} should lead to a state that offers at least one advanced reply (directly or via negation)`);
+    });
   });
 });
 

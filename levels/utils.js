@@ -11,7 +11,9 @@ import {
   setGroundProfile,
   setWalkBounds,
   sceneColors,
+  flashLightning,
 } from '../scene.js';
+export { flashLightning };
 import { Sprite } from '../retroBlitter.js';
 import { layoutText, createTextRenderer } from '../graphics.js';
 import { switchMusicTrack } from '../musicPlayer.js';
@@ -250,6 +252,34 @@ export function splitSpellInput(value) {
     .filter(Boolean);
 }
 
+export async function runWordPuzzle({ taskText, hints = [], prompt = null } = {}) {
+  const queue = Array.isArray(hints) ? [...hints] : [];
+  let current = queue.shift();
+  while (current) {
+    const promptText = current.prompt ?? taskText ?? 'Welches Wort sprichst du?';
+    const expected = Array.isArray(current.words) ? current.words : [current.words].filter(Boolean);
+    const input = await (typeof prompt === 'function' ? prompt(promptText) : promptBubble(
+      anchorX(wizard, -6),
+      anchorY(wizard, -60),
+      promptText,
+      anchorX(wizard, 0),
+      anchorY(wizard, -34),
+    ));
+    const canonical = canonicalSpell(input);
+    const matches = expected.some(word => canonicalSpell(word) === canonical);
+    if (matches) {
+      if (typeof current.onSuccess === 'function') {
+        await current.onSuccess(canonical);
+      }
+      current = queue.shift();
+      continue;
+    }
+    if (typeof current.onFailure === 'function') {
+      await current.onFailure(canonical);
+    }
+  }
+}
+
 export function canonicalizeSequence(words = []) {
   return words.map(word => canonicalSpell(word));
 }
@@ -275,6 +305,7 @@ export async function celebrateGlyph(spell, options = {}) {
   const forcedLetter = typeof options.forceLetter === 'string'
     ? options.forceLetter.trim()
     : null;
+  const triggerLightning = options.lightning ?? false;
   const canonical = canonicalSpell(spell);
   if (!canonical) return;
   const letters = Array.from(canonical).filter(char => LETTER_DETAILS[char]);
@@ -293,6 +324,9 @@ export async function celebrateGlyph(spell, options = {}) {
     letter = unknownLetters[0];
     knownGlyphs.add(letter);
     persistKnownGlyphs();
+    if (!triggerLightning) {
+      options.lightning = true;
+    }
   } else {
     const randomIndex = Math.floor(Math.random() * uniqueLetters.length);
     letter = uniqueLetters[randomIndex];
@@ -300,6 +334,9 @@ export async function celebrateGlyph(spell, options = {}) {
 
   const details = LETTER_DETAILS[letter];
   if (!details) return;
+  if (options.lightning) {
+    await flashLightning({ doubleFlash: true, durationIn: 50, durationOut: 140, intensity: 0.9 });
+  }
   await showGlyphReveal(details.glyph, details.label, details.meaning);
 }
 

@@ -149,6 +149,10 @@ export function createPaletteFader(retroPalette, transparentIndex) {
       queue = queue.then(() => fadeTo(blackPalette, duration));
       return queue;
     },
+    fadeToPalette(targetPalette, duration) {
+      queue = queue.then(() => fadeTo(targetPalette, duration));
+      return queue;
+    },
     basePalette,
     blackPalette,
   };

@@ -43,7 +43,7 @@ Denn ich weiß: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist
 
 **Bileam:**  
 Bleibt hier über Nacht.  
-Ich will hören, was der HERR mir sagt.
+Ich will hören, was יהוה (JHWH) mir sagt.
 
 *(Schriftanzeige blendet ein:)*  
 > **Ziel:** Warte auf die Stimme in der Nacht.  
@@ -67,13 +67,13 @@ Ich will hören, was der HERR mir sagt.
 
 *Dunkelheit. Nur das Flackern des Feuers. Das Rauschen klingt, als atme die Welt selbst. Das Bild flimmert, als löste sich die Verdichtung der Materie.*
 
-**Gottes Stimme (tief, verzerrt):**  
+**Stimme יהוה (JHWH, tief, verzerrt):**  
 Wer sind die Männer, die bei dir sind?
 
 **Bileam:**  
 Balak, Sohn Zippors, hat mich gerufen, zu verfluchen ein Volk, das das Land bedeckt.
 
-**Gott:**  
+**יהוה:**  
 Geh *nicht* mit ihnen.  
 Verfluche das Volk *nicht* – denn es ist gesegnet.
 
@@ -104,7 +104,7 @@ das, worauf alles ruht, das Unsichtbare, das doch alles trägt.
 
 **Bileam (zu den Fürsten):**  
 Geht hin in euer Land.  
-Der HERR will’s *nicht* gestatten, dass ich mit euch ziehe.
+יהוה (JHWH) will’s *nicht* gestatten, dass ich mit euch ziehe.
 
 *(Die Fürsten verbeugen sich, reiten ab. Über der Steppe liegt wieder jenes matte Flackern, als sei der Himmel nur ein dünnes Tuch.)*
 

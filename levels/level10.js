@@ -9,6 +9,7 @@ import {
   showLevelTitle,
   setSceneProps,
   waitForWizardToReach,
+  flashLightning,
 } from '../scene.js';
 import {
   narratorSay,
@@ -21,11 +22,14 @@ import {
   applySceneConfig,
   cloneSceneProps,
   spellEquals,
+  canonicalizeSequence,
+  consumeSequenceTokens,
   updateProp,
   addProp,
   celebrateGlyph,
   propSay,
   showLocationSign,
+  findProp,
 } from './utils.js';
 
 const STAR_TERRACE_SCENE = {
@@ -73,6 +77,9 @@ const CROWN_SCENE = {
     { id: 'crownArcThree', type: 'lightCrownArcDormant', x: 328, align: 'ground', parallax: 0.96 },
     { id: 'crownArcFour', type: 'lightCrownArcDormant', x: 384, align: 'ground', parallax: 0.97 },
     { id: 'crownArcFive', type: 'lightCrownArcDormant', x: 440, align: 'ground', parallax: 0.98 },
+    { id: 'crownStabilityRing', type: 'resonanceRingDormant', x: 120, align: 'ground', parallax: 0.9 },
+    { id: 'crownShadowMeter', type: 'shadowEchoDormant', x: 164, align: 'ground', parallax: 0.92 },
+    { id: 'crownDivineHalo', type: 'lightCrownArcDormant', x: 80, align: 'ground', parallax: 0.88 },
   ],
 };
 
@@ -144,26 +151,26 @@ const TERRACE_ACTIONS = [
   {
     id: 'starTerraceOne',
     steps: [
-      { prompt: 'Höre den ersten Stern: sprich שמע.', spells: ['shama', 'שמע'] },
-      { prompt: 'Blockiere Balaks Gegenspruch mit לא.', spells: ['lo', 'לא'] },
-      { prompt: 'Segne den Pfad mit ברך.', spells: ['baruch', 'ברך'] },
+      { prompt: 'Setze das Wort: sprich דבר. Das Wort trägt den ersten Stern.', spells: ['dabar', 'דבר'] },
+      { prompt: 'Versiegle das Wort mit אמת – Wahrheit macht die Höhe fest.', spells: ['emet', 'אמת'] },
+      { prompt: 'Lass das wahre Wort leuchten: sprich אור.', spells: ['or', 'אור'] },
     ],
     fragment: 'א',
   },
   {
     id: 'starTerraceTwo',
     steps: [
-      { prompt: 'Höre erneut.', spells: ['shama', 'שמע'] },
-      { prompt: 'Sag Nein.', spells: ['lo', 'לא'] },
-      { prompt: 'Segne erneut.', spells: ['baruch', 'ברך'] },
+      { prompt: 'Sprich das Wort erneut: דבר.', spells: ['dabar', 'דבר'] },
+      { prompt: 'Segne das gesprochene Wort: ברך.', spells: ['baruch', 'ברך'] },
+      { prompt: 'Halte es mit אמת.', spells: ['emet', 'אמת'] },
     ],
   },
   {
     id: 'starTerraceThree',
     steps: [
-      { prompt: 'Höre ein drittes Mal.', spells: ['shama', 'שמע'] },
-      { prompt: 'Segne Balaks Furcht.', spells: ['baruch', 'ברך'] },
-      { prompt: 'Sag Nein zum Schatten.', spells: ['lo', 'לא'] },
+      { prompt: 'Beginne mit אמת – Wahrheit zuerst.', spells: ['emet', 'אמת'] },
+      { prompt: 'Sprich dann das Wort: דבר.', spells: ['dabar', 'דבר'] },
+      { prompt: 'Lass אור folgen, damit die Höhe antwortet.', spells: ['or', 'אור'] },
     ],
   },
 ];
@@ -179,12 +186,12 @@ const CROWN_SEQUENCE = [
 const NATION_SEQUENCE = [
   {
     id: 'visionAmalek',
-    combo: ['dabar', 'or'],
+    combo: ['dabar', 'emet'],
     quote: '„Amalek war das erste unter den Völkern, doch zuletzt wird es vergehen.“',
   },
   {
     id: 'visionKenite',
-    combo: ['shama', 'lo'],
+    combo: ['emet', 'baruch'],
     quote: '„Fest ist deine Wohnung, Keniter, und du hast dein Nest im Felsen gebaut.“',
   },
   {
@@ -194,7 +201,7 @@ const NATION_SEQUENCE = [
   },
   {
     id: 'visionWoe',
-    combo: ['shama', 'lo', 'baruch'],
+    combo: ['dabar', 'emet', 'or'],
     quote: '„Wehe, wer wird leben, wenn אלוהים dies tut?“',
   },
   {
@@ -205,9 +212,9 @@ const NATION_SEQUENCE = [
 ];
 
 const SHADOW_SEQUENCE = [
-  { id: 'shadowEchoNorth', combo: ['shama', 'lo', 'baruch', 'or'] },
-  { id: 'shadowEchoEast', combo: ['shama', 'lo', 'baruch', 'or'] },
-  { id: 'shadowEchoSouth', combo: ['shama', 'lo', 'baruch', 'or'] },
+  { id: 'shadowEchoNorth', combo: ['dabar', 'emet', 'or'] },
+  { id: 'shadowEchoEast', combo: ['dabar', 'emet', 'or'] },
+  { id: 'shadowEchoSouth', combo: ['dabar', 'emet', 'or'] },
 ];
 
 const BRIDGE_SEQUENCE = [
@@ -229,31 +236,29 @@ export async function runLevelTen() {
   setSceneContext({ level: 'level10', phase: 'terraces' });
   await showLevelTitle('Level 10 - Der Stern aus Jakob');
   await fadeToBase(600);
-  await showLocationSign(terraceProps, { id: 'signStarTerraces', x: 172, text: 'Bamot-Peor – Sternterrassen | במות פעור' });
+  await showLocationSign(terraceProps, { id: 'signPeorTerraces', x: 172, text: 'Peor – Drittes Opferfeld | פעור' });
+  await narratorSay('Balak bringt dich nach Peor. Ein drittes Feld voller Altäre wartet, doch dein Wort bleibt an יהוה gebunden.');
+  await donkeySay('Drittes Opferfeld: דבר ist das Wort, das wirkt; אמת ist die Wahrheit, die es trägt. Lass beide zusammen leuchten.');
 
   await phaseBalakAccusation(terraceProps);
   await phaseStarTerraces(terraceProps);
 
   const crownProps = cloneSceneProps(CROWN_SCENE.props);
   await transitionToScene(plan?.learn, CROWN_SCENE, crownProps, 'crown');
-  await showLocationSign(crownProps, { id: 'signStarCrown', x: 236, text: 'Krone des Sterns | כתר הכוכב' });
   await phaseStarCrown(crownProps);
 
   const visionProps = cloneSceneProps(VISION_SCENE.props);
   await transitionToScene(plan?.learn, VISION_SCENE, visionProps, 'visions');
-  await showLocationSign(visionProps, { id: 'signVisionField', x: 228, text: 'Visionen der Nationen | חזון הגויים' });
   await phaseNationVisions(visionProps);
 
   const shadowProps = cloneSceneProps(SHADOW_SCENE.props);
   await transitionToScene(plan?.learn, SHADOW_SCENE, shadowProps, 'shadows');
-  await showLocationSign(shadowProps, { id: 'signShadowRift', x: 240, text: 'Balaks Schattenriss | סדק הצל של בלק' });
   await phaseShadowRift(shadowProps);
 
-  await phaseFirmamentWarning();
+  await phaseFirmamentWarning(shadowProps);
 
   const bridgeProps = cloneSceneProps(BRIDGE_SCENE.props);
   await transitionToScene(plan?.apply, BRIDGE_SCENE, bridgeProps, 'bridge');
-  await showLocationSign(bridgeProps, { id: 'signStarBridge', x: 220, text: 'Sternenbrücke | גשר הכוכבים' });
   await phaseStarBridge(bridgeProps);
 
   await narratorSay('Balaks Schatten flieht in den Palast der Worte. Der Stern bleibt als Schild hinter dir.');
@@ -265,6 +270,8 @@ async function phaseBalakAccusation(props) {
   await ensureWizardBesideBalak(props, 'balakStarFigure', { offset: -36, tolerance: 18 });
   await propSay(props, 'balakStarFigure', 'Ich habe dich gerufen, dass du meine Feinde verfluchst – und siehe, du hast sie dreimal gesegnet! Geh fort; ich wollte dich ehren, aber dein אלוהים verweigert es dir.', { anchor: 'center', offsetY: -30 });
   await wizardSay('Hab ich dir nicht gesagt? Gäbe mir Balak sein Haus voll Silber und Gold, ich könnte das Wort יהוה nicht übertreten, weder im Kleinen noch im Großen.');
+  await donkeySay('Denke an die Reihenfolge: hören (`shama`), verneinen (`lo`), segnen (`baruch`), sprechen (`dabar`), halten (`emet`), dann leuchten (`or`). Die Plattform telegrafiert jede Phase.');
+  await flashLightning({ doubleFlash: true, durationIn: 70, durationOut: 160, intensity: 0.85 });
 
   addProp(props, { id: 'starTrailWestA', type: 'hoofSignTrail', x: wizard.x - 24, align: 'ground', parallax: 0.96 });
   addProp(props, { id: 'starTrailWestB', type: 'hoofSignTrail', x: wizard.x - 56, align: 'ground', parallax: 0.94 });
@@ -273,7 +280,8 @@ async function phaseBalakAccusation(props) {
 }
 
 async function phaseStarTerraces(props) {
-  await narratorSay('Der Sternpfad ist zerrissen. Stabilisiere jede Terrasse mit Hören, Nein und Segen.');
+  await narratorSay('Der Sternpfad ist zerrissen. Stabilisiere jede Höhe, indem du das Wort sprichst und mit Wahrheit festhältst.');
+  await narratorSay('Auf jeder Sternhöhe: דבר ruft, אמת hält, אור antwortet – oder du segnest das Wort und bindest es mit אמת. Warte, bis die Höhe ruht, bevor du sprichst.');
   for (const terrace of TERRACE_ACTIONS) {
     const target = props.find(entry => entry.id === terrace.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 18 });
@@ -281,12 +289,11 @@ async function phaseStarTerraces(props) {
       let ok = false;
       while (!ok) {
         const answer = await readWord(step.prompt);
-        const variant = step.spells[0] === 'שמע' ? 'שמע' : step.spells[0] === 'לא' ? 'לא' : 'ברך';
         if (step.spells.some(spell => spellEquals(answer, spell))) {
           ok = true;
           await celebrateGlyph(answer);
         } else {
-          await donkeySay('Halte dich an Hören, Nein und Segen.');
+          await donkeySay('Halte dich an das Muster: דבר setzen, אמת halten, dann אור oder ברך je nach Höhe.');
         }
       }
     }
@@ -296,10 +303,12 @@ async function phaseStarTerraces(props) {
     }
   }
   await narratorSay('Fragmente des Sterns sammeln sich in deiner Hand.');
+  await flashLightning({ doubleFlash: true, durationIn: 70, durationOut: 150, intensity: 0.9 });
 }
 
 async function phaseStarCrown(props) {
   await narratorSay('Eine Krone aus Licht senkt sich. Hänge jede Bahn mit den richtigen Worten.');
+  await narratorSay('Die fünf Bahnen glimmen nacheinander: blau → bernstein → weißgold → violett → sternweiß. Erst wenn das Licht ruht, zählt das Wort.');
   await wizardSay('Es sagt Bileam, der Sohn בעור, der Mann, dem die Augen geöffnet sind.');
   await wizardSay('Es sagt der Hörer göttlicher Rede, der Offenbarung des Mächtigen sieht, dem die Augen geöffnet wird, wenn er niederkniet.');
   await wizardSay('Wie fein sind deine Zelte, Jakob, deine Wohnungen, Israel.');
@@ -321,8 +330,7 @@ async function phaseStarCrown(props) {
         stepIndex += 1;
         await celebrateGlyph(answer);
       } else {
-        await donkeySay('Behalte die Reihenfolge der Krone.');
-        stepIndex = 0;
+        await donkeySay('Bleib im Takt der Krone und sprich das nächste Wort erst, wenn das Licht ruht.');
       }
     }
     updateProp(props, arcId, { type: 'lightCrownArcLit' });
@@ -333,10 +341,12 @@ async function phaseStarCrown(props) {
   await wizardSay('Er zerbricht die Schläfen מואב und die Häupter aller Söhne שת.');
   await wizardSay('Edom fällt, Seir wird Besitz; ישראל handelt mächtig.');
   await wizardSay('Aus Jakob kommt der Herrscher hervor und tilgt, was von den Städten bleibt.');
+  await flashLightning({ doubleFlash: true, durationIn: 60, durationOut: 160, intensity: 1 });
 }
 
 async function phaseNationVisions(props) {
   await narratorSay('Fünf Visionen erscheinen: Amalek, der Keniter, Assur, das Wehe und כתים.');
+  await narratorSay('Jede Vision pulsiert kurz: bernstein für דבר, weißgold für אמת, sternweiß für אור, gold für ברך. Eingaben zählen nur, wenn das Pulslicht ruht.');
   for (const vision of NATION_SEQUENCE) {
     const target = props.find(entry => entry.id === vision.id)?.x ?? wizard.x + 200;
     await waitForWizardToReach(target, { tolerance: 18 });
@@ -348,12 +358,22 @@ async function phaseNationVisions(props) {
       const expected = vision.combo[idx];
       const prompt = makePromptForVision(expected);
       const answer = await readWord(prompt);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'baruch' ? 'ברך' : expected === 'dabar' ? 'דבר' : 'אור';
+      const variant = expected === 'shama'
+        ? 'שמע'
+        : expected === 'lo'
+          ? 'לא'
+          : expected === 'baruch'
+            ? 'ברך'
+            : expected === 'dabar'
+              ? 'דבר'
+              : expected === 'emet'
+                ? 'אמת'
+                : 'אור';
       if (spellEquals(answer, expected, variant)) {
         idx += 1;
         await celebrateGlyph(answer);
       } else {
-        await donkeySay('Folge der vorgegebenen Formel für diese Vision.');
+        await donkeySay('Halte das Muster: דבר spricht, אמת hält, אור vollendet.');
         idx = 0;
       }
     }
@@ -367,37 +387,52 @@ async function phaseShadowRift(props) {
   await propSay(props, 'balakShadowCore', 'Dein Licht blendet, aber es wärmt nicht. Wer ist dieser Stern? Ein אלוהים? Ein Spiegel?', { anchor: 'center', offsetY: -34 });
   await wizardSay('Ich sehe ihn nur. Und wer ihn sieht, weiss, dass nichts anderes ist.');
   await donkeySay('Hüte dich, Meister. Licht kann auch verletzen.');
+  await narratorSay('Jeder Schattenknoten verlangt das Wort und die Wahrheit: דבר setzt, אמת hält, אור zerreißt den Rest. Verpasste Fenster kehren zurück, doch jeder Treffer an der Krone zehrt an der Welt.');
   for (const shadow of SHADOW_SEQUENCE) {
     const target = props.find(entry => entry.id === shadow.id)?.x ?? wizard.x + 220;
     await waitForWizardToReach(target, { tolerance: 18 });
+    const canonicalSeq = canonicalizeSequence(shadow.combo);
     let idx = 0;
     while (idx < shadow.combo.length) {
       const expected = shadow.combo[idx];
-      const prompt = 'Bann den Schatten mit שמע → לא → ברך → אור.';
+      const prompt = 'Bann den Schatten mit דבר → אמת → אור.';
       const answer = await readWord(prompt);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'baruch' ? 'ברך' : 'אור';
-      if (spellEquals(answer, expected, variant)) {
-        idx += 1;
-        await celebrateGlyph(answer);
-      } else {
-        await donkeySay('Reihenfolge einhalten: hören, verneinen, segnen, leuchten.');
-        idx = 0;
+      const multiAdvance = consumeSequenceTokens(answer, canonicalSeq, idx);
+      if (multiAdvance > 0) {
+        for (let offset = 0; offset < multiAdvance; offset += 1) {
+          await celebrateGlyph(shadow.combo[idx + offset]);
+        }
+        idx += multiAdvance;
+        continue;
       }
+      const variant = expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
+      if (!spellEquals(answer, expected, variant)) {
+        await donkeySay('Reihenfolge einhalten: Wort, Wahrheit, Licht.');
+        continue;
+      }
+      idx += 1;
+      await celebrateGlyph(answer);
     }
     updateProp(props, shadow.id, { type: 'shadowEchoBanished' });
   }
   addProp(props, { id: 'starFragmentKaf', type: 'crownFragment', x: wizard.x + 22, y: wizard.y - 48, parallax: 0.9, letter: 'ך' });
 }
 
-async function phaseFirmamentWarning() {
+async function phaseFirmamentWarning(props) {
   await narratorSay('Der Himmel reisst auf. Ein Riss zeigt den Schattenpalast.');
-  await narratorSay('Systemwarnung: Weltstabilität kritisch. Neuer Prozess entdeckt: SHADOW_BALAK.exe.');
-  await narratorSay('Eine Stimme warnt: „Verwende אור → אמת → ברך, um den Riss zu schliessen.“');
+  const spill = findProp(props, 'shadowSpill');
+  if (spill) {
+    updateProp(props, 'shadowSpill', { type: 'resonanceRingActive' });
+  }
+  addProp(props, { id: 'worldStabilityVeil', type: 'resonanceRingActive', x: wizard.x - 28, align: 'ground', parallax: 0.9, layer: 1, offsetY: -4 });
+  addProp(props, { id: 'shadowAccessLance', type: 'shadowFracture', x: wizard.x + 42, align: 'ground', parallax: 1, layer: 1 });
+  addProp(props, { id: 'transgressionAsh', type: 'shadowFracture', x: wizard.x - 18, align: 'ground', parallax: 1.08, layer: 0, offsetY: 6 });
+  await narratorSay('Eine Stimme warnt: „Verwende אור אמת ברך, um den Riss zu schließen.“');
   let idx = 0;
   const combo = ['or', 'emet', 'baruch'];
   while (idx < combo.length) {
     const expected = combo[idx];
-    const prompt = 'Sprich אור → אמת → ברך, um den Riss zu zügeln.';
+    const prompt = 'Sprich אור אמת ברך, um den Riss zu zügeln.';
     const variant = expected === 'or' ? 'אור' : expected === 'emet' ? 'אמת' : 'ברך';
     const answer = await readWord(prompt);
     if (spellEquals(answer, expected, variant)) {
@@ -405,41 +440,51 @@ async function phaseFirmamentWarning() {
       await celebrateGlyph(answer);
     } else {
       await donkeySay('Halte die Reihenfolge: Licht, Wahrheit, Segen.');
-      idx = 0;
     }
   }
   await narratorSay('Der Riss schliesst sich kurz – doch Balaks Schatten entkommt in eine tiefe Senke.');
+  await flashLightning({ doubleFlash: true, durationIn: 50, durationOut: 140, intensity: 1 });
 }
 
 async function phaseStarBridge(props) {
   await narratorSay('Ein Sternensteg führt in den Schattenpalast. Jeder Schritt verlangt ein Lichtwort.');
+  await narratorSay('Jedes Segment trägt vier Adern, die kurz nacheinander leuchten. Sprich nur, wenn die Ader stillsteht; verpasste Fenster lassen das Segment neu pulsieren, nicht einstürzen.');
   for (const seg of BRIDGE_SEQUENCE) {
     const target = props.find(entry => entry.id === seg.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 16 });
+    const canonicalSeq = canonicalizeSequence(seg.combo);
     let idx = 0;
     while (idx < seg.combo.length) {
       const expected = seg.combo[idx];
       const prompt = makePromptForBridge(expected, idx, seg.combo.length);
       const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'baruch' ? 'ברך' : expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
       const answer = await readWord(prompt);
-      if (spellEquals(answer, expected, variant)) {
-        idx += 1;
-        await celebrateGlyph(answer);
-      } else {
-        await donkeySay('Der Steg reagiert nur auf die richtige Formel. Beginn erneut.');
-        idx = 0;
+      const multiAdvance = consumeSequenceTokens(answer, canonicalSeq, idx);
+      if (multiAdvance > 0) {
+        for (let offset = 0; offset < multiAdvance; offset += 1) {
+          await celebrateGlyph(seg.combo[idx + offset]);
+        }
+        idx += multiAdvance;
+        continue;
       }
+      if (!spellEquals(answer, expected, variant)) {
+        await donkeySay('Der Steg reagiert nur auf die richtige Formel. Beginn erneut.');
+        continue;
+      }
+      idx += 1;
+      await celebrateGlyph(answer);
     }
     updateProp(props, seg.id, { type: 'starBridgeSegmentLit' });
   }
   await narratorSay('Der Sternensteg leuchtet und zieht dich in den Schattenpalast. Du trägst den Stern als Schild.');
+  await flashLightning({ doubleFlash: true, durationIn: 60, durationOut: 150, intensity: 0.9 });
 }
 
 function makePromptForCrown(arcIndex, stepIndex) {
   const prompts = [
-    ['Höre zuerst: sprich שמע.', 'Forme das Gehörte mit דבר.'],
-    ['Sprich דבר, dann אמת.', 'Besiegle den Klang mit אמת.'],
-    ['Segne und bestaetige: ברך, dann אמת.', 'Lass אור als drittes folgen.'],
+    ['Höre zuerst: sprich שמע.', 'Forme das Gehörte mit דבר – Wort wird Wirklichkeit.'],
+    ['Sprich דבר, dann אמת.', 'Besiegle das gesprochene Wort mit אמת, damit es trägt.'],
+    ['Segne das Wort: ברך, dann bestätige mit אמת.', 'Lass אור als drittes folgen.'],
     ['Höre den Befehl: שמע.', 'Verneine ihn mit לא.', 'Schliesse mit אור.'],
     ['Halte das Licht: sprich אור.'],
   ];
@@ -449,7 +494,7 @@ function makePromptForCrown(arcIndex, stepIndex) {
 function makePromptForVision(expected) {
   switch (expected) {
     case 'dabar':
-      return 'Sprich דבר, um die Vision zu binden.';
+      return 'Sprich דבר, das Wort macht die Vision greifbar.';
     case 'or':
       return 'Lass אור den Schatten brechen.';
     case 'shama':
@@ -457,7 +502,9 @@ function makePromptForVision(expected) {
     case 'lo':
       return 'Verneine den Fluch mit לא.';
     case 'baruch':
-      return 'Beende mit ברך.';
+      return 'Segne das Gesagte mit ברך.';
+    case 'emet':
+      return 'Halte das Gesagte mit אמת fest.';
     default:
       return 'Sprich das geforderte Wort.';
   }

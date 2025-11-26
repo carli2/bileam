@@ -308,7 +308,7 @@ async function phaseEnvoyDialogue(props) {
   await ensureWizardBesideProp(props, 'petorEnvoySouth');
   await propSay(props, 'balakAdvisorSouth', 'Denn wir wissen: Wen du segnest, der ist gesegnet, und wen du verfluchst, der ist verflucht.', { anchor: 'center' });
   await propSay(props, 'balakAdvisorNorth', 'Balak sendet Silber, Gold und Ehrengewänder. Alles soll dir gehören, wenn du sprichst, wie er es verlangt.', { anchor: 'center' });
-  await wizardSay('Bleibt hier über Nacht. Ich will hören, was יהוה (JHWH – Gott) mir sagt.');
+  await wizardSay('Bleibt hier über Nacht. Ich will hören, was יהוה (JHWH – Elohim) mir sagt.');
   ensurePropDefinition(props, {
     id: 'petorNightSignal',
     type: 'resonanceRingDormant',
@@ -360,7 +360,7 @@ async function phaseNightVision(props) {
   addProp(props, { id: 'petorGlyphComplete', type: 'noGlyphShard', x: wizard.x + 20, y: wizard.y - 48, parallax: 0.9, letter: 'לא' });
   await showLevelTitle('Neues Wort gelernt: לא (lo) – das Nein, das die Welt zusammenhält.', 3600);
   await wizardSay('Das Nein hallt nach. In seinem Echo höre ich den Raum zwischen den Dingen – das Unsichtbare, das doch alles trägt.');
-  await narratorSay('לא (lo) heißt Nein. אל (el) heißt Gott. Wenn du אל rückwärts liest, kommt לא heraus – ist das nicht lustig?');
+  await narratorSay('לא (lo) heißt Nein. אל (el) heißt Elohim. Wenn du אל rückwärts liest, kommt לא heraus – ist das nicht lustig?');
 }
 
 async function phaseNightMeditation(props) {
@@ -381,7 +381,7 @@ async function phaseMorningRefusal(props) {
   addProp(props, { id: 'petorGift', type: 'temptationVessel', x: wizard.x + 42, align: 'ground', parallax: 1.02 });
   await propSay(props, 'petorEnvoyEast', 'Bileam, der König schwört bei seinem Thron: Er macht dich reich, wenn du nur kommst.', { anchor: 'center' });
   await propSay(props, 'petorEnvoySouth', 'Goldene Schalen, Purpur und Silber – alles liegt bereit. Verweigere uns nicht länger.', { anchor: 'center' });
-  await wizardSay('לא. Geht hin in euer Land. יהוה (JHWH – Gott) wills nicht gestatten, dass ich mit euch ziehe.');
+  await wizardSay('לא. Geht hin in euer Land. יהוה (JHWH – Elohim) wills nicht gestatten, dass ich mit euch ziehe.');
   await wizardSay('Selbst wenn Balak mir sein Haus voll Silber und Gold gäbe, würde ich kein Wort יהוהs brechen.');
   await celebrateGlyph('לא');
   updateProp(props, 'petorGift', { type: 'temptationVesselAshes' });

@@ -15,7 +15,7 @@ Und Balak sprach:
 
 **Bileam:**  
 „Siehe, ich bin zu dir gekommen.  
-Aber wie kann ich etwas anderes reden als das, was mir Gott in den Mund gibt?  
+Aber wie kann ich etwas anderes reden als das, was mir אלוהים (Elohim) in den Mund gibt?  
 Nur das kann ich reden.“
 
 **Schriftanzeige:**  
@@ -23,7 +23,10 @@ Nur das kann ich reden.“
 > **Neues Wort zum Erwachen:** `baruch` (ברך) – segnen, Segen freisetzen.  
 > Ziel: Halte Balaks Erwartungen in Grenzen und bereite die sieben Altäre vor.
 
-**Gameplay-Hinweis:** Der Spieler erreicht mit Bileam einen dreistufigen Vorplatz. Jede Stufe ist von Schriftwächtern bewacht. Erst wenn `lo` gesprochen wurde, um Balaks Befehlslinien zu blockieren, und `shama` das Flüstern der Wachen offenlegt, öffnet sich der Pfad zur nächsten Stufe.
+**Esel (leise, didaktisch):**  
+„Baruch bedeutet Segen. Sprich erst `lo`, dann höre mit `shama`, damit kein falscher Befehl in den Altar kriecht.“
+
+**Gameplay-Hinweis:** Der Spieler erreicht mit Bileam einen dreistufigen Vorplatz. Jede Stufe ist von Schriftwächtern bewacht. Erst wenn `lo` gesprochen wurde, um Balaks Befehlslinien zu blockieren, und `shama` das Flüstern der Wachen offenlegt, öffnet sich der Pfad zur nächsten Stufe. Ein goldener Ring blitzt kurz auf jedem Wächter, bevor er den Konter akzeptiert – das ist das Telegraphie-Fenster.
 
 ---
 
@@ -34,6 +37,7 @@ Nur das kann ich reden.“
   - `lo` löst die Purpurkette, die Balaks Befehl überträgt.  
   - `shama` deckt versteckte Glyphen auf und zeigt den sicheren Weg.  
   - Optional: `aor` erleuchtet die Schriftzüge, `mayim` beruhigt die glühenden Steine.  
+- Telegraphie: Jede Plattform sendet einen kurzen Purpur-Puls (Hinweis auf `lo`), danach ein feines Klingeln (Hinweis auf `shama`).  
 - Nach erfolgreichem Durchgang erscheint das Fragment ב (Bet) als schwebender Lichtwürfel – erster Hinweis auf `baruch`.
 
 ---
@@ -51,6 +55,9 @@ Nur das kann ich reden.“
 **Erzähler:**  
 Balak und Bileam richteten die Altäre aus. Jeder Altar trägt vier Linien, die ein leuchtendes Mosaik bilden.
 
+**Esel (erklärend):**  
+„Segen braucht Ordnung. Erst hören (`shama`), dann abwehren (`lo`), dann sprechen (`baruch`).“
+
 ---
 
 ### 🜁 Spielphase II – Baukreis der Altäre
@@ -61,6 +68,7 @@ Balak und Bileam richteten die Altäre aus. Jeder Altar trägt vier Linien, die 
   - `lo` verhindert, dass Fluchcode in den Altar fließt.  
   - Abschluss jeder Sequenz lässt Fragment ר (Resch) aus dem Rauch steigen.  
 - Bei falschen Eingaben flackert der Boden, und Balak wird ungeduldig (Dialogvariante: „Beeile dich, Seher!“).
+- Telegraphie: Vor jedem Eingabefenster leuchtet der Ring blau (Hörfenster für `shama`), danach kurz violett (Abwehrfenster für `lo`); das innere Feld glimmt gold, wenn `baruch` verlangt wird. Fehlversuche lassen die Farben invertieren, ohne sofort Schaden – der Zyklus startet sichtbar neu.
 
 ---
 
@@ -69,15 +77,18 @@ Balak und Bileam richteten die Altäre aus. Jeder Altar trägt vier Linien, die 
 *Nebel schließt sich. Der Klang erstirbt. Nur ein tiefes Summen bleibt, wie das Atmen des Steins.*
 
 **Erzähler:**  
-Bileam stieg allein auf den Fels, um zu hören, ob der HERR ihm begegnete.
+Bileam stieg allein auf den Fels, um zu hören, ob יהוה (JHWH) ihm begegnete.
 
-**Gottes Stimme:**  
+**Stimme יהוה (JHWH):**  
 „Sieben Altäre hast du errichtet.  
 Doch du kannst nicht fluchen, was ich gesegnet habe.“
 
 **Systemmeldung:**  
 > Das Wort `baruch` formt sich über deinen Händen.  
 > Drei Fragmente vereinen sich – ב, ר, ך – sie warten auf deine Zustimmung.
+
+**Esel:**  
+„Sprich den Segen erst, wenn Licht und Nein den Raum halten. Sonst zerstreut er sich.“
 
 ---
 
@@ -90,6 +101,7 @@ Doch du kannst nicht fluchen, was ich gesegnet habe.“
   3. Der innere Ring reagiert erst, wenn der Spieler `baruch` korrekt spricht oder tippt.  
 - Jede richtige Sequenz erhöht die Segenresonanz und setzt das Fragment ך (Kaf) frei.  
 - Misslingt `baruch`, zerstreuen sich die Fragmente und die Sequenz beginnt erneut.
+- Telegraphie: Die Ringe färben sich nacheinander (silber → violett → gold). Erst wenn eine Farbe stillsteht, ist das Eingabefenster offen. Ein zarter Glockenklang markiert den letzten Herzschlag vor Ablauf.
 
 ---
 
@@ -105,19 +117,23 @@ Da hob Bileam an mit seinem Spruch und sprach:
 > Komm, verfluche mir Jakob,  
 > komm, verwünsche Israel!  
 >  
-> Wie soll ich fluchen, dem Gott nicht flucht?  
-> Wie soll ich verwünschen, den der HERR nicht verwünscht?  
+> Wie soll ich fluchen, dem אלוהים (Elohim) nicht flucht?  
+> Wie soll ich verwünschen, den יהוה nicht verwünscht?  
 >  
 > Denn von der Höhe der Felsen sehe ich ihn,  
 > und von den Hügeln schaue ich ihn.  
 > Siehe, das Volk wohnt abgesondert  
 > und wird sich nicht zu den Völkern rechnen.“
+> Wer kann den Staub Jakobs zählen  
+> und die Zahl des vierten Teils von Israel?  
+> Meine Seele sterbe den Tod der Gerechten,  
+> und mein Ende sei wie ihres!
 
 **Balak (entsetzt):**  
 „Was tust du mir an? Ich habe dich holen lassen, um meine Feinde zu verfluchen – und siehe, du segnest sie!“
 
 **Bileam:**  
-„Muss ich nicht reden, was der HERR in meinen Mund gibt?“
+„Muss ich nicht reden, was יהוה in meinen Mund gibt?“
 
 ---
 
@@ -128,6 +144,7 @@ Da hob Bileam an mit seinem Spruch und sprach:
 - Erfolgreiche Eingabe erzeugt eine Segenwelle, die über das Volk rollt; Weltstabilität +25.  
 - Falsche Reihenfolge führt zu Flimmern, Übertretung +1 und erzwingt Wiederholung der Strophe.  
 - Optional: `aor` verstärkt die Sichtbarkeit Israels, `mayim` streut Taupartikel, `qol` fügt Echoeffekte hinzu.
+- Telegraphie: Jede Zeile des Orakels färbt den Rand der Wortfenster (blau = hören, violett = abwehren, gold = segnen). Bei Fehlversuch bleibt die Farbe rot stehen, bis der Spieler die richtige Eingabe sieht.
 
 ---
 
@@ -171,6 +188,7 @@ Und er baute dort abermals sieben Altäre.
   2. **Kluft aus Licht:** `shama` hört den sicheren Schritt, `lo` schließt Balaks Befehlslinie.  
   3. **Pisga-Portal:** Sequenz `lo` → `baruch` lässt den Durchgang erscheinen.  
 - Abschlussszene setzt Speicherstand `progress.level8 = complete`.
+- Telegraphie: Jeder Kontrollpunkt sendet einen Vor-Impuls (Puls/Summen) vor dem Eingabefenster. Erst nach dem kurzen Aufleuchten ist die Eingabe gültig; verpasste Fenster wiederholen sich nach einem Atemzug statt zu bestrafen.
 
 ---
 

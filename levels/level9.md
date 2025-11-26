@@ -20,6 +20,9 @@ vielleicht kannst du mir dort das Volk verfluchen."
 > **Neue Worte zum Ergründen:** `dabar` (דבר) - Wort, das geschieht; `emet` (אמת) - Wahrheit, die trägt.  
 > Ziel: Errichte den Wahrheitskreis, bevor Balaks Druck das Gewebe reißt.
 
+**Esel (lehrend):**  
+„Dabar wirkt. Emet hält. Höre (`shama`), wehre (`lo`), sprich (`dabar`) – und verankere (`emet`).“
+
 ---
 
 ### 🜂 Spielphase I - Die Linien von Pisga
@@ -31,6 +34,7 @@ vielleicht kannst du mir dort das Volk verfluchen."
   - `baruch` stabilisiert den Kreis.  
 - Nach einer vollständigen Runde erscheint Fragment ד (Dalet) als schwebender Klangwürfel - erstes Zeichen für `dabar`.  
 - Verfehlst du eine Spur, wächst Balaks Projektion `balakAngerVeil`; drei Fehlversuche lösen eine Zornsequenz aus, die mit `lo` beruhigt werden muss.
+- Telegraphie: Jede Spur pulsiert silbern (Hörfenster), dann violett (Abwehrfenster), dann gold (Stabilisierungsfenster). Die Farbe steht für zwei Herzschläge still, erst dann zählt die Eingabe; verpasste Fenster lassen den Puls neu starten, ohne Fortschritt zu löschen.
 
 ---
 
@@ -39,10 +43,10 @@ vielleicht kannst du mir dort das Volk verfluchen."
 *Die Schatten versinken, nur der Altar-Kreis bleibt erleuchtet. Nebel wirkt wie Speicherdampf, aus dem sich Silben formen.*
 
 **Erzähler:**  
-Da begegnete der HERR dem Bileam  
+Da begegnete יהוה (JHWH) dem Bileam  
 und gab ihm ein Wort in seinen Mund.
 
-**Gottes Stimme:**  
+**Stimme יהוה (JHWH):**  
 "Ich bin nicht ein Mensch, dass ich lüge,  
 noch ein Menschenkind, dass ich bereue.  
 Sollte ich reden und es nicht tun?  
@@ -60,6 +64,7 @@ Sollte ich sprechen und es nicht halten?"
 - Jede korrekte Eingabe füllt eine Säule mit Licht, bis sie ein Fragment ב (Bet) frei gibt.  
 - Nach drei vollständigen Sequenzen entsteht das Wortfragment ר (Resch) - `dabar` wird im Grimoire aktiv.  
 - Fehlversuche erzeugen ein Echo aus Balaks Stimme; das Echo muss mit `lo` gebrochen werden, bevor eine neue Sequenz startet.
+- Telegraphie: Die Säulen hauchen vor jedem Fenster sichtbar (Nebelstoß); Sockel färben sich blau → violett → bernstein. Nur im stehenden Farbzustand zählt die Eingabe, verpasste Fenster wiederholen sich mit schwächerem Licht statt Schaden.
 
 ---
 
@@ -70,24 +75,29 @@ Sollte ich sprechen und es nicht halten?"
 **Bileam:**  
 > "Man sieht kein Unheil in Jakob,  
 > keine Mühsal in Israel.  
-> Der HERR, sein Gott, ist bei ihm,  
+> יהוה, sein אלוהים (Elohim), ist bei ihm,  
 > und es jauchzt dem König zu.  
 >  
-> Gott, der sie aus Ägypten geführt hat,  
+> אלוהים (Elohim), der sie aus Ägypten geführt hat,  
 > ist für sie wie das Horn des Wildstiers.  
 >  
 > Daher hilft kein Zaubern gegen Jakob  
 > und kein Wahrsagen gegen Israel.  
 >  
 > Zu rechter Zeit wird gesagt,  
-> was Gott gewirkt hat."
+> was יהוה (JHWH) gewirkt hat.  
+>  
+> Siehe, ein Volk erhebt sich wie eine Löwin  
+> und erhebt sich wie ein Löwe;  
+> es legt sich nicht nieder, bis es den Raub gefressen  
+> und das Blut der Erschlagenen getrunken hat."
 
 **Balak (wütend):**  
 "Wenn du schon nicht fluchst, so segne sie wenigstens nicht!"
 
 **Bileam:**  
 "Hab ich dir nicht gesagt:  
-Alles, was der HERR redet, das werde ich tun?"
+Alles, was יהוה (JHWH) redet, das werde ich tun?"
 
 ---
 
@@ -98,6 +108,7 @@ Alles, was der HERR redet, das werde ich tun?"
   - Richtige Reihenfolge (`dabar` -> `emet`) erzeugt eine Lichtbrücke über dem Lager; Weltstabilität +30.  
   - Verwechslung oder Auslassung führt zu "Wahrheitsbruch" - Umgebung verzerrt, Balaks Flehen verstärkt sich.  
 - Nach erfolgreicher Strophe manifestiert sich Fragment א (Aleph) - erstes Zeichen von `emet`.
+- Telegraphie: Das `dabar`-Fenster glimmt bernsteinfarben, sobald die Tat-Zeile beginnt; das `emet`-Fenster wird weißgold, wenn die Wahrheits-Zeile erklingt. Bei Fehlgriff färbt sich der Rand rot, die Zeile wird erneut gesprochen, bevor Schaden droht.
 
 ---
 
@@ -106,10 +117,13 @@ Alles, was der HERR redet, das werde ich tun?"
 *Balak führt Bileam höher zu einem Feld aus poliertem Stein, das wie ein Spiegel des Himmels wirkt.*
 
 **Erzähler:**  
-Als Bileam sah, dass es dem HERRN gefiel, Israel zu segnen,  
+Als Bileam sah, dass es יהוה (JHWH) gefiel, Israel zu segnen,  
 ging er nicht mehr auf Zeichen aus,  
 sondern richtete sein Angesicht zur Wüste.  
-Und der Geist Gottes kam auf ihn.
+Und der Geist יהוה (JHWH) kam auf ihn.
+
+**Esel (nah, ruhig):**  
+„Halte fest, was du sagst. `dabar` trifft, `emet` hält. Segne mit `baruch`, damit nichts verrutscht.“
 
 **Bileam:**  
 > "Wie fein sind deine Zelte, Jakob,  
@@ -117,11 +131,20 @@ Und der Geist Gottes kam auf ihn.
 >  
 > Wie Täler, die sich ausbreiten,  
 > wie Gärten an Wassern,  
-> wie Aloebäume, die der HERR pflanzt,  
+> wie Aloebäume, die יהוה pflanzt,  
 > wie Zedern an den Wassern.  
 >  
-> Gott hat sie aus Ägypten geführt;  
+> Wasser fließt aus seinen Eimern,  
+> und seine Saat ist in reichlichem Wasser.  
+> Sein König wird höher als Agag,  
+> und sein Königreich wird erhaben.  
+>  
+> אלוהים (Elohim) hat sie aus Ägypten geführt;  
 > er ist für sie wie das Horn des Wildstiers.  
+>  
+> Er frisst die Nationen, seine Feinde,  
+> und zerbricht ihre Gebeine,  
+> mit seinen Pfeilen zerschmettert er sie.  
 >  
 > Er hat sich hingestreckt wie ein Löwe -  
 > wer will ihn aufstören?  
@@ -138,6 +161,7 @@ Und der Geist Gottes kam auf ihn.
 - Spieler muss `emet` sprechen, sobald das jeweilige Sinnbild aufleuchtet.  
 - Richtige Eingabe speist das Netz mit Licht; nach allen vier Symbolen schließt sich Fragment מ (Mem) und ט (Taw) an - `emet` wird vollständig.  
 - Währenddessen kann der Spieler optional `baruch` weben, um zusätzliche Schutzringe über Israel zu legen.
+- Telegraphie: Jedes Sinnbild flackert weißgold zwei Herzschläge vor Aktivierung; ein kurzer Summton kündigt das Fenster an. Verpasste Eingaben lassen das Symbol kurz dunkel werden, dann erneut aufleuchten, ohne den Gesamtfortschritt zu löschen.
 
 ---
 
@@ -151,7 +175,7 @@ du hast sie dreimal gesegnet!"
 
 **Bileam:**  
 "Wenn mir Balak sein Haus voll Silber und Gold gäbe,  
-ich könnte das Wort des HERRN nicht übertreten,  
+ich könnte das Wort יהוה nicht übertreten,  
 weder im Kleinen noch im Großen."
 
 **Innere Stimme (Bileam):**  
@@ -167,6 +191,7 @@ der uns alle trägt."
 - Sequenz `shama` -> `dabar` -> `emet` -> `baruch` muss in ruhigem Takt gesprochen werden.  
 - Erfolg senkt den *Übertretung*-Zähler auf Null, vergibt den Zustand "Wahrheitsbote".  
 - Scheitert die Sequenz dreimal, bleibt Balaks Schatten über Level 10 als zusätzlicher Schwierigkeitsgrad aktiv.
+- Telegraphie: Der Schwurkreis leuchtet Abschnitt für Abschnitt (blau → bernstein → weißgold → gold). Jede Farbe steht zwei Herzschläge; Eingaben außerhalb des Fensters zählen nicht, lösen aber keinen sofortigen Rückschlag aus – der Kreis rotiert neu.
 
 ---
 

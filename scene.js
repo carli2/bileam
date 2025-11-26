@@ -650,6 +650,41 @@ export async function fadeToBlack(duration) {
   throwIfSkipRequested();
 }
 
+function buildLightningPalette(intensity = 1) {
+  const t = Math.max(0, Math.min(1, intensity));
+  return paletteFader.basePalette.map(color => {
+    if (!color) return [255, 255, 255, 255];
+    const [r, g, b, a] = color;
+    return [
+      Math.round(r + (255 - r) * t),
+      Math.round(g + (255 - g) * t),
+      Math.round(b + (255 - b) * t),
+      a,
+    ];
+  });
+}
+
+export async function flashLightning(options = {}) {
+  throwIfSkipRequested();
+  const {
+    durationIn = 60,
+    durationOut = 160,
+    doubleFlash = true,
+    intensity = 1,
+  } = options;
+  const flashPalette = buildLightningPalette(intensity);
+  const runFlash = async () => {
+    await paletteFader.fadeToPalette(flashPalette, durationIn);
+    await paletteFader.fadeToBase(durationOut);
+  };
+  await runFlash();
+  if (doubleFlash) {
+    await runFlash();
+  }
+  sceneState.paletteAtBlack = false;
+  throwIfSkipRequested();
+}
+
 export function isSceneAtBlack() {
   return Boolean(sceneState.paletteAtBlack);
 }
@@ -771,6 +806,7 @@ function initSprites() {
   propSprites.balakStatueOvergrown = createBalakStatueSprite(colors, true);
   propSprites.balakFigure = createBalakFigureSprite(colors);
   propSprites.balakBossFigure = createBalakBossSprite(colors);
+  propSprites.balakWrathEffect = createBalakWrathEffectSprite(colors);
   propSprites.irrigationChannels = createIrrigationSprite(colors);
   propSprites.sunStoneDormant = createSunStoneSprite(colors, false);
   propSprites.sunStoneAwakened = createSunStoneSprite(colors, true);
@@ -811,6 +847,7 @@ function initSprites() {
   propSprites.watchFireDormant = createWatchFireSprite(colors, 'dormant');
   propSprites.watchFireAwakened = createWatchFireSprite(colors, 'awakened');
   propSprites.watchFireVeiled = createWatchFireSprite(colors, 'veiled');
+  propSpriteFactories.pisgaCueGlow = definition => createPisgaCueGlowSprite(colors, definition?.tint);
   propSprites.vineyardBoundary = createVineyardBoundarySprite(colors);
   propSprites.angelBladeForm = createAngelSpriteFromData();
   propSprites.hutBed = createHutBedSprite(colors);
@@ -2268,6 +2305,82 @@ function createBalakProcessCoreSprite(c, active = false) {
       if (column > 0) {
         pixels[idx - 1] = aura;
       }
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createBalakWrathEffectSprite(c) {
+  const width = 42;
+  const height = 36;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const centerX = width / 2;
+  const centerY = height * 0.55;
+  const maxRadius = Math.min(width, height) * 0.48;
+  const innerRadius = maxRadius * 0.42;
+  const midRadius = maxRadius * 0.74;
+  const outerRadius = maxRadius * 0.94;
+  const core = c.lavaGlow ?? c.wizardHatHighlight;
+  const rim = c.marketFabric ?? c.wizardHat;
+  const ember = c.wizardBelt ?? c.cloudHighlight;
+  const haze = c.hutGlow ?? c.sanctumSky;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      let color = c.transparent;
+      if (dist < innerRadius) {
+        color = (Math.abs(dx + dy) % 4 === 0) ? rim : core;
+      } else if (dist < midRadius) {
+        const wave = Math.sin((dx + dy) * 0.4);
+        color = wave > 0 ? rim : core;
+      } else if (dist < outerRadius && Math.sin(dist * 1.3 + x * 0.6) > 0) {
+        color = haze;
+      }
+      if (color === c.transparent && dist < outerRadius && ((x + y * 3) % 17 === 0)) {
+        color = ember;
+      }
+      pixels[y * width + x] = color;
+    }
+  }
+
+  return new Sprite(width, height, pixels);
+}
+
+function createPisgaCueGlowSprite(c, tint = 'blue') {
+  const width = 28;
+  const height = 18;
+  const pixels = new Uint8Array(width * height);
+  pixels.fill(c.transparent);
+  const centerX = width / 2;
+  const centerY = height / 2;
+  const palette = {
+    blue: { core: c.sanctumSky ?? c.waterGlyph, rim: c.cloudHighlight ?? c.hutGlow, spark: c.wizardBelt ?? c.marketFabric },
+    violet: { core: c.wizardRobe ?? c.marketFabric, rim: c.wizardHatHighlight ?? c.marketFabric, spark: c.lavaGlow ?? c.hutGlow },
+    gold: { core: c.marketFabric ?? c.hutGlow, rim: c.wizardBelt ?? c.hutWood, spark: c.cloudHighlight ?? c.wizardHatHighlight },
+  };
+  const colors = palette[tint] ?? palette.blue;
+  const inner = Math.min(width, height) * 0.2;
+  const outer = Math.min(width, height) * 0.48;
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      const dx = x - centerX;
+      const dy = y - centerY;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      let color = c.transparent;
+      if (dist < inner) {
+        color = colors.core;
+      } else if (dist < outer) {
+        color = (Math.sin((dx + dy) * 0.6) > 0) ? colors.rim : colors.core;
+      } else if (dist < outer + 2 && Math.abs(Math.sin(dist)) > 0.5) {
+        color = colors.spark;
+      }
+      pixels[y * width + x] = color;
     }
   }
 

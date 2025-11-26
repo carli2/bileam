@@ -1,13 +1,8 @@
 /**
- * Spell duel consistency rules
- * ---------------------------
- * - Elements follow a loose dominance chain instead of full symmetry; not
- *   every state exposes every known word, so Fehler sind möglich und gewollt.
- * - Wasser besiegt Feuer, Feuer verbrennt Leben, Leben durchdringt Licht usw.
- *   Beim Rückweg sind Kombinationen bewusst eingeschränkt, damit Lernende
- *   Muster erkennen statt jede Eingabe zu erraten.
- * - Echo-Schleifen dürfen sich zuspitzen: wiederholtes קול führt in eine
- *   Resonanzfalle mit höherem Grundschaden, aus der קול nicht mehr herausführt.
+ * Spell duel rules – re-tuned for Reaktionskampf:
+ * - Jeder Zustand telegrafiert klar, welche Konterfenster offen sind.
+ * - dabar/emet bleiben Siegel, sitzen aber auf Treffer-Fenstern statt Ritualketten.
+ * - Keine Zwei-Schritt-Loops; Fluss bleibt gerichtet, damit Reaktionen zählen.
  */
 export const SPELL_DUEL_MACHINE = {
   meta: {
@@ -16,42 +11,42 @@ export const SPELL_DUEL_MACHINE = {
   obedienceEcho: {
     intro_player: {
       speaker: 'narrator',
-      text: 'Gehorche! Der Befehl hallt zwischen Felsen, jeder Ton will dich lenken.',
+      text: 'Ein Befehl peitscht durch die Schlucht; jedes Echo drückt dich nach vorn.',
     },
     intro_enemy: {
-      text: 'Ich ertränke dich in Wiederholungen, bis du gehorchst.',
+      text: 'Gehorche. Ich stopfe dir jeden Spalt mit meinem Wort.',
     },
-    prompt_player: 'Wie entkommst du diesem Gehorsams-Hall?',
+    prompt_player: 'Konter das Echo, bevor es zuschnappt.',
     damage: 55,
-    failure_player: '%s - du gehorchst und der Hall verschlingt dich.',
+    failure_player: '%s - du gehorchst, der Hall schnürt dich.',
     failure_computer: '%s - der Hall verheddert mich selbst.',
     transitions: {
       'קול': {
         next: 'obedienceBind',
-        text_player: 'קול! Ich lenke den Befehl tiefer in meinen eigenen Klang.',
-        text_enemy: 'קול! Ich schicke dir Befehl auf Befehl, bis nur noch Gehorchen bleibt.',
+        text_player: 'קול! Ich drehe den Hall und schicke ihn zurück.',
+        text_enemy: 'קול! Ich vervielfache den Ruf.',
       },
       'מים': {
         next: 'flooded',
-        text_player: 'מים! Ich lasse die Wiederholung davonspülen.',
-        text_enemy: 'מים! Ich erzeuge einen Strom von Befehlen.',
+        text_player: 'מים! Ich spüle den Befehl fort.',
+        text_enemy: 'מים! Ich erzeuge einen Strom aus Stimmen.',
       },
       'אש': {
         next: 'burning',
-        text_player: 'אש! Ich verbrenne den Hall, bis nur Hitze bleibt.',
-        text_enemy: 'אש! Ich lasse meine Drohung in Flammen springen.',
+        text_player: 'אש! Ich verbrenne den Aufruf, bis nur Hitze bleibt.',
+        text_enemy: 'אש! Ich lasse Drohung in Flammen springen.',
       },
     },
   },
   obedienceBind: {
     intro_player: {
       speaker: 'narrator',
-      text: 'Der Befehl legt sich wie Riemen um deine Brust. Jeder Impuls verlangt Gehorsam.',
+      text: 'Riemen aus Klang legen sich um deine Brust. Jetzt zählt nur der Konter.',
     },
     intro_enemy: {
       text: 'Meine Worte wickeln sich um dich. Du wirst gehorchen.',
     },
-    prompt_player: 'Wie beantwortest du das gebundene Gehorchen?',
+    prompt_player: 'Welches Wort sprengt den Zwang?',
     damage: 58,
     failure_player: '%s - du gehorchst blind und deine Kraft versiegt.',
     failure_computer: '%s - ich gehorche blind und verliere die Kontrolle.',
@@ -60,61 +55,69 @@ export const SPELL_DUEL_MACHINE = {
     transitions: {
       'לא': {
         next: 'negation',
-        text_player: 'לא! Ich werde abgewiesen, also stoße ich diesen Befehl zurück.',
-        text_enemy: 'לא! Ich werde abgewiesen und wuchte dich hinaus.',
+        text_player: 'לא! Ich stoße den Befehl zurück, ehe er greift.',
+        text_enemy: 'לא! Ich wuchte dich aus meinem Kreis.',
         damage: 48,
         damageTarget: 'enemy',
-        damageText: '%opponent% erleidet 48 Schaden, weil dein Nein das Gehorchen zerreißt.',
+        damageText: '%opponent% erleidet 48 Schaden, weil dein Nein die Fesseln sprengt.',
       },
       'אש': {
         next: 'burning',
-        text_player: 'אש! Ich lasse die Fesseln im Feuer verglühen.',
-        text_enemy: 'אש! Ich lasse das gebotene Feuer dich bedrängen.',
+        text_player: 'אש! Ich lasse die Riemen aufglühen, bis sie reißen.',
+        text_enemy: 'אש! Ich erhitze die Fesseln gegen dich.',
       },
       'מים': {
-        next: 'flooded',
-        text_player: 'מים! Ich verwandle die Fesseln in Fluss und schwimme frei.',
-        text_enemy: 'מים! Ich halte dich unter der Oberfläche meines Befehls.',
+        next: 'steamChamber',
+        text_player: 'מים! Ich mache aus dem Zwang Dampf, der verfliegt.',
+        text_enemy: 'מים! Ich halte dich unter meiner Welle.',
       },
       'קול': {
         next: 'resonantTrap',
-        text_player: 'קול! Ich forme den Gehorsam zu einem Echo nach meinen Regeln.',
-        text_enemy: 'קול! Meine Stimme presst dich in den Hall zurück.',
+        text_player: 'קול! Ich schiebe den Befehl in einen eigenen Takt.',
+        text_enemy: 'קול! Mein Echo drückt dich tiefer.',
       },
     },
   },
   steamChamber: {
     intro_player: {
       speaker: 'narrator',
-      text: 'Dampf umschlingt dich. Wasser und Feuer stoßen sich und suchen Form.',
+      text: 'Dampf zischt; Wasser und Feuer stoßen sich, jede Sekunde ist ein Konterfenster.',
     },
     intro_enemy: {
       text: 'Der Dampf kriecht über meine Arme. Ich suche einen Weg aus der Hitze.',
     },
-    prompt_player: 'Wie lenkst du den Dampf?',
+    prompt_player: 'Wie lenkst du die Wolke?',
     damage: 45,
     failure_player: '%s - der Dampf schneidet dich wie Glas.',
     failure_computer: '%s - der Dampf frisst an mir, ich verliere die Kontrolle.',
     transitions: {
       'קול': {
         next: 'resonantTrap',
-        text_player: 'קול! Ich singe durch den Dampf, bis der Hall zerreißt.',
+        text_player: 'קול! Ich reiße einen Rhythmus in den Nebel.',
         text_enemy: 'קול! Ich verdichte den Dampf zu einem brüllenden Hall.',
       },
       'חיים': {
-        next: 'overgrown',
-        text_player: 'חיים! Ich lasse nasses Grün entstehen, das die Hitze bändigt.',
-        text_enemy: 'חיים! Ich lasse nasses Rankenwerk nach dir greifen.',
+        next: 'radiant',
+        text_player: 'חיים! Feuchte Ranken fressen die Hitze und lassen Licht durch.',
+        text_enemy: 'חיים! Nasses Wuchern reflektiert das Licht gegen dich.',
       },
       'אש': {
         next: 'radiant',
-        text_player: 'אש! Ich ziehe die Hitze zurück ins Licht.',
-        text_enemy: 'אש! Ich schicke glühende Ströme zurück auf dich.',
+        text_player: 'אש! Ich ziehe Funken aus dem Dampf und bündle sie als Licht.',
+        text_enemy: 'אש! Ich schicke glühende Ströme zurück.',
       },
       'מים': {
-        next: 'flooded',
-        text_player: 'מים! Ich lasse den Dampf wieder zu Fluss werden.',
-        text_enemy: 'מים! Ich breche den Dampf auf und lenke ihn als Strömung.',
+        next: 'radiant',
+        text_player: 'מים! Ich drücke den Dampf ins Licht, bis er sich legt.',
+        text_enemy: 'מים! Ich breche den Dampf auf und lasse Licht übrig.',
+      },
+      'שמע': {
+        next: 'listening',
+        text_player: 'שמע! Ich halte inne, bis das Zischen seinen Takt verrät.',
+        text_enemy: 'שמע! Gehorche der Hitze oder sie frisst dich.',
+        damage: 20,
+        damageTarget: 'enemy',
+        damageText: '%opponent% stolpert im Dampf und erleidet 20 Schaden.',
       },
     },
   },
@@ -214,21 +217,21 @@ export const SPELL_DUEL_MACHINE = {
   negation: {
     intro_player: {
       speaker: 'narrator',
-      text: 'לא steht wie ein Schild vor dir. Der Atem wird langsam.',
+      text: 'לא steht wie ein Schild. Jeder nächste Laut muss schlagen, nicht sammeln.',
     },
     intro_enemy: {
       text: 'לא krallt sich in meinen Willen. Ich stosse mich davon ab.',
     },
     prompt_player: 'Was folgt auf das Nein?',
     damage: 40,
-    failure_player: '%s - das Nein faellt auf dich zurueck.',
+    failure_player: '%s - das Nein fällt auf dich zurück.',
     failure_computer: '%s - das Nein frisst meinen eigenen Befehl.',
-    failure_player_damageText: 'Bileam erhaelt 40 Schaden durch zurueckspringende Verneinung.',
+    failure_player_damageText: 'Bileam erhaelt 40 Schaden durch zurückspringende Verneinung.',
     failure_computer_damageText: 'Balak erleidet 40 Schaden, sein Nein zerschneidet ihn.',
     transitions: {
       'דבר': {
         next: 'spoken',
-        text_player: 'דבר! Forme das Nein zu Sprache.',
+        text_player: 'דבר! Ich forme das Nein zu einem Kantenwort.',
         text_enemy: 'דבר! Ich erteile dir mein Urteil.',
         damage: 46,
         damageTarget: 'enemy',
@@ -240,38 +243,38 @@ export const SPELL_DUEL_MACHINE = {
         text_enemy: 'אור! Ich zerbreche dein Nein im Licht.',
       },
       'אש': {
-        next: 'radiant',
-        text_player: 'אש! Ich brenne das Nein zu neuer Glut und lenke es ins Licht.',
-        text_enemy: 'אש! Ich schuere mein Nein zu einem Fluch.',
+        next: 'steamChamber',
+        text_player: 'אש! Ich brenne das Nein an, damit nur Dampf bleibt.',
+        text_enemy: 'אש! Ich schüre mein Nein zu einem Fluch.',
       },
     },
   },
   listening: {
     intro_player: {
       speaker: 'narrator',
-      text: 'שמע – eine Stimme befiehlt dir zu gehorchen; alles andere verstummt.',
+      text: 'שמע – ein Befehl will dich beugen, doch das Fenster bleibt kurz offen.',
     },
     intro_enemy: {
       text: 'שמע heißt: „Gehorche mir.“ Ich will deine Stimme beugen.',
     },
-    prompt_player: 'Was folgt auf das Hoeren?',
+    prompt_player: 'Was folgt auf das Hören?',
     damage: 45,
     failure_player: '%s - dein Lauschen bleibt leer, der Schlag trifft dich.',
-    failure_computer: '%s - ich hoere meine eigene Luege und stolpere.',
+    failure_computer: '%s - ich höre meine eigene Lüge und stolpere.',
     failure_player_damageText: 'Bileam erhaelt 45 Schaden im Widerhall.',
     failure_computer_damageText: 'Balak erleidet 45 Schaden, sein Hall bricht.',
     transitions: {
       'לא': {
         next: 'negation',
-        text_player: 'לא! Ich werde abgewiesen, darum gehorche ich nicht und stelle mein Nein vor dich.',
-        text_enemy: 'לא! Ich werde abgewiesen und lasse dich fühlen, was Gehorsam verweigert.',
+        text_player: 'לא! Ich werde abgewiesen, darum stelle ich mein Nein sofort vor dich.',
+        text_enemy: 'לא! Ich lasse dich fühlen, was Gehorsam verweigert.',
       },
     },
   },
   burning: {
     intro_player: {
       speaker: 'narrator',
-      text: 'אש kriecht ueber deine Aermel. Hitze summt in der Luft.',
+      text: 'אש kriecht über deine Ärmel. Die Lunge brennt – jetzt reagieren.',
     },
     intro_enemy: null,
     sequence_enemy: [
@@ -280,10 +283,10 @@ export const SPELL_DUEL_MACHINE = {
         text: 'אש frisst durch mich. Hitze summt in meinem Blut.',
       },
     ],
-    prompt_player: 'Wie loeschst du die Flammen?',
+    prompt_player: 'Wie löschst du die Flammen, bevor sie greifen?',
     damage: 60,
     failure_player: '%s - die Glut frisst tiefer in dein Fleisch.',
-    failure_computer: '%s - ich knirsche, mein Koerper brennt in der Glut.',
+    failure_computer: '%s - ich knirsche, mein Körper brennt in der Glut.',
     failure_player_damageText: 'Bileam erhaelt 60 Schaden im Feuer.',
     failure_computer_damageText: 'Der Gegner erleidet 60 Schaden in der Glut.',
     transitions: {
@@ -292,17 +295,9 @@ export const SPELL_DUEL_MACHINE = {
         text_player: 'מים! Nebel, nimm die Glut.',
         text_enemy: 'מים! Ich ersticke mein Feuer und wende mich gegen dich.',
       },
-      'לא': {
-        next: 'negation',
-        text_player: 'לא! Ich werde abgewiesen – sogar das Feuer gehört nur mir.',
-        text_enemy: 'לא! Ich werde abgewiesen und verweigere dir jede Glut.',
-        damage: 52,
-        damageTarget: 'enemy',
-        damageText: '%opponent% erleidet 52 Schaden, als dein abgewiesenes Nein das Feuer erstickt.',
-      },
       'קול': {
-        next: 'echoing',
-        text_player: 'קול! Ich singe gegen das Feuer an, bis es weicht.',
+        next: 'resonantTrap',
+        text_player: 'קול! Ich schneide einen Rhythmus in die Flammen.',
         text_enemy: 'קול! Ich lasse Donner wie Funken auf dich fallen.',
       },
     },
@@ -310,32 +305,33 @@ export const SPELL_DUEL_MACHINE = {
   flooded: {
     intro_player: {
       speaker: 'narrator',
-      text: 'מים umspuelt deine Beine. Die Schlucht rauscht mit dir.',
+      text: 'מים umspült deine Beine. Die Schlucht rauscht mit dir.',
     },
     intro_enemy: {
-      text: 'מים druecken auf mich. Ich suche Hitze oder Stimme.',
+      text: 'מים drücken auf mich. Ich suche Hitze oder Stimme.',
     },
-    prompt_player: 'Wie formst du die Stroemung?',
+    prompt_player: 'Wie formst du die Strömung?',
     damage: 45,
-    failure_player: '%s - Dampf schlaegt zurueck, die Flut reisst dich zu Boden.',
+    failure_player: '%s - Dampf schlägt zurück, die Flut reißt dich zu Boden.',
     failure_computer: {
       speaker: 'sequence',
-      text: '%s - das Wasser spuelt mir die Worte aus dem Leib.',
+      text: '%s - das Wasser spült mir die Worte aus dem Leib.',
     },
     failure_player_damageText: 'Bileam erhaelt 45 Schaden in der Stroemung.',
     failure_computer_damageText: 'Der Gegner wird von der Stroemung verletzt.',
     transitions: {
       'קול': {
         next: 'echoing',
-        text_player: 'קול! Ich singe dem Wasser einen ruhigeren Rhythmus.',
+        text_player: 'קול! Ich reiße die Strömung in meinen Takt.',
         text_enemy: 'קול! Ich hetze die Flut mit Hall auf dich.',
       },
       'חיים': {
-        next: 'overgrown',
-        text_player: 'חיים! Ich lasse Ranken aus dem Strom greifen.',
-        text_enemy: 'חיים! Mein Wasser wuchert wie Rankwerk.',
+        next: 'steamChamber',
+        text_player: 'חיים! Ich lasse Ranken aus dem Strom greifen und in Dampf übergehen.',
+        text_enemy: 'חיים! Mein Wasser wuchert zu Dampfadern, die dich packen.',
         damage: 15,
         damageText: '%opponent% erhaelt 15 Schaden durch wuchernde Ranken.',
+        damageTarget: 'enemy',
       },
     },
   },
@@ -360,9 +356,9 @@ export const SPELL_DUEL_MACHINE = {
         text_enemy: 'קול! Ich stopfe die Schlucht mit noch mehr Klang.',
       },
       'מים': {
-        next: 'overgrown',
-        text_player: 'מים! Ich lenke den Hall in Ströme.',
-        text_enemy: 'מים! Ich ertränke deinen Widerhall.',
+        next: 'steamChamber',
+        text_player: 'מים! Ich lenke den Hall in Ströme, die zu Dampf werden.',
+        text_enemy: 'מים! Ich ertränke deinen Widerhall im Dampf.',
       },
       'אש': {
         next: 'radiant',
@@ -386,7 +382,7 @@ export const SPELL_DUEL_MACHINE = {
     },
     prompt_player: 'Wie lenkst du das gesprochene Wort?',
     damage: 50,
-    failure_player: '%s - dein Wort zerfranst, erdrueckt dich mit Silben.',
+    failure_player: '%s - dein Wort zerfranst, erdrückt dich mit Silben.',
     failure_computer: '%s - ich verschlucke meine Worte, mein Leib platzt auf.',
     failure_player_damageText: 'Bileam erhaelt 50 Schaden im Widerhall der Worte.',
     failure_computer_damageText: 'Der Gegner erleidet 50 Schaden, seine Worte reiben ihn auf.',
@@ -399,12 +395,12 @@ export const SPELL_DUEL_MACHINE = {
         damageText: '%opponent% erhaelt 20 Schaden durch schnappende Silben.',
       },
       'דבר': {
-        next: 'resonantTrap',
-        text_player: 'דבר! Ich halte das Wort fest und leite es in den Hall.',
-        text_enemy: 'דבר! Ich lenke jede Silbe zu meinem Urteil.',
+        next: 'truthPrism',
+        text_player: 'דבר! Ich treffe jetzt, ehe sich das Fenster schließt.',
+        text_enemy: 'דבר! Mein Urteil trifft dich sofort.',
         damage: 44,
         damageTarget: 'enemy',
-        damageText: '%opponent% erleidet 44 Schaden, weil dein gesprochenes Urteil sich festbeißt.',
+        damageText: '%opponent% erleidet 44 Schaden, weil dein Wort den Treffer versiegelt.',
       },
       'מים': {
         next: 'flooded',
@@ -428,16 +424,8 @@ export const SPELL_DUEL_MACHINE = {
     failure_player_damageText: 'Bileam erhaelt 55 Schaden an schneidender Einsicht.',
     failure_computer_damageText: 'Der Gegner erhaelt 55 Schaden durch spiegelnde Kanten.',
     transitions: {
-      'דבר': {
-        next: 'spoken',
-        text_player: 'דבר! Ich fasse die Wahrheit in klares Wort.',
-        text_enemy: 'דבר! Ich spreche die Wahrheit, damit du kniest.',
-        damage: 48,
-        damageTarget: 'enemy',
-        damageText: '%opponent% erleidet 48 Schaden – das Wort bindet die ausgesprochene Wahrheit.',
-      },
       'קול': {
-        next: 'echoing',
+        next: 'resonantTrap',
         text_player: 'קול! Spiegel, erklinge in mir.',
         text_enemy: 'קול! Ich lasse Wahrheit als Klinge toenen.',
       },
@@ -478,6 +466,14 @@ export const SPELL_DUEL_MACHINE = {
         next: 'echoing',
         text_player: 'קול! Ich lasse die Boten nur noch als Klang bestehen.',
         text_enemy: 'קול! Meine Boten schreien dich nieder.',
+      },
+      'לא': {
+        next: 'negation',
+        text_player: 'לא! Ich stelle ein Nein zwischen mich und den Boten.',
+        text_enemy: 'לא! Ich sperre deine Boten aus.',
+        damage: 24,
+        damageTarget: 'enemy',
+        damageText: '%opponent% erleidet 24 Schaden, das Nein schneidet den Botenfluss.',
       },
     },
   },
@@ -532,7 +528,7 @@ export const SPELL_DUEL_MACHINE = {
         text_enemy: 'קול! Mein Donner zerbricht deinen Strahl.',
       },
       'מים': {
-        next: 'start',
+        next: 'flooded',
         text_player: 'מים! Ich zerstreue das Licht wie Regen.',
         text_enemy: 'מים! Ich schleudere Lichtsplitter wie Tropfen auf dich.',
       },
@@ -555,7 +551,7 @@ export const SPELL_DUEL_MACHINE = {
   overgrown: {
     intro_player: {
       speaker: 'narrator',
-      text: 'חיים greifen nach dir. Sporen glimmen ueber dem Boden.',
+      text: 'חיים greifen nach dir. Sporen glimmen über dem Boden.',
     },
     intro_enemy: {
       text: 'חיים spriessen aus mir. Ich knirsche unter Ranken.',
@@ -573,36 +569,37 @@ export const SPELL_DUEL_MACHINE = {
         text_enemy: 'אש! Ich verwandle Wachstum in Asche um dich.',
       },
       'מים': {
-        next: 'burning',
-        text_player: 'מים! Fuehr das Leben zum Fluss.',
-        text_enemy: 'מים! Ich lenke das Wachsen in Stroeme, die dich treffen.',
+        next: 'steamChamber',
+        text_player: 'מים! Führe das Wachsen in Dampf, damit es sich legt.',
+        text_enemy: 'מים! Ich lenke das Wuchern in Dampf, der dich blendet.',
       },
-      'קול': {
-        next: 'radiant',
-        text_player: 'קול! Ruhe, Leben.',
-        text_enemy: 'קול! Ich befehle dem Wuchern, mich zu hoeren und dich zu schlagen.',
-        damage: 15,
-        damageText: '%opponent% erhaelt 15 Schaden durch peitschende Triebe.',
+      'שמע': {
+        next: 'listening',
+        text_player: 'שמע! Ich höre das Gras wachsen, der Takt verrät mir die Lücke.',
+        text_enemy: 'שמע! Hör das Gras wachsen, bis es dich ganz umschlingt.',
+        damage: 18,
+        damageTarget: 'enemy',
+        damageText: '%opponent% stolpert im Wuchern und erleidet 18 Schaden durch peitschende Ranken.',
       },
       'חיים': {
-        next: 'truth',
-        text_player: 'חיים! Bleib in deinem Mass.',
-        text_enemy: 'חיים! Ich ueberwuchere dich vollstaendig.',
+        next: 'radiant',
+        text_player: 'חיים! Bleib in deinem Maß.',
+        text_enemy: 'חיים! Ich überwuchere dich vollständig.',
       },
     },
   },
   resonantTrap: {
     intro_player: {
       speaker: 'narrator',
-      text: 'קול laedt sich selbst auf. Der Hall verschlingt jede Bewegung.',
+      text: 'קול lädt sich selbst auf. Der Hall verschlingt jede Bewegung.',
     },
     intro_enemy: {
-      text: 'קול auf קול – ich druecke dich in einen Klangkaefig.',
+      text: 'קול auf קול – ich drücke dich in einen Klangkäfig.',
     },
-    prompt_player: 'Wie entkommst du dem Klangkaefig?',
+    prompt_player: 'Wie entkommst du dem Klangkäfig?',
     damage: 65,
-    failure_player: '%s - der Klangkaefig schnuert dir die Lunge ab.',
-    failure_computer: '%s - der Kaefig bricht auf mich selbst.',
+    failure_player: '%s - der Klangkäfig schnürt dir die Lunge ab.',
+    failure_computer: '%s - der Käfig bricht auf mich selbst.',
     failure_player_damageText: 'Bileam erhaelt 65 Schaden in der Resonanzfalle.',
     failure_computer_damageText: 'Der Gegner erhaelt 65 Schaden, die Resonanz zerquetscht ihn.',
     transitions: {
@@ -611,15 +608,15 @@ export const SPELL_DUEL_MACHINE = {
         text_player: 'מים! Ich flute den Kaefig, bis der Klang erstickt.',
         text_enemy: 'מים! Ich ersaeufe deine Stimme.',
       },
-      'אש': {
-        next: 'burning',
-        text_player: 'אש! Ich verbrenne den Hall zu Funken.',
-        text_enemy: 'אש! Meine Flammen tanzen durch jeden Ton.',
-      },
       'חיים': {
         next: 'overgrown',
         text_player: 'חיים! Ich lasse Wurzeln durch die Resonanz wachsen.',
         text_enemy: 'חיים! Lebende Fasern fesseln dich im Beat.',
+      },
+      'אש': {
+        next: 'radiant',
+        text_player: 'אש! Ich verbrenne den Hall zu Funken.',
+        text_enemy: 'אש! Meine Flammen tanzen durch jeden Ton.',
       },
       'שמע': {
         next: 'obedienceEcho',
@@ -665,6 +662,14 @@ export const SPELL_DUEL_MACHINE = {
         text_player: 'אש! Ich lasse Funken die Spiegel sprengen.',
         text_enemy: 'אש! Meine Prismen brennen dich leer.',
       },
+      'דבר': {
+        next: 'radiantPrism',
+        text_player: 'דבר! Ich setze das Wort auf jede Kante.',
+        text_enemy: 'דבר! Mein Urteil drückt sich in jede Facette.',
+        damage: 32,
+        damageTarget: 'enemy',
+        damageText: '%opponent% erleidet 32 Schaden, weil dein Wort die Facetten verbindet.',
+      },
     },
   },
   blessingOrbit: {
@@ -677,7 +682,7 @@ export const SPELL_DUEL_MACHINE = {
     },
     prompt_player: 'Wie lenkst du die überschäumende Gnade?',
     damage: 60,
-    failure_player: '%s - der Kreis schliesst sich und schnürt deinen Atem.',
+    failure_player: '%s - der Kreis schließt sich und schnürt deinen Atem.',
     failure_computer: '%s - der Orbit schlägt zurück und verbrennt mich.',
     transitions: {
       'מלאך': {
@@ -689,7 +694,7 @@ export const SPELL_DUEL_MACHINE = {
         damageText: '%opponent% erleidet 56 Schaden – der drohende Engel greift mitten im Orbit ein.',
       },
       'קול': {
-        next: 'echoing',
+        next: 'resonantTrap',
         text_player: 'קול! Ich lasse den Kreis nur noch als Klang kreisen.',
         text_enemy: 'קול! Mein Kreis singt dich in Ketten.',
       },
