@@ -129,7 +129,7 @@ export async function runLevelNine() {
   await propSay(props, 'pisgaBalak', 'Komm, ich bringe dich an einen andern Ort. Von dort wirst du nur einen Teil sehen – vielleicht kannst du mir dort das Volk verfluchen.', { anchor: 'center', offsetY: -30 });
   await wizardSay('Baue mir dort sieben Altäre und bringe mir sieben Stiere und sieben Widder.');
   await donkeySay('Noch eine Opferhöhe, Meister. Bewahre dabar und emet – sie werden mit ברך verbunden, wenn wir weiterziehen.');
-  await narratorSay('So brecht ihr auf zum dritten Feld. Balaks Geduld reisst; dein Wort bleibt gebunden an den Auftrag יהוה.');
+  await narratorSay('So brecht ihr auf zum dritten Feld. Balaks Geduld reißt; dein Wort bleibt gebunden an den Auftrag יהוה.');
   await fadeToBlack(720);
 }
 

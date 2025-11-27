@@ -274,7 +274,10 @@ export async function runLevelTen() {
 
 async function phaseBalakAccusation(props) {
   const altarBuild = animateBalakAltarsPeor(props);
-  await narratorSay('Bileam steht auf dem Felsen von Bamot-Peor; unter ihm glimmt das Lager Israels wie ein Meer aus geordneten Sternen.');
+  addProp(props, { id: 'peorStarWash', type: 'resonanceRingActive', x: wizard.x, align: 'ground', parallax: 0.9, layer: 1, tint: 'starwhite', offsetY: -22 });
+  await showFloatingRunes(props, { x: wizard.x + 18, letters: ['א', 'ו', 'ר'] });
+  await sleep(320);
+  updateProp(props, 'peorStarWash', { visible: false });
   await ensureWizardBesideBalak(props, 'balakStarFigure', { offset: -36, tolerance: 18 });
   await propSay(props, 'balakStarFigure', 'Ich habe dich gerufen, dass du meine Feinde verfluchst – und siehe, du hast sie dreimal gesegnet! Geh fort; ich wollte dich ehren, aber dein אלוהים verweigert es dir.', { anchor: 'center', offsetY: -30 });
   await wizardSay('Hab ich dir nicht gesagt? Gäbe mir Balak sein Haus voll Silber und Gold, ich könnte das Wort יהוה nicht übertreten, weder im Kleinen noch im Großen.');
@@ -310,7 +313,7 @@ async function phaseStarTerraces(props) {
 }
 
 async function animateBalakAltarsPeor(props) {
-  const spots = [188, 252, 316, 380, 444, 508, 572];
+  const spots = [228, 292, 356, 420, 484, 548, 612];
   let balak = findProp(props, 'balakStarFigure');
   if (!balak) {
     addProp(props, { id: 'balakStarFigure', type: 'balakFigure', x: wizard.x - 32, align: 'ground', parallax: 1.02 });
@@ -351,7 +354,7 @@ async function phaseStarCrown(props) {
   addProp(props, { id: 'crownArcPulseEast', type: 'lightCrownArcDormant', x: 384, align: 'ground', parallax: 0.97, layer: 1, tint: 'violet' });
   addProp(props, { id: 'crownArcPulseWest', type: 'lightCrownArcDormant', x: 440, align: 'ground', parallax: 0.98, layer: 1, tint: 'starwhite' });
   await narratorSay('Bileam hebt sein Spruchwort an:');
-  await wizardSay('Es sagt Bileam, der Sohn בעור, der Mann, dem die Augen geöffnet sind.');
+  await wizardSay('Es sagt Bileam, der Sohn בעור (Beor), der Mann, dem die Augen geöffnet sind.');
   await wizardSay('Es sagt der Hörer göttlicher Rede, der Offenbarung des Mächtigen sieht, dem die Augen geöffnet wird, wenn er niederkniet.');
   await wizardSay('Wie fein sind deine Zelte, Jakob, deine Wohnungen, Israel.');
   await wizardSay('Wie Täler, die sich ausbreiten, wie Gärten an Wassern, wie Aloebäume, die יהוה pflanzt, wie Zedern an Bächen.');
@@ -384,7 +387,7 @@ async function phaseStarCrown(props) {
   updateProp(props, 'crownPulseGlow', { visible: false });
   await wizardSay('Ich sehe ihn, aber nicht jetzt; ich schaue ihn, aber nicht von Nahem.');
   await wizardSay('Ein Stern geht auf aus Jakob, ein Zepter erhebt sich aus ישראל.');
-  await wizardSay('Er zerbricht die Schläfen מואב und die Häupter aller Söhne שת.');
+  await wizardSay('Er zerbricht die Schläfen Moab und die Häupter aller Söhne Seth.');
   await wizardSay('Edom fällt, Seir wird Besitz; ישראל handelt mächtig.');
   await wizardSay('Aus Jakob kommt der Herrscher hervor und tilgt, was von den Städten bleibt.');
   await flashLightning({ doubleFlash: true, durationIn: 60, durationOut: 160, intensity: 1 });
@@ -503,7 +506,7 @@ async function phaseShadowRift(props) {
 }
 
 async function phaseFirmamentWarning(props) {
-  await narratorSay('Der Himmel reisst auf. Ein Riss zeigt den Schattenpalast.');
+  await narratorSay('Der Himmel reißt auf. Ein Riss zeigt den Schattenpalast.');
   const spill = findProp(props, 'shadowSpill');
   if (spill) {
     updateProp(props, 'shadowSpill', { type: 'resonanceRingActive' });
@@ -514,52 +517,40 @@ async function phaseFirmamentWarning(props) {
   await narratorSay('Eine Stimme warnt: „Verwende אור אמת ברך, um den Riss zu schließen.“');
   let idx = 0;
   const combo = ['or', 'emet', 'baruch'];
+  const expectedHebrewSequence = 'אור אמת ברך';
   while (idx < combo.length) {
     const expected = combo[idx];
-    const prompt = 'Sprich אור אמת ברך, um den Riss zu zügeln.';
+    const prompt = 'Sprich אור אמת ברך (Licht, Wahrheit, Segen), um den Riss zu zügeln.';
     const variant = expected === 'or' ? 'אור' : expected === 'emet' ? 'אמת' : 'ברך';
     const answer = await readWord(prompt);
-    if (spellEquals(answer, expected, variant)) {
+    if (answer.trim() === expectedHebrewSequence) {
+      idx = combo.length;
+      await celebrateGlyph('or');
+      await celebrateGlyph('emet');
+      await celebrateGlyph('baruch');
+    } else if (spellEquals(answer, expected, variant)) {
       idx += 1;
       await celebrateGlyph(answer);
     } else {
-      await donkeySay('Halte die Reihenfolge: Licht, Wahrheit, Segen.');
+      await donkeySay('Halte die Reihenfolge: Licht, Wahrheit, Segen. Tipp "or emet baruch" als hebräische Folge.');
     }
   }
+  updateProp(props, 'shadowSpill', null);
+  updateProp(props, 'worldStabilityVeil', null);
+  updateProp(props, 'shadowAccessLance', null);
+  updateProp(props, 'transgressionAsh', null);
   await narratorSay('Der Riss schliesst sich kurz – doch Balaks Schatten entkommt in eine tiefe Senke.');
   await flashLightning({ doubleFlash: true, durationIn: 50, durationOut: 140, intensity: 1 });
 }
 
 async function phaseStarBridge(props) {
   ensurePhaseProps(props, BRIDGE_SCENE.props);
-  await narratorSay('Ein Sternensteg führt in den Schattenpalast. Jeder Schritt verlangt ein Lichtwort.');
-  await narratorSay('Jedes Segment trägt vier Adern, die kurz nacheinander leuchten. Sprich nur, wenn die Ader stillsteht; verpasste Fenster lassen das Segment neu pulsieren, nicht einstürzen.');
+  await narratorSay('Der Sternensteg richtet sich selbst: Wort, Wahrheit und Licht verweigern Balaks Fluch.');
   for (const seg of BRIDGE_SEQUENCE) {
     const target = props.find(entry => entry.id === seg.id)?.x ?? wizard.x + 160;
     await waitForWizardToReach(target, { tolerance: 16 });
-    const canonicalSeq = canonicalizeSequence(seg.combo);
-    let idx = 0;
-    while (idx < seg.combo.length) {
-      const expected = seg.combo[idx];
-      const prompt = makePromptForBridge(expected, idx, seg.combo.length);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'baruch' ? 'ברך' : expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
-      const answer = await readWord(prompt);
-      const multiAdvance = consumeSequenceTokens(answer, canonicalSeq, idx);
-      if (multiAdvance > 0) {
-        for (let offset = 0; offset < multiAdvance; offset += 1) {
-          await celebrateGlyph(seg.combo[idx + offset]);
-        }
-        idx += multiAdvance;
-        continue;
-      }
-      if (!spellEquals(answer, expected, variant)) {
-        await donkeySay('Der Steg reagiert nur auf die richtige Formel. Beginn erneut.');
-        continue;
-      }
-      idx += 1;
-      await celebrateGlyph(answer);
-    }
     updateProp(props, seg.id, { type: 'starBridgeSegmentLit' });
+    await flashLightning({ doubleFlash: false, durationIn: 50, durationOut: 140, intensity: 0.6 });
   }
   await narratorSay('Der Sternensteg leuchtet und zieht dich in den Schattenpalast. Du trägst den Stern als Schild.');
   await flashLightning({ doubleFlash: true, durationIn: 60, durationOut: 150, intensity: 0.9 });
