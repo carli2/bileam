@@ -26,11 +26,11 @@ Nur das kann ich reden.“
 **Esel (leise, didaktisch):**  
 „Baruch bedeutet Segen. Sprich erst `lo`, dann höre mit `shama`, damit kein falscher Befehl in den Altar kriecht.“
 
-**Gameplay-Hinweis:** Der Spieler erreicht mit Bileam einen dreistufigen Vorplatz. Jede Stufe ist von Schriftwächtern bewacht. Erst wenn `lo` gesprochen wurde, um Balaks Befehlslinien zu blockieren, und `shama` das Flüstern der Wachen offenlegt, öffnet sich der Pfad zur nächsten Stufe. Ein goldener Ring blitzt kurz auf jedem Wächter, bevor er den Konter akzeptiert – das ist das Telegraphie-Fenster.
+**Gameplay-Hinweis:** Der Spieler erreicht mit Bileam einen dreiteiligen Vorplatz. Jeder Aufgang ist von Schriftwächtern bewacht. Erst wenn `lo` gesprochen wurde, um Balaks Befehlslinien zu blockieren, und `shama` das Flüstern der Wachen offenlegt, öffnet sich der Pfad zum nächsten Segment. Ein goldener Ring blitzt kurz auf jedem Wächter, bevor er den Konter akzeptiert – das ist das Telegraphie-Fenster.
 
 ---
 
-### 🜂 Spielphase I – Die Stufen von Bamot-Baal
+### 🜂 Spielphase I – Die Höhen von Bamot-Baal
 
 - Drei Plattformen mit `princeProcessionBanner`-Wächtern.  
 - Aufgabe: Kombiniere bekannte Worte, um den Zugang freizuschalten.  
@@ -229,7 +229,7 @@ als hätte der Segen selbst ein Gedächtnis.
 ## Sprite-Anforderungen
 
 - `balakThronePresence` – Balak auf Basaltplattform mit pulsierenden Purpuradern.  
-- `moabWatcherGuard` – Schriftwächter für die Stufen-Segmente.  
+- `moabWatcherGuard` – Schriftwächter für die Aufgangs-Segmente.  
 - `altarGlyphPlate` – modulare Altarplatten mit animierten Glyphen.  
 - `blessingFragment` – schwebende Buchstaben ב, ר, ך mit Leuchtspur.  
 - `resonanceRing` – konzentrische Hörkreise für die Segen-Resonanz.  

@@ -103,16 +103,13 @@ export async function runLevelNine() {
   await fadeToBase(600);
 
   await donkeySay('Zweites Opferfeld – halte hören, Nein und Segen bereit.');
-  startBalakFollow(props, 'pisgaBalak');
-  await phasePisgaPath(props);
-  stopBalakFollow();
-
   await showFloatingRunes(props, { x: 200, letters: ['ש', 'מ', 'ע'] });
   await narratorSay('Balak führt dich auf das Feld des Spähers am Pisga und richtet erneut sieben Altäre her. Noch einmal bringt er Stiere und Widder, während du auf יהוה wartest.');
   await donkeySay('Zweites Opferfeld – zweiter Versuch. Halte deine Worte bereit.');
   await propSay(props, 'pisgaBalak', 'Was tust du, Bileam? Ich nahm dich, um meine Feinde zu verfluchen – und du schweigst oder segnest!', { anchor: 'center', offsetY: -30 });
   const buildAltarsPromise = animateBalakAltars(props);
 
+  await buildAltarsPromise;
   await wizardSay('„Steh auf, Balak, und höre! אלוהים ist kein Mensch, dass er lügt; kein Menschenkind, das ihm etwas leid könnte. Was er spricht, das geschieht.“');
   const pillars = ['dabarPillarOne', 'dabarPillarTwo', 'dabarPillarThree'];
   await donkeySay('דבר (DABAR): Dal (ד) – Aleph (א) – Resh (ר). Eine Tür, durch die Kraft aus dem Kopf fließt. Sprich das Wort, und es trägt Form.');
@@ -125,20 +122,19 @@ export async function runLevelNine() {
   await wizardSay('„Ich sehe kein Unheil in Jakob, keine Mühsal in Israel. יהוה, sein אלוהים, ist bei ihm, und der Jubel eines Königs ist in seiner Mitte.“');
   await wizardSay('„אלוהים hat sie aus Ägypten geführt; er ist für sie wie das Horn des Wildstiers. Kein Zaubern hilft gegen Jakob, kein Wahrsagen gegen Israel.“');
   await wizardSay('„Zu rechter Zeit wird gesagt, was יהוה gewirkt hat. Siehe, ein Volk erhebt sich wie eine Löwin, richtet sich auf wie ein Löwe; es legt sich nicht nieder, bis es Raub gefressen und Blut getrunken hat.“');
-  await buildAltarsPromise;
   await propSay(props, 'pisgaBalak', 'Weder verfluche noch segne sie! Schweig doch endlich!', { anchor: 'center', offsetY: -32 });
   await wizardSay('Habe ich dir nicht gesagt: Alles, was יהוה redet, das werde ich tun?');
   await donkeySay('Balak hört nur, was er hören will. Doch das Wort bleibt bestehen.');
   await narratorSay('Balak ringt vergeblich. Dennoch plant er ein drittes Mal.');
   await propSay(props, 'pisgaBalak', 'Komm, ich bringe dich an einen andern Ort. Von dort wirst du nur einen Teil sehen – vielleicht kannst du mir dort das Volk verfluchen.', { anchor: 'center', offsetY: -30 });
   await wizardSay('Baue mir dort sieben Altäre und bringe mir sieben Stiere und sieben Widder.');
-  await donkeySay('Noch eine Stufe, Meister. Bewahre dabar und emet – sie werden mit ברך verbunden, wenn wir weiterziehen.');
+  await donkeySay('Noch eine Opferhöhe, Meister. Bewahre dabar und emet – sie werden mit ברך verbunden, wenn wir weiterziehen.');
   await narratorSay('So brecht ihr auf zum dritten Feld. Balaks Geduld reisst; dein Wort bleibt gebunden an den Auftrag יהוה.');
   await fadeToBlack(720);
 }
 
 async function animateBalakAltars(props) {
-  const altarSpots = [160, 220, 280, 340, 400, 460, 520];
+  const altarSpots = [180, 240, 300, 360, 420, 480, 540];
   for (let i = props.length - 1; i >= 0; i -= 1) {
     if (props[i]?.id && String(props[i].id).startsWith('balakBuiltAltar')) {
       props.splice(i, 1);
@@ -160,8 +156,15 @@ async function animateBalakAltars(props) {
       balak = findProp(props, 'pisgaBalak');
       await sleep(60);
     }
-    addProp(props, { id: `balakBuiltAltar${i + 1}`, type: 'gardenAltar', x: target, align: 'ground', parallax: balak?.parallax ?? 1.02 });
-    await sleep(220);
+    const baseId = `balakBuiltAltar${i + 1}`;
+    addProp(props, { id: baseId, type: 'gardenAltar', x: target, align: 'ground', parallax: balak?.parallax ?? 1.02, visible: true });
+    await sleep(260);
+    const centerX = getPropCenterX(props, baseId);
+    const fireId = `${baseId}Fire`;
+    addProp(props, { id: fireId, type: 'watchFireDormant', x: centerX, align: 'ground', parallax: balak?.parallax ?? 1.02, layer: 1, offsetY: -14 });
+    await sleep(340);
+    updateProp(props, fireId, { type: 'watchFireAwakened' });
+    await sleep(240);
   }
 }
 

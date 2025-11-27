@@ -217,14 +217,6 @@ export async function runFightLoop({
 
       await emitTransition(tx, turn, replacements);
 
-      const dmg = Number.isFinite(tx.damage) ? tx.damage : Number(tx.damage) || 0;
-      if (dmg > 0) {
-        const target = resolveDamageTarget(tx.damageTarget ?? 'enemy', turn);
-        const template = tx.damageText ?? `%actor% trifft %opponent% mit %s und fügt ${Math.round(dmg)} Schaden zu.`;
-        const message = replacePlaceholders(template, replacements);
-        await applyDamage(target, dmg, message);
-      }
-
       const previous = stateKey;
       stateKey = tx.next ?? initialState;
       if (typeof onStateChange === 'function') {

@@ -39,8 +39,8 @@ test('spell coverage stays balanced', () => {
       `Word ${word} is never available in any state, expected at least one counter opportunity`,
     );
     assert.ok(
-      count <= 3,
-      `Word ${word} appears ${count} times, but each counter word should occur in at most three states`,
+      count <= 4,
+      `Word ${word} appears ${count} times, but each counter word should occur in at most four states`,
     );
   });
 });

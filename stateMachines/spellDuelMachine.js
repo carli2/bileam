@@ -192,9 +192,6 @@ export const SPELL_DUEL_MACHINE = {
         next: 'spoken',
         text_player: 'דבר! Wort, das geschieht.',
         text_enemy: 'דבר! Ich befehle dir zu knien.',
-        damage: 46,
-        damageTarget: 'enemy',
-        damageText: '%opponent% erleidet 46 Schaden – dein gesprochenes Urteil trifft zuerst.',
       },
       'אמת': {
         next: 'truth',
@@ -618,6 +615,11 @@ export const SPELL_DUEL_MACHINE = {
         text_player: 'אש! Ich verbrenne den Hall zu Funken.',
         text_enemy: 'אש! Meine Flammen tanzen durch jeden Ton.',
       },
+      'דבר': {
+        next: 'spoken',
+        text_player: 'דבר! Ein klares Wort übertönt den Klang.',
+        text_enemy: 'דבר! Mein Wort schneidet durch deinen Käfig.',
+      },
       'שמע': {
         next: 'obedienceEcho',
         text_player: 'שמע! Ich lausche, bis ich seinem Befehl entgehe.',
@@ -661,14 +663,6 @@ export const SPELL_DUEL_MACHINE = {
         next: 'burning',
         text_player: 'אש! Ich lasse Funken die Spiegel sprengen.',
         text_enemy: 'אש! Meine Prismen brennen dich leer.',
-      },
-      'דבר': {
-        next: 'radiantPrism',
-        text_player: 'דבר! Ich setze das Wort auf jede Kante.',
-        text_enemy: 'דבר! Mein Urteil drückt sich in jede Facette.',
-        damage: 32,
-        damageTarget: 'enemy',
-        damageText: '%opponent% erleidet 32 Schaden, weil dein Wort die Facetten verbindet.',
       },
     },
   },

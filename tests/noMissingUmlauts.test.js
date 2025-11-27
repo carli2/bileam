@@ -7,6 +7,7 @@ const BLACKLIST = [
   'gross',
   'fliessen',
   'zerreissen',
+  'stufe',
   'a\u0308',
   'o\u0308',
   'u\u0308',

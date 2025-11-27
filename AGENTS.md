@@ -115,7 +115,7 @@ Am Anfang harmonisch und lehrreich, wird die Atmosphäre zunehmend prunkvoll, be
 
 ### 4.2. Farbphilosophie
 - **Licht → Wasser → Klang → Leben → Feuer → Grenze → Hören → Segen → Wort & Wahrheit → Sternlicht.**  
-- Jede Stufe ab Level 6 fügt kühle Nacht- und Silbernuancen hinzu, um das „Nein“ und das Lauschen spürbar zu machen; Segen und Wahrheit bringen Gold- und Weißgoldanteile zurück, bevor Level 10 mit Sternweiß Kulmination und Gefahr vereint.  
+- Jeder Abschnitt ab Level 6 fügt kühle Nacht- und Silbernuancen hinzu, um das „Nein“ und das Lauschen spürbar zu machen; Segen und Wahrheit bringen Gold- und Weißgoldanteile zurück, bevor Level 10 mit Sternweiß Kulmination und Gefahr vereint.  
 - Balaks Farbcode: **Purpur + Gold** – blendend, aber kalt; seine Schatten schlagen violette Risse in jede Szene, wenn Versuchung oder Zorn eskalieren.  
 - Göttliches Licht (Engel & Sternkrone): **Weißgold + Transparenz** – erhaben, doch stets eingebettet in sanfte Bewegungen, niemals blendendes Hartlicht.
 
