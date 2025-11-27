@@ -503,7 +503,7 @@ export const SPELL_DUEL_MACHINE = {
       'מים': {
         next: 'flooded',
         text_player: 'מים! Ich kühle den Glanz, damit er nicht verbrennt.',
-        text_enemy: 'מים! Ich ertränke deinen Segen.',
+        text_enemy: 'מים! Ich ersäufe deinen Segen.',
       },
     },
   },

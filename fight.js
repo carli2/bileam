@@ -5,76 +5,23 @@ function clamp(value, min, max) {
 }
 
 function normalizeInput(input) {
-  if (!input) return null;
+  if (input == null) return null;
   const cleaned = String(input).trim();
   if (!cleaned) return null;
   return cleaned.toLowerCase();
 }
 
 function createLifeState(max = DEFAULT_MAX_HP) {
-  return {
-    max,
-    current: max,
-  };
+  return { max, current: max };
 }
 
 function formatLifeBar(current, max, width = 8) {
   const ratio = max > 0 ? current / max : 0;
   const filled = clamp(Math.round(ratio * width), 0, width);
   const empty = width - filled;
-  const filledChar = '|';
-  const emptyChar = '.';
-  return filledChar.repeat(filled) + emptyChar.repeat(empty);
+  return '|'.repeat(filled) + '.'.repeat(empty);
 }
 
-/**
- * Runs a spell duel driven by a declarative state machine.
- *
- * Machine contract per state (keys are canonical Hebrew words):
- * {
- *   intro_player: string | SpeechCfg,
- *   intro_enemy: string | SpeechCfg,
- *   sequence_player: string | SequenceStep | SequenceStep[],
- *   sequence_enemy: string | SequenceStep | SequenceStep[],
- *   prompt_player: string,
- *   damage: number,                    // fallback damage on failed response
- *   damage_player/damage_enemy: number // optional overrides
- *   failure_player: string | SpeechCfg,
- *   failure_enemy: string | SpeechCfg,
- *   failure_player_damageText: string,
- *   failure_enemy_damageText: string,
- *   failure_next: string,              // default next state after failure
- *   transitions: {
- *     'אש': string | {
- *       next: 'on_fire',
- *       text/text_player/text_enemy: string,
- *       text2/text2_player/text2_enemy: string,
- *       speaker/speaker_player/speaker_enemy: string,
- *       damage: number,                // optional on-hit damage
- *       damageTarget: 'player' | 'enemy',
- *       damageText: string,
- *       only: 'player' | 'enemy',      // restricts transition to a single side
- *     }
- *   }
- * }
- *
- * SequenceStep: {
-  *   text?: string,
-  *   duration?: number,
-  *   effect?: string,
-  *   speaker?: string,
-  *   type?: string,
-  * }
-  *
- * Additional params:
- * - enemyMistakeChance (0..1) controls how often the enemy deliberately
- *   chooses a non-transition word. Overridden by `enemyAccuracy` (1 - mistake)
- *   or machine meta (`meta.enemyMistakeChance` / `meta.enemyAccuracy`).
- * - enemyVocabulary allows overriding the word bank considered for random
- *   enemy mistakes; defaults to the union of machine transitions.
- *
- * Strings may contain %actor%, %opponent%, %state%, and %s (word) placeholders.
- */
 export async function runFightLoop({
   machine,
   initialState = 'start',
@@ -86,22 +33,15 @@ export async function runFightLoop({
   onEvent = () => {},
   onUpdate = () => {},
   randomFn = Math.random,
-  enemyMistakeChance,
-  enemyAccuracy,
-  enemyVocabulary,
+  enemyStrength,
   onStateChange,
 }) {
-  if (!machine) {
-    throw new Error('Fight state machine not provided');
-  }
+  if (!machine) throw new Error('Fight state machine not provided');
+  if (!machine[initialState]) throw new Error(`Unknown fight state: ${initialState}`);
 
-  const states = machine;
-  const machineMeta = (machine && typeof machine === 'object' && machine.meta && typeof machine.meta === 'object')
-    ? machine.meta
-    : {};
-  if (!states[initialState]) {
-    throw new Error(`Unknown fight state: ${initialState}`);
-  }
+  const strength = typeof enemyStrength === 'number'
+    ? enemyStrength
+    : (typeof machine.meta?.enemyStrength === 'number' ? machine.meta.enemyStrength : 0.7);
 
   const life = {
     player: createLifeState(playerHP),
@@ -119,6 +59,25 @@ export async function runFightLoop({
     });
   };
 
+  const replacePlaceholders = (text, replacements) => {
+    if (!text) return text;
+    let out = text;
+    Object.entries(replacements).forEach(([key, value]) => {
+      const pattern = new RegExp(`%${key}%`, 'g');
+      out = out.replace(pattern, value);
+    });
+    if (replacements.word) out = out.replace('%s', replacements.word);
+    return out;
+  };
+
+  const resolveDamageTarget = (label, actorSide) => {
+    const normalized = typeof label === 'string' ? label.toLowerCase() : 'enemy';
+    if (normalized === 'player' || normalized === 'self' || normalized === 'actor') {
+      return actorSide === 'player' ? 'player' : 'enemy';
+    }
+    return actorSide === 'player' ? 'enemy' : 'player';
+  };
+
   const applyDamage = async (target, amount, message) => {
     if (!(amount > 0)) return;
     if (target === 'enemy') {
@@ -132,450 +91,147 @@ export async function runFightLoop({
     renderStatus();
   };
 
-  const resolveDamageTarget = (label, actorSide) => {
-    const normalized = typeof label === 'string' ? label.toLowerCase() : 'enemy';
-    switch (normalized) {
-      case 'player':
-        return actorSide === 'player' ? 'player' : 'enemy';
-      case 'self':
-      case 'actor':
-        return actorSide === 'player' ? 'player' : 'enemy';
-      case 'enemy':
-      default:
-        return actorSide === 'player' ? 'enemy' : 'player';
+  const resolveTransition = (stateKey, word, actor) => {
+    const state = machine[stateKey];
+    if (!state) return null;
+    const raw = state.transitions?.[word];
+    if (!raw) return null;
+    if (typeof raw === 'object') {
+      const only = raw.only ?? raw.allowedFor ?? null;
+      if (only === 'player' && actor !== 'player') return null;
+      if (only === 'enemy' && actor !== 'enemy') return null;
+      const forbid = raw.forbiddenFor ?? raw.forbid ?? null;
+      if (forbid === actor) return null;
+      if (Array.isArray(forbid) && forbid.includes(actor)) return null;
     }
-  };
-
-  const replacePlaceholders = (text, replacements) => {
-    if (!text) return text;
-    let output = text;
-    Object.entries(replacements).forEach(([key, value]) => {
-      const pattern = new RegExp(`%${key}%`, 'g');
-      output = output.replace(pattern, value);
-    });
-    if (replacements.word) {
-      output = output.replace('%s', replacements.word);
-    }
-    return output;
-  };
-
-  const emitSpeech = async config => {
-    if (!config) return;
-    const { speaker, text, text2, speaker2 } = config;
-    if (text) {
-      await onEvent({ speaker: speaker ?? 'narrator', text });
-    }
-    if (text2) {
-      await onEvent({ speaker: speaker2 ?? speaker ?? 'narrator', text: text2 });
-    }
-  };
-
-  const resolveSpeech = (value, fallbackSpeaker, replacements = {}) => {
-    if (!value) return null;
-    if (typeof value === 'string') {
-      return {
-        speaker: fallbackSpeaker,
-        text: replacePlaceholders(value, replacements),
-      };
-    }
-    const text = value.text ? replacePlaceholders(value.text, replacements) : undefined;
-    const text2 = value.text2 ? replacePlaceholders(value.text2, replacements) : undefined;
+    if (typeof raw === 'string') return { next: raw };
     return {
-      speaker: value.speaker ?? fallbackSpeaker,
-      text,
-      text2,
-      speaker2: value.speaker2,
+      next: raw.next ?? initialState,
+      text: raw.text ?? (actor === 'player' ? raw.text_player : raw.text_enemy),
+      text2: raw.text2 ?? (actor === 'player' ? raw.text2_player : raw.text2_enemy),
+      speaker: raw.speaker ?? (actor === 'player' ? 'player' : 'enemy'),
+      speaker2: raw.speaker2,
+      damage: raw.damage ?? 0,
+      damageTarget: raw.damageTarget,
+      damageText: raw.damageText,
     };
   };
 
-  const normalizeTransition = (entry, actor) => {
-    if (!entry) return null;
-    if (typeof entry === 'string') {
-      return { next: entry };
-    }
-    const restrict = entry.only ?? entry.allowedFor ?? null;
-    if (restrict === 'player' && actor !== 'player') return null;
-    if (restrict === 'enemy' && actor !== 'enemy') return null;
-
-    const forbid = entry.forbiddenFor ?? entry.forbid ?? null;
-    if (forbid === actor) return null;
-    if (Array.isArray(forbid) && forbid.includes(actor)) return null;
-
-    const nextEntry = entry.next ?? 'start';
-    return {
-      next: nextEntry,
-      text: entry.text ?? (actor === 'player' ? entry.text_player : entry.text_enemy),
-      text2: entry.text2 ?? (actor === 'player' ? entry.text2_player : entry.text2_enemy),
-      speaker: entry.speaker ?? (actor === 'player' ? entry.speaker_player : entry.speaker_enemy),
-      speaker2: entry.speaker2 ?? (actor === 'player' ? entry.speaker2_player : entry.speaker2_enemy),
-      damage: entry.damage ?? 0,
-      damageTarget: entry.damageTarget,
-      damageText: entry.damageText,
-    };
+  const emitTransition = async (tx, actor, replacements) => {
+    const text = tx.text ? replacePlaceholders(tx.text, replacements) : null;
+    const text2 = tx.text2 ? replacePlaceholders(tx.text2, replacements) : null;
+    const speaker = tx.speaker ?? (actor === 'player' ? 'player' : 'enemy');
+    if (text) await onEvent({ speaker, text });
+    if (text2) await onEvent({ speaker: tx.speaker2 ?? speaker, text: text2 });
   };
 
-  const appendDamageMarker = (text, damage) => {
-    if (!text || !(damage > 0)) return text;
-    return text.includes('(-') ? text : `${text} (-${damage})`;
-  };
-
-  const normalizeSequenceStep = (step, actorSide) => {
-    if (!step) return null;
-    if (typeof step === 'string') {
-      return {
-        text: step,
-        speaker: 'sequence',
-      };
+  const emitFailure = async (state, actor, word, replacements) => {
+    const damage = actor === 'player'
+      ? state?.damage_player ?? state?.damage ?? 0
+      : state?.damage_enemy ?? state?.damage ?? 0;
+    const cfg = actor === 'player' ? state?.failure_player : state?.failure_computer;
+    let text = null;
+    let speaker = actor === 'player' ? 'ally' : 'enemy';
+    if (typeof cfg === 'string') {
+      text = replacePlaceholders(cfg, replacements);
+    } else if (cfg && typeof cfg === 'object') {
+      text = cfg.text ? replacePlaceholders(cfg.text, replacements) : null;
+      speaker = cfg.speaker ?? speaker;
     }
-    if (typeof step !== 'object') return null;
-    const copy = { ...step };
-    if (!copy.speaker) {
-      copy.speaker = copy.type === 'speech'
-        ? actorSide === 'player' ? 'ally' : 'enemy'
-        : 'sequence';
+    if (!text) {
+      text = actor === 'player'
+        ? `${playerName} findet keinen passenden Zauber.`
+        : `${enemyName} findet keinen passenden Zauber.`;
     }
-    copy.type = copy.type ?? 'sequence';
-    return copy;
-  };
-
-  const emitSequence = async (rawSequence, actorSide, replacements) => {
-    if (!rawSequence) return;
-    const steps = Array.isArray(rawSequence) ? rawSequence : [rawSequence];
-    for (const rawStep of steps) {
-      const step = normalizeSequenceStep(rawStep, actorSide);
-      if (!step) continue;
-      const payload = {
-        speaker: step.speaker ?? 'sequence',
-        type: step.type ?? 'sequence',
-        text: step.text ? replacePlaceholders(step.text, replacements) : undefined,
-        duration: step.duration,
-        effect: step.effect,
-        actor: actorSide,
-      };
-      await onEvent(payload);
+    await onEvent({ speaker, text });
+    if (damage > 0) {
+      const target = actor === 'player' ? 'player' : 'enemy';
+      const template = (actor === 'player'
+        ? state?.failure_player_damageText
+        : state?.failure_computer_damageText) ?? state?.failure_damageText;
+      const message = template
+        ? replacePlaceholders(template, replacements)
+        : `${target === 'player' ? playerName : enemyName} erhält ${damage} Schaden.`;
+      await applyDamage(target, damage, message);
     }
   };
 
-  const transitionsFor = state => state?.transitions ?? {};
-
-  const clamp01 = value => clamp(value, 0, 1);
-
-  const resolvedAccuracy = (() => {
-    if (typeof enemyAccuracy === 'number') return clamp01(enemyAccuracy);
-    if (typeof enemyMistakeChance === 'number') return clamp01(1 - enemyMistakeChance);
-    if (typeof machineMeta.enemyAccuracy === 'number') return clamp01(machineMeta.enemyAccuracy);
-    if (typeof machineMeta.enemyMistakeChance === 'number') return clamp01(1 - machineMeta.enemyMistakeChance);
-    return 0.7;
-  })();
-  const streakLimit = typeof machineMeta.enemyAccuracyStreakLimit === 'number'
-    ? Math.max(0, Math.floor(machineMeta.enemyAccuracyStreakLimit))
-    : 2;
-
-  const collectedVocabulary = (() => {
-    if (Array.isArray(enemyVocabulary) && enemyVocabulary.length > 0) {
-      return [...new Set(enemyVocabulary.filter(Boolean))];
-    }
-    const words = new Set();
-    Object.values(machine).forEach(state => {
-      const transitions = transitionsFor(state);
-      Object.keys(transitions).forEach(key => {
-        if (key) words.add(key);
-      });
-    });
-    return [...words];
-  })();
-
-  let stateKey = initialState;
-  let actor = 'player';
+  const startWords = Object.keys(machine[initialState]?.transitions ?? {});
+  let round = 0;
   let lastFailure = null;
-  let recentEnemyWord = null;
-  let roundsObserved = 0;
-  let enemyAccurateStreak = 0;
-  let enemyAccurateChoice = false;
-  let enemyTurnsTaken = 0;
-  let pendingEnemyDamage = null;
-
-  const changeState = async (nextState, meta = {}) => {
-    const targetState = nextState ?? 'start';
-    const previousState = stateKey;
-    stateKey = targetState;
-    if (typeof onStateChange === 'function') {
-      await onStateChange({
-        state: stateKey,
-        previousState,
-        ...meta,
-      });
-    }
-  };
 
   if (typeof onStateChange === 'function') {
-    await onStateChange({
-      state: stateKey,
-      previousState: null,
-      reason: 'init',
-      actor: null,
-      word: null,
-    });
+    await onStateChange({ state: initialState, previousState: null, reason: 'init', actor: null, word: null });
   }
   renderStatus();
 
-  const announceRound = async () => {
-    roundsObserved += 1;
-    const label = actor === 'player' ? 'Dein Zug' : 'Gegner ist dran';
-    await onEvent({
-      speaker: 'sequence',
-      text: `Runde ${roundsObserved}: ${label}`,
-      duration: 1200,
-    });
-  };
-
-  const advanceActor = () => {
-    actor = actor === 'player' ? 'enemy' : 'player';
-    if (actor === 'enemy') {
-      recentEnemyWord = null;
-    } else {
-      enemyAccurateChoice = false;
+  while (life.player.current > 0 && life.enemy.current > 0) {
+    round += 1;
+    let stateKey = initialState;
+    if (typeof onStateChange === 'function') {
+      await onStateChange({ state: stateKey, previousState: null, reason: 'round-start', actor: null, word: null });
     }
-  };
+    let turn = round % 2 === 1 ? 'player' : 'enemy';
+    let active = true;
 
-  fightLoop: while (life.player.current > 0 && life.enemy.current > 0) {
-    await announceRound();
+    while (active && life.player.current > 0 && life.enemy.current > 0) {
+      const state = machine[stateKey] ?? {};
+      const transitions = state.transitions ?? {};
+      const actorName = turn === 'player' ? playerName : enemyName;
+      const opponentName = turn === 'player' ? enemyName : playerName;
 
-    let roundSettled = false;
-    while (!roundSettled && life.player.current > 0 && life.enemy.current > 0) {
-      if (actor !== 'enemy') {
-        enemyAccurateChoice = false;
-      }
-
-      const state = states[stateKey];
-      if (!state) {
-        throw new Error(`Missing fight state definition for "${stateKey}"`);
-      }
-
-      const actorName = actor === 'player' ? playerName : enemyName;
-      const opponent = actor === 'player' ? enemyName : playerName;
-      const replacements = {
-        actor: actorName,
-        opponent,
-        state: stateKey,
-      };
-
-      const sequenceConfig = actor === 'player'
-        ? state.sequence_player ?? state.sequence
-        : state.sequence_enemy ?? state.sequence;
-      await emitSequence(sequenceConfig, actor, replacements);
-
-      const introConfig = actor === 'player' ? state.intro_player : state.intro_enemy;
-      await emitSpeech(resolveSpeech(introConfig, actor === 'player' ? 'ally' : 'enemy', replacements));
-
-      const stateTransitions = transitionsFor(state);
-      const transitionKeys = Object.keys(stateTransitions);
-      const normalizedTransitions = {};
-      transitionKeys.forEach(word => {
-        const normalized = normalizeTransition(stateTransitions[word], actor);
-        if (normalized) {
-          normalizedTransitions[word] = normalized;
-        }
-      });
-      const availableTransitionWords = Object.keys(normalizedTransitions);
-
-      const resolveFailure = async word => {
-        const failedStateKey = stateKey;
-        const damage = actor === 'player'
-          ? state.damage_player ?? state.damage ?? 0
-          : state.damage_enemy ?? state.damage ?? 0;
-      const failureConfig = actor === 'player' ? state.failure_player : state.failure_computer;
-      const failureSpeakerFallback = actor === 'player' ? 'ally' : 'enemy';
-      const failureReplacements = {
-        ...replacements,
-        word: word ?? '',
-      };
-      let speech = resolveSpeech(failureConfig, failureSpeakerFallback, failureReplacements);
-      if (!speech || !speech.text) {
-        const defaultText = actor === 'player'
-          ? `${playerName} findet keinen passenden Zauber.`
-          : `${enemyName} findet keinen passenden Zauber.`;
-        speech = { speaker: failureSpeakerFallback, text: defaultText };
-      }
-      speech.text = appendDamageMarker(speech.text, damage);
-      await emitSpeech(speech);
-
-        if (damage > 0) {
-          const target = actor === 'player' ? 'player' : 'enemy';
-          const targetName = target === 'player' ? playerName : enemyName;
-          const template = (actor === 'player'
-            ? state.failure_player_damageText
-            : state.failure_computer_damageText)
-            ?? state.failure_damageText;
-          const damageText = template
-            ? replacePlaceholders(template, failureReplacements)
-            : `${targetName} erhält ${damage} Schaden.`;
-          await applyDamage(target, damage, damageText);
-        }
-
-        const transitions = Object.keys(stateTransitions ?? {});
-        lastFailure = {
-          actor,
-          state: failedStateKey,
-          word: word ?? '',
-          transitions,
-          attackerWord: actor === 'player' ? recentEnemyWord : null,
-          damage,
-        };
-
-        if (life.player.current <= 0 || life.enemy.current <= 0) {
-          return;
-        }
-
-        if (actor === 'enemy' && pendingEnemyDamage) {
-          await applyDamage(pendingEnemyDamage.target, pendingEnemyDamage.amount, pendingEnemyDamage.message);
-          pendingEnemyDamage = null;
-        }
-
-        const failureNextPreference = actor === 'player'
-          ? state.failure_player_next
-          : state.failure_computer_next;
-        await changeState(
-          failureNextPreference ?? state.failure_next ?? 'start',
-          {
-            reason: 'failure',
-            actor,
-            word,
-          },
-        );
-
-        if (actor === 'enemy') {
-          enemyAccurateStreak = 0;
-          enemyTurnsTaken += 1;
-        }
-
-        advanceActor();
-
-      };
-
-      if (availableTransitionWords.length === 0) {
-        await resolveFailure('');
-        roundSettled = true;
-        if (life.player.current <= 0 || life.enemy.current <= 0) {
-          break fightLoop;
-        }
-        break;
-      }
-
-      let chosenWord;
-      if (actor === 'player') {
+      let word = '';
+      if (turn === 'player') {
         const promptText = state.prompt_player ?? state.prompt ?? 'Welches Wort sprichst du?';
         const input = await promptPlayerSpell?.({
-          prompt: replacePlaceholders(promptText, replacements),
+          prompt: replacePlaceholders(promptText, { actor: actorName, opponent: opponentName, state: stateKey }),
           allowSkip: false,
           state: stateKey,
           playerHP: life.player.current,
           enemyHP: life.enemy.current,
         });
-        const normalized = normalizeInput(input);
-        chosenWord = normalized ?? '';
+        word = normalizeInput(input) ?? '';
       } else {
-        const pickRandom = list => (list.length > 0 ? list[Math.floor(randomFn() * list.length)] : undefined);
-        const startTransitionKeys = Object.keys(states.start?.transitions ?? {});
-        const forcePerfect = enemyTurnsTaken === 0;
-        if (forcePerfect) {
-          if (availableTransitionWords.length > 0) {
-            [chosenWord] = availableTransitionWords;
-            enemyAccurateChoice = true;
-          } else {
-            enemyAccurateChoice = false;
-          }
+        const validCurrent = Object.keys(transitions).filter(w => resolveTransition(stateKey, w, 'enemy'));
+        const validStart = startWords.filter(w => resolveTransition(initialState, w, 'enemy'));
+        const pool = randomFn() < strength ? validCurrent : validStart;
+        if (pool.length > 0) {
+          word = pool[Math.floor(randomFn() * pool.length)];
+        } else if (validCurrent.length > 0) {
+          word = validCurrent[0];
+        } else if (validStart.length > 0) {
+          word = validStart[0];
         } else {
-          const accuracyRoll = randomFn();
-          const forceFreestyle = streakLimit > 0 && enemyAccurateStreak >= streakLimit;
-          enemyAccurateChoice = !forceFreestyle && accuracyRoll < resolvedAccuracy;
-          if (enemyAccurateChoice) {
-            chosenWord = pickRandom(availableTransitionWords) ?? null;
-            if (!chosenWord) {
-              const fallbackStart = startTransitionKeys.filter(word => {
-                const entry = states.start?.transitions?.[word];
-                return !!normalizeTransition(entry, 'enemy');
-              });
-              chosenWord = pickRandom(fallbackStart) ?? pickRandom(collectedVocabulary) ?? '';
-            }
-          }
+          word = '';
         }
-        if (!chosenWord) {
-          chosenWord = pickRandom(startTransitionKeys) ?? null;
-          if (!chosenWord) {
-            chosenWord = pickRandom(collectedVocabulary) ?? null;
-          }
-          if (!chosenWord) {
-            chosenWord = pickRandom(availableTransitionWords) ?? '';
-          }
-          enemyAccurateChoice = false;
-        }
-        recentEnemyWord = chosenWord;
       }
 
-      const transition = normalizedTransitions[chosenWord];
-
-      if (!transition) {
-        if (actor === 'enemy') {
-          enemyAccurateStreak = 0;
-        }
-        await resolveFailure(chosenWord);
-        roundSettled = true;
-        if (life.player.current <= 0 || life.enemy.current <= 0) {
-          break fightLoop;
-        }
+      const tx = resolveTransition(stateKey, word, turn);
+      const replacements = { actor: actorName, opponent: opponentName, state: stateKey, word };
+      if (!tx) {
+        await emitFailure(state, turn, word, replacements);
+        lastFailure = { actor: turn, state: stateKey, word, transitions: Object.keys(transitions) };
+        active = false;
         break;
       }
 
-      const speakReplacements = {
-        ...replacements,
-        word: chosenWord,
-      };
+      await emitTransition(tx, turn, replacements);
 
-      const speech = resolveSpeech(
-        {
-          speaker: transition.speaker,
-          speaker2: transition.speaker2,
-          text: transition.text,
-          text2: transition.text2,
-        },
-        actor === 'player' ? 'player' : 'enemy',
-        speakReplacements,
-      );
-
-      if (!speech?.text) {
-        const defaultSpeaker = actor === 'player' ? 'player' : 'enemy';
-        await emitSpeech({ speaker: defaultSpeaker, text: `${actorName} spricht ${chosenWord}.` });
-      } else {
-        await emitSpeech(speech);
+      const dmg = Number.isFinite(tx.damage) ? tx.damage : Number(tx.damage) || 0;
+      if (dmg > 0) {
+        const target = resolveDamageTarget(tx.damageTarget ?? 'enemy', turn);
+        const template = tx.damageText ?? `%actor% trifft %opponent% mit %s und fügt ${Math.round(dmg)} Schaden zu.`;
+        const message = replacePlaceholders(template, replacements);
+        await applyDamage(target, dmg, message);
       }
 
-      const inflictedDamage = Number.isFinite(transition.damage)
-        ? transition.damage
-        : Number(transition.damage) || 0;
-      if (inflictedDamage > 0) {
-        const target = resolveDamageTarget(transition.damageTarget ?? 'enemy', actor);
-        const defaultText = `%actor% trifft %opponent% mit %s und fügt ${Math.round(inflictedDamage)} Schaden zu.`;
-        const template = transition.damageText ?? defaultText;
-        const message = replacePlaceholders(template, speakReplacements);
-        if (actor === 'player') {
-          pendingEnemyDamage = { target, amount: inflictedDamage, message };
-        } else {
-          await applyDamage(target, inflictedDamage, message);
-        }
+      const previous = stateKey;
+      stateKey = tx.next ?? initialState;
+      if (typeof onStateChange === 'function') {
+        await onStateChange({ state: stateKey, previousState: previous, reason: 'transition', actor: turn, word });
       }
 
-      await changeState(transition.next ?? 'start', {
-        reason: 'transition',
-        actor,
-        word: chosenWord,
-      });
-      if (actor === 'enemy') {
-        enemyAccurateStreak = enemyAccurateChoice ? enemyAccurateStreak + 1 : 0;
-        enemyTurnsTaken += 1;
-        pendingEnemyDamage = null;
-      }
-      advanceActor();
+      turn = turn === 'player' ? 'enemy' : 'player';
     }
   }
 

@@ -165,8 +165,7 @@ async function executeBalakFight(sceneProps) {
       promptPlayerSpell: options => promptSpellInput(options),
       onEvent: relayFightEvent,
       onUpdate: hudUpdate,
-      enemyAccuracy: BALAK_MACHINE.meta?.enemyAccuracy ?? 0.88,
-      enemyMistakeChance: 0.08,
+      enemyStrength: 0.8,
       onStateChange: animateState,
     });
   } catch (error) {

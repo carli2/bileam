@@ -175,7 +175,7 @@ async function executeFight(canyonProps) {
       promptPlayerSpell: options => promptSpellInput(options),
       onEvent: relayFightEvent,
       onUpdate: hudUpdate,
-      enemyAccuracy: GOLEM_MACHINE.meta?.enemyAccuracy,
+      enemyStrength: 0.5,
       onStateChange: animateState,
     });
   } catch (err) {

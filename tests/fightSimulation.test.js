@@ -21,15 +21,13 @@ const BALAK_WORDS = [
 const GOLEM_MACHINE = cropStateMachine(SPELL_DUEL_MACHINE, GOLEM_WORDS);
 GOLEM_MACHINE.meta = {
   ...(GOLEM_MACHINE.meta ?? {}),
-  enemyAccuracy: 0.45,
-  enemyAccuracyStreakLimit: 1,
+  enemyStrength: 0.5,
 };
 
 const BALAK_MACHINE = cropStateMachine(SPELL_DUEL_MACHINE, BALAK_WORDS);
 BALAK_MACHINE.meta = {
   ...(BALAK_MACHINE.meta ?? {}),
-  enemyAccuracy: 0.88,
-  enemyAccuracyStreakLimit: 3,
+  enemyStrength: 0.8,
 };
 
 function createRng(seed = 1) {
@@ -99,7 +97,7 @@ async function simulateFight(machine, options = {}) {
       onEvent: () => {},
       onUpdate: () => {},
       randomFn: rng,
-      enemyAccuracy: machine.meta?.enemyAccuracy,
+      enemyStrength: machine.meta?.enemyStrength,
     });
     if (result.winner === 'player') {
       wins += 1;
