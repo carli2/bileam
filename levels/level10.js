@@ -176,7 +176,7 @@ async function phaseBalakAccusation(props) {
   await showFloatingRunes(props, { x: wizard.x + 18, letters: ['א', 'ו', 'ר'] });
   await sleep(320);
   updateProp(props, 'peorStarWash', { visible: false });
-  await ensureWizardBesideBalak(props, 'balakStarFigure', { offset: -36, tolerance: 18 });
+  await waitUntilNearBalak(props, 'balakStarFigure', { offset: -36, tolerance: 22 });
   await propSay(props, 'balakStarFigure', 'Ich habe dich gerufen, dass du meine Feinde verfluchst – und siehe, du hast sie dreimal gesegnet! Geh fort; ich wollte dich ehren, aber dein אלוהים verweigert es dir.', { anchor: 'center', offsetY: -30 });
   await wizardSay('Hab ich dir nicht gesagt? Gäbe mir Balak sein Haus voll Silber und Gold, ich könnte das Wort יהוה nicht übertreten, weder im Kleinen noch im Großen.');
   await flashLightning({ doubleFlash: true, durationIn: 70, durationOut: 160, intensity: 0.85 });
@@ -450,5 +450,16 @@ async function ensureWizardBesideBalak(props, id, { offset = -42, tolerance = 18
     const targetX = (balak.x ?? wizard.x) + offset;
     if (Math.abs((wizard.x ?? targetX) - targetX) <= tolerance) return;
     await waitForWizardToReach(targetX, { tolerance });
+  }
+}
+
+async function waitUntilNearBalak(props, id, { offset = -36, tolerance = 22, pollMs = 140 } = {}) {
+  if (!Array.isArray(props)) return;
+  while (true) {
+    const balak = props.find(entry => entry.id === id);
+    if (!balak) return;
+    const targetX = (balak.x ?? wizard.x) + offset;
+    if (Math.abs((wizard.x ?? targetX) - targetX) <= tolerance) return;
+    await sleep(pollMs);
   }
 }
