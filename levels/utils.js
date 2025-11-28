@@ -12,6 +12,7 @@ import {
   setWalkBounds,
   sceneColors,
   flashLightning,
+  promptBubble,
 } from '../scene.js';
 export { flashLightning };
 import { Sprite } from '../retroBlitter.js';

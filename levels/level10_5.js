@@ -27,6 +27,7 @@ import {
   findProp,
   divineSay,
   switchMusic,
+  sleep,
 } from './utils.js';
 import { runFightLoop, cropStateMachine } from '../fight.js';
 import { SPELL_DUEL_MACHINE } from '../stateMachines/spellDuelMachine.js';
@@ -91,6 +92,10 @@ export async function runLevelTenFive() {
   await wizardSay('Ich bin Bileam, Sohn des Beor. Mit Worten kann ich Dinge bewegen. Die Welt gehorcht mir, wenn ich mich an die richtigen Worte benutze und dem Code des Schöpfers folge.');
   await propSay(throneProps, 'balakBoss', 'Dann sind wir jetzt Feinde.', balakSpeechIntro);
 
+  const chainId = 'balakBossChains';
+  addProp(throneProps, { id: chainId, type: 'resonanceRingActive', x: BALAK_BOSS_X, align: 'ground', parallax: 0.98, layer: 1, tint: 'violet', offsetY: -18 });
+  await flashChainPulse(throneProps, chainId);
+
   const outcome = await executeBalakFight(throneProps);
   if (outcome === 'win') {
     await narratorSay('Balaks Schatten zerbricht. Purpurne Funken taumeln in das Sternenlicht und verglühen.');
@@ -101,6 +106,14 @@ export async function runLevelTenFive() {
     return 'win';
   }
   return 'restart';
+}
+
+async function flashChainPulse(props, id) {
+  await sleep(260);
+  const pulseId = `${id}-pulse`;
+  addProp(props, { id: pulseId, type: 'shadowFracture', x: BALAK_BOSS_X, align: 'ground', parallax: 1, layer: 2, offsetY: -6 });
+  await sleep(320);
+  addProp(props, { id: `${pulseId}-fade`, type: 'shadowFracture', x: BALAK_BOSS_X + 8, align: 'ground', parallax: 1.02, layer: 2, offsetY: -10 });
 }
 
 async function executeBalakFight(sceneProps) {
@@ -243,7 +256,7 @@ async function playBalakDefeatSequence(sceneProps) {
   await propSay(sceneProps, 'balakBoss', 'Siehst du, Sohn des Beor? Meine Gier frisst deine Treue.', balakSpeech);
   await narratorSay('Purpurne Ketten umwinden den Altar. Sternenlicht sickert in schwarzes Glas.');
   await donkeySay('Wir kehren zum Anfang zurück. Atme, erinnere dich, forme die Worte neu.');
-  await donkeySay('Nur wer hoert und wiederholt, zerreißt seinen Schatten. Wir beginnen von vorn.');
+  await donkeySay('Nur wer hört und wiederholt, zerreißt seinen Schatten. Wir beginnen von vorn.');
   await divineSay('חזור לדברי ואקים אותך.\nKehre zu meinem Wort zurück, und ich richte dich auf.');
 }
 

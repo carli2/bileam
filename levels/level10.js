@@ -1,13 +1,11 @@
 import {
   promptBubble,
   ensureAmbience,
-  transitionAmbience,
   setSceneContext,
   levelAmbiencePlan,
   fadeToBlack,
   fadeToBase,
   showLevelTitle,
-  setSceneProps,
   waitForWizardToReach,
   flashLightning,
 } from '../scene.js';
@@ -33,6 +31,8 @@ import {
   showFloatingRunes,
   sleep,
   getPropCenterX,
+  runWordPuzzle,
+  switchMusic,
 } from './utils.js';
 
 const STAR_TERRACE_SCENE = {
@@ -46,7 +46,6 @@ const STAR_TERRACE_SCENE = {
   props: [
     { id: 'starTerraceBackdrop', type: 'canyonMist', x: -120, align: 'ground', offsetY: -58, parallax: 0.42, layer: -3 },
     { id: 'starTerraceFloor', type: 'borderProcessionPath', x: -60, align: 'ground', parallax: 0.5, layer: -2 },
-    { id: 'starTerraceGlyphRing', type: 'resonanceRingDormant', x: 40, align: 'ground', parallax: 0.7 },
     { id: 'starTerraceTorchWest', type: 'watchFireDormant', x: 118, align: 'ground', parallax: 0.88 },
     { id: 'starTerraceTorchEast', type: 'watchFireDormant', x: 548, align: 'ground', parallax: 1.12 },
     { id: 'starTerraceSpireWest', type: 'basaltSpireTall', x: -30, align: 'ground', parallax: 0.74 },
@@ -61,31 +60,6 @@ const STAR_TERRACE_SCENE = {
   ],
 };
 
-const CROWN_SCENE = {
-  ambience: 'sanctumFinale',
-  wizardStartX: 92,
-  donkeyOffset: -38,
-  groundProfile: {
-    height: 24,
-    cutouts: [{ start: 540, end: 760 }],
-  },
-  props: [
-    { id: 'crownBackdrop', type: 'canyonMist', x: -80, align: 'ground', offsetY: -60, parallax: 0.38, layer: -3 },
-    { id: 'crownFloor', type: 'borderProcessionPath', x: -12, align: 'ground', parallax: 0.54, layer: -2 },
-    { id: 'crownAura', type: 'starShardDormant', x: 60, align: 'ground', parallax: 0.84 },
-    { id: 'crownTorchNorth', type: 'watchFireDormant', x: 132, align: 'ground', parallax: 0.82 },
-    { id: 'crownTorchSouth', type: 'watchFireDormant', x: 470, align: 'ground', parallax: 1.08 },
-    { id: 'crownArcOne', type: 'lightCrownArcDormant', x: 216, align: 'ground', parallax: 0.94 },
-    { id: 'crownArcTwo', type: 'lightCrownArcDormant', x: 272, align: 'ground', parallax: 0.95 },
-    { id: 'crownArcThree', type: 'lightCrownArcDormant', x: 328, align: 'ground', parallax: 0.96 },
-    { id: 'crownArcFour', type: 'lightCrownArcDormant', x: 384, align: 'ground', parallax: 0.97 },
-    { id: 'crownArcFive', type: 'lightCrownArcDormant', x: 440, align: 'ground', parallax: 0.98 },
-    { id: 'crownStabilityRing', type: 'resonanceRingDormant', x: 120, align: 'ground', parallax: 0.9 },
-    { id: 'crownShadowMeter', type: 'shadowEchoDormant', x: 164, align: 'ground', parallax: 0.92 },
-    { id: 'crownDivineHalo', type: 'lightCrownArcDormant', x: 80, align: 'ground', parallax: 0.88 },
-  ],
-};
-
 const VISION_SCENE = {
   ambience: 'sanctumFinale',
   wizardStartX: 90,
@@ -97,7 +71,6 @@ const VISION_SCENE = {
   props: [
     { id: 'visionBackdrop', type: 'canyonMist', x: -140, align: 'ground', offsetY: -60, parallax: 0.4, layer: -3 },
     { id: 'visionPath', type: 'borderProcessionPath', x: -20, align: 'ground', parallax: 0.58, layer: -2 },
-    { id: 'visionGlyphNorth', type: 'resonanceRingDormant', x: 80, align: 'ground', parallax: 0.8 },
     { id: 'visionTorch', type: 'watchFireDormant', x: 518, align: 'ground', parallax: 1.1 },
     { id: 'visionAmalek', type: 'nationEchoDormant', x: 216, align: 'ground', parallax: 0.94 },
     { id: 'visionKenite', type: 'nationEchoDormant', x: 312, align: 'ground', parallax: 0.96 },
@@ -118,35 +91,11 @@ const SHADOW_SCENE = {
   props: [
     { id: 'shadowBackdrop', type: 'canyonMist', x: -100, align: 'ground', offsetY: -64, parallax: 0.36, layer: -3 },
     { id: 'shadowFloor', type: 'borderProcessionPath', x: -32, align: 'ground', parallax: 0.48, layer: -2 },
-    { id: 'shadowSpill', type: 'resonanceRingDormant', x: 60, align: 'ground', parallax: 0.76 },
     { id: 'shadowTorch', type: 'watchFireDormant', x: 520, align: 'ground', parallax: 1.1 },
     { id: 'shadowEchoNorth', type: 'shadowEchoDormant', x: 232, align: 'ground', parallax: 0.94 },
     { id: 'shadowEchoEast', type: 'shadowEchoDormant', x: 332, align: 'ground', parallax: 0.96 },
     { id: 'shadowEchoSouth', type: 'shadowEchoDormant', x: 432, align: 'ground', parallax: 0.98 },
     { id: 'balakShadowCore', type: 'balakFigure', x: 296, align: 'ground', parallax: 0.96 },
-  ],
-};
-
-const BRIDGE_SCENE = {
-  ambience: 'sanctumFinale',
-  wizardStartX: 92,
-  donkeyOffset: -36,
-  groundProfile: {
-    height: 24,
-    cutouts: [{ start: 480, end: 760 }],
-  },
-  props: [
-    { id: 'bridgeBackdrop', type: 'canyonMist', x: -120, align: 'ground', offsetY: -66, parallax: 0.34, layer: -3 },
-    { id: 'bridgeFloor', type: 'borderProcessionPath', x: -28, align: 'ground', parallax: 0.46, layer: -2 },
-    { id: 'bridgeStarTrail', type: 'resonanceRingDormant', x: 80, align: 'ground', parallax: 0.74 },
-    { id: 'bridgeTorchEast', type: 'watchFireDormant', x: 536, align: 'ground', parallax: 1.08 },
-    { id: 'bridgeSegOne', type: 'starBridgeSegmentDormant', x: 148, align: 'ground', parallax: 0.92 },
-    { id: 'bridgeSegTwo', type: 'starBridgeSegmentDormant', x: 214, align: 'ground', parallax: 0.94 },
-    { id: 'bridgeSegThree', type: 'starBridgeSegmentDormant', x: 280, align: 'ground', parallax: 0.96 },
-    { id: 'bridgeSegFour', type: 'starBridgeSegmentDormant', x: 346, align: 'ground', parallax: 0.98 },
-    { id: 'bridgeSegFive', type: 'starBridgeSegmentDormant', x: 412, align: 'ground', parallax: 1.0 },
-    { id: 'bridgeSegSix', type: 'starBridgeSegmentDormant', x: 478, align: 'ground', parallax: 1.02 },
-    { id: 'bridgeSegSeven', type: 'starBridgeSegmentDormant', x: 544, align: 'ground', parallax: 1.04 },
   ],
 };
 
@@ -157,42 +106,6 @@ const COMBINED_SCENE = {
   groundProfile: STAR_TERRACE_SCENE.groundProfile,
   props: [...STAR_TERRACE_SCENE.props],
 };
-
-const TERRACE_ACTIONS = [
-  {
-    id: 'starTerraceOne',
-    steps: [
-      { prompt: 'Höre den ersten Stern: sprich שמע.', spells: ['shama', 'שמע'] },
-      { prompt: 'Blockiere Balaks Gegenspruch mit לא.', spells: ['lo', 'לא'] },
-      { prompt: 'Segne den Pfad mit ברך.', spells: ['baruch', 'ברך'] },
-    ],
-    fragment: 'א',
-  },
-  {
-    id: 'starTerraceTwo',
-    steps: [
-      { prompt: 'Höre erneut.', spells: ['shama', 'שמע'] },
-      { prompt: 'Sag Nein.', spells: ['lo', 'לא'] },
-      { prompt: 'Segne erneut.', spells: ['baruch', 'ברך'] },
-    ],
-  },
-  {
-    id: 'starTerraceThree',
-    steps: [
-      { prompt: 'Höre ein drittes Mal.', spells: ['shama', 'שמע'] },
-      { prompt: 'Segne Balaks Furcht.', spells: ['baruch', 'ברך'] },
-      { prompt: 'Sag Nein zum Schatten.', spells: ['lo', 'לא'] },
-    ],
-  },
-];
-
-const CROWN_SEQUENCE = [
-  ['shama', 'dabar'],
-  ['baruch', 'or'],
-  ['shama', 'lo', 'or'],
-  ['baruch', 'or'],
-  ['or'],
-];
 
 const NATION_SEQUENCE = [
   {
@@ -218,7 +131,7 @@ const NATION_SEQUENCE = [
   {
     id: 'visionKittim',
     combo: [],
-    quote: '„Schiffe aus Kittim kommen; sie demütigen אשור und עבר – doch auch sie vergehen.“',
+    quote: '„Schiffe aus Kittim kommen; sie demütigen Assur und Eber – doch auch sie vergehen.“',
   },
 ];
 
@@ -226,16 +139,6 @@ const SHADOW_SEQUENCE = [
   { id: 'shadowEchoNorth', combo: ['dabar', 'emet', 'or'] },
   { id: 'shadowEchoEast', combo: ['dabar', 'emet', 'or'] },
   { id: 'shadowEchoSouth', combo: ['dabar', 'emet', 'or'] },
-];
-
-const BRIDGE_SEQUENCE = [
-  { id: 'bridgeSegOne', combo: ['or'] },
-  { id: 'bridgeSegTwo', combo: ['or', 'emet'] },
-  { id: 'bridgeSegThree', combo: ['or', 'emet', 'baruch'] },
-  { id: 'bridgeSegFour', combo: ['shama', 'or'] },
-  { id: 'bridgeSegFive', combo: ['dabar', 'or'] },
-  { id: 'bridgeSegSix', combo: ['baruch', 'or'] },
-  { id: 'bridgeSegSeven', combo: ['or'] },
 ];
 
 export async function runLevelTen() {
@@ -251,11 +154,11 @@ export async function runLevelTen() {
   await narratorSay('Balak bringt dich nach Peor. Ein drittes Feld voller Altäre wartet, doch dein Wort bleibt an יהוה gebunden.');
   await donkeySay('Drittes Opferfeld: דבר ist das Wort, das wirkt; אמת ist die Wahrheit, die es trägt. Lass beide zusammen leuchten.');
 
-  await phaseBalakAccusation(props);
-  await phaseStarTerraces(props);
+  const altarBuildPromise = animateBalakAltarsPeor(props);
+  const accusationPromise = phaseBalakAccusation(props);
+  const blessingSpeechPromise = runPeorBlessingSpeech(props);
 
-  setSceneContext({ level: 'level10', phase: 'crown' });
-  await phaseStarCrown(props);
+  await Promise.all([altarBuildPromise, accusationPromise, blessingSpeechPromise]);
 
   setSceneContext({ level: 'level10', phase: 'visions' });
   await phaseNationVisions(props);
@@ -265,16 +168,11 @@ export async function runLevelTen() {
 
   await phaseFirmamentWarning(props);
 
-  setSceneContext({ level: 'level10', phase: 'bridge' });
-  await phaseStarBridge(props);
-
   await narratorSay('Balaks Schatten flieht in den Palast der Worte. Der Stern bleibt als Schild hinter dir.');
   await fadeToBlack(720);
 }
 
 async function phaseBalakAccusation(props) {
-  const altarBuild = animateBalakAltarsPeor(props);
-  addProp(props, { id: 'peorStarWash', type: 'resonanceRingActive', x: wizard.x, align: 'ground', parallax: 0.9, layer: 1, tint: 'starwhite', offsetY: -22 });
   await showFloatingRunes(props, { x: wizard.x + 18, letters: ['א', 'ו', 'ר'] });
   await sleep(320);
   updateProp(props, 'peorStarWash', { visible: false });
@@ -283,33 +181,7 @@ async function phaseBalakAccusation(props) {
   await wizardSay('Hab ich dir nicht gesagt? Gäbe mir Balak sein Haus voll Silber und Gold, ich könnte das Wort יהוה nicht übertreten, weder im Kleinen noch im Großen.');
   await flashLightning({ doubleFlash: true, durationIn: 70, durationOut: 160, intensity: 0.85 });
 
-  addProp(props, { id: 'starTrailWestA', type: 'hoofSignTrail', x: wizard.x - 24, align: 'ground', parallax: 0.96 });
-  addProp(props, { id: 'starTrailWestB', type: 'hoofSignTrail', x: wizard.x - 56, align: 'ground', parallax: 0.94 });
-  addProp(props, { id: 'starTrailWestC', type: 'starShardDormant', x: wizard.x - 92, align: 'ground', parallax: 0.92 });
-  await donkeySay('Schau nach Westen. Die Sternsplitter warten dort auf dich – folge den Spuren zurück über den Pfad.');
-  await altarBuild;
-}
-
-async function phaseStarTerraces(props) {
-  await narratorSay('Der Sternpfad reißt – du verweigerst Balaks Befehl und hältst Israel im Segen.');
-  addProp(props, { id: 'terracePulseBlue', type: 'resonanceRingActive', x: wizard.x - 18, align: 'ground', parallax: 0.94, layer: 1, tint: 'blue', offsetY: -12 });
-  addProp(props, { id: 'terracePulseViolet', type: 'resonanceRingActive', x: wizard.x, align: 'ground', parallax: 0.96, layer: 1, tint: 'violet', offsetY: -14 });
-  addProp(props, { id: 'terracePulseGold', type: 'resonanceRingActive', x: wizard.x + 18, align: 'ground', parallax: 0.98, layer: 1, tint: 'gold', offsetY: -16 });
-  for (const terrace of TERRACE_ACTIONS) {
-    const target = props.find(entry => entry.id === terrace.id)?.x ?? wizard.x + 160;
-    await waitForWizardToReach(target, { tolerance: 18 });
-    await flashLightning({ doubleFlash: false, durationIn: 60, durationOut: 160, intensity: 0.6 });
-    updateProp(props, terrace.id, { type: 'starShardAwakened' });
-    if (terrace.fragment) {
-      addProp(props, { id: `starFragment${terrace.fragment}`, type: 'crownFragment', x: wizard.x + 16, y: wizard.y - 44, parallax: 0.9, letter: terrace.fragment });
-    }
-  }
-  const gatherId = 'starGatherGlow';
-  addProp(props, { id: gatherId, type: 'resonanceRingActive', x: wizard.x, align: 'ground', parallax: 0.96, layer: 2, tint: 'starwhite', offsetY: -20 });
-  await showFloatingRunes(props, { x: wizard.x + 10, letters: ['א', 'מ', 'ת'] });
-  await sleep(360);
-  updateProp(props, gatherId, { visible: false });
-  await flashLightning({ doubleFlash: true, durationIn: 70, durationOut: 150, intensity: 0.9 });
+  await donkeySay('Schau nach Westen. Balak ruft dich – folge dem Pfad.');
 }
 
 async function animateBalakAltarsPeor(props) {
@@ -342,57 +214,6 @@ async function animateBalakAltarsPeor(props) {
   }
 }
 
-async function phaseStarCrown(props) {
-  ensurePhaseProps(props, CROWN_SCENE.props);
-  addProp(props, { id: 'crownDescRing', type: 'resonanceRingActive', x: wizard.x, align: 'ground', parallax: 0.92, layer: 2, tint: 'starwhite', offsetY: -18 });
-  await showFloatingRunes(props, { x: wizard.x + 12, letters: ['א', 'ו', 'ר'] });
-  await sleep(320);
-  updateProp(props, 'crownDescRing', { visible: false });
-  addProp(props, { id: 'crownArcPulseNorth', type: 'lightCrownArcDormant', x: 216, align: 'ground', parallax: 0.94, layer: 1, tint: 'blue' });
-  addProp(props, { id: 'crownArcPulseMid', type: 'lightCrownArcDormant', x: 272, align: 'ground', parallax: 0.95, layer: 1, tint: 'amber' });
-  addProp(props, { id: 'crownArcPulseSouth', type: 'lightCrownArcDormant', x: 328, align: 'ground', parallax: 0.96, layer: 1, tint: 'whitegold' });
-  addProp(props, { id: 'crownArcPulseEast', type: 'lightCrownArcDormant', x: 384, align: 'ground', parallax: 0.97, layer: 1, tint: 'violet' });
-  addProp(props, { id: 'crownArcPulseWest', type: 'lightCrownArcDormant', x: 440, align: 'ground', parallax: 0.98, layer: 1, tint: 'starwhite' });
-  await narratorSay('Bileam hebt sein Spruchwort an:');
-  await wizardSay('Es sagt Bileam, der Sohn בעור (Beor), der Mann, dem die Augen geöffnet sind.');
-  await wizardSay('Es sagt der Hörer göttlicher Rede, der Offenbarung des Mächtigen sieht, dem die Augen geöffnet wird, wenn er niederkniet.');
-  await wizardSay('Wie fein sind deine Zelte, Jakob, deine Wohnungen, Israel.');
-  await wizardSay('Wie Täler, die sich ausbreiten, wie Gärten an Wassern, wie Aloebäume, die יהוה pflanzt, wie Zedern an Bächen.');
-  await wizardSay('Sein Eimer strömt über, seine Saat trinkt aus Fülle; sein König wird höher als Agag und sein Reich erhebt sich.');
-  await wizardSay('אלוהים führte sie aus Ägypten; er ist ihnen wie das Horn des Wildstiers.');
-  await wizardSay('Er frisst die Nationen, ihre Gegner, zermalmt ihre Knochen und zerbricht sie mit Pfeilen.');
-  await wizardSay('Er liegt wie ein Löwe und wie ein Junglöwe – wer will ihn aufwecken? Gesegnet ist, wer dich segnet; verflucht, wer dich verflucht.');
-  for (let index = 0; index < CROWN_SEQUENCE.length; index++) {
-    const arcId = ['crownArcOne', 'crownArcTwo', 'crownArcThree', 'crownArcFour', 'crownArcFive'][index];
-    const combo = CROWN_SEQUENCE[index];
-    const canonicalSeq = canonicalizeSequence(combo);
-    let stepIndex = 0;
-    while (stepIndex < combo.length) {
-      const expected = combo[stepIndex];
-      const prompt = makePromptForCrown(index, stepIndex);
-      const answer = await readWord(prompt);
-      const variant = expected === 'shama' ? 'שמע' : expected === 'lo' ? 'לא' : expected === 'baruch' ? 'ברך' : expected === 'dabar' ? 'דבר' : expected === 'emet' ? 'אמת' : 'אור';
-      if (!spellEquals(answer, expected, variant)) {
-        await donkeySay('Bleib im Takt der Krone und sprich das nächste Wort erst, wenn das Licht ruht.');
-        continue;
-      }
-      stepIndex += 1;
-      await celebrateGlyph(answer);
-    }
-    updateProp(props, arcId, { type: 'lightCrownArcLit' });
-  }
-  addProp(props, { id: 'crownPulseGlow', type: 'resonanceRingActive', x: wizard.x + 4, align: 'ground', parallax: 0.92, layer: 2, tint: 'gold', offsetY: -14 });
-  await showFloatingRunes(props, { x: wizard.x + 18, letters: ['כ', 'ת', 'ר'] });
-  await flashLightning({ doubleFlash: false, durationIn: 60, durationOut: 180, intensity: 0.85 });
-  updateProp(props, 'crownPulseGlow', { visible: false });
-  await wizardSay('Ich sehe ihn, aber nicht jetzt; ich schaue ihn, aber nicht von Nahem.');
-  await wizardSay('Ein Stern geht auf aus Jakob, ein Zepter erhebt sich aus ישראל.');
-  await wizardSay('Er zerbricht die Schläfen Moab und die Häupter aller Söhne Seth.');
-  await wizardSay('Edom fällt, Seir wird Besitz; ישראל handelt mächtig.');
-  await wizardSay('Aus Jakob kommt der Herrscher hervor und tilgt, was von den Städten bleibt.');
-  await flashLightning({ doubleFlash: true, durationIn: 60, durationOut: 160, intensity: 1 });
-}
-
 async function phaseNationVisions(props) {
   ensurePhaseProps(props, VISION_SCENE.props);
   const tintForWord = word => {
@@ -413,16 +234,7 @@ async function phaseNationVisions(props) {
     if (!vision.combo || vision.combo.length === 0) return;
     const target = props.find(entry => entry.id === vision.id)?.x ?? wizard.x + 200;
     const tint = tintForWord(vision.combo.find(word => ['dabar', 'emet', 'or', 'baruch'].includes(word)) ?? 'or');
-    addProp(props, {
-      id: `${vision.id}Cue`,
-      type: 'resonanceRingActive',
-      x: target,
-      align: 'ground',
-      parallax: 0.94,
-      layer: 1,
-      tint,
-      offsetY: -16,
-    });
+    // cue removed
     const letters = lettersForWord(vision.combo[0]);
     if (letters.length > 0) {
       showFloatingRunes(props, { x: target, letters });
@@ -432,7 +244,6 @@ async function phaseNationVisions(props) {
     const target = props.find(entry => entry.id === vision.id)?.x ?? wizard.x + 200;
     await waitForWizardToReach(target, { tolerance: 18 });
     if (vision.combo && vision.combo.length > 0) {
-      updateProp(props, `${vision.id}Cue`, { visible: false });
       await flashLightning({ doubleFlash: false, durationIn: 60, durationOut: 160, intensity: 0.6 });
     }
     if (vision.quote) {
@@ -465,7 +276,6 @@ async function phaseNationVisions(props) {
     }
     updateProp(props, vision.id, { type: 'nationEchoActive' });
   }
-  addProp(props, { id: 'starFragmentVav', type: 'crownFragment', x: wizard.x + 18, y: wizard.y - 46, parallax: 0.9, letter: 'ו' });
 }
 
 async function phaseShadowRift(props) {
@@ -502,16 +312,14 @@ async function phaseShadowRift(props) {
     }
     updateProp(props, shadow.id, { type: 'shadowEchoBanished' });
   }
-  addProp(props, { id: 'starFragmentKaf', type: 'crownFragment', x: wizard.x + 22, y: wizard.y - 48, parallax: 0.9, letter: 'ך' });
 }
 
 async function phaseFirmamentWarning(props) {
   await narratorSay('Der Himmel reißt auf. Ein Riss zeigt den Schattenpalast.');
   const spill = findProp(props, 'shadowSpill');
   if (spill) {
-    updateProp(props, 'shadowSpill', { type: 'resonanceRingActive' });
+    updateProp(props, 'shadowSpill', null);
   }
-  addProp(props, { id: 'worldStabilityVeil', type: 'resonanceRingActive', x: wizard.x - 28, align: 'ground', parallax: 0.9, layer: 1, offsetY: -4 });
   addProp(props, { id: 'shadowAccessLance', type: 'shadowFracture', x: wizard.x + 42, align: 'ground', parallax: 1, layer: 1 });
   addProp(props, { id: 'transgressionAsh', type: 'shadowFracture', x: wizard.x - 18, align: 'ground', parallax: 1.08, layer: 0, offsetY: 6 });
   await narratorSay('Eine Stimme warnt: „Verwende אור אמת ברך, um den Riss zu schließen.“');
@@ -543,28 +351,42 @@ async function phaseFirmamentWarning(props) {
   await flashLightning({ doubleFlash: true, durationIn: 50, durationOut: 140, intensity: 1 });
 }
 
-async function phaseStarBridge(props) {
-  ensurePhaseProps(props, BRIDGE_SCENE.props);
-  await narratorSay('Der Sternensteg richtet sich selbst: Wort, Wahrheit und Licht verweigern Balaks Fluch.');
-  for (const seg of BRIDGE_SEQUENCE) {
-    const target = props.find(entry => entry.id === seg.id)?.x ?? wizard.x + 160;
-    await waitForWizardToReach(target, { tolerance: 16 });
-    updateProp(props, seg.id, { type: 'starBridgeSegmentLit' });
-    await flashLightning({ doubleFlash: false, durationIn: 50, durationOut: 140, intensity: 0.6 });
-  }
-  await narratorSay('Der Sternensteg leuchtet und zieht dich in den Schattenpalast. Du trägst den Stern als Schild.');
-  await flashLightning({ doubleFlash: true, durationIn: 60, durationOut: 150, intensity: 0.9 });
-}
-
-function makePromptForCrown(arcIndex, stepIndex) {
-  const prompts = [
-    ['Höre zuerst: sprich שמע.', 'Forme das Gehörte mit דבר – Wort wird Wirklichkeit.'],
-    ['Segne das Wort: sprich ברך.', 'Lass אור als Bestätigung folgen.'],
-    ['Höre den Befehl: שמע.', 'Verneine ihn mit לא.', 'Schliesse mit אור.'],
-    ['Segne erneut: ברך.', 'Lass אור den Abschluss halten.'],
-    ['Halte das Licht: sprich אור.'],
-  ];
-  return prompts[arcIndex][stepIndex] ?? 'Sprich das passende Wort.';
+async function runPeorBlessingSpeech(props) {
+  switchMusic('נאם בלעם בנו בער ונאם הגבר שתם העין.mp3');
+  await sleep(24000);
+  await narratorSay('Bileam hebt sein Spruchwort an:');
+  await wizardSay('נאם בלעם בנו בער ונאם הגבר שתם העין\nEs sagt Bileam, der Sohn des Beor, der Mann, dem die Augen geöffnet sind.');
+  await wizardSay('נאם שמע אמרי אל אשר מחזה שדי יחזה נפל וגלוי עינים\nEs sagt der Hörer göttlicher Rede, der Offenbarung des Mächtigen sieht, dem die Augen geöffnet wird, wenn er niederkniet.');
+  await wizardSay('מה טבו אהלך יעקב משכנתיך ישראל\nWie fein sind deine Zelte, Jakob, deine Wohnungen, Israel.');
+  await wizardSay('כנחלים נטיו כגנת עלי נהר כאהלים נטע יהוה כארזים עלי מים\nWie Täler, die sich ausbreiten, wie Gärten an Wassern, wie Aloebäume, die יהוה pflanzt, wie Zedern an Bächen.');
+  await wizardSay('יזל מים מדליו וזרעו במים רבים וירם מאגג מלכו ותנשא מלכתו\nSein Eimer strömt über, seine Saat trinkt aus Fülle; sein König wird höher als Agag und sein Reich erhebt sich.');
+  await wizardSay('אל מוציאו ממצרים כתועפת ראם לו יאכל גוים צריו ועצמתיהם יגרם וחציו ימחץ\nאלוהים führte sie aus Ägypten; er ist ihnen wie das Horn des Wildstiers. Er frisst die Nationen, ihre Gegner, zermalmt ihre Knochen und zerbricht sie mit Pfeilen.');
+  await wizardSay('כרע שכב כארי וכלביא מי יקימנו מברכיך ברוך וארריך ארור\nEr liegt wie ein Löwe und wie ein Junglöwe – wer will ihn aufwecken? Gesegnet ist, wer dich segnet; verflucht, wer dich verflucht.');
+  await runWordPuzzle({
+    taskText: 'Segne Israel: ברך ישראל',
+    hints: [
+      {
+        prompt: 'Segne Israel:\nברך ישראל',
+        words: ['ברך ישראל'],
+        onSuccess: async () => {
+          await celebrateGlyph('baruch israel');
+        },
+        onFailure: async () => {
+          await donkeySay('Segne Israel:\nברך ישראל');
+        },
+      },
+    ],
+  });
+  // pulse glow removed
+  await showFloatingRunes(props, { x: wizard.x + 18, letters: ['כ', 'ת', 'ר'] });
+  await flashLightning({ doubleFlash: false, durationIn: 60, durationOut: 180, intensity: 0.85 });
+  updateProp(props, 'crownPulseGlow', { visible: false });
+  await wizardSay('Ich sehe ihn, aber nicht jetzt; ich schaue ihn, aber nicht von Nahem.');
+  await wizardSay('Ein Stern geht auf aus Jakob, ein Zepter erhebt sich aus ישראל.');
+  await wizardSay('Er zerbricht die Schläfen Moab und die Häupter aller Söhne Seth.');
+  await wizardSay('Edom fällt, Seir wird Besitz; ישראל handelt mächtig.');
+  await wizardSay('Aus Jakob kommt der Herrscher hervor und tilgt, was von den Städten bleibt.');
+  await flashLightning({ doubleFlash: true, durationIn: 60, durationOut: 160, intensity: 1 });
 }
 
 function ensurePhaseProps(props, template) {
@@ -620,20 +442,13 @@ async function readWord(promptText) {
   return tokens.join(' ');
 }
 
-async function transitionToScene(ambienceKey, sceneConfig, props, phase) {
-  await fadeToBlack(360);
-  ensureAmbience(ambienceKey ?? sceneConfig.ambience ?? 'sanctumFinale');
-  setSceneProps([]);
-  applySceneConfig({ ...sceneConfig, props }, { setAmbience: false });
-  setSceneProps(props);
-  setSceneContext({ level: 'level10', phase });
-  await fadeToBase(420);
-}
-
 async function ensureWizardBesideBalak(props, id, { offset = -42, tolerance = 18 } = {}) {
   if (!Array.isArray(props)) return;
-  const balak = props.find(entry => entry.id === id);
-  if (!balak) return;
-  const targetX = (balak.x ?? wizard.x) + offset;
-  await waitForWizardToReach(targetX, { tolerance });
+  while (true) {
+    const balak = props.find(entry => entry.id === id);
+    if (!balak) return;
+    const targetX = (balak.x ?? wizard.x) + offset;
+    if (Math.abs((wizard.x ?? targetX) - targetX) <= tolerance) return;
+    await waitForWizardToReach(targetX, { tolerance });
+  }
 }
