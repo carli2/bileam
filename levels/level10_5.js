@@ -101,7 +101,7 @@ export async function runLevelTenFive() {
     await narratorSay('Balaks Schatten zerbricht. Purpurne Funken taumeln in das Sternenlicht und verglühen.');
     await donkeySay('Siehst du, Meister? Sein Gold und seine Drohungen liegen wie Staub zu deinen Füßen.');
     await divineSay('שמעת בקולי, בן בעור.\nDu hast auf meine Stimme gehört, Sohn des Beor.');
-    await fadeToBlack(640);
+    await fadeToBlack(2000);
     setLifeBars(null);
     return 'win';
   }
@@ -195,7 +195,7 @@ async function executeBalakFight(sceneProps) {
 
   const defeatAdvice = await handleFightDefeat(result.lastFailure);
   await playBalakDefeatSequence(sceneProps);
-  await fadeToBlack(600);
+  await fadeToBlack(2000);
   throw new LevelRetrySignal('level10_5', {
     message: 'level10_5_balak_defeat',
     hint: defeatAdvice?.suggestion ?? null,

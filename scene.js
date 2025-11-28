@@ -2599,7 +2599,7 @@ function createBalakFigureSprite(c) {
 }
 
 function createBalakBossSprite(c) {
-  return createBalakFigureScaledSprite(c, 7);
+  return createBalakFigureScaledSprite(c, 5);
 }
 
 function createBalakFigureScaledSprite(c, scale = 1) {

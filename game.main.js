@@ -107,10 +107,14 @@ async function mainFlow() {
 
       if (levelStatus === 'skipNext') {
         if (index === LEVELS.length - 1) {
-          endingState = 'skip';
-          cycleAborted = true;
-          break;
+          // restart the journey from Level 1 when the last level is skipped
+          index = -1;
+          continue;
         }
+        continue;
+      }
+      if (levelStatus === 'skipCycle') {
+        index = -1;
         continue;
       }
     }
@@ -152,6 +156,9 @@ async function runLevel(entry, index, progress) {
       clearSkipState();
       setSceneProps([]);
       ensureAmbience('exteriorDay');
+      if (reason === 'skip' && entry.id === 'level12') {
+        return 'skipCycle';
+      }
       return reason === 'restart' ? 'restart' : 'skipNext';
     }
     throw error;

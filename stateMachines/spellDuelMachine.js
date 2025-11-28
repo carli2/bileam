@@ -68,7 +68,7 @@ export const SPELL_DUEL_MACHINE = {
       },
       'מים': {
         next: 'steamChamber',
-        text_player: 'מים! Ich mache aus dem Zwang Dampf, der verfliegt.',
+        text_player: 'מים! Wasser löst den Zwang und nährt Ranken.',
         text_enemy: 'מים! Ich halte dich unter meiner Welle.',
       },
       'קול': {
@@ -108,7 +108,7 @@ export const SPELL_DUEL_MACHINE = {
       },
       'מים': {
         next: 'radiant',
-        text_player: 'מים! Ich drücke den Dampf ins Licht, bis er sich legt.',
+        text_player: 'מים! Wasser kühlt, bis Leben durchkommt.',
         text_enemy: 'מים! Ich breche den Dampf auf und lasse Licht übrig.',
       },
       'שמע': {
@@ -499,7 +499,7 @@ export const SPELL_DUEL_MACHINE = {
       },
       'מים': {
         next: 'flooded',
-        text_player: 'מים! Ich kühle den Glanz, damit er nicht verbrennt.',
+        text_player: 'מים! Ich kühle den Glanz, damit Ranken wachsen.',
         text_enemy: 'מים! Ich ersäufe deinen Segen.',
       },
     },
@@ -526,7 +526,7 @@ export const SPELL_DUEL_MACHINE = {
       },
       'מים': {
         next: 'flooded',
-        text_player: 'מים! Ich zerstreue das Licht wie Regen.',
+        text_player: 'מים! Ich streue Licht wie Regen auf wachsende Blätter.',
         text_enemy: 'מים! Ich schleudere Lichtsplitter wie Tropfen auf dich.',
       },
       'חיים': {
@@ -567,8 +567,8 @@ export const SPELL_DUEL_MACHINE = {
       },
       'מים': {
         next: 'steamChamber',
-        text_player: 'מים! Führe das Wachsen in Dampf, damit es sich legt.',
-        text_enemy: 'מים! Ich lenke das Wuchern in Dampf, der dich blendet.',
+        text_player: 'מים! Wasser lässt das Wuchern atmen.',
+        text_enemy: 'מים! Ich lenke das Wuchern in Strom, der dich blendet.',
       },
       'שמע': {
         next: 'listening',
