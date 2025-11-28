@@ -26,11 +26,6 @@ Jedes Level ist ein kleines Lehrdrama. Die Szene oben zeigt Level 7: Fürsten, B
 - **Engel:** Wesen aus Licht, die spätere Levels bewachen und lehren.
 
 ## So probierst du das Spiel aus
-- Lade dieses Projekt auf deinen Rechner.
-- Starte einen einfachen lokalen Webserver und öffne `index.html` in deinem Browser.
+- gehe auf https://launix.de/bileam/
 - Folge den Hinweisen der Eselin, sprich oder tippe die Wörter und beobachte, wie die Welt darauf reagiert.
 
-## Mehr entdecken
-Die Datei `AGENTS.md` enthält weiterführende Stil- und Designhinweise. Wenn du neue Levels planst, orientiere dich am Rhythmus Erinnerung -> Erkenntnis -> Anwendung, damit Lernende die Macht der Worte Schritt für Schritt meistern.
-
-Genieße die Reise - Worte sind die Schlüssel im Bauplan der Schöpfung.

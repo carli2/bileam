@@ -222,7 +222,7 @@ async function phaseFirstOracle(props) {
   await flashLightning({ doubleFlash: true, durationIn: 80, durationOut: 180, intensity: 0.9 });
 }
 
-async function phaseBlessingSequence() {
+async function phaseBlessingSequence(props) {
   igniteAltarFlame(props, 'altarWatchFire', { offsetY: -50 });
   addProp(props, { id: 'blessingRingBlue', type: 'resonanceRingActive', x: wizard.x - 20, align: 'ground', parallax: 0.94, layer: 1, offsetY: -10, tint: 'blue' });
   addProp(props, { id: 'blessingRingViolet', type: 'resonanceRingActive', x: wizard.x, align: 'ground', parallax: 0.96, layer: 1, offsetY: -12, tint: 'violet' });
